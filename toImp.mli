@@ -21,32 +21,37 @@
  *
  *)
 
-(* This module implements the IMP language and translation from fixpoint constraints *)
+(* This module implements the IMP language and translation 
+ * from fixpoint constraints *)
 
-module C = FixConstraint
-
-type program = decl list * block list
-
-type block = instr list
-
-(* vars are always in lex order *)
-
-type decl  = RDecl of Ast.Symbol.t * var list
-           | PDecl of Ast.Symbol.t
+(* We can have at most one set of temporaries in scope at a time
+ * so we share named and mark temporaries *)
 
 type var   = PVar of Ast.Symbol.t
            | TVar of Ast.Symbol.t
 
+type kvar  = FixConstraint.subs * Ast.Symbol.t
+
+type decl  = RDecl of Ast.Symbol.t * Ast.Symbol.t list
+           | PDecl of Ast.Symbol.t
+
+(* IMP commands *)
+
 type tupl  = var list
 
-type instr = Assm of bexpr list
-           | Asst of bexpr list
+type instr = Assm of Ast.pred list
+           | Asst of Ast.pred list
            | Asgn of var * var
            | Rget of Ast.Symbol.t * tupl
            | Rset of tupl * Ast.Symbol.t
+           | Havc of var
 
-val constraint_to_block : C.t -> block
-val contraints_to_program : C.deft list -> program
+type block = instr list
+
+type program = decl list * block list
+
+val constraint_to_block : decl list -> FixConstraint.t -> block
+(*val contraints_to_program : FixConstraint.deft list -> program*)
 
 val check_imp : program -> bool
 

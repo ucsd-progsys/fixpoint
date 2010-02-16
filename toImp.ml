@@ -34,15 +34,23 @@ module SM = Sy.SMap
 module C = FixConstraint
 (*module BS = BNstats*)
 
+open Misc.Ops
 
 
 (* vars are always in lex order *)
 
+(* We can have at most one set of temporaries in scope at a time
+ * so we share named and mark temporaries *)
+
 type var   = PVar of Sy.t
            | TVar of Sy.t
 
-type decl  = RDecl of Sy.t * var list
+type kvar  = C.subs * Sy.t
+
+type decl  = RDecl of Sy.t * Sy.t list
            | PDecl of Sy.t
+
+(* IMP commands *)
 
 type tupl  = var list
 
@@ -51,55 +59,33 @@ type instr = Assm of A.pred list
            | Asgn of var * var
            | Rget of Sy.t * tupl
            | Rset of tupl * Sy.t
+           | Havc of var
 
 type block = instr list
 
 type program = decl list * block list
 
+(* Declarations *)
+
 let filter_wfs cs =
-  Misc.maybe_list (List.map (function Wfc x -> Some x | _ -> None))
+  Misc.maybe_list (List.map (function C.Wfc x -> Some x | _ -> None) cs)
 
 let filter_subt cs =
-  Misc.maybe_list (List.map (function Cst x -> Some x | _ -> None))
+  Misc.maybe_list (List.map (function C.Cst x -> Some x | _ -> None) cs)
 
 let wf_to_decls wf =
-  let vars  = Misc.sort_and_compact (List.map fst (bindings_of_env (C.env_of_wf wf))) in
+  let vars  =
+    List.map fst (C.bindings_of_env (C.env_of_wf wf)) |>
+    Misc.sort_and_compact in
   let kvars = C.kvars_of_reft (C.reft_of_wf wf) in
-  (List.rev_map2 (fun k -> (k, vars)) kvars, List.map (fun v -> PDecl v) vars)
+  (List.map (fun k -> RDecl (snd k, vars)) kvars, List.map (fun v -> PDecl v) vars)
 
 let constraints_to_decls cs =
   let decls = List.map wf_to_decls (filter_wfs cs) in
-  let rdecls = Misc.flap snd decls in
-  let pdecls = Misc.sort_and_compact (Misc.flap fst decls) in
+  let (rdecls, pdecls) = (Misc.flap fst decls, Misc.flap snd decls) in
   rdecls @ pdecls 
 
-let constraints_to_program cs =
-  let decls = constraints_to_decls cs in
-  (decls, constraints_to_blocks decls cs)
-
-let binding_to_instrs (var, reft) =
-  reft_to_get_instrs reft @ [Asgn (PVar var, PVar (vv_of_reft reft))]
-
-let envt_to_instrs envt =
-  Misc.flap binding_to_instrs (C.bindings_of_envt envt)
-
-let reft_to_get_instrs decls reft =
-  let vv = vv_of_reft reft in
-  let kvars = kvars_of_reft reft in
-  let preds = preds_of_reft reft in
-  match (kvars, preds) with
-  | ([], preds) -> Havc vv :: Assm preds :: []
-  | (kvars, []) -> Misc.flap (get_instrs vv decls) kvars
-  | (kvars, preds) -> Misc.flap (get_instrs vv decls) kvars @ ([Assm preds])
-
-let reft_to_set_instrs decls reft =
-  let vv = vv_of_reft reft in
-  let kvars = kvars_of_reft reft in
-  let preds = preds_of_reft reft in
-  match (kvars, preds) with
-  | ([], preds) -> Asst preds :: []
-  | (kvars, []) -> Misc.flap (set_instrs vv decls) kvars
-  | (kvars, preds) -> Misc.flap (get_instrs vv decls) kvars @ ([Asst preds])
+(* Constraint translation *)
 
 let rec get_kdecl kvar decls =
   match decls with  
@@ -111,32 +97,66 @@ let rec get_kdecl kvar decls =
   | _ :: decls -> get_kdecl kvar decls
   | [] -> raise Not_found
 
-let get_instrs vv decls (subs, kvar) =
-  let vars = get_kdecl kvar decls in
-  let tvars = List.map (fun v -> TVar v) vars in
-  let assumes = List.map (sub_to_assume vars) subs in
-  RGet (kvar, tvars) :: assumes @
-  [Asgn (PVar vv, TVar (hd vars))]
-
 let sub_to_assume (var, expr) =
-  Assm (A.eBin var A.Eq expr)
+  Assm [A.pAtom (A.eVar var, A.Eq, expr)]
 
-let set_instrs decls (subs, kvar) =
-  RSet (get_kdecls kvar decls, kvar)
+let preds_of_reft reft =
+  C.preds_of_reft Sy.SMap.empty reft
 
-let constraints_to_blocks decls cs =
-  List.map constraint_to_block (filter_subt cs)
+(* [[{t | p}]]_get *)
 
-let constraint_to_block c =
+let get_instrs vv decls (subs, kvar) =
+  let vars = get_kdecl kvar decls |> List.map (fun v -> TVar v) in
+  let assumes = List.map sub_to_assume subs in
+  Rget (kvar, vars) :: assumes @
+  [Asgn (PVar vv, List.hd vars)]
+
+let set_instr decls (subs, kvar) =
+  Rset (List.map (fun v -> TVar v) (get_kdecl kvar decls), kvar)
+
+let reft_to_get_instrs decls reft =
+  let vv = C.vv_of_reft reft in
+  let kvars = C.kvars_of_reft reft in
+  let preds = preds_of_reft reft in
+  match (kvars, preds) with
+  | ([], preds) -> Havc (PVar vv) :: Assm preds :: []
+  | (kvars, []) -> Misc.flap (get_instrs vv decls) kvars
+  | (kvars, preds) -> Misc.flap (get_instrs vv decls) kvars @ ([Assm preds])
+
+(* [[{t | p}]]_set *)
+
+let reft_to_set_instrs decls reft =
+  let kvars = C.kvars_of_reft reft in
+  let preds = preds_of_reft reft in
+  match (kvars, preds) with
+  | ([], preds) -> Asst preds :: []
+  | (kvars, []) -> List.map (set_instr decls) kvars
+  | (kvars, preds) -> List.map (set_instr decls) kvars @ [(Asst preds)]
+
+(* [[x:T; G]] *)
+
+let binding_to_instrs decls (var, reft) =
+  reft_to_get_instrs decls reft @ [Asgn (PVar var, PVar (C.vv_of_reft reft))]
+
+let envt_to_instrs decls envt =
+  Misc.flap (binding_to_instrs decls) (C.bindings_of_env envt)
+
+let constraint_to_block decls c =
   let (env, grd, lhs, rhs) = (C.env_of_t c,
                               C.grd_of_t c,
-                              C.vars_of_t c,
                               C.lhs_of_t c,
                               C.rhs_of_t c) in
-  envt_to_instrs env @
-  [Asst grd] @
-  reft_to_get_instrs lhs @
-  reft_to_set_instrs rhs
+  Assm [grd] ::
+  envt_to_instrs decls env @
+  reft_to_get_instrs decls lhs @
+  reft_to_set_instrs decls rhs
+
+let constraints_to_blocks decls cs =
+  List.map (constraint_to_block decls) (filter_subt cs)
+
+let constraints_to_program cs =
+  let decls = constraints_to_decls cs in
+  (decls, constraints_to_blocks decls cs)
 
 let check_imp prog = true
   
