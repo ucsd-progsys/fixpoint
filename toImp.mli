@@ -25,23 +25,25 @@
 
 module C = FixConstraint
 
-type program = rdecl list * block list
+type program = decl list * block list
 
 type block = instr list
 
-(* pVars are always in lexico order (or use a map?) *)
+(* vars are always in lex order *)
 
-type rdecl  = rVar * pVar list
+type decl  = RDecl of Ast.Symbol.t * var list
+           | PDecl of Ast.Symbol.t
 
-type rVar = string
-type pVar = string
+type var   = PVar of Ast.Symbol.t
+           | TVar of Ast.Symbol.t
 
-type instr = Assm of Ast.pred list
-           | Asst of Ast.pred list
-           | Read of rVar * pVar list 
-           | Wrte of rVar * pVar list
-           | Asgn of pVar * pVar
-           | Havc of pVar
+type tupl  = var list
+
+type instr = Assm of bexpr list
+           | Asst of bexpr list
+           | Asgn of var * var
+           | Rget of Ast.Symbol.t * tupl
+           | Rset of tupl * Ast.Symbol.t
 
 val constraint_to_block : C.t -> block
 val contraints_to_program : C.deft list -> program
