@@ -65,6 +65,31 @@ type block = instr list
 
 type program = decl list * block list
 
+(* IMP printing *)
+
+let print_var ppf = function 
+  | PVar v -> F.fprintf ppf "%a" Sy.print v
+  | TVar v -> F.fprintf ppf "'%a" Sy.print v
+
+let print_tuple ppf =
+  F.fprintf ppf "(%a)" (Misc.pprint_many false ", " print_var)
+
+let print_instr ppf = function
+  | Assm ps ->
+      F.fprintf ppf "@[Assume@ (%a);@]"
+        (Misc.pprint_many false ", " A.Predicate.print) ps
+  | Asst ps ->
+      F.fprintf ppf "@[Assert@ (%a);@]"
+        (Misc.pprint_many false ", " A.Predicate.print) ps
+  | Asgn (lhs, rhs) ->
+      F.fprintf ppf "@[%a@ :=@ %a;@]" print_var lhs print_var rhs
+  | Rget (rv, tupl) ->
+      F.fprintf ppf "@[%a@ <|@ %a;@]" print_tuple tupl Sy.print rv
+  | Rset (tupl, rv) ->
+      F.fprintf ppf "@[%a@ |>@ %a;@]" print_tuple tupl Sy.print rv
+
+(* Translation from fixpoint to IMP *)
+
 (* Declarations *)
 
 let filter_wfs cs =
@@ -142,10 +167,8 @@ let envt_to_instrs decls envt =
   Misc.flap (binding_to_instrs decls) (C.bindings_of_env envt)
 
 let constraint_to_block decls c =
-  let (env, grd, lhs, rhs) = (C.env_of_t c,
-                              C.grd_of_t c,
-                              C.lhs_of_t c,
-                              C.rhs_of_t c) in
+  let (env, grd, lhs, rhs) =
+    (C.env_of_t c, C.grd_of_t c, C.lhs_of_t c, C.rhs_of_t c) in
   Assm [grd] ::
   envt_to_instrs decls env @
   reft_to_get_instrs decls lhs @
