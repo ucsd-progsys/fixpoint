@@ -48,3 +48,7 @@ type instr = Assm of Ast.pred list
 type block = instr list
 
 type program = decl list * block list
+
+val print_program : Format.formatter -> program -> unit
+
+val check_imp : program -> bool

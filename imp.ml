@@ -31,6 +31,7 @@ module A  = Ast
 module E  = A.Expression
 module P  = A.Predicate
 module Sy = A.Symbol
+module Pr = A.Predicate
 module SM = Sy.SMap
 module C = FixConstraint
 (*module BS = BNstats*)
@@ -77,11 +78,9 @@ let print_tuple ppf =
 
 let print_instr ppf = function
   | Assm ps ->
-      F.fprintf ppf "@[assume@ (%a);@]"
-        (Misc.pprint_many false ", " A.Predicate.print) ps
+      F.fprintf ppf "@[assume %a;@]" Pr.print (A.pAnd ps)
   | Asst ps ->
-      F.fprintf ppf "@[assert@ (%a);@]"
-        (Misc.pprint_many false ", " A.Predicate.print) ps
+      F.fprintf ppf "@[assert %a;@]" Pr.print (A.pAnd ps)
   | Asgn (lhs, rhs) ->
       F.fprintf ppf "@[%a@ :=@ %a;@]" print_var lhs print_var rhs
   | Rget (rv, tupl) ->
@@ -90,3 +89,21 @@ let print_instr ppf = function
       F.fprintf ppf "@[%a@ |>@ %a;@]" print_tuple tupl Sy.print rv
   | Havc v ->
       F.fprintf ppf "@[havoc@ %a;@]" print_var v 
+
+let print_decl ppf = function
+  | RDecl (r, vs) ->
+      F.fprintf ppf "@[rel@ (%a)@ (%a);@]" Sy.print r
+        (Misc.pprint_many false ", " Sy.print) vs 
+  | PDecl v ->
+      F.fprintf ppf "@[var@ %a;@]" Sy.print v
+
+let print_block ppf block =
+  F.fprintf ppf "@[%a@]"
+    (Misc.pprint_many false "\n" print_instr) block
+
+let print_program ppf (decls, blocks) =
+  F.fprintf ppf "@[%a@.%a@]"
+    (Misc.pprint_many false "\n" print_decl) decls
+    (Misc.pprint_many false "\n" print_block) blocks 
+
+let check_imp prog = true

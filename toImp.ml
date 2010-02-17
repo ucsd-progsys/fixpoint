@@ -126,9 +126,6 @@ let constraint_to_block decls c =
 let constraints_to_blocks decls cs =
   List.map (constraint_to_block decls) (filter_subt cs)
 
-let constraints_to_program cs =
+let mk_program cs =
   let decls = constraints_to_decls cs in
   (decls, constraints_to_blocks decls cs)
-
-let check_imp prog = true
-  
