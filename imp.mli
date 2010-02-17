@@ -21,8 +21,30 @@
  *
  *)
 
-val constraint_to_block : Imp.decl list -> FixConstraint.t -> Imp.block
-val contraints_to_program : FixConstraint.deft list -> Imp.program
+(* This module implements the IMP language *)
 
-val check_imp : Imp.program -> bool
+(* We can have at most one set of temporaries in scope at a time
+ * so we share named and mark temporaries *)
 
+type var   = PVar of Ast.Symbol.t
+           | TVar of Ast.Symbol.t
+
+type kvar  = FixConstraint.subs * Ast.Symbol.t
+
+type decl  = RDecl of Ast.Symbol.t * Ast.Symbol.t list
+           | PDecl of Ast.Symbol.t
+
+(* IMP commands *)
+
+type tupl  = var list
+
+type instr = Assm of Ast.pred list
+           | Asst of Ast.pred list
+           | Asgn of var * var
+           | Rget of Ast.Symbol.t * tupl
+           | Rset of tupl * Ast.Symbol.t
+           | Havc of var
+
+type block = instr list
+
+type program = decl list * block list

@@ -34,59 +34,8 @@ module SM = Sy.SMap
 module C = FixConstraint
 (*module BS = BNstats*)
 
+open Imp
 open Misc.Ops
-
-
-(* vars are always in lex order *)
-
-(* We can have at most one set of temporaries in scope at a time
- * so we share named and mark temporaries *)
-
-type var   = PVar of Sy.t
-           | TVar of Sy.t
-
-type kvar  = C.subs * Sy.t
-
-type decl  = RDecl of Sy.t * Sy.t list
-           | PDecl of Sy.t
-
-(* IMP commands *)
-
-type tupl  = var list
-
-type instr = Assm of A.pred list
-           | Asst of A.pred list
-           | Asgn of var * var
-           | Rget of Sy.t * tupl
-           | Rset of tupl * Sy.t
-           | Havc of var
-
-type block = instr list
-
-type program = decl list * block list
-
-(* IMP printing *)
-
-let print_var ppf = function 
-  | PVar v -> F.fprintf ppf "%a" Sy.print v
-  | TVar v -> F.fprintf ppf "'%a" Sy.print v
-
-let print_tuple ppf =
-  F.fprintf ppf "(%a)" (Misc.pprint_many false ", " print_var)
-
-let print_instr ppf = function
-  | Assm ps ->
-      F.fprintf ppf "@[Assume@ (%a);@]"
-        (Misc.pprint_many false ", " A.Predicate.print) ps
-  | Asst ps ->
-      F.fprintf ppf "@[Assert@ (%a);@]"
-        (Misc.pprint_many false ", " A.Predicate.print) ps
-  | Asgn (lhs, rhs) ->
-      F.fprintf ppf "@[%a@ :=@ %a;@]" print_var lhs print_var rhs
-  | Rget (rv, tupl) ->
-      F.fprintf ppf "@[%a@ <|@ %a;@]" print_tuple tupl Sy.print rv
-  | Rset (tupl, rv) ->
-      F.fprintf ppf "@[%a@ |>@ %a;@]" print_tuple tupl Sy.print rv
 
 (* Translation from fixpoint to IMP *)
 
