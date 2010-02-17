@@ -77,10 +77,10 @@ let print_tuple ppf =
 
 let print_instr ppf = function
   | Assm ps ->
-      F.fprintf ppf "@[Assume@ (%a);@]"
+      F.fprintf ppf "@[assume@ (%a);@]"
         (Misc.pprint_many false ", " A.Predicate.print) ps
   | Asst ps ->
-      F.fprintf ppf "@[Assert@ (%a);@]"
+      F.fprintf ppf "@[assert@ (%a);@]"
         (Misc.pprint_many false ", " A.Predicate.print) ps
   | Asgn (lhs, rhs) ->
       F.fprintf ppf "@[%a@ :=@ %a;@]" print_var lhs print_var rhs
@@ -88,3 +88,5 @@ let print_instr ppf = function
       F.fprintf ppf "@[%a@ <|@ %a;@]" print_tuple tupl Sy.print rv
   | Rset (tupl, rv) ->
       F.fprintf ppf "@[%a@ |>@ %a;@]" print_tuple tupl Sy.print rv
+  | Havc v ->
+      F.fprintf ppf "@[havoc@ %a;@]" print_var v 
