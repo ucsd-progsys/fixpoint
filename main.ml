@@ -91,8 +91,13 @@ let solve (ts, ps, cs, ws, ds, qs, s0) = match cs with
 
 let usage = "Usage: fixpoint <options> [source-files]\noptions are:"
 
+let foo (_, _, a, b, _, _, _) = List.map (fun c -> C.Cst c) a @ List.map (fun c -> C.Wfc c) b
+
 let main () =
-  let cs' = read_inputs usage |> snd |> BS.time "solve" solve in
+  let cs  = read_inputs usage |> snd in
+  let _   = if !Co.dump_imp then
+    (F.fprintf F.std_formatter "%a" Imp.print_program_as_c (ToImp.mk_program (foo cs)); assert false) in
+  let cs' = BS.time "solve" solve cs in
   let _   = BNstats.print stdout "Fixpoint Solver Time \n" in
   match cs' with 
   | [] -> (F.printf "\nSAT\n" ; exit 0)
