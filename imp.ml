@@ -76,6 +76,25 @@ let rv_append v1 = function
   | TVar v2 | PVar v2 ->
       PVar (Sy.of_string (Sy.to_string v1 ^ "_" ^ Sy.to_string v2))
   
+let collect_apps_from_pred p = 
+  let apps = ref [] in
+  let f_exp e =
+    match E.unwrap e with
+    | A.App (s, es) -> apps := (s, List.length es) :: !apps
+    | t -> () in
+  P.iter (fun _ -> ()) f_exp p; !apps
+
+let collect_apps_from_instr = function
+  | Assm ps
+  | Asst ps ->
+      Misc.flap collect_apps_from_pred ps
+  | _ -> []
+
+let collect_apps_from_block block =
+  Misc.flap collect_apps_from_instr block
+
+let collect_apps_from_program (_, blocks) =
+  Misc.flap collect_apps_from_block blocks
 
 (* IMP printing *)
 
@@ -209,13 +228,32 @@ and print_block_as_c ppf block =
   F.fprintf ppf "@[%a@]"
     (Misc.pprint_many false "\n" print_instr_as_c) block
 
-let print_program_as_c ppf (decls, blocks) =
-  F.fprintf ppf "@[%s@.@.%s@.@.%s@.@.%a@.%a@]"
-    "void error() { ERROR: goto ERROR; }"
-    "void diverge() { DIV: goto DIV; }"
-    "int nondet() { int x; return x; }"
+let print_list ppf = List.iter (F.fprintf ppf "%s")
+
+let generate_uf (name, numargs) =
+  let rec mkargs n s =
+    if numargs > 0 then
+      mkargs (n-1) ("int, " ^ s)
+    else
+      s in
+  "int " ^ (Sy.to_string name) ^ "(" ^ (mkargs (numargs-1) "int") ^ ") {}"
+
+let prologue =
+  ["void error() { ERROR: goto ERROR; }";
+  "void diverge() { DIV: goto DIV; }";
+  "int nondet() { int x; return x; }";
+  "int main() {"]
+
+let epilogue =
+  ["return 0; }"]
+
+let print_program_as_c ppf ((decls, blocks) as program) =
+  F.fprintf ppf "@[%a@.%a@.%a@.%a@.%a@.@]"
+    print_list (collect_apps_from_program program |> List.map generate_uf)
+    print_list prologue
+    (*Misc.pprint_many false "\n\n" (fun ppf s -> F.fprintf ppf "%s" s)*) 
     (Misc.pprint_many false "\n" print_decl_as_c) decls
     (Misc.pprint_many false "\n" print_block_as_c) blocks
+    print_list epilogue
 
 let check_imp (decls, instrs) = true
-
