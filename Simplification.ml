@@ -1,5 +1,6 @@
 module C = FixConstraint
 module P = Ast.Predicate
+module E = Ast.Expression
 module Sy = Ast.Symbol
 
 open Misc.Ops
@@ -54,19 +55,13 @@ let rec simplify_pred ((p, _) as pred) =
 	    end
     | _ -> pred
 
-let rec defs_of_pred edefs pdefs ((p, _) as pred) = 
+let rec defs_of_pred (edefs, pdefs) ((p, _) as pred) = 
   match p with
     | Ast.Atom ((Ast.Var v, _), Ast.Eq, e) when not(P.is_tauto pred) -> Sy.SMap.add v e edefs, pdefs
     | Ast.And [Ast.Imp ((Ast.Bexp (Ast.Var v1, _), _), p1), _; 
 	       Ast.Imp (p2, (Ast.Bexp (Ast.Var v2, _), _)), _] when v1 = v2 && p1 = p2 && not(P.is_tauto pred) -> 
 	edefs, Sy.SMap.add v1 p1 pdefs
-    | Ast.And preds -> 
-	let edefs', pdefs' = List.fold_left 
-	  (fun (edefs_sofar, pdefs_sofar) p ->
-	     let edefs'', pdefs'' = defs_of_pred edefs_sofar pdefs_sofar p in
-	       edefs'', pdefs''
-	  ) (edefs, pdefs) preds in
-	  edefs', pdefs'
+    | Ast.And preds -> List.fold_left defs_of_pred (edefs, pdefs) preds
     | _ -> edefs, pdefs
 
 
@@ -168,7 +163,7 @@ let preds_kvars_of_reft reft =
     (fun (ps, ks) r ->
        match r with
 	 | C.Conc p -> p :: ps, ks
-	 | C.Kvar (subs, kvar) -> ps, (subs, kvar) :: ks
+	 | C.Kvar (subs, kvar) -> ps, (subs, kvar) :: ks 
     ) ([], []) (C.ras_of_reft reft)
 
 let simplify_subs subs =
@@ -178,7 +173,7 @@ let simplify_kvar (subs, sym) =
   simplify_subs subs, sym
 
 let simplify_t t = 
-  let env_ps, pfree_env = 
+  let env_ps, pfree_env = (* separate concrete predicates from refinement templates *)
     Sy.SMap.fold 
       (fun bv reft (ps, env) -> 
 	 let vv = C.vv_of_reft reft in
@@ -186,18 +181,31 @@ let simplify_t t =
 	 let sort = C.sort_of_reft reft in
 	 let reft_ps, reft_ks = preds_kvars_of_reft reft in
 	   (List.rev_append (List.map (fun p -> P.subst p vv bv_expr) reft_ps) ps,
-	    if reft_ks = [] then env 
-	    else Sy.SMap.add bv (vv, sort, reft_ks) env)
+	    if reft_ks = [] then env else Sy.SMap.add bv (vv, sort, reft_ks) env)
       ) (C.env_of_t t) ([], Sy.SMap.empty) in
   let lhs = C.lhs_of_t t in
+  let lhs_vv = C.vv_of_reft lhs in
   let lhs_ps, lhs_ks = preds_kvars_of_reft lhs in
   let body_pred = Ast.pAnd (C.grd_of_t t :: List.rev_append lhs_ps env_ps) in
-  let edefs, pdefs = defs_of_pred Sy.SMap.empty Sy.SMap.empty body_pred in
+  let edefs, pdefs = defs_of_pred (Sy.SMap.empty, Sy.SMap.empty) body_pred in
+    Printf.printf "\nbody_pred edefs map for %d\n" (C.id_of_t t);
+    Sy.SMap.iter (fun v exp ->
+		    Printf.printf "%s -> %s\n" (Sy.to_string v) (E.to_string exp)
+		 ) edefs;
+    Printf.printf "edef for lhs_vv %s = %s (simplified %s)\n" (Sy.to_string lhs_vv) 
+      (try Sy.SMap.find lhs_vv edefs |> E.to_string with Not_found -> "none")
+      (try Sy.SMap.find lhs_vv edefs |> expr_apply_defs edefs pdefs |> E.to_string with Not_found -> "none");
   let kvar_to_simple_Kvar (subs, sym) = C.Kvar (subs_apply_defs edefs pdefs subs |> simplify_subs, sym) in
   let senv = 
     Sy.SMap.mapi (fun bv (vv, sort, ks) -> 
 		    List.map kvar_to_simple_Kvar ks |>	C.make_reft vv sort) pfree_env in
-  let sgrd = pred_apply_defs edefs pdefs body_pred |> simplify_pred in
+    Printf.printf "body_pred: %s\n" (P.to_string body_pred);
+  let sgrd' = pred_apply_defs edefs pdefs body_pred |> simplify_pred in
+  let sgrd = 
+    try
+      Ast.pAnd [sgrd'; Ast.pAtom (Ast.eVar lhs_vv, Ast.Eq, Sy.SMap.find lhs_vv edefs |> expr_apply_defs edefs pdefs)]
+    with Not_found -> sgrd' in
+    Printf.printf "simplified body_pred: %s\n" (P.to_string sgrd);
   let slhs = List.map kvar_to_simple_Kvar lhs_ks |> C.make_reft (C.vv_of_reft lhs) (C.sort_of_reft lhs) in
   let rhs = C.rhs_of_t t in
   let rhs_ps, rhs_ks = preds_kvars_of_reft rhs in

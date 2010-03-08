@@ -62,7 +62,7 @@ let main () =
 	| Some f -> 
 	    let out = open_out f in
 	      Printf.fprintf out "%% %s\n" (String.concat ", " fs);
-	      ToARMC.to_armc out cs ws;
+	      ToHC.to_armc out cs ws sol;
 	      close_out out
 	| None -> ()
     end;
