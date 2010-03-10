@@ -187,6 +187,100 @@ let horn_clause_to_string hc =
     (P.to_string hc.body_pred)
     (List.map (fun (subs, kvar) -> C.refa_to_string (C.Kvar (subs, kvar))) hc.body_kvars |> String.concat ", ")
 
+let horn_clause_dependency_to_string hc =
+  Printf.sprintf "%s: %s :- %s."
+    hc.tag 
+    (List.map (fun (_, kvar) -> Sy.to_string kvar) hc.head_kvars |> List.sort compare |> String.concat ", ")
+    (List.map (fun (_, kvar) -> Sy.to_string kvar) hc.body_kvars |> List.sort compare |> String.concat ", ")
+
+
+module CFGNodeSet = Set.Make (struct type t = StrSet.t let compare = StrSet.compare end)
+
+
+module DepV = struct
+  type t = string
+  let compare = Pervasives.compare
+  let hash = Hashtbl.hash
+  let equal = (=)
+end
+module DepE = struct
+  type t = string
+  let compare = Pervasives.compare
+  let default = ""
+end
+module DepG = Graph.Persistent.Digraph.ConcreteLabeled(DepV)(DepE)
+
+module Display = struct
+  include DepG
+  let vertex_name v = DepG.V.label v
+  let graph_attributes _ = []
+  let default_vertex_attributes _ = []
+  let vertex_attributes _ = []
+  let default_edge_attributes _ = []
+  let edge_attributes _ = []
+  let get_subgraph _ = None
+end
+module DepGToDot = Graph.Graphviz.Dot(Display)
+module DepGOper = Graph.Oper.P(DepG)
+
+module G = Graph.Pack.Digraph
+
+let hc_to_dep hc =
+  List.map (fun (_, kvar) -> Sy.to_string kvar) hc.head_kvars |> List.sort compare,
+  List.map (fun (_, kvar) -> Sy.to_string kvar) hc.body_kvars |> List.sort compare
+
+let mk_cfg state hcs =
+  let nodes = ref (CFGNodeSet.singleton StrSet.empty) in
+  let nodes_size = ref 0 in
+  let nodes_size' = ref 1 in
+    while !nodes_size < !nodes_size' do
+      nodes_size := CFGNodeSet.cardinal !nodes;
+      List.iter (fun hc ->
+		   let heads, body = hc_to_dep hc in
+		   let body_set = List.fold_left (fun sofar b -> StrSet.add b sofar) StrSet.empty body in
+		     List.iter (fun node ->
+				  List.iter (fun head ->
+					       if StrSet.subset body_set node then
+						 nodes := CFGNodeSet.add (StrSet.add head node) !nodes
+					    ) heads
+			       ) (CFGNodeSet.elements !nodes)
+		) hcs;
+      nodes_size' := CFGNodeSet.cardinal !nodes
+    done;
+    Printf.printf "nodes: %s\n" (List.sort compare state.kvs |> String.concat ", ");
+    CFGNodeSet.iter (fun node -> 
+		       Printf.printf "node: %s\n" (StrSet.elements node |> List.sort compare |> String.concat ", ")
+		    ) !nodes;
+    let g = G.create () in
+      List.iter (fun hc -> 
+		   let heads, body = hc_to_dep hc in
+		     List.iter (fun b -> 
+				  List.iter (fun head -> 
+					       G.add_edge g (G.V.create 1) (G.V.create 2)
+					    ) heads
+			       ) body
+		) hcs;
+    let depg = 
+      List.fold_left
+	(fun g hc -> 
+	   let heads, body = hc_to_dep hc in
+	     List.fold_left 
+	       (fun g' b -> 
+		  List.fold_left 
+		    (fun g'' head -> 
+		       DepG.add_edge_e g'' (DepG.E.create b (* hc.tag *) "" head)
+		    ) g' heads
+	       ) g body
+	) DepG.empty hcs in
+    let out = open_out "/var/tmp/awesome/g.dot" in
+      DepGToDot.output_graph out depg;
+      close_out out;
+    let out = open_out "/var/tmp/awesome/t.dot" in
+      DepGToDot.output_graph out (DepGOper.transitive_closure depg);
+      close_out out
+
+    
+
 let kvar_to_hc_armcs ?(suffix = "") state (subs, sym) = 
   let subs_map = List.fold_left (fun m (s, e) -> StrMap.add (symbol_to_armc s) e m) StrMap.empty subs in
   let find_subst v default = try StrMap.find v subs_map |> expr_to_armc with Not_found -> default in
@@ -357,16 +451,18 @@ cutpoint(pc(%s)).
       start_pc error_pc loop_pc 
       (mk_var2names state)
       (mk_preds state);
+    let hcs = List.map t_to_horn_clause ts in
+      mk_cfg state hcs;
     Printf.fprintf out "%s\n\n" (mk_start_rule state);
     List.iter (fun t -> 
 		 if List.mem (C.id_of_t t) cex || List.length cex = 0 then
-		   begin
-		     Printf.fprintf out "/*\n%s%s\n*/\n" (C.to_string t) (t_to_horn_clause t |> horn_clause_to_string);
+		   let hc = t_to_horn_clause t in
+		     Printf.fprintf out "/*\n%s%s\n*/\n" (C.to_string t) (horn_clause_to_string hc);
+		     Printf.printf "dep: %s\n" (horn_clause_dependency_to_string hc);
 		     List.iter (fun r -> 
 				  output_string out r;
 				  output_string out "\n\n"
-			       ) (t_to_horn_clause t |> hc_to_armc state)
-		   end
+			       ) (hc_to_armc state hc)
 		 else
 		   ()
 	      ) ts;
