@@ -171,6 +171,8 @@ let t_to_horn_clause t =
 	   List.rev_append ps' ps, List.rev_append ks' ks
       ) (C.env_of_t t) (C.grd_of_t t :: lhs_ps, lhs_ks) in
   let head_ps, head_ks = C.rhs_of_t t |> preds_kvars_of_reft in
+    if List.length head_ks > 1 then
+      failwith (Printf.sprintf "t_to_horn_clause: multiple k's in rhs of %d" (C.id_of_t t));
     {
       body_pred = preds_to_pred body_ps; 
       body_kvars = body_ks; 
@@ -223,6 +225,8 @@ end
 module DepGToDot = Graph.Graphviz.Dot(Display)
 module DepGOper = Graph.Oper.P(DepG)
 
+module DepGSCC = Graph.Components.Make(DepG)
+
 module G = Graph.Pack.Digraph
 
 let hc_to_dep hc =
@@ -272,11 +276,28 @@ let mk_cfg state hcs =
 		    ) g' heads
 	       ) g body
 	) DepG.empty hcs in
+    let dep_cs = 
+      List.fold_left
+	(fun g hc -> 
+	   let heads, _ = hc_to_dep hc in
+	     List.fold_left 
+	       (fun g' hc' -> 
+		  (* check if heads intersect body' *)
+		  let _, body' = hc_to_dep hc' in
+		    if hc.tag <> hc'.tag && List.exists (fun head -> List.mem head body') heads then 
+		      DepG.add_edge g' hc.tag hc'.tag
+		    else 
+		      g'
+	       ) g hcs
+	) DepG.empty hcs in
     let out = open_out "/var/tmp/awesome/g.dot" in
       DepGToDot.output_graph out depg;
       close_out out;
     let out = open_out "/var/tmp/awesome/t.dot" in
       DepGToDot.output_graph out (DepGOper.transitive_closure depg);
+      close_out out;
+    let out = open_out "/var/tmp/awesome/cs.dot" in
+      DepGToDot.output_graph out dep_cs;
       close_out out
 
     
@@ -293,19 +314,21 @@ let kvar_to_hc_armcs ?(suffix = "") state (subs, sym) =
 		     (mk_data_var ~suffix:suffix kv v) (find_subst v (mk_data_var exists_kv v))
 		) scope  
 
-let kvar_to_armcs ?(suffix = "") state (subs, sym) = 
+let kvar_to_armcs ?(suffix = "") ?(cfg = false) state (subs, sym) = 
   let subs_map = List.fold_left (fun m (s, e) -> StrMap.add (symbol_to_armc s) (expr_to_armc e) m) StrMap.empty subs in
   let find_subst v default = try StrMap.find v subs_map with Not_found -> default in
   let kv = symbol_to_armc sym in
   try
     let scope = StrMap.find kv state.kv_scope in
-    let card, data = 
-      match scope with
-	| card :: data -> card, data
-	| _ -> failwith ("kvar_to_armcs: unknown scope " ^ (String.concat ", " scope))
+    let card_armc, data = 
+      if cfg then
+	[], scope
+      else 
+	([Printf.sprintf "%s = 1" (mk_data_var ~suffix:suffix kv card_vname)],
+	 List.tl scope)
     in
-      Printf.sprintf "%s = 1" (mk_data_var ~suffix:suffix kv card_vname)
-      :: List.map (fun v -> 
+      card_armc
+      @ List.map (fun v -> 
 		     Printf.sprintf "%s = %s" 
 		       (mk_data_var ~suffix:suffix kv v) (find_subst v (mk_data_var exists_kv v))
 		  ) data |> String.concat ", "
@@ -337,16 +360,16 @@ let mk_rule from_pc from_data to_pc to_data guard update tag =
   Printf.sprintf "r(p(pc(%s), data(%s)),\np(pc(%s), data(%s)),\n[%s],\n[%s], %s)." 
     from_pc from_data to_pc to_data guard update tag
 
-let hc_to_armc state hc = 
+let hc_to_armc ?(cfg = false) state hc = 
   let from_data = mk_data state in
   let to_data = mk_data ~suffix:primed_suffix state in
-  let _ = pred_to_armc hc.body_pred in
-  let _ = List.map (kvar_to_armcs state) hc.body_kvars in
-  let body = pred_to_armc hc.body_pred :: List.map (kvar_to_armcs state) hc.body_kvars in
+  let body = pred_to_armc hc.body_pred :: List.map (kvar_to_armcs ~cfg:cfg state) hc.body_kvars in
   let prules =
     if P.is_tauto hc.head_pred then []
     else 
-      [mk_rule loop_pc from_data error_pc to_data 
+      [mk_rule 
+	 (if cfg then Printf.sprintf "src_%s" hc.tag else loop_pc)
+	 from_data error_pc to_data 
 	 ((Ast.pNot hc.head_pred |> pred_to_armc) :: body |> String.concat ",\n") "" hc.tag] in
   let single_kvar = List.length hc.head_kvars = 1 in
   let rules, _ =
@@ -355,10 +378,12 @@ let hc_to_armc state hc =
 	 let kv = symbol_to_armc sym in
 	 let skip_kvs = List.filter (fun kv' -> kv <> kv') state.kvs in
 	 mk_rule 
-	   loop_pc from_data 
-	   loop_pc (mk_data ~suffix:primed_suffix ~skip_kvs:skip_kvs state) 
+	   (if cfg then Printf.sprintf "src_%s" hc.tag else loop_pc)
+	   from_data 
+	   (if cfg then Printf.sprintf "dst_%s" hc.tag else loop_pc)
+	   (mk_data ~suffix:primed_suffix ~skip_kvs:skip_kvs state) 
 	   (body |> String.concat ",\n") 
-	   (kvar_to_armcs ~suffix:primed_suffix state kvar) 
+	   (kvar_to_armcs ~cfg:cfg ~suffix:primed_suffix state kvar) 
 	   (if single_kvar then hc.tag else Printf.sprintf "%s%d" hc.tag n)
 	 :: rules, n+1) (prules, 1) hc.head_kvars in
     rules
@@ -394,13 +419,16 @@ let mk_hc_preds state =
 	 (List.map (mk_data_var kv) (StrMap.find kv state.kv_scope) |> String.concat ", ")
     ) state.kvs |> String.concat "\n"
 
-let mk_preds state = 
+let mk_preds ?(with_card = true) state = 
   let preds = 
-    List.map (fun kv ->
-		let card = StrMap.find kv state.kv_scope |> List.hd in
-		let kv_card = mk_data_var kv card in
-		  Printf.sprintf "%s = 0, %s = 1" kv_card kv_card
-	     ) state.kvs |> String.concat ", "
+    if with_card then
+      List.map (fun kv ->
+		  let card = StrMap.find kv state.kv_scope |> List.hd in
+		  let kv_card = mk_data_var kv card in
+		    Printf.sprintf "%s = 0, %s = 1" kv_card kv_card
+	       ) state.kvs |> String.concat ", "
+    else 
+      ""
   in
     Printf.sprintf "preds(p(pc(_), data(%s)), [%s])." (mk_data state) preds
 
@@ -472,6 +500,45 @@ cutpoint(pc(%s)).
 				Printf.printf "%s\n" (C.to_string t)
 			   ) ts
 	      ) cex
+
+let to_cfg_armc out ts wfs sol =
+  print_endline "Translating to ARMC. ToHC.to_cfg_armc";
+  let state = mk_kv_scope ~with_card:false out ts wfs sol in
+    Printf.fprintf out
+      ":- multifile r/5,implicit_updates/0,var2names/2,preds/2,trans_preds/3,cube_size/1,start/1,error/1,refinement/1,cutpoint/1,invgen_template/2,invgen_template/1,cfg_exit_relation/1,stmtsrc/2,strengthening/2.
+refinement(inter). 
+cube_size(1). 
+
+start(pc(%s)).
+error(pc(%s)).
+
+\n%s\n\n%s\n
+"
+      start_pc error_pc 
+      (mk_var2names state)
+      (mk_preds ~with_card:false state);
+    List.iter 
+      (fun t -> 
+	 let hc = t_to_horn_clause t in
+	 let heads, body = hc_to_dep hc in
+	   Printf.fprintf out "/*\n%s%s\n*/\n" (C.to_string t) (horn_clause_to_string hc);
+	   List.iter (Printf.fprintf out "%s\n\n") (hc_to_armc ~cfg:true state hc);
+	   if body = [] then
+	     Printf.fprintf out "%s\n\n"
+	       (mk_rule start_pc (mk_data state) 
+		  (Printf.sprintf "src_%s" hc.tag) (mk_data ~suffix:primed_suffix state) 
+		  "" "" (Printf.sprintf "start_%s" hc.tag));
+	   List.iter
+	       (fun t' -> 
+		  let hc' = t_to_horn_clause t' in
+		  let _, body' = hc_to_dep hc' in
+		    if hc.tag <> hc'.tag && List.exists (fun head -> List.mem head body') heads then 
+		      Printf.fprintf out "%% %s -> %s\n%s\n\n" hc.tag hc'.tag
+			(mk_rule (Printf.sprintf "dst_%s" hc.tag) (mk_data state) 
+			   (Printf.sprintf "src_%s" hc'.tag) (mk_data state) 
+			   "" "" (Printf.sprintf "t_%s_%s" hc.tag hc'.tag));
+	       ) ts
+      ) ts
 
 (*
   make -f Makefile.fixtop && ./f -latex /tmp/main.tex -armc /tmp/a.pl tests/pldi08-max.fq && cat /tmp/a.pl

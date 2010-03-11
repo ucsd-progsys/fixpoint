@@ -67,6 +67,15 @@ let main () =
 	| None -> ()
     end;
     begin
+      match !Co.cfg_armc_file with
+	| Some f -> 
+	    let out = open_out f in
+	      Printf.fprintf out "%% %s\n" (String.concat ", " fs);
+	      ToHC.to_cfg_armc out cs ws sol;
+	      close_out out
+	| None -> ()
+    end;
+    begin
       match !Co.q_armc_file with
 	| Some f -> 
 	    let out = open_out f in
