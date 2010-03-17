@@ -38,7 +38,7 @@ type horn_clause = {
   body_pred : Ast.pred;
   body_kvars : (C.subs * Sy.t) list;
   head_pred : Ast.pred;
-  head_kvars : (C.subs * Sy.t) list;
+  head_kvar_opt : (C.subs * Sy.t) option;
   tag : string;
 }
 
@@ -171,13 +171,18 @@ let t_to_horn_clause t =
 	   List.rev_append ps' ps, List.rev_append ks' ks
       ) (C.env_of_t t) (C.grd_of_t t :: lhs_ps, lhs_ks) in
   let head_ps, head_ks = C.rhs_of_t t |> preds_kvars_of_reft in
-    if List.length head_ks > 1 then
-      failwith (Printf.sprintf "t_to_horn_clause: multiple k's in rhs of %d" (C.id_of_t t));
+  let head_kvar_opt =
+    match head_ks with 
+      | [] -> None
+      | [head_kvar] -> Some head_kvar
+      | _ ->
+	  failwith (Printf.sprintf "t_to_horn_clause: multiple k's in rhs of %d" (C.id_of_t t));
+  in
     {
       body_pred = preds_to_pred body_ps; 
       body_kvars = body_ks; 
       head_pred = preds_to_pred head_ps; 
-      head_kvars = head_ks;
+      head_kvar_opt = head_kvar_opt;
       tag = try string_of_int (C.id_of_t t) with _ -> failure "ERROR: t_to_horn_clause: anonymous constraint %s" (C.to_string t);
     }
 
@@ -185,15 +190,12 @@ let horn_clause_to_string hc =
   Printf.sprintf "%s: %s, %s :- %s, %s."
     hc.tag 
     (P.to_string hc.head_pred)
-    (List.map (fun (subs, kvar) -> C.refa_to_string (C.Kvar (subs, kvar))) hc.head_kvars |> String.concat ", ")
+    (match hc.head_kvar_opt with
+       | Some (subs, kvar) -> C.refa_to_string (C.Kvar (subs, kvar))
+       | None -> "none"
+    )
     (P.to_string hc.body_pred)
     (List.map (fun (subs, kvar) -> C.refa_to_string (C.Kvar (subs, kvar))) hc.body_kvars |> String.concat ", ")
-
-let horn_clause_dependency_to_string hc =
-  Printf.sprintf "%s: %s :- %s."
-    hc.tag 
-    (List.map (fun (_, kvar) -> Sy.to_string kvar) hc.head_kvars |> List.sort compare |> String.concat ", ")
-    (List.map (fun (_, kvar) -> Sy.to_string kvar) hc.body_kvars |> List.sort compare |> String.concat ", ")
 
 
 module CFGNodeSet = Set.Make (struct type t = StrSet.t let compare = StrSet.compare end)
@@ -230,9 +232,13 @@ module DepGSCC = Graph.Components.Make(DepG)
 module G = Graph.Pack.Digraph
 
 let hc_to_dep hc =
-  List.map (fun (_, kvar) -> Sy.to_string kvar) hc.head_kvars |> List.sort compare,
-  List.map (fun (_, kvar) -> Sy.to_string kvar) hc.body_kvars |> List.sort compare
+  (match hc.head_kvar_opt with
+     | Some (_, sym) -> Some (symbol_to_armc sym) 
+     | None -> None
+  ),
+  List.map (fun (_, sym) -> symbol_to_armc sym) hc.body_kvars |> List.sort compare
 
+(*
 let mk_cfg state hcs =
   let nodes = ref (CFGNodeSet.singleton StrSet.empty) in
   let nodes_size = ref 0 in
@@ -299,7 +305,7 @@ let mk_cfg state hcs =
     let out = open_out "/var/tmp/awesome/cs.dot" in
       DepGToDot.output_graph out dep_cs;
       close_out out
-
+*)
     
 
 let kvar_to_hc_armcs ?(suffix = "") state (subs, sym) = 
@@ -344,19 +350,17 @@ let hc_to_hcarmc state hc =
   let prules = 
     if P.is_tauto hc.head_pred then []
     else [mk_rule error_pc  (Printf.sprintf "%s, %s" body (Ast.pNot hc.head_pred |> pred_to_armc)) hc.tag] in
-  let single_kvar = List.length hc.head_kvars = 1 in
-  let rules, _ =
-    List.fold_left
-      (fun (rules, n) kvar -> 
+  let krules =
+    match hc.head_kvar_opt with
+      | Some kvar ->
 	 let head_armcs = kvar_to_hc_armcs ~suffix:primed_suffix state kvar in
-	   mk_rule 
+	   [mk_rule 
 	     (List.hd head_armcs)
 	     (body :: List.tl head_armcs |> String.concat ", ")
-	     (if single_kvar then hc.tag else Printf.sprintf "%s%d" hc.tag n)
-	   :: rules,
-	 n+1
-      ) (prules, 1) hc.head_kvars in
-    rules 
+	     hc.tag]
+      | None -> []
+  in
+    krules @ prules
 
 let mk_rule from_pc from_data to_pc to_data guard update tag = 
   Printf.sprintf "r(p(pc(%s), data(%s)),\np(pc(%s), data(%s)),\n[%s],\n[%s], %s)." 
@@ -373,22 +377,22 @@ let hc_to_armc ?(cfg=false) ?(with_card=true) state hc =
 	 (if cfg then Printf.sprintf "src_%s" hc.tag else loop_pc)
 	 from_data error_pc to_data 
 	 ((Ast.pNot hc.head_pred |> pred_to_armc) :: body |> String.concat ",\n") "" hc.tag] in
-  let single_kvar = List.length hc.head_kvars = 1 in
-  let rules, _ =
-    List.fold_left
-      (fun (rules, n) ((subs, sym) as kvar) -> 
-	 let kv = symbol_to_armc sym in
-	 let skip_kvs = List.filter (fun kv' -> kv <> kv') state.kvs in
-	 mk_rule 
-	   (if cfg then Printf.sprintf "src_%s" hc.tag else loop_pc)
-	   from_data 
-	   (if cfg then Printf.sprintf "dst_%s" hc.tag else loop_pc)
-	   (mk_data ~suffix:primed_suffix ~skip_kvs:skip_kvs state) 
-	   (body |> String.concat ",\n") 
-	   (kvar_to_armcs ~with_card:with_card ~suffix:primed_suffix state kvar) 
-	   (if single_kvar then hc.tag else Printf.sprintf "%s%d" hc.tag n)
-	 :: rules, n+1) (prules, 1) hc.head_kvars in
-    rules
+  let krules =
+    match hc.head_kvar_opt with
+      | Some ((subs, sym) as kvar) ->
+	  let kv = symbol_to_armc sym in
+	  let skip_kvs = List.filter (fun kv' -> kv <> kv') state.kvs in
+	    [mk_rule 
+	       (if cfg then Printf.sprintf "src_%s" hc.tag else loop_pc)
+	       from_data 
+	       (if cfg then Printf.sprintf "dst_%s" hc.tag else loop_pc)
+	       (mk_data ~suffix:primed_suffix ~skip_kvs:skip_kvs state) 
+	       (body |> String.concat ",\n") 
+	       (kvar_to_armcs ~with_card:with_card ~suffix:primed_suffix state kvar) 
+	       hc.tag]
+      | None -> []
+  in
+    krules @ prules
 
 let mk_hc_var2names state = 
   List.map
@@ -481,14 +485,11 @@ cutpoint(pc(%s)).
       start_pc error_pc loop_pc 
       (mk_var2names state)
       (mk_preds state);
-    let hcs = List.map t_to_horn_clause ts in
-      mk_cfg state hcs;
     Printf.fprintf out "%s\n\n" (mk_start_rule state);
     List.iter (fun t -> 
 		 if List.mem (C.id_of_t t) cex || List.length cex = 0 then
 		   let hc = t_to_horn_clause t in
 		     Printf.fprintf out "/*\n%s%s\n*/\n" (C.to_string t) (horn_clause_to_string hc);
-		     Printf.printf "dep: %s\n" (horn_clause_dependency_to_string hc);
 		     List.iter (fun r -> 
 				  output_string out r;
 				  output_string out "\n\n"
@@ -508,6 +509,14 @@ let to_cfg_armc out ts wfs sol =
   let with_card_flag = true in
   let state = mk_kv_scope ~with_card:with_card_flag out ts wfs sol in
   let cex = [1;5;13;14;68;69;54] in 
+    (*  let cex = [] in  *)
+  let ts = (if cex = [] then ts else List.filter (fun t -> List.mem (C.id_of_t t) cex) ts) in
+  let hcs = List.map t_to_horn_clause ts in
+  let start_hcs, loop_hcs = 
+    List.partition (fun hc -> 
+		      hc_to_dep hc |> snd = [] (* no kvs in the body *)
+		   ) hcs 
+  in
     Printf.fprintf out
       ":- multifile r/5,implicit_updates/0,var2names/2,preds/2,trans_preds/3,cube_size/1,start/1,error/1,refinement/1,cutpoint/1,invgen_template/2,invgen_template/1,cfg_exit_relation/1,stmtsrc/2,strengthening/2.
 refinement(inter). 
@@ -521,36 +530,77 @@ error(pc(%s)).
       start_pc error_pc 
       (mk_var2names state)
       (mk_preds ~with_card:with_card_flag state);
-    List.iter 
-      (fun t -> 
-	 let hc = t_to_horn_clause t in
-	 let heads, body = hc_to_dep hc in
-	   Printf.fprintf out "/*\n%s%s\n*/\n" (C.to_string t) (horn_clause_to_string hc);
-	   List.iter (Printf.fprintf out "%s\n\n") 
-	     (hc_to_armc ~cfg:true ~with_card:with_card_flag state hc);
-	   if body = [] then
-	     Printf.fprintf out "%s\n\n"
-	       (mk_rule start_pc (mk_data state) 
-		  (Printf.sprintf "src_%s" hc.tag) (mk_data ~suffix:primed_suffix state) 
-		  "" 
-		  (if with_card_flag then
-		     List.map (fun kv ->
-				 let card = StrMap.find kv state.kv_scope |> List.hd in
-				   Printf.sprintf "%s = 0" (mk_data_var ~suffix:primed_suffix kv card)
-			      ) state.kvs |> String.concat ", "
-		   else "")
-		  (Printf.sprintf "start_%s" hc.tag));
-	   List.iter
-	     (fun t' -> 
-		let hc' = t_to_horn_clause t' in
-		let _, body' = hc_to_dep hc' in
-		  if hc.tag <> hc'.tag && List.exists (fun head -> List.mem head body') heads then 
-		    Printf.fprintf out "%% %s -> %s\n%s\n\n" hc.tag hc'.tag
-		      (mk_rule (Printf.sprintf "dst_%s" hc.tag) (mk_data state) 
-			 (Printf.sprintf "src_%s" hc'.tag) (mk_data state) 
-			 "" "" (Printf.sprintf "t_%s_%s" hc.tag hc'.tag));
-	     ) ts
-      ) (List.filter (fun t -> List.mem (C.id_of_t t) cex) ts)
+
+    Printf.fprintf out "%s\n\n"
+      (mk_rule 
+	 start_pc (mk_data state) 
+	 (Printf.sprintf "%s_card_init" start_pc) (mk_data ~suffix:primed_suffix state) 
+	 "" 
+	 (List.map (fun kv ->
+		      let card = StrMap.find kv state.kv_scope |> List.hd in
+			Printf.sprintf "%s = 0" (mk_data_var ~suffix:primed_suffix kv card)
+		   ) state.kvs |> String.concat ", ")
+	 "start_card_init");
+
+    let loop_start_pc, start_heads =
+      List.fold_left
+	(fun (curr_pc, heads_sofar) hc ->
+	   match hc_to_dep hc |> fst with 
+	     | Some head -> 
+		 (* connect headed start_hcs in a sequence *)
+		 Printf.fprintf out "%s\n\n"
+		   (mk_rule 
+		      curr_pc (mk_data state) 
+		      (Printf.sprintf "src_%s" hc.tag) (mk_data state) 
+		      "" ""
+		      (Printf.sprintf "start_%s" hc.tag));
+		 Printf.sprintf "dst_%s" hc.tag, StrSet.add head heads_sofar
+	     | None -> 
+		 (* directly connect to asserting hc *)
+		 Printf.fprintf out "%s\n\n"
+		   (mk_rule 
+		      start_pc (mk_data state) 
+		      (Printf.sprintf "src_%s" hc.tag) (mk_data state) 
+		      "" ""
+		      (Printf.sprintf "start_%s" hc.tag));
+		 (curr_pc, heads_sofar)
+	) (Printf.sprintf "%s_card_init" start_pc, StrSet.empty) start_hcs
+    in
+      List.iter
+	(fun hc -> 
+	   let head_opt, body = hc_to_dep hc in
+	     Printf.fprintf out "/*\n%s\n*/\n" (* TODO: (C.to_string t) *) (horn_clause_to_string hc);
+
+	     (* the actual transition relation *)
+	     List.iter (Printf.fprintf out "%s\n\n") 
+	       (hc_to_armc ~cfg:true ~with_card:with_card_flag state hc);
+
+	     if body <> [] then
+	       begin
+		 if List.for_all (fun body_kv -> StrSet.mem body_kv start_heads) body then
+		   (* connect to the starting sequence *)
+		   Printf.fprintf out "%s\n\n"
+		     (mk_rule 
+			loop_start_pc (mk_data state) 
+			(Printf.sprintf "src_%s" hc.tag) (mk_data state) 
+			"" ""
+			(Printf.sprintf "start_%s" hc.tag));
+
+		 (* connect non-starting to successors *)
+		 match head_opt with
+		   | Some head ->
+		       List.iter
+			 (fun hc' -> 
+			    let _, body' = hc_to_dep hc' in
+			      if hc.tag <> hc'.tag && List.mem head body' then 
+				Printf.fprintf out "%% %s -> %s\n%s\n\n" hc.tag hc'.tag
+				  (mk_rule (Printf.sprintf "dst_%s" hc.tag) (mk_data state) 
+				     (Printf.sprintf "src_%s" hc'.tag) (mk_data state) 
+				     "" "" (Printf.sprintf "t_%s_%s" hc.tag hc'.tag));
+			 ) loop_hcs
+		   | _ -> ()
+	       end
+	) hcs
 
 (*
   make -f Makefile.fixtop && ./f -latex /tmp/main.tex -armc /tmp/a.pl tests/pldi08-max.fq && cat /tmp/a.pl
