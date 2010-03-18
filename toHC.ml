@@ -509,7 +509,7 @@ let to_cfg_armc out ts wfs sol =
   let with_card_flag = true in
   let state = mk_kv_scope ~with_card:with_card_flag out ts wfs sol in
   let cex = [1;5;13;14;68;69;54] in 
-    (*  let cex = [] in  *)
+  let cex = [] in  
   let ts = (if cex = [] then ts else List.filter (fun t -> List.mem (C.id_of_t t) cex) ts) in
   let hcs = List.map t_to_horn_clause ts in
   let start_hcs, loop_hcs = 
@@ -536,10 +536,12 @@ error(pc(%s)).
 	 start_pc (mk_data state) 
 	 (Printf.sprintf "%s_card_init" start_pc) (mk_data ~suffix:primed_suffix state) 
 	 "" 
-	 (List.map (fun kv ->
+	 (if with_card_flag then 
+	    List.map (fun kv ->
 		      let card = StrMap.find kv state.kv_scope |> List.hd in
 			Printf.sprintf "%s = 0" (mk_data_var ~suffix:primed_suffix kv card)
-		   ) state.kvs |> String.concat ", ")
+		   ) state.kvs |> String.concat ", "
+	  else "")
 	 "start_card_init");
 
     let loop_start_pc, start_heads =
@@ -597,8 +599,16 @@ error(pc(%s)).
 				  (mk_rule (Printf.sprintf "dst_%s" hc.tag) (mk_data state) 
 				     (Printf.sprintf "src_%s" hc'.tag) (mk_data state) 
 				     "" "" (Printf.sprintf "t_%s_%s" hc.tag hc'.tag));
+
 			 ) loop_hcs
-		   | _ -> ()
+		   | None -> 
+		       (* create a backedge *)
+		       Printf.fprintf out "%s\n\n"
+			 (mk_rule 
+			    (Printf.sprintf "src_%s" hc.tag) (mk_data state) 
+			    loop_start_pc (mk_data state) 
+			    "" ""
+			    (Printf.sprintf "loop_%s" hc.tag))
 	       end
 	) hcs
 
