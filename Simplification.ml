@@ -220,3 +220,5 @@ let is_tauto_t t =
     | [] -> true
     | [C.Conc p] -> P.is_tauto p 
     | _ -> false
+
+  

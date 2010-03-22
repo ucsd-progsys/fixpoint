@@ -363,8 +363,9 @@ let hc_to_hcarmc state hc =
     krules @ prules
 
 let mk_rule from_pc from_data to_pc to_data guard update tag = 
-  Printf.sprintf "r(p(pc(%s), data(%s)),\np(pc(%s), data(%s)),\n[%s],\n[%s], %s)." 
+  Printf.sprintf "r(p(pc(%s), data(%s)),\np(pc(%s), data(%s)),\n[%s],\n[%s], %s).%s"
     from_pc from_data to_pc to_data guard update tag
+    (if guard = "" && update = "" then Printf.sprintf "\nid_trans(%s)." tag else "")
 
 let hc_to_armc ?(cfg=false) ?(with_card=true) state hc = 
   let from_data = mk_data state in
@@ -504,7 +505,7 @@ cutpoint(pc(%s)).
 			   ) ts
 	      ) cex
 
-let to_cfg_armc out ts wfs sol =
+let old_to_cfg_armc out ts wfs sol =
   print_endline "Translating to ARMC. ToHC.to_cfg_armc";
   let with_card_flag = true in
   let state = mk_kv_scope ~with_card:with_card_flag out ts wfs sol in
@@ -598,8 +599,7 @@ error(pc(%s)).
 				Printf.fprintf out "%% %s -> %s\n%s\n\n" hc.tag hc'.tag
 				  (mk_rule (Printf.sprintf "dst_%s" hc.tag) (mk_data state) 
 				     (Printf.sprintf "src_%s" hc'.tag) (mk_data state) 
-				     "" "" (Printf.sprintf "t_%s_%s" hc.tag hc'.tag));
-
+				     "" "" (Printf.sprintf "t_%s_%s" hc.tag hc'.tag))
 			 ) loop_hcs
 		   | None -> 
 		       (* create a backedge *)
@@ -612,20 +612,159 @@ error(pc(%s)).
 	       end
 	) hcs
 
-(*
-  make -f Makefile.fixtop && ./f -latex /tmp/main.tex -armc /tmp/a.pl tests/pldi08-max.fq && cat /tmp/a.pl
+let bv_to_ks_of_t init t =
+  Sy.SMap.fold 
+    (fun bv reft sofar ->
+       let bv_str = Sy.to_string bv in
+       StrMap.add bv_str
+	 (List.fold_left 
+	    (fun kvs_sofar (_, sy) -> StrSet.add (Printf.sprintf "%s" (Sy.to_string sy)) kvs_sofar)
+	    (try StrMap.find bv_str sofar with Not_found -> StrSet.empty)
+	    (C.kvars_of_reft reft))
+	 sofar
+    ) (C.env_of_t t) init
 
-tests:
+let aux ts = 
+  (* print k variable for each bound variable *)
+  List.iter
+    (fun t ->
+       Sy.SMap.iter 
+	 (fun bv reft -> 
+	    Printf.printf "aux: %s : %s\n"
+	      (Sy.to_string bv) 
+	      (List.map (fun (_, sy) -> Sy.to_string sy) (C.kvars_of_reft reft) |> String.concat ", ")
+	 ) (C.env_of_t t)
+    ) ts;
+  (* map each bound variable to corresponding k variables *)
+  StrMap.iter (fun bv kvs ->
+		 Printf.printf "aux map: %s -> %s\n"
+		   bv (StrSet.elements kvs |> List.sort compare |> String.concat ", ")
+	      ) (List.fold_left bv_to_ks_of_t StrMap.empty ts);
+  (* map each transition into bvs *)
+  List.iter
+    (fun t ->
+       Printf.printf "aux id %d -> %s\n"
+	 (C.id_of_t t)
+	 (Sy.SMap.fold (fun bv reft sofar -> 
+			  StrSet.add 
+			    (Printf.sprintf "%s:%s"
+			       (Sy.to_string bv) 
+			       (List.map (fun (_, sy) -> Sy.to_string sy) (C.kvars_of_reft reft) |> List.sort compare |> String.concat ", ")			       
+			    ) sofar
+		       ) (C.env_of_t t) StrSet.empty |> 
+	      StrSet.elements |> List.sort compare |> String.concat ", ")
+    ) ts;
+  (* find equivalent k variables *)
+  List.iter
+    (fun t ->
+       let env_grd_to_string tt = 
+	 Sy.SMap.fold 
+	   (fun bv reft sofar -> C.binding_to_string (bv, reft) :: sofar) 
+	   (C.env_of_t tt) [C.grd_of_t tt |> P.to_string] |> List.sort compare 
+       in
+       let env_grd_str = env_grd_to_string t in
+	 match 
+	   C.lhs_of_t t |> preds_kvars_of_reft, 
+	   C.rhs_of_t t |> preds_kvars_of_reft 
+	 with
+	   | ([], [([], lhs_kv)]), 
+	     ([], [([], rhs_kv)]) -> (* when P.is_tauto lhs_p && P.is_tauto rhs_p -> *)
+	       List.iter
+		 (fun t' ->
+		    match 
+		      C.lhs_of_t t' |> preds_kvars_of_reft, 
+		      C.rhs_of_t t' |> preds_kvars_of_reft 
+		    with
+		      | ([], [([], lhs_kv')]), 
+			([], [([], rhs_kv')]) -> (* when P.is_tauto lhs_p' && P.is_tauto rhs_p' -> *)
+			  if lhs_kv = rhs_kv' && rhs_kv = lhs_kv' && env_grd_str = env_grd_to_string t' then
+			    Printf.printf "aux equiv %s = %s via %d and %d\n"
+			      (Sy.to_string lhs_kv) (Sy.to_string rhs_kv) (C.id_of_t t) (C.id_of_t t')
+		      | _ -> ()
+		 ) ts
+	   | _ -> ()
+    ) ts;
+  (* find join of k variables in lhs *)
+  List.iter
+    (fun t ->
+       match C.lhs_of_t t |> preds_kvars_of_reft with
+	 | _, (_ :: _ :: _ as kvs) ->
+	     Printf.printf "aux id join %d: %s <: ...\n"
+	       (C.id_of_t t)
+	       (List.map (fun (_, sy) -> Sy.to_string sy) kvs |> List.sort compare |> String.concat ", ")
+	 | _ -> ()
+    ) ts
+  
 
-for file in `ls pldi08-*-atom.fq`; do ../f -latex /tmp/main.tex -armc /tmp/a.pl $file; head -n 1 /tmp/a.pl; armc a.pl | grep correct; done
 
-pldi08-arraymax-atom.fq  pass
-pldi08-max-atom.fq       pass
-pldi08-foldn-atom.fq     pass
-pldi08-sum-atom.fq       pass
-mask-atom.fq             pass
-samples-atom.fq          pass 
+  let to_cfg_armc out ts wfs sol =
+    print_endline "Translating to ARMC. ToHC.to_cfg_armc";
+    let with_card_flag = true in
+    let state = mk_kv_scope ~with_card:with_card_flag out ts wfs sol in
+    let cex = [1;5;13;14;68;69;54] in 
+    let cex = [] in  
+    let ts = (if cex = [] then ts else List.filter (fun t -> List.mem (C.id_of_t t) cex) ts) in
+    let hcs = List.map t_to_horn_clause ts in
+      Printf.fprintf out
+	":- multifile r/5,implicit_updates/0,var2names/2,preds/2,trans_preds/3,cube_size/1,start/1,error/1,refinement/1,cutpoint/1,invgen_template/2,invgen_template/1,cfg_exit_relation/1,stmtsrc/2,strengthening/2,id_trans/1.
+refinement(inter). 
+cube_size(1). 
 
-test00.c                 pass
+start(pc(%s)).
+error(pc(%s)).
 
-*)
+\n%s\n\n%s\n
+"
+	start_pc error_pc 
+	(mk_var2names state)
+	(mk_preds ~with_card:with_card_flag state);
+
+      (* connect the start with the loop *)
+      Printf.fprintf out "%s\n\n"
+	(mk_rule start_pc (mk_data state) loop_pc (mk_data ~suffix:primed_suffix state) 
+	   "" 
+	   (if with_card_flag then 
+	      List.map (fun kv ->
+			  let card = StrMap.find kv state.kv_scope |> List.hd in
+			    Printf.sprintf "%s = 0" (mk_data_var ~suffix:primed_suffix kv card)
+		       ) state.kvs |> String.concat ", "
+	    else "")
+	   "start");
+      List.iter
+	(fun hc -> 
+	   Printf.fprintf out "/*\n%s\n*/\n" (* TODO: (C.to_string t) *) (horn_clause_to_string hc);
+	   (* the actual transition relation *)
+	   List.iter (Printf.fprintf out "%s\n\n") 
+	     (hc_to_armc ~cfg:true ~with_card:with_card_flag state hc);
+	   let head_opt, body = hc_to_dep hc in
+	     if body = [] then
+	       (* connect from the loop *)
+	       Printf.fprintf out "%s\n\n"
+		 (mk_rule loop_pc (mk_data state) (Printf.sprintf "src_%s" hc.tag) (mk_data state) 
+		    "" ""	(Printf.sprintf "t_loop_%s" hc.tag));
+	     match head_opt with
+	       | Some head ->
+		   List.iter
+		     (fun hc' -> 
+			if hc.tag <> hc'.tag && List.mem head (hc_to_dep hc' |> snd) then 
+			  (* connect to successors *)
+			  Printf.fprintf out "%% %s -> %s\n%s\n\n" hc.tag hc'.tag
+			    (mk_rule 
+			       (Printf.sprintf "dst_%s" hc.tag) (mk_data state) 
+			       (Printf.sprintf "src_%s" hc'.tag) (mk_data state) 
+			       "" "" (Printf.sprintf "t_%s_%s" hc.tag hc'.tag))
+		     ) hcs
+	       | None -> 
+		   (* connect to the loop *)
+		   Printf.fprintf out "%s\n\n"
+		     (mk_rule 
+			(Printf.sprintf "src_%s" hc.tag) (mk_data state) 
+			loop_pc (mk_data state) 
+			"" ""
+			(Printf.sprintf "loop_%s" hc.tag))
+	) hcs;
+      output_string out "/*\n";
+      List.iter (fun t -> Printf.fprintf out "%s\n\n" (C.to_string t)) ts;
+      output_string out "*/\n";
+      aux ts
+
