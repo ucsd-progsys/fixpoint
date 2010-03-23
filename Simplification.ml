@@ -240,39 +240,6 @@ let simplify_ts ts =
 	pruned := pruned_ts <> []
     done;
     !ts_sofar
-(*
-	pruned := false;
-	let pre, post =
-	  List.fold_left 
-	    (fun (pre, post) t ->
-	       (* INV: t :: post = rest *)
-	       begin
-		 match C.rhs_of_t t |> preds_kvars_of_reft with
-		   | [], [(_, sy)] ->
-		       Printf.printf "simplify_ts: %d" (C.id_of_t t);
-		       if List.exists 
-			 (fun t' -> 
-			    List.exists (fun (_, sy') -> sy = sy') 
-			      (Sy.SMap.fold 
-				 (fun _ reft sofar -> List.rev_append (C.kvars_of_reft reft) sofar) 
-				 (C.env_of_t t') (C.lhs_of_t t' |> C.kvars_of_reft))
-			 ) (List.rev_append pre post) then
-			   t :: pre
-		       else
-			 begin
-			   print_string "pruned\n";
-			   pruned := true;
-			   pre
-			 end
-		   | _ -> t :: pre
-	       end, 
-	       if post <> [] then List.tl post else []
-	    ) ([], List.tl !ts_sofar) !ts_sofar 
-	in 
-	  ts_sofar := List.rev_append pre post
-    done;
-    !ts_sofar
-*)
 
 let is_tauto_t t =
   match C.rhs_of_t t |> C.ras_of_reft with
