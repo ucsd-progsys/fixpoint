@@ -697,16 +697,16 @@ let aux ts =
   
 
 
-  let to_cfg_armc out ts wfs sol =
-    print_endline "Translating to ARMC. ToHC.to_cfg_armc";
-    let with_card_flag = true in
-    let state = mk_kv_scope ~with_card:with_card_flag out ts wfs sol in
-    let cex = [1;5;13;14;68;69;54] in 
-    let cex = [] in  
-    let ts = (if cex = [] then ts else List.filter (fun t -> List.mem (C.id_of_t t) cex) ts) in
-    let hcs = List.map t_to_horn_clause ts in
-      Printf.fprintf out
-	":- multifile r/5,implicit_updates/0,var2names/2,preds/2,trans_preds/3,cube_size/1,start/1,error/1,refinement/1,cutpoint/1,invgen_template/2,invgen_template/1,cfg_exit_relation/1,stmtsrc/2,strengthening/2,id_trans/1.
+let to_cfg_armc out ts wfs sol =
+  print_endline "Translating to ARMC. ToHC.to_cfg_armc";
+  let with_card_flag = true in
+  let state = mk_kv_scope ~with_card:with_card_flag out ts wfs sol in
+  let cex = [1;5;13;14;68;69;54] in 
+  let cex = [] in  
+  let ts = (if cex = [] then ts else List.filter (fun t -> List.mem (C.id_of_t t) cex) ts) in
+  let hcs = List.map t_to_horn_clause ts in
+    Printf.fprintf out
+      ":- multifile r/5,implicit_updates/0,var2names/2,preds/2,trans_preds/3,cube_size/1,start/1,error/1,refinement/1,cutpoint/1,invgen_template/2,invgen_template/1,cfg_exit_relation/1,stmtsrc/2,strengthening/2,id_trans/1.
 refinement(inter). 
 cube_size(1). 
 
@@ -715,56 +715,63 @@ error(pc(%s)).
 
 \n%s\n\n%s\n
 "
-	start_pc error_pc 
-	(mk_var2names state)
-	(mk_preds ~with_card:with_card_flag state);
+      start_pc error_pc 
+      (mk_var2names state)
+      (mk_preds ~with_card:with_card_flag state);
 
-      (* connect the start with the loop *)
-      Printf.fprintf out "%s\n\n"
-	(mk_rule start_pc (mk_data state) loop_pc (mk_data ~suffix:primed_suffix state) 
-	   "" 
-	   (if with_card_flag then 
-	      List.map (fun kv ->
-			  let card = StrMap.find kv state.kv_scope |> List.hd in
-			    Printf.sprintf "%s = 0" (mk_data_var ~suffix:primed_suffix kv card)
-		       ) state.kvs |> String.concat ", "
-	    else "")
-	   "start");
-      List.iter
-	(fun hc -> 
-	   Printf.fprintf out "/*\n%s\n*/\n" (* TODO: (C.to_string t) *) (horn_clause_to_string hc);
-	   (* the actual transition relation *)
-	   List.iter (Printf.fprintf out "%s\n\n") 
-	     (hc_to_armc ~cfg:true ~with_card:with_card_flag state hc);
-	   let head_opt, body = hc_to_dep hc in
-	     if body = [] then
-	       (* connect from the loop *)
-	       Printf.fprintf out "%s\n\n"
-		 (mk_rule loop_pc (mk_data state) (Printf.sprintf "src_%s" hc.tag) (mk_data state) 
-		    "" ""	(Printf.sprintf "t_loop_%s" hc.tag));
-	     match head_opt with
-	       | Some head ->
-		   List.iter
-		     (fun hc' -> 
-			if hc.tag <> hc'.tag && List.mem head (hc_to_dep hc' |> snd) then 
-			  (* connect to successors *)
-			  Printf.fprintf out "%% %s -> %s\n%s\n\n" hc.tag hc'.tag
-			    (mk_rule 
-			       (Printf.sprintf "dst_%s" hc.tag) (mk_data state) 
-			       (Printf.sprintf "src_%s" hc'.tag) (mk_data state) 
-			       "" "" (Printf.sprintf "t_%s_%s" hc.tag hc'.tag))
-		     ) hcs
-	       | None -> 
-		   (* connect to the loop *)
-		   Printf.fprintf out "%s\n\n"
-		     (mk_rule 
-			(Printf.sprintf "src_%s" hc.tag) (mk_data state) 
-			loop_pc (mk_data state) 
-			"" ""
-			(Printf.sprintf "loop_%s" hc.tag))
-	) hcs;
-      output_string out "/*\n";
-      List.iter (fun t -> Printf.fprintf out "%s\n\n" (C.to_string t)) ts;
-      output_string out "*/\n";
-      aux ts
+    (* connect the start with the loop *)
+    Printf.fprintf out "%s\n\n"
+      (mk_rule start_pc (mk_data state) loop_pc (mk_data ~suffix:primed_suffix state) 
+	 "" 
+	 (if with_card_flag then 
+	    List.map (fun kv ->
+			let card = StrMap.find kv state.kv_scope |> List.hd in
+			  Printf.sprintf "%s = 0" (mk_data_var ~suffix:primed_suffix kv card)
+		     ) state.kvs |> String.concat ", "
+	  else "")
+	 "start");
+    List.iter
+      (fun hc -> 
+	 Printf.fprintf out "/*\n%s\n*/\n" (horn_clause_to_string hc);
+	 (* the actual transition relation *) 
+	 List.iter (Printf.fprintf out "%s\n\n") (hc_to_armc ~cfg:true ~with_card:with_card_flag state hc);
+	 let head_opt, body = hc_to_dep hc in
+	   if List.for_all (fun hc' ->
+			      (* each other hc' is non-incoming *)
+			      (hc.tag = hc'.tag) ||
+				(match hc_to_dep hc' |> fst with
+				   | Some head' -> not(List.mem head' body)
+				   | None -> true
+				)
+			   ) hcs
+	   then 
+	     (* connect from the loop *)
+	     Printf.fprintf out "%s\n\n"
+	       (mk_rule loop_pc (mk_data state) (Printf.sprintf "src_%s" hc.tag) (mk_data state) 
+		  "" ""	(Printf.sprintf "t_loop_%s" hc.tag));
+	   match head_opt with
+	     | Some head ->
+		 List.iter
+		   (fun hc' -> 
+		      if hc.tag <> hc'.tag && List.mem head (hc_to_dep hc' |> snd) then 
+			(* connect to successors *)
+			Printf.fprintf out "%% %s -> %s\n%s\n\n" hc.tag hc'.tag
+			  (mk_rule 
+			     (Printf.sprintf "dst_%s" hc.tag) (mk_data state) 
+			     (Printf.sprintf "src_%s" hc'.tag) (mk_data state) 
+			     "" "" (Printf.sprintf "t_%s_%s" hc.tag hc'.tag))
+		   ) hcs
+	     | None -> 
+		 (* connect to the loop *)
+		 Printf.fprintf out "%s\n\n"
+		   (mk_rule 
+		      (Printf.sprintf "src_%s" hc.tag) (mk_data state) 
+		      loop_pc (mk_data state) 
+		      "" ""
+		      (Printf.sprintf "loop_%s" hc.tag))
+      ) hcs;
+    output_string out "/*\n";
+    List.iter (fun t -> Printf.fprintf out "%s\n" (C.to_string t)) ts;
+    output_string out "*/\n";
+    aux ts
 

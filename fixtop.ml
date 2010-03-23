@@ -47,7 +47,7 @@ let main () =
 	(fun t -> 
 	   let st = Simplification.simplify_t t in
 	     if Simplification.is_tauto_t st then None else Some st
-	) cs
+	) cs |> Simplification.simplify_ts
     else cs in
     begin
       match !Co.latex_file with

@@ -215,6 +215,65 @@ let simplify_t t =
       C.make_reft (C.vv_of_reft rhs) (C.sort_of_reft rhs) in
     C.make_t senv sgrd slhs srhs (Some (C.id_of_t t)) (C.tag_of_t t)
 
+let simplify_ts ts =
+  (* drop t if its rhs is a k variable that is not read *)
+  let ts_sofar = ref ts in
+  let pruned = ref true in
+    while !pruned && !ts_sofar <> [] do
+      let pruned_ts, rest_ts = 
+	List.partition
+	  (fun t ->
+	     match C.rhs_of_t t |> preds_kvars_of_reft with
+	       | [], [(_, sy)] ->
+		   Printf.printf "\nt = %d: %s" (C.id_of_t t) (Sy.to_string sy);
+		   List.for_all 
+		     (fun t' -> 
+			Printf.printf "\nt' = %d " (C.id_of_t t');
+			List.for_all (fun (_, sy') -> Printf.printf "%s " (Sy.to_string sy'); sy <> sy') 
+			  (Sy.SMap.fold 
+			     (fun _ reft sofar -> List.rev_append (C.kvars_of_reft reft) sofar) 
+			     (C.env_of_t t') (C.lhs_of_t t' |> C.kvars_of_reft))
+		     ) !ts_sofar
+	       | _ -> false
+	  ) !ts_sofar in
+	ts_sofar := rest_ts;
+	pruned := pruned_ts <> []
+    done;
+    !ts_sofar
+(*
+	pruned := false;
+	let pre, post =
+	  List.fold_left 
+	    (fun (pre, post) t ->
+	       (* INV: t :: post = rest *)
+	       begin
+		 match C.rhs_of_t t |> preds_kvars_of_reft with
+		   | [], [(_, sy)] ->
+		       Printf.printf "simplify_ts: %d" (C.id_of_t t);
+		       if List.exists 
+			 (fun t' -> 
+			    List.exists (fun (_, sy') -> sy = sy') 
+			      (Sy.SMap.fold 
+				 (fun _ reft sofar -> List.rev_append (C.kvars_of_reft reft) sofar) 
+				 (C.env_of_t t') (C.lhs_of_t t' |> C.kvars_of_reft))
+			 ) (List.rev_append pre post) then
+			   t :: pre
+		       else
+			 begin
+			   print_string "pruned\n";
+			   pruned := true;
+			   pre
+			 end
+		   | _ -> t :: pre
+	       end, 
+	       if post <> [] then List.tl post else []
+	    ) ([], List.tl !ts_sofar) !ts_sofar 
+	in 
+	  ts_sofar := List.rev_append pre post
+    done;
+    !ts_sofar
+*)
+
 let is_tauto_t t =
   match C.rhs_of_t t |> C.ras_of_reft with
     | [] -> true
