@@ -1,6 +1,6 @@
 
 constraint:
-  env  [x_145:{AA_0 : int | [k_2523]}] 
+ env  [x_145:{AA_0 : int | [k_2523]}] 
  grd (~ ((x_145 > 0))) 
  lhs {AA_0 : uit unint | []} 
  rhs {AA_0 : uit unint | [k_2650]} 

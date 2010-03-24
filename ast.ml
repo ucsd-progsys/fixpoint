@@ -528,18 +528,14 @@ module Predicate =
         let _ = [pFalse; pNot pTrue; pAtom (zero, Eq, one); pAtom (one, Eq, zero)]
                 |> List.iter (fun p-> PredHash.replace t p ()) in 
         fun p -> PredHash.mem t p 
-        
+       
+
       let is_tauto  = function
         | Atom(e1, Eq, e2), _ -> e1 == e2
-	| Imp (p1, p2), _ -> 
-	    (* matching (p -> p) && (p -> p)) *)
-	    p1 == p2
-        | True, _              -> true
+	| Imp (p1, p2), _     ->  p1 == p2 (* matching (p -> p) && (p -> p)) *) 
+        | True, _             -> true
         | _                   -> false
-
     end
-
-
 
 let print_stats _ = 
   Printf.printf "Ast Stats. [none] \n"
@@ -673,6 +669,60 @@ and sortcheck_pred f p =
     | Forall (qs,p) ->
         let f' = fun x -> try List.assoc x qs with _ -> f x in
         sortcheck_pred f' p
+
+let neg_brel = function 
+  | Eq -> Ne
+  | Ne -> Eq
+  | Gt -> Le
+  | Ge -> Lt
+  | Lt -> Ge
+  | Le -> Gt
+
+let rec push_neg ?(neg=false) ((p, _) as pred) =
+  match p with
+    | True   -> 
+        if neg then pFalse else pred
+    | False  -> 
+        if neg then pTrue else pred
+    | Bexp _ -> 
+        if neg then pNot pred else pred
+    | Not p  -> 
+        push_neg ~neg:(not neg) p
+    | Imp (p, q) -> 
+	if neg then pAnd [push_neg p; push_neg ~neg:true q]
+	else pImp (push_neg p, push_neg q)
+    | Forall (qs, p) -> 
+	let pred' = pForall (qs, push_neg ~neg:false p) in
+	if neg then pNot pred' else pred'
+    | And ps -> 
+        List.map (push_neg ~neg:neg) ps 
+        |> if neg then pOr else pAnd
+    | Or ps -> 
+        List.map (push_neg ~neg:neg) ps 
+        |> if neg then pAnd else pOr
+    | Atom (e1, brel, e2) -> 
+        if neg then pAtom (e1, neg_brel brel, e2) else pred
+
+(* Andrey: TODO flatten nested conjunctions/disjunctions *)
+let rec simplify_pred ((p, _) as pred) =
+  match p with
+    | Not p -> pNot (simplify_pred p)
+    | Imp (p, q) -> pImp (simplify_pred p, simplify_pred q) 
+    | Forall (qs, p) -> pForall (qs, simplify_pred p)
+    | And ps -> ps |> List.map simplify_pred 
+                   |> List.filter (not <.> Predicate.is_tauto) 
+                   |> (function | []  -> pTrue
+                                | [p] -> p
+                                | _ when List.exists Predicate.is_contra ps -> pFalse
+                                | _   -> pAnd ps)
+    | Or ps -> ps |> List.map simplify_pred 
+                  |> List.filter (not <.> Predicate.is_contra)
+                  |> (function []  -> pFalse
+                             | [p] -> p
+                             | ps when List.exists Predicate.is_tauto ps -> pTrue
+                             | ps  -> pOr ps)
+    | _ -> pred
+
 
 (********************************************************************************)
 (*********************************** Qualifiers *********************************)

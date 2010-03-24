@@ -5,56 +5,6 @@ module Sy = Ast.Symbol
 
 open Misc.Ops
 
-let neg_brel = function 
-  | Ast.Eq -> Ast.Ne
-  | Ast.Ne -> Ast.Eq
-  | Ast.Gt -> Ast.Le
-  | Ast.Ge -> Ast.Lt
-  | Ast.Lt -> Ast.Ge
-  | Ast.Le -> Ast.Gt
-
-let rec push_neg ?(neg=false) ((p, _) as pred) =
-  match p with
-    | Ast.True -> if neg then Ast.pFalse else pred
-    | Ast.False -> if neg then Ast.pTrue else pred
-    | Ast.Bexp _ -> if neg then Ast.pNot pred else pred
-    | Ast.Not p -> push_neg ~neg:(not neg) p
-    | Ast.Imp (p, q) -> 
-	if neg then Ast.pAnd [push_neg p; push_neg ~neg:true q]
-	else Ast.pImp (push_neg p, push_neg q)
-    | Ast.Forall (qs, p) -> 
-	let pred' = Ast.pForall (qs, push_neg ~neg:false p) in
-	  if neg then Ast.pNot pred' else pred'
-    | Ast.And ps -> List.map (push_neg ~neg:neg) ps |> if neg then Ast.pOr else Ast.pAnd
-    | Ast.Or ps -> List.map (push_neg ~neg:neg) ps |> if neg then Ast.pAnd else Ast.pOr
-    | Ast.Atom (e1, brel, e2) -> if neg then Ast.pAtom (e1, neg_brel brel, e2) else pred
-
-(* Andrey: TODO flatten nested conjunctions/disjunctions *)
-let rec simplify_pred ((p, _) as pred) =
-  match p with
-    | Ast.Not p -> Ast.pNot (simplify_pred p)
-    | Ast.Imp (p, q) -> Ast.pImp (simplify_pred p, simplify_pred q) 
-    | Ast.Forall (qs, p) -> Ast.pForall (qs, simplify_pred p)
-    | Ast.And ps -> 
-	let ps' = List.map simplify_pred ps |> List.filter (fun p -> not(P.is_tauto p)) in
-	  if List.mem Ast.pFalse ps' then Ast.pFalse else
-	    begin
-	      match ps' with
-		| [] -> Ast.pTrue
-		| [p'] -> p'
-		| _ :: _ -> Ast.pAnd ps'
-	    end
-    | Ast.Or ps -> 
-	let ps' = List.map simplify_pred ps in
-	  if List.exists P.is_tauto ps' then Ast.pTrue else 
-	    begin
-	      match ps' with
-		| [] -> Ast.pFalse
-		| [p'] -> p'
-		| _ :: _ -> Ast.pOr ps'
-	    end
-    | _ -> pred
-
 let rec defs_of_pred (edefs, pdefs) ((p, _) as pred) = 
   match p with
     | Ast.Atom ((Ast.Var v, _), Ast.Eq, e) when not(P.is_tauto pred) -> Sy.SMap.add v e edefs, pdefs
@@ -63,7 +13,6 @@ let rec defs_of_pred (edefs, pdefs) ((p, _) as pred) =
 	edefs, Sy.SMap.add v1 p1 pdefs
     | Ast.And preds -> List.fold_left defs_of_pred (edefs, pdefs) preds
     | _ -> edefs, pdefs
-
 
 let some_def_applied = ref false
 let rec expr_apply_defs edefs pdefs ((e, _) as expr) = 
@@ -110,6 +59,7 @@ let rec expr_apply_defs edefs pdefs ((e, _) as expr) =
 	  some_def_applied := current_some_def_applied;
 	  expr''
 	end
+
 and pred_apply_defs edefs pdefs ((p, _) as pred) =
   let current_some_def_applied = !some_def_applied in
     some_def_applied := false;
@@ -200,7 +150,7 @@ let simplify_t t =
     Sy.SMap.mapi (fun bv (vv, sort, ks) -> 
 		    List.map kvar_to_simple_Kvar ks |>	C.make_reft vv sort) pfree_env in
     Printf.printf "body_pred: %s\n" (P.to_string body_pred);
-  let sgrd' = pred_apply_defs edefs pdefs body_pred |> simplify_pred in
+  let sgrd' = pred_apply_defs edefs pdefs body_pred |> Ast.simplify_pred in
   let sgrd = 
     try
       Ast.pAnd [sgrd'; Ast.pAtom (Ast.eVar lhs_vv, Ast.Eq, Sy.SMap.find lhs_vv edefs |> expr_apply_defs edefs pdefs)]
@@ -209,7 +159,7 @@ let simplify_t t =
   let slhs = List.map kvar_to_simple_Kvar lhs_ks |> C.make_reft (C.vv_of_reft lhs) (C.sort_of_reft lhs) in
   let rhs = C.rhs_of_t t in
   let rhs_ps, rhs_ks = preds_kvars_of_reft rhs in
-  let srhs_pred = pred_apply_defs edefs pdefs (Ast.pAnd rhs_ps) |> simplify_pred in
+  let srhs_pred = pred_apply_defs edefs pdefs (Ast.pAnd rhs_ps) |> Ast.simplify_pred in
   let srhs_ks = List.map kvar_to_simple_Kvar rhs_ks in
   let srhs =  (if P.is_tauto srhs_pred then srhs_ks else (C.Conc srhs_pred) :: srhs_ks) |> 
       C.make_reft (C.vv_of_reft rhs) (C.sort_of_reft rhs) in

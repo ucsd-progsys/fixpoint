@@ -93,12 +93,6 @@ and pred_int =
   | Atom of expr * brel * expr 
   | Forall of ((Symbol.t * Sort.t) list) * pred
 
-(** Wrap and unwrap -- should be hidden 
-val ewr : expr_int -> expr
-val euw : expr -> expr_int
-val pwr : pred_int -> pred
-val puw : pred -> pred_int*)
-
 (* Constructors : expressions *)
 val eCon : Constant.t -> expr
 val eVar : Symbol.t -> expr
@@ -125,6 +119,10 @@ val fixdiv      : pred -> pred
 val zero        : expr
 val one         : expr
 
+(* val neg_brel : brel -> brel 
+   val push_neg : 
+ *)
+val simplify_pred  : pred -> pred
 val sortcheck_expr : (Symbol.t -> Sort.t) -> expr -> Sort.t option
 val sortcheck_pred : (Symbol.t -> Sort.t) -> pred -> bool
 
