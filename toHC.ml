@@ -124,14 +124,18 @@ and pred_to_armc (p, _) =
             (List.map bind_to_armc qs |> String.concat ", ") 
 	    (pred_to_armc p)
 
+(* map each k variable to variables in its scope *)
+(* k variables no appearing in any rhs don't have any scope *)
 let mk_kv_scope ?(with_card=true) out ts wfs sol =
   let kv_scope_t =
     List.fold_left (fun kv_scope' t ->
+		      (* collect bound vars of t *)
 		      let scope =
 			Sy.SMap.fold (fun bv _ scope' ->
 					StrSet.add (symbol_to_armc bv) scope'
 				     ) (C.env_of_t t) StrSet.empty in
 		      let _, rhs_kvs = C.rhs_of_t t |> Simplification.preds_kvars_of_reft in
+			(* add these bound vars to the scope of each k var in rhs of t *)
 			List.fold_left (fun kv_scope'' kv ->
 					  StrMap.add kv (StrSet.union 
 							   (try StrMap.find kv kv_scope'' with Not_found -> StrSet.empty) 
@@ -139,6 +143,7 @@ let mk_kv_scope ?(with_card=true) out ts wfs sol =
 				       ) kv_scope' (List.map snd rhs_kvs |> List.map symbol_to_armc)
 		   ) StrMap.empty ts in
   let kv_scope = 
+    (* sort scope, add value variable and, if needed, cardinality variable *)
     StrMap.map (fun scope -> 
 		  let scope' = val_vname :: (StrSet.elements scope |> List.sort compare) in
 		    if with_card then card_vname :: scope' else scope'
@@ -338,9 +343,7 @@ let kvar_to_armcs ?(suffix = "") ?(with_card=true) state (subs, sym) =
 		     Printf.sprintf "%s = %s" 
 		       (mk_data_var ~suffix:suffix kv v) (find_subst v (mk_data_var exists_kv v))
 		  ) data |> String.concat ", "
-  with Not_found -> 
-    Printf.printf "kvar_to_armcs: unreachable kvar %s\n" (Sy.to_string sym);
-    armc_true (* AR: TODO there is no lower bound on this kvar *)
+  with Not_found -> armc_true (* input variable *)
 
 let hc_to_hcarmc state hc =
   let mk_rule head body tag = Printf.sprintf "hc(%s, [%s], %s)." head body tag in

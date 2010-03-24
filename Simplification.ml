@@ -225,11 +225,9 @@ let simplify_ts ts =
 	  (fun t ->
 	     match C.rhs_of_t t |> preds_kvars_of_reft with
 	       | [], [(_, sy)] ->
-		   Printf.printf "\nt = %d: %s" (C.id_of_t t) (Sy.to_string sy);
 		   List.for_all 
 		     (fun t' -> 
-			Printf.printf "\nt' = %d " (C.id_of_t t');
-			List.for_all (fun (_, sy') -> Printf.printf "%s " (Sy.to_string sy'); sy <> sy') 
+			List.for_all (fun (_, sy') -> sy <> sy') 
 			  (Sy.SMap.fold 
 			     (fun _ reft sofar -> List.rev_append (C.kvars_of_reft reft) sofar) 
 			     (C.env_of_t t') (C.lhs_of_t t' |> C.kvars_of_reft))
