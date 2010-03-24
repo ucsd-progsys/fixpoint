@@ -44,6 +44,7 @@ type t = {
   tpc : TP.t;
   sri : Ci.t;
   ws  : C.wf list;
+  tt  : Timer.t;
 }
 
 let mydebug = false  
@@ -159,6 +160,7 @@ let print_solution_stats ppf s =
   F.fprintf ppf "# Quals: Total=%d, Avg=%f, Max=%d, Min=%d \n" sum avg max min
 
 let print_solver_stats ppf me = 
+  (* let _    = assertf "FUCKOFF" in *)
   let cs   = Ci.to_list me.sri in 
   let cn   = List.length cs in
   let scn  = List.length (List.filter C.is_simple cs) in
@@ -170,7 +172,9 @@ let print_solver_stats ppf me =
     !stat_matches !stat_imp_queries !stat_valid_queries;
   F.fprintf ppf "%a" TP.print_stats me.tpc;
   F.fprintf ppf "Iteration Frequency: \n";
-  hashtbl_print_frequency stat_cfreqt
+  hashtbl_print_frequency stat_cfreqt;
+  F.fprintf ppf "Iteration Periods: @[%a@] \n" Timer.print me.tt;
+  F.fprintf ppf "finished solver_stats \n"
 
 let dump me s = 
   Co.cprintf Co.ol_solve_stats "%a \n" print_solver_stats me;
@@ -248,10 +252,16 @@ let inst wfs qs s =
 (******************** Iterative Refinement *********************)
 (***************************************************************)
 
+let log_iter_stats me s = 
+  (if Co.ck_olev Co.ol_insane then F.printf "%a" C.print_soln s);
+  (if !stat_refines mod 100 = 0 then 
+     let s = Printf.sprintf "num refines=%d " !stat_refines in
+     let _ = Timer.log_event me.tt (Some s) in
+     let _ = Printf.printf "%s \n" s in ());
+  ()
+
 let rec acsolve me w s = 
-  let _ = if !stat_refines mod 1000 = 0 
-          then Printf.printf "num refines =%d \n" !stat_refines in
-  let _ = if Co.ck_olev Co.ol_insane then F.printf "%a" C.print_soln s in
+  let _ = log_iter_stats me s in
   match Ci.wpop me.sri w with (None,_) -> s | (Some c, w') ->
     let (ch, s')  = BS.time "refine" (refine me s) c in
     let _ = hashtbl_incr_frequency stat_cfreqt (C.id_of_t c) in  
@@ -292,7 +302,7 @@ let create ts sm ps a ds cs ws qs =
   let _   = asserts (List.length cs = List.length cs') "Validation fails" in
   let sri = BS.time "Ref index" Ci.create ds cs' in
   let tpc = TP.create ts sm ps in
-  ({ tpc = tpc; sri = sri; ws = ws}, s)
+  ({ tpc = tpc; sri = sri; ws = ws; tt = Timer.create "fixpoint iters"}, s)
  
 (* API *)
 let save fname me s =

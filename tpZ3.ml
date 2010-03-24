@@ -354,13 +354,13 @@ let valid me p =
   rv
 
 let clean_decls me =
-  let (cs,vars') = vpop ([],me.vars) in
-  let _          = me.vars <- vars'  in 
-  List.iter 
-    (function Barrier    -> failure "ERROR: TPZ3.clean_decls" 
-            | Vbl _ as d -> Hashtbl.remove me.vart d 
-            | Fun _ as d -> Hashtbl.remove me.funt d)
-    cs
+  let cs, vars' = vpop ([],me.vars) in
+  let _         = me.vars <- vars'  in 
+  List.iter begin function 
+    | Barrier    -> failure "ERROR: TPZ3.clean_decls" 
+    | Vbl _ as d -> Hashtbl.remove me.vart d 
+    | Fun _ as d -> Hashtbl.remove me.funt d
+  end cs
 
 let set me env vv ps =
   Hashtbl.remove me.vart (Vbl vv); 
@@ -399,9 +399,8 @@ let create ts env ps =
 
 (* API *)
 let set_filter me env vv ps qs =
-  let _   = ignore(nb_set   += 1); 
-            ignore(nb_query += List.length qs) in
-  let ps  = List.rev_map A.fixdiv ps in
+  let _   = ignore(nb_set   += 1); ignore(nb_query += List.length qs) in
+  let ps  = BS.time "fixdiv" (List.rev_map A.fixdiv) ps in
   let qs' =
     match BS.time "TP set" (set me env vv) ps with 
     | true  -> 

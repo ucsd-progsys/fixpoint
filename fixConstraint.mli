@@ -32,8 +32,8 @@ type refa = Conc of Ast.pred | Kvar of subs * Ast.Symbol.t
 type reft = Ast.Symbol.t * Ast.Sort.t * (refa list)   (* { VV: t | [ra] } *)
 type envt = reft Ast.Symbol.SMap.t
 
-type t          (* NEVER expose! *) 
-type wf         (* NEVER expose! *)
+type t                  (* NEVER EVER expose! *) 
+type wf                 (* NEVER EVER expose! *)
 
 type soln = Ast.pred list Ast.Symbol.SMap.t
 
