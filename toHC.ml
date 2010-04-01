@@ -370,30 +370,39 @@ let mk_rule from_pc from_data to_pc to_data guard update tag =
     from_pc from_data to_pc to_data guard update tag
     (if guard = "" && update = "" then Printf.sprintf "\nid_trans(%s)." tag else "")
 
-let hc_to_armc ?(cfg=false) ?(with_card=true) state hc = 
+let hc_to_armc ?(cfg=false) ?(with_card=true) ?(with_dataflow=false) state hc = 
   let from_data = mk_data state in
   let to_data = mk_data ~suffix:primed_suffix state in
   let body = pred_to_armc hc.body_pred :: List.map (kvar_to_armcs ~with_card:with_card state) hc.body_kvars in
+  let body_kv_strs = hc_to_dep hc |> snd |> List.filter (fun kv -> StrMap.mem kv state.kv_scope) in
   let prules =
     if P.is_tauto hc.head_pred then []
     else 
-      [mk_rule 
-	 (if cfg then Printf.sprintf "src_%s" hc.tag else loop_pc)
-	 from_data error_pc to_data 
-	 ((Ast.pNot hc.head_pred |> pred_to_armc) :: body |> String.concat ",\n") "" hc.tag] in
+      mk_rule 
+	(if cfg then Printf.sprintf "src_%s" hc.tag else loop_pc)
+	from_data error_pc to_data 
+	((Ast.pNot hc.head_pred |> pred_to_armc) :: body |> String.concat ",\n") "" hc.tag
+      :: 
+	if with_dataflow then
+	  [Printf.sprintf "dataflow_transition(%s, [%s], [])." hc.tag (String.concat ", " body_kv_strs)]
+	else [] in
   let krules =
     match hc.head_kvar_opt with
       | Some ((subs, sym) as kvar) ->
 	  let kv = symbol_to_armc sym in
 	  let skip_kvs = List.filter (fun kv' -> kv <> kv') state.kvs in
-	    [mk_rule 
-	       (if cfg then Printf.sprintf "src_%s" hc.tag else loop_pc)
-	       from_data 
-	       (if cfg then Printf.sprintf "dst_%s" hc.tag else loop_pc)
-	       (mk_data ~suffix:primed_suffix ~skip_kvs:skip_kvs state) 
-	       (body |> String.concat ",\n") 
-	       (kvar_to_armcs ~with_card:with_card ~suffix:primed_suffix state kvar) 
-	       hc.tag]
+	    mk_rule 
+	      (if cfg then Printf.sprintf "src_%s" hc.tag else loop_pc)
+	      from_data 
+	      (if cfg then Printf.sprintf "dst_%s" hc.tag else loop_pc)
+	      (mk_data ~suffix:primed_suffix ~skip_kvs:skip_kvs state) 
+	      (body |> String.concat ",\n") 
+	      (kvar_to_armcs ~with_card:with_card ~suffix:primed_suffix state kvar) 
+	      hc.tag
+	    ::
+	      if with_dataflow then
+		[Printf.sprintf "dataflow_transition(%s, [%s], [%s])." hc.tag (String.concat ", " body_kv_strs) kv]
+	      else []
       | None -> []
   in
     krules @ prules
@@ -751,7 +760,13 @@ error(pc(%s)).
 	     (* connect from the loop *)
 	     Printf.fprintf out "%s\n\n"
 	       (mk_rule loop_pc (mk_data state) (Printf.sprintf "src_%s" hc.tag) (mk_data state) 
-		  "" ""	(Printf.sprintf "t_loop_%s" hc.tag));
+		  "" ""	(Printf.sprintf "t_loop_%s" hc.tag))
+	   else
+	     (* connect to the loop *)
+	     Printf.fprintf out "%s\n\n"
+	       (mk_rule (Printf.sprintf "dst_%s" hc.tag) (mk_data state) loop_pc (mk_data state) 
+		  "" "" (Printf.sprintf "loop_%s" hc.tag));
+
 	   match head_opt with
 	     | Some head ->
 		 List.iter
@@ -763,18 +778,46 @@ error(pc(%s)).
 			     (Printf.sprintf "dst_%s" hc.tag) (mk_data state) 
 			     (Printf.sprintf "src_%s" hc'.tag) (mk_data state) 
 			     "" "" (Printf.sprintf "t_%s_%s" hc.tag hc'.tag))
-		   ) hcs
-	     | None -> 
-		 (* connect to the loop *)
-		 Printf.fprintf out "%s\n\n"
-		   (mk_rule 
-		      (Printf.sprintf "src_%s" hc.tag) (mk_data state) 
-		      loop_pc (mk_data state) 
-		      "" ""
-		      (Printf.sprintf "loop_%s" hc.tag))
+		   ) hcs;
+	     | None -> ()
       ) hcs;
     output_string out "/*\n";
     List.iter (fun t -> Printf.fprintf out "%s\n" (C.to_string t)) ts;
     output_string out "*/\n";
     aux ts
+
+let to_dataflow_armc out ts wfs sol =
+  print_endline "Translating to ARMC. ToHC.to_dataflow_armc ";
+  let with_card_flag = false in
+  let state = mk_kv_scope ~with_card:with_card_flag out ts wfs sol in
+  let cex = [] in  
+  let ts = (if cex = [] then ts else List.filter (fun t -> List.mem (C.id_of_t t) cex) ts) in
+  let hcs = List.map t_to_horn_clause ts in
+    Printf.fprintf out
+      ":- multifile r/5,implicit_updates/0,var2names/2,preds/2,trans_preds/3,cube_size/1,start/1,error/1,refinement/1,cutpoint/1,invgen_template/2,invgen_template/1,cfg_exit_relation/1,stmtsrc/2,strengthening/2,id_trans/1,dataflow_transition/3.
+refinement(inter). 
+cube_size(1). 
+
+start(pc(%s)).
+error(pc(%s)).
+
+\n%s\n\n%s\n
+"
+      start_pc error_pc 
+      (mk_var2names state)
+      (mk_preds ~with_card:with_card_flag state);
+    (* connect the start with the loop *)
+    Printf.fprintf out "%s\n\n" (mk_rule start_pc (mk_data state) loop_pc (mk_data state) "" "" "start");
+    Printf.fprintf out "dataflow_transition(%s, [], []).\n\n" "start";
+    List.iter
+      (fun hc -> 
+	 Printf.fprintf out "/*\n%s\n*/\n" (horn_clause_to_string hc);
+	 (* the actual transition relation, each disjunct *) 
+	 List.iter (Printf.fprintf out "%s\n\n") (hc_to_armc ~cfg:false ~with_card:with_card_flag ~with_dataflow:true state hc)
+      ) hcs;
+    output_string out "/*\n";
+    List.iter (fun t -> Printf.fprintf out "%s\n" (C.to_string t)) ts;
+    output_string out "*/\n";
+    aux ts
+
 
