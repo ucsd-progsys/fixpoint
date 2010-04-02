@@ -124,35 +124,6 @@ and pred_to_armc (p, _) =
             (List.map bind_to_armc qs |> String.concat ", ") 
 	    (pred_to_armc p)
 
-(* map each k variable to variables in its scope *)
-(* k variables no appearing in any rhs don't have any scope *)
-let mk_kv_scope ?(with_card=true) out ts wfs sol =
-  let kv_scope_t =
-    List.fold_left (fun kv_scope' t ->
-		      (* collect bound vars of t *)
-		      let scope =
-			Sy.SMap.fold (fun bv _ scope' ->
-					StrSet.add (symbol_to_armc bv) scope'
-				     ) (C.env_of_t t) StrSet.empty in
-		      let _, rhs_kvs = C.rhs_of_t t |> Simplification.preds_kvars_of_reft in
-			(* add these bound vars to the scope of each k var in rhs of t *)
-			List.fold_left (fun kv_scope'' kv ->
-					  StrMap.add kv (StrSet.union 
-							   (try StrMap.find kv kv_scope'' with Not_found -> StrSet.empty) 
-							   scope) kv_scope''
-				       ) kv_scope' (List.map snd rhs_kvs |> List.map symbol_to_armc)
-		   ) StrMap.empty ts in
-  let kv_scope = 
-    (* sort scope, add value variable and, if needed, cardinality variable *)
-    StrMap.map (fun scope -> 
-		  let scope' = val_vname :: (StrSet.elements scope |> List.sort compare) in
-		    if with_card then card_vname :: scope' else scope'
-	       ) kv_scope_t in
-  let kvs = StrMap.fold (fun kv _ kvs -> kv :: kvs) kv_scope [] in
-    StrMap.iter (fun kv scope ->
-    		   Printf.fprintf out "%% %s -> %s\n" kv (String.concat ", " scope)) kv_scope;
-    {kvs = kvs; kv_scope = kv_scope; sol = sol}
-
 let preds_kvars_of_reft reft =
   List.fold_left 
     (fun (ps, ks) r ->
@@ -458,6 +429,76 @@ let mk_start_rule state =
 		   Printf.sprintf "%s = 0" (mk_data_var ~suffix:primed_suffix kv card)
 	      ) state.kvs |> String.concat ", ")
     "start_t"
+
+let find_kv_wf_scope wfs kv = 
+  let wf =
+    try List.find (fun wf -> 
+		     match C.reft_of_wf wf|> C.kvars_of_reft with
+		       | [([], kvar)] -> kv = symbol_to_armc kvar
+		       | _ -> false
+		  ) wfs 
+    with Not_found -> failwith (Printf.sprintf "find_wf_scope: %s" kv)
+  in
+    Sy.SMap.fold (fun kvar _ sofar -> StrSet.add (symbol_to_armc kvar) sofar) (C.env_of_wf wf) StrSet.empty
+
+(* map each k variable to variables in its scope *)
+(* k variables no appearing in any rhs don't have any scope *)
+let mk_kv_scope ?(with_card=true) ?(hcs=[]) out ts wfs sol =
+  List.iter (fun wf -> 
+	       let env = C.env_of_wf wf in
+	       let bvs = Sy.SMap.fold (fun bv _ sofar -> symbol_to_armc bv :: sofar) env [] in
+		 Printf.printf "wf: %s : %s\n" (C.reft_of_wf wf |> C.reft_to_string) (String.concat ", " bvs)
+	    ) wfs;
+  let hcs = if hcs = [] then List.map t_to_horn_clause ts else hcs in
+  let hc_deps = List.map hc_to_dep hcs in
+  let kv_scope_aux =
+    ref (List.fold_left (fun kv_scope' t ->
+			   (* collect bound vars of t *)
+			   let scope =
+			     Sy.SMap.fold (fun bv _ scope' ->
+					     StrSet.add (symbol_to_armc bv) scope'
+					  ) (C.env_of_t t) StrSet.empty in
+			   let _, rhs_kvs = C.rhs_of_t t |> Simplification.preds_kvars_of_reft in
+			     (* add these bound vars to the scope of each k var in rhs of t *)
+			     List.fold_left (fun kv_scope'' kv ->
+					       StrMap.add kv (StrSet.union 
+								(try StrMap.find kv kv_scope'' with Not_found -> StrSet.empty) 
+								scope) kv_scope''
+					    ) kv_scope' (List.map snd rhs_kvs |> List.map symbol_to_armc)
+			) StrMap.empty ts) in
+  let done_flag = ref false in
+    (* if k' depends on k then scope(k') contains scope(k) *)
+    while not(!done_flag) do
+      done_flag := true;
+      List.iter (fun (head_opt, body) ->
+		   match head_opt with
+		     | Some kv' -> 
+			 let scope_kv' = StrMap.find kv' !kv_scope_aux in 
+			 let size_scope_kv' = StrSet.cardinal scope_kv' in
+			 let upd_scope_kv' = 
+			   List.fold_left (fun sofar kv ->
+					     StrSet.union (try StrMap.find kv !kv_scope_aux with Not_found -> StrSet.empty) sofar
+					  ) scope_kv' body 
+			 in
+			   if size_scope_kv' < StrSet.cardinal upd_scope_kv' then
+			     begin
+			       kv_scope_aux := StrMap.add kv' upd_scope_kv' !kv_scope_aux;
+			       done_flag := false
+			     end
+		     | None -> ()
+		) hc_deps
+    done;
+    let kv_scope = 
+      (* sort scope, add value variable and, if needed, cardinality variable *)
+      StrMap.mapi (fun kv scope -> 
+		     let scope' = val_vname :: (StrSet.inter scope (find_kv_wf_scope wfs kv) |> StrSet.elements |> List.sort compare) in
+		       if with_card then card_vname :: scope' else scope'
+		  ) !kv_scope_aux in
+    let kvs = StrMap.fold (fun kv _ kvs -> kv :: kvs) kv_scope [] in
+      StrMap.iter (fun kv scope ->
+    		     Printf.fprintf out "%% %s -> %s\n" kv (String.concat ", " scope)) kv_scope;
+      {kvs = kvs; kv_scope = kv_scope; sol = sol}
+
 
 let to_hc_armc out ts wfs sol =
   print_endline "Translating to HC'ARMC.";
@@ -789,10 +830,11 @@ error(pc(%s)).
 let to_dataflow_armc out ts wfs sol =
   print_endline "Translating to ARMC. ToHC.to_dataflow_armc ";
   let with_card_flag = false in
-  let state = mk_kv_scope ~with_card:with_card_flag out ts wfs sol in
-  let cex = [] in  
+(*  let cex = [1;2;4;5;9;23;24] in   *)
+  let cex = [] in
   let ts = (if cex = [] then ts else List.filter (fun t -> List.mem (C.id_of_t t) cex) ts) in
   let hcs = List.map t_to_horn_clause ts in
+  let state = mk_kv_scope ~with_card:with_card_flag ~hcs:hcs out ts wfs sol in
     Printf.fprintf out
       ":- multifile r/5,implicit_updates/0,var2names/2,preds/2,trans_preds/3,cube_size/1,start/1,error/1,refinement/1,cutpoint/1,invgen_template/2,invgen_template/1,cfg_exit_relation/1,stmtsrc/2,strengthening/2,id_trans/1,dataflow_transition/3.
 refinement(inter). 
