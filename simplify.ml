@@ -2,129 +2,112 @@ module C = FixConstraint
 module P = Ast.Predicate
 module E = Ast.Expression
 module Sy = Ast.Symbol
-
 open Misc.Ops
+open Ast
 
-let rec defs_of_pred (edefm, pdefm) p = match p with
-  | Ast.Atom ((Ast.Var v, _), Ast.Eq, e), _ 
+let rec defs_of_pred (em, pm) p = match p with
+  | Atom ((Var v, _), Eq, e), _ 
     when not (P.is_tauto p) -> 
-      Sy.SMap.add v e edefm, pdefs
-  | Ast.And [Ast.Imp ((Ast.Bexp (Ast.Var v1, _), _), p1), _; 
-             Ast.Imp (p2, (Ast.Bexp (Ast.Var v2, _), _)), _], _ 
+      Sy.SMap.add v e em, pm
+  | And [Imp ((Bexp (Var v1, _), _), p1), _; 
+         Imp (p2, (Bexp (Var v2, _), _)), _], _ 
     when v1 = v2 && p1 = p2 && not(P.is_tauto p) -> 
-      edefs, Sy.SMap.add v1 p1 pdefs
-  | Ast.And ps, _ -> 
-      List.fold_left defs_of_pred (edefm, pdefm) ps
-  | _ -> edefm, pdefm
+      edefs, Sy.SMap.add v1 p1 pm
+  | And ps, _ -> 
+      List.fold_left defs_of_pred (em, pm) ps
+  | _ -> em, pm
 
-let some_def_applied = ref false
+let rec expr_apply_defs em pm expr = 
+  let ef = expr_apply_defs em pm in
+  let pf = pred_apply_defs em pm in
+  match expr with 
+  | Var v, _ when Sy.SMap.mem v em ->
+      Sy.SMap.find v em, true
+  | Var _, _ | Con _, _ ->
+      expr, false
+  | App (v, es), _ -> 
+      let _  = asserts (not (Sy.SMap.mem v em)) "binding for UF" in
+      es |> List.map ef 
+         |> List.split 
+         |> (fun (es', bs') -> (eApp (v, es'), List.fold_left (||) false bs'))
+  | Bin (e1, op, e2), _ -> 
+      let e1', b1' = ef e1 in
+      let e2', b2' = ef e2 in
+      eBin (e1', op, e2'), (b1' || b2')
+  | Ite (p, e1, e2) -> 
+      let p', b'   = pf p in
+      let e1', b1' = ef e1 in
+      let e2', b2' = ef e2 in
+      eIte (p', e1', e2'), (b' || b2' || b3')
+  | Fld (v, e) -> 
+      let e', b' = ef e in
+      eFld (v, e'), b'
 
-let rec expr_apply_defs edefs pdefs ((e, _) as expr) = 
-  let current_some_def_applied = !some_def_applied in
-    some_def_applied := false;
-    let expr'' =
-      match e with
-	| Ast.Con _ -> expr
-	| Ast.Var v -> 
-	    begin
-	      try
-		let expr' = Sy.SMap.find v edefs in
-		  some_def_applied := true;
-		  expr'
-	      with Not_found -> expr
-	    end
-	| Ast.App (v, es) -> 
-	    let edefs' = Sy.SMap.remove v edefs in
-	      Ast.eApp (v, List.map (expr_apply_defs edefs' pdefs) es)
-	| Ast.Bin (e1, op, e2) -> 
-	    Ast.eBin (expr_apply_defs edefs pdefs e1, op, expr_apply_defs edefs pdefs e2)
-	| Ast.Ite (p, e1, e2) -> 
-	    Ast.eIte (pred_apply_defs edefs pdefs p, 
-		      expr_apply_defs edefs pdefs e1,
-		      expr_apply_defs edefs pdefs e2)
-	| Ast.Fld (v, e) -> 
-	    let v' = 
-	      try
-		match Sy.SMap.find v edefs with
-		  | (Ast.Var v'', _) -> 
-		      some_def_applied := true;
-		      v''
-		  | _ -> v
-	      with Not_found -> v
-	    in
-	      Ast.eFld (v', expr_apply_defs edefs pdefs e)
-    in
-      if !some_def_applied then
-	let expr''' = expr_apply_defs edefs pdefs expr'' in
-	  some_def_applied := current_some_def_applied;
-	  expr'''
-      else
-	begin
-	  some_def_applied := current_some_def_applied;
-	  expr''
-	end
+and pred_apply_defs em pm pred =
+  let ef = expr_apply_defs em pm in
+  let pf = pred_apply_defs em pm in
+  match pred with 
+  | And ps, _ -> 
+      ps |> List.map pf
+         |> List.split
+         |> (fun (ps', bs') -> pAnd ps', List.exists id bs') 
+  | Or ps, _ -> 
+      ps |> List.map pf
+         |> List.split
+         |> (fun (ps', bs') -> pOr ps', List.exists id bs') 
+  | Not p, _ ->
+       p |> pf 
+         |> Misc.app_fst pNot
+  | Imp (p1, p2), _ -> 
+      let p1', b1' = pf p1 in
+      let p2', b2' = pf p2 in
+      pImp (p1', p2'), b1' || b2'
+  | Bexp (Var v, _), _ when Sy.SMap.mem v pm ->
+      Sy.SMap.find v pm, true
+  | Bexp e, _ ->
+      e |> ef |> Misc.app_fst pBexp
+  | Atom (e1, brel, e2) ->
+      let e1', b1' = ef e1 in
+      let e2', b2' = ef e2 in
+      pAnd (e1', brel, e2'), b1' || b2'
+  | Forall (qs, p) -> 
+      assertf "Forall in Simplify!"
+  | _ ->
+      pred, false
 
-and pred_apply_defs edefs pdefs ((p, _) as pred) =
-  let current_some_def_applied = !some_def_applied in
-    some_def_applied := false;
-    let pred'' =
-      match p with
-	| Ast.And ps -> List.map (pred_apply_defs edefs pdefs) ps |> Ast.pAnd
-	| Ast.Or ps -> List.map (pred_apply_defs edefs pdefs) ps |> Ast.pOr
-	| Ast.Not p -> pred_apply_defs edefs pdefs p |> Ast.pNot
-	| Ast.Imp (p, q) -> Ast.pImp (pred_apply_defs edefs pdefs p, pred_apply_defs edefs pdefs q)
-	| Ast.Bexp (Ast.Var v, _) ->
-	    begin
-	      try
-		let expr' = Sy.SMap.find v edefs in
-		  some_def_applied := true;
-		  Ast.pBexp expr'
-	      with Not_found ->
-		try
-		  let pred' = Sy.SMap.find v pdefs in
-		    some_def_applied := true;
-		    pred'
-		with Not_found ->
-		  pred
-	    end
-	| Ast.Atom (e1, brel, e2) ->
-	    Ast.pAtom (expr_apply_defs edefs pdefs e1, brel, expr_apply_defs edefs pdefs e2)
-	| Ast.Forall (qs, p) ->
-	    let vs = List.map fst qs in
-	    let edefs' = List.fold_left (fun defs v -> Sy.SMap.remove v defs) edefs vs in
-	    let pdefs' = List.fold_left (fun defs v -> Sy.SMap.remove v defs) pdefs vs in
-	      Ast.pForall (qs, pred_apply_defs edefs' pdefs' p)
-	| _ -> pred
-    in
-      if !some_def_applied then
-	let pred''' = pred_apply_defs edefs pdefs pred'' in
-	  some_def_applied := current_some_def_applied;
-	  pred'''
-      else 
-	begin
-	  some_def_applied := current_some_def_applied;
-	  pred''
-	end
+(* Why does this fixpointing terminate?
+ * close em, pm under substitution so that
+   for all x in dom(em), support(em(x)) \cap dom(em) = empty *)
 
-let subs_apply_defs edefs pdefs subs =
-  List.map (fun (s, e) -> s, expr_apply_defs edefs pdefs e) subs
+(* Assume: em is well-formed, 
+ * i.e. exists an ordering on vars of dom(em)
+ * x1 < x2 < ... < xn s.t. if xj \in em(xi) then xj < xi *)
 
-let kvar_apply_defs edefs pdefs (subs, sym) = 
-  subs_apply_defs edefs pdefs subs, sym
+let expr_apply_defs em fm e = 
+  Misc.fixpoint (expr_apply_defs em fm) e |> fst
+
+let pred_apply_defs em fm p = 
+  Misc.fixpoint (pred_apply_defs em fm) f |> fst
+ 
+let subs_apply_defs em pm xes =
+  List.map (Misc.app_snd (expr_apply_defs em pm)) xes
+
+let kvar_apply_defs em pm (xes, kvar) = 
+  subs_apply_defs em pm xes, kvar 
 
 let preds_kvars_of_reft reft =
-  List.fold_left 
-    (fun (ps, ks) r ->
-       match r with
-	 | C.Conc p -> p :: ps, ks
-	 | C.Kvar (subs, kvar) -> ps, (subs, kvar) :: ks 
-    ) ([], []) (C.ras_of_reft reft)
+  List.fold_left begin fun (ps, ks) -> function 
+    | C.Conc p -> p :: ps, ks
+    | C.Kvar (xes, kvar) -> ps, (xes, kvar) :: ks 
+  end ([], []) (C.ras_of_reft reft)
 
-let simplify_subs subs =
-  List.filter (fun (s, e) -> not(P.is_tauto (Ast.pAtom (Ast.eVar s, Ast.Eq, e)))) subs
+let simplify_subs xes =
+  xes |> List.filter (fun (x, e) -> not (P.is_tauto (pAtom (eVar x, Eq, e))))
 
-let simplify_kvar (subs, sym) =
-  simplify_subs subs, sym
+let simplify_kvar (xes, kvar) =
+  simplify_subs xes, kvar 
+
+(**************** HEREHEREHEREHEREHEREHERE *******************)
 
 let simplify_t t = 
   let env_ps, pfree_env = (* separate concrete predicates from refinement templates *)
@@ -194,9 +177,6 @@ let simplify_ts ts =
     !ts_sofar
 
 let is_tauto_t t =
-  match C.rhs_of_t t |> C.ras_of_reft with
-    | [] -> true
-    | [C.Conc p] -> P.is_tauto p 
-    | _ -> false
-
-  
+  t |> C.rhs_of_t 
+    |> C.ras_of_reft 
+    |> (function [C.Conc p] -> P.is_tauto p | [] -> true | _ -> false)
