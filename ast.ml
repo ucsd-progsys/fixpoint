@@ -142,7 +142,7 @@ and expr_int =
   | App of Symbol.t * expr list
   | Bin of expr * bop * expr  
   | Ite of pred * expr * expr
-  | Fld of Symbol.t * expr             (* NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
+(*  | Fld of Symbol.t * expr             NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
       
 and pred = pred_int * tag
 
