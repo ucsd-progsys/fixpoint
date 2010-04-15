@@ -59,7 +59,9 @@ let stat_tp_refines     = ref 0
 let stat_imp_queries    = ref 0
 let stat_valid_queries  = ref 0
 let stat_matches        = ref 0
+let stat_umatches       = ref 0
 let stat_unsatLHS       = ref 0
+let stat_emptyRHS       = ref 0
 let stat_cfreqt         = Hashtbl.create 37
 
 let hashtbl_incr_frequency t k = 
@@ -80,8 +82,8 @@ let hashtbl_print_frequency t =
 
 let rhs_cands s = function
   | C.Kvar (xes, k) -> 
-      C.sol_read s k |> 
-      List.map (fun q -> ((k,q), P.substs q xes))
+      k |> C.sol_read s 
+        |> List.map (fun q -> ((k,q), P.substs q xes))
   | _ -> []
 
 let check_tp me env vv t lps =  function [] -> [] | rcs ->
@@ -98,12 +100,15 @@ let refine me s c =
   let env = C.env_of_t c in
   let (vv1, t1, _) = C.lhs_of_t c in
   let (_,_,ra2s) as r2 = C.rhs_of_t c in
-  let k2s = C.kvars_of_reft r2 |> List.map snd in
+  let k2s = r2 |> C.kvars_of_reft |> List.map snd in
   let lps = BS.time "preds_of_lhs" (C.preds_of_lhs s) c in
   let rcs = BS.time "rhs_cands" (Misc.flap (rhs_cands s)) ra2s in
-  if (BS.time "lhs_contra" (List.exists P.is_contra) lps) || (rcs = []) then
+  if rcs = [] then
+    let _ = stat_emptyRHS += 1 in
+    (false, s)
+  else if BS.time "lhs_contra" (List.exists P.is_contra) lps then 
     let _ = stat_unsatLHS += 1 in
-    let _ = stat_matches  += (List.length rcs) in
+    let _ = stat_umatches += (List.length rcs) in
     (false, s)
   else
     let rcs     = List.filter (fun (_,p) -> not (P.is_contra p)) rcs in
@@ -115,7 +120,8 @@ let refine me s c =
     (if C.is_simple c 
      then (ignore(stat_simple_refines += 1); kqs1) 
      else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps) x2))
-    |> C.group_sol_update s k2s 
+  >> (fun _ -> c |> C.id_of_t |> F.printf "Constraint: %d : ")
+  |> C.group_sol_update s k2s 
 
 (***************************************************************)
 (************************* Satisfaction ************************)
@@ -156,8 +162,8 @@ let print_solution_stats ppf s =
      SM.fold (fun _ qs x -> min x (List.length qs)) s max_int,
      SM.fold (fun _ qs x -> x + (if List.exists P.is_contra qs then 1 else 0)) s 0) in
   let avg = (float_of_int sum) /. (float_of_int (Sy.sm_length s)) in
-  F.fprintf ppf "# Vars: Total=%d, False=%d \n" (Sy.sm_length s) bot;
-  F.fprintf ppf "# Quals: Total=%d, Avg=%f, Max=%d, Min=%d \n" sum avg max min
+  F.fprintf ppf "# Vars: (Total=%d, False=%d) Quals: (Total=%d, Avg=%f, Max=%d, Min=%d)\n" 
+                (Sy.sm_length s) bot sum avg max min
 
 let print_solver_stats ppf me = 
   let cs   = Ci.to_list me.sri in 
@@ -165,10 +171,10 @@ let print_solver_stats ppf me =
   let scn  = List.length (List.filter C.is_simple cs) in
   F.fprintf ppf "#constraints = %d \n" cn;
   F.fprintf ppf "#simple constraints = %d \n" scn;
-  F.fprintf ppf "#Refine Iterations = %d (si=%d tp=%d unsatLHS=%d) \n"
-    !stat_refines !stat_simple_refines !stat_tp_refines !stat_unsatLHS;
-  F.fprintf ppf "#Queries: match=%d, ask=%d, valid=%d\n" 
-    !stat_matches !stat_imp_queries !stat_valid_queries;
+  F.fprintf ppf "#Refine Iterations = %d (si=%d tp=%d unsatLHS=%d emptyRHS=%d) \n"
+    !stat_refines !stat_simple_refines !stat_tp_refines !stat_unsatLHS !stat_emptyRHS;
+  F.fprintf ppf "#Queries: umatch=%d, match=%d, ask=%d, valid=%d\n" 
+    !stat_umatches !stat_matches !stat_imp_queries !stat_valid_queries;
   F.fprintf ppf "%a" TP.print_stats me.tpc;
   F.fprintf ppf "Iteration Frequency: \n";
   hashtbl_print_frequency stat_cfreqt;
@@ -210,7 +216,7 @@ let valid_binding xys =
   (List.for_all varmatch xys)
 
 let valid_bindings ys x = 
-  ys |> List.map (fun y -> (x,y))
+  ys |> List.map (fun y -> (x, y))
      |> List.filter varmatch 
 
 let inst_qual ys (q : Q.t) : Q.t list =
@@ -254,9 +260,11 @@ let inst wfs qs s =
 let log_iter_stats me s = 
   (if Co.ck_olev Co.ol_insane then F.printf "%a" C.print_soln s);
   (if !stat_refines mod 100 = 0 then 
-     let s = Printf.sprintf "num refines=%d " !stat_refines in
-     let _ = Timer.log_event me.tt (Some s) in
-     let _ = Printf.printf "%s \n" s in ());
+     let msg = Printf.sprintf "num refines=%d" !stat_refines in 
+     let _   = Timer.log_event me.tt (Some msg) in
+     let _   = F.printf "%s" msg in 
+     let _   = F.printf "%a \n" print_solution_stats s in
+     ());
   ()
 
 let rec acsolve me w s = 

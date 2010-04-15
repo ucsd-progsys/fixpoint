@@ -101,7 +101,9 @@ module Symbol =
 
     let value_variable t = 
       "VV_"^(Sort.to_string_short t)
- 
+
+    let is_value_variable s = Misc.is_prefix "VV_" s 
+
     let sm_length m = 
       SMap.fold (fun _ _ i -> i+1) m 0
 
@@ -535,6 +537,8 @@ module Predicate =
 	| Imp (p1, p2), _     ->  p1 == p2 (* matching (p -> p) && (p -> p)) *) 
         | True, _             -> true
         | _                   -> false
+      
+
     end
 
 let print_stats _ = 
@@ -639,8 +643,8 @@ let rec sortcheck_expr f e =
   | _ -> None
 
 and sortcheck_rel f (e1, r, e2) = 
-  let t1o, t2o = (e1,e2) |> Misc.map_pair (sortcheck_expr f) 
-                         |> Misc.map_pair (Misc.maybe_map (function Sort.Ptr -> Sort.Int | x -> x)) in
+  let t1o, t2o = (e1,e2) |> Misc.map_pair (sortcheck_expr f) in
+ (* |> Misc.map_pair (Misc.maybe_map (function Sort.Ptr -> Sort.Int | x -> x)) in *)
   match r, t1o, t2o with
   | Eq, Some t1, Some t2 
   | Ne, Some t1, Some t2 when t1 = t2 -> true 
@@ -664,6 +668,9 @@ and sortcheck_pred f p =
     | And ps  
     | Or ps ->
         List.for_all (sortcheck_pred f) ps
+    | Atom ((Con (Constant.Int(0)),_), _, e) 
+    | Atom (e, _, (Con (Constant.Int(0)),_)) -> 
+        not (sortcheck_expr f e = None)
     | Atom (e1, r, e2) ->
         sortcheck_rel f (e1, r, e2)
     | Forall (qs,p) ->

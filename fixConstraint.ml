@@ -42,8 +42,14 @@ type refa = Conc of A.pred | Kvar of subs * Sy.t
 type reft = Sy.t * A.Sort.t * (refa list)                (* { VV: t | [ra] } *)
 type envt = reft SM.t
 type soln = A.pred list SM.t
-type t    = (envt * envt) * A.pred * reft * reft * (id option) * tag
 type wf   = envt * reft * (id option)
+type t    = { full    : envt; 
+              nontriv : envt;
+              guard   : A.pred;
+              lhs     : reft;
+              rhs     : reft;
+              ido     : id option;
+              tag     : tag; }
 
 type deft = Srt of Ast.Sort.t 
           | Axm of Ast.pred 
@@ -52,6 +58,8 @@ type deft = Srt of Ast.Sort.t
           | Sol of Ast.Symbol.t * Ast.pred list
           | Qul of Ast.Qualifier.t
           | Dep of dep
+
+let mydebug = true
 
 (*************************************************************)
 (************************** Misc.  ***************************)
@@ -81,14 +89,13 @@ let bindings_of_env env =
   SM.fold (fun x y bs -> (x,y)::bs) env []
 
 (* API *)
-let is_simple (_,_,(_,_,ra1s),(_,_,ra2s),_,_) = 
+let is_simple {lhs = (_,_,ra1s); rhs = (_,_,ra2s)} = 
   List.for_all is_simple_refatom ra1s 
   && List.for_all is_simple_refatom ra2s 
-  && (not !Constants.no_simple) 
-  && (not !Constants.verify_simple)
+  && !Constants.simple
 
 (* API *)
-let kvars_of_t ((_,env), _, lhs, rhs, _ ,_) =
+let kvars_of_t {nontriv = env; lhs = lhs; rhs = rhs} =
   [lhs; rhs] 
   |> SM.fold (fun _ r acc -> r :: acc) env
   |> Misc.flap kvars_of_reft 
@@ -112,17 +119,19 @@ let sol_read s k =
 
 (* INV: qs' \subseteq qs *)
 let sol_update s k qs' =
-  let qs = sol_read s k in
+  let qs  = sol_read s k in
+  (if mydebug then 
+    qs |> List.filter (fun q -> not (List.mem q qs')) 
+       (* |> List.length *) 
+       |> F.printf "Dropping %a: (%d) %a \n" Sy.print k (List.length qs) (Misc.pprint_many false "," P.print)
+  );
   (not (Misc.same_length qs qs'), SM.add k qs' s)
 
-
-(* API *)
 let sol_add s k qs' = 
   let qs   = sol_query s k in
   let qs'' = qs' ++ qs in
   (not (Misc.same_length qs qs''), SM.add k qs'' s)
 
-(* API *)
 let sol_merge s1 s2 =
   SM.fold (fun k qs s -> sol_add s k qs |> snd) s1 s2 
 
@@ -174,16 +183,40 @@ let preds_of_envt s env =
     env [] 
 
 (* API *)
-let preds_of_lhs s ((_,env), gp, r1, _, _, _) =
+let preds_of_lhs s {nontriv = env; guard = gp; lhs =  r1} = 
   let envps = preds_of_envt s env in
   let r1ps  = preds_of_reft s r1 in
   gp :: (envps ++ r1ps) 
 
 (* API *)
-let vars_of_t s ((_, _, _, r2, _,_) as c) =
+let vars_of_t s ({rhs = r2} as c) =
   (preds_of_reft s r2) ++ (preds_of_lhs s c)
   |> Misc.flap P.support
-  
+
+(*
+(**************************************************************)
+(*******************Constraint Simplification *****************)
+(**************************************************************)
+
+let is_var_def v = function
+  | Conc (A.Atom ((A.Var x, _), A.Eq, (A.Var y, _)), _) when x = v -> Some y
+  | Conc (A.Atom ((A.Var x, _), A.Eq, (A.Var y, _)), _) when y = v -> Some x
+  | _                                                              -> None
+
+let str_reft env r = 
+  Misc.expand begin fun (v, t, ras) ->
+    ras |> List.partition (function Conc _ -> true | _ -> false)
+        |> Misc.app_fst (Misc.map_partial (is_var_def v))
+        |> Misc.app_fst (List.filter (fun x -> SM.mem x env))
+        |> Misc.app_fst (List.map (fun x -> SM.find x env))
+  end [r] []
+
+let strengthen_reft env ((v,t,ras) as r) =
+  if not !Constants.simplify_t then r else
+    let kras = str_reft env r in
+    (v, t, Misc.sort_and_compact (ras ++ kras))
+
+*)
 
 (**************************************************************)
 (********************** Pretty Printing ***********************)
@@ -247,7 +280,7 @@ let print_wf so ppf (env, r, io) =
     pprint_id io
 
 (* API *)
-let print_t so ppf ((env,_),g,r1,r2,io,is) =
+let print_t so ppf {full=env;guard=g;lhs=r1;rhs=r2;ido=io; tag=is} =
   F.fprintf ppf 
   "constraint:@.  env  @[[%a]@] @\n grd @[%a@] @\n lhs @[%a@] @\n rhs @[%a@] @\n %a %a @\n"
     (print_env so) env 
@@ -284,7 +317,7 @@ let binding_to_string (vv, reft) =
 let print_soln ppf sm =
   SM.iter 
     (fun k ps -> 
-      F.fprintf ppf "solution: @[%a := [%a]@] \n"  
+      F.fprintf ppf "solution: %a := [%a] \n"  
         Sy.print k (Misc.pprint_many false ";" P.print) ps)
     sm
 
@@ -305,14 +338,22 @@ let shape_of_reft = fun (v, so, _) -> (v, so, [])
 let theta         = fun subs (v, so, ras) -> (v, so, Misc.map (theta_ra subs) ras)
 
 (* API *)
-let make_t      = fun env p r1 r2 io is -> ((env, non_trivial env ), p, r1, r2, io, is)
-let env_of_t    = fun ((env,_),_,_,_,_,_) -> env
-let grd_of_t    = fun (_,grd,_,_,_,_) -> grd 
-let lhs_of_t    = fun (_,_,lhs,_,_,_) -> lhs 
-let rhs_of_t    = fun (_,_,_,rhs,_,_) -> rhs
-let tag_of_t    = fun (_,_,_,_,_,is) -> is 
-let id_of_t     = function (_,_,_,_,Some i,_) -> i | _ -> assertf "C.id_of_t"
-let ido_of_t    = fun (_,_,_,_,ido,_) -> ido
+let env_of_t    = fun t -> t.full 
+let grd_of_t    = fun t -> t.guard 
+let lhs_of_t    = fun t -> t.lhs 
+let rhs_of_t    = fun t -> t.rhs
+let tag_of_t    = fun t -> t.tag
+let ido_of_t    = fun t -> t.ido
+let id_of_t     = fun t -> match t.ido with Some i -> i | _ -> assertf "C.id_of_t"
+let make_t      = fun env p r1 r2 io is -> 
+                    let env' = non_trivial env in
+                    { full    = env ; 
+                      nontriv = env'; 
+                      guard   = p; 
+                      lhs     = r1 (* strengthen_reft env' r1 *); 
+                      rhs     = r2; 
+                      ido     = io;
+                      tag     = is }
 
 (* API *)
 let make_wf     = fun env r io -> (env, r, io)

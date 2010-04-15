@@ -52,6 +52,7 @@ module Symbol :
     val is_wild: t -> bool
     val print : Format.formatter -> t -> unit
     val value_variable : Sort.t -> t
+    val is_value_variable : t -> bool
     val sm_length : 'a SMap.t -> int
     val sm_filter : (t -> 'a -> bool) -> 'a SMap.t -> 'a SMap.t
     val sm_to_list : 'a SMap.t -> (t * 'a) list
