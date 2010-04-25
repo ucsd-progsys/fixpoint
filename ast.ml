@@ -643,8 +643,11 @@ let rec sortcheck_expr f e =
   | _ -> None
 
 and sortcheck_rel f (e1, r, e2) = 
-  let t1o, t2o = (e1,e2) |> Misc.map_pair (sortcheck_expr f) in
- (* |> Misc.map_pair (Misc.maybe_map (function Sort.Ptr -> Sort.Int | x -> x)) in *)
+  let t1o, t2o = (e1,e2) 
+                 |> Misc.map_pair (sortcheck_expr f) 
+(*                 |> Misc.map_pair (Misc.maybe_map (function Sort.Ptr ->Sort.Int | x -> x)) 
+  *)
+            in
   match r, t1o, t2o with
   | Eq, Some t1, Some t2 
   | Ne, Some t1, Some t2 when t1 = t2 -> true 
