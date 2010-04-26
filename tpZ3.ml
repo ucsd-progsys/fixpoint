@@ -45,16 +45,15 @@ type decl = Vbl of Sy.t | Fun of Sy.t * int | Barrier
 type var_ast = Const of Z3.ast | Bound of int * So.t
 
 type t = { 
-  c                 : Z3.context;
-  tint              : Z3.type_ast;
-  tbool             : Z3.type_ast;
-  vart              : (decl, var_ast) Hashtbl.t;
-  funt              : (decl, Z3.const_decl_ast) Hashtbl.t;
-  tydt              : (So.t, Z3.type_ast) Hashtbl.t;
-  mutable vars      : decl list ;
-  mutable count     : int;
-  mutable bnd       : int;
- (* mutable frtymap   : (Frame.t * So.t) list; *)
+  c             : Z3.context;
+  tint          : Z3.type_ast;
+  tbool         : Z3.type_ast;
+  vart          : (decl, var_ast) Hashtbl.t;
+  funt          : (decl, Z3.const_decl_ast) Hashtbl.t;
+  tydt          : (So.t, Z3.type_ast) Hashtbl.t;
+  mutable vars  : decl list ;
+  mutable count : int;
+  mutable bnd   : int;
 }
 
 (*************************************************************************)

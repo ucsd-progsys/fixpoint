@@ -34,18 +34,20 @@ open Misc.Ops
 
 module Sort = 
   struct
+    
     type t = 
       | Int 
       | Bool 
-      | Ptr
-      | Array of t * t 
-      | Unint of string 
-      | Func of t list
+      | Ptr   of string
+      | Obj
+      | Func  of t list
+   (* | Array of t * t  *)
+   (* | Unint of string *)
 
     let rec to_string = function
       | Int     -> "int"
-      | Ptr     -> "ptr" 
       | Bool    -> "bool"
+      | Ptr s   -> Printf.sprintf "ptr(%s)" s
       | Unint s -> "uit "^s
       | Func ts -> Printf.sprintf "func([%s])" (ts |> List.map to_string |> String.concat " ; ")
       | Array _ -> failwith "TBD: Sort.to_string"
@@ -57,7 +59,6 @@ module Sort =
       | Unint s -> "uit "^s
       | Func ts -> "func"
       | Array _ -> failwith "TBD: Sort.to_string"
-
 
     let print fmt t = 
       to_string t |> Format.fprintf fmt "%s"
@@ -123,7 +124,6 @@ module Constant =
 
     let to_string = function
       | Int i -> string_of_int i
-
 
     let print fmt s =
       to_string s |> Format.fprintf fmt "%s"

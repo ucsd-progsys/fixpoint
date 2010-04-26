@@ -35,8 +35,15 @@
 (**********************************************************)
 
 module Sort :
-  sig 
-    type t = Int | Bool | Ptr | Array of t * t | Unint of string | Func of t list
+  sig
+    type t = 
+      | Int 
+      | Bool 
+      | Ptr   of string
+      | Func  of t list
+   (* | Array of t * t  *)
+   (* | Unint of string *)
+    
     val to_string : t -> string
     val print : Format.formatter -> t -> unit
   end
