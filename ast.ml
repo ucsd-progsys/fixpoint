@@ -47,21 +47,20 @@ module Sort =
     let rec to_string = function
       | Int     -> "int"
       | Bool    -> "bool"
+      | Obj     -> "obj"
       | Ptr s   -> Printf.sprintf "ptr(%s)" s
-      | Unint s -> "uit "^s
-      | Func ts -> Printf.sprintf "func([%s])" (ts |> List.map to_string |> String.concat " ; ")
-      | Array _ -> failwith "TBD: Sort.to_string"
+      | Func ts -> ts |> List.map to_string 
+                      |> String.concat " ; " 
+                      |> Printf.sprintf "func([%s])" 
 
     let to_string_short = function
-      | Int     -> "int"
-      | Ptr     -> "ptr"
-      | Bool    -> "bool"
-      | Unint s -> "uit "^s
-      | Func ts -> "func"
-      | Array _ -> failwith "TBD: Sort.to_string"
+      | Func _  -> "func"
+      | t       -> to_string t      
 
     let print fmt t = 
-      to_string t |> Format.fprintf fmt "%s"
+      t |> to_string 
+        |> Format.fprintf fmt "%s"
+
   end
 
 module Symbol = 
@@ -611,20 +610,15 @@ let rec sortcheck_expr f e =
   | Var s -> 
       (try Some (f s) with _ -> None)
   | Bin (e1, op, e2) -> 
-      begin 
-        match Misc.map_pair (sortcheck_expr f) (e1,e2) with
-        | (Some Sort.Int, Some Sort.Int) -> Some Sort.Int
-        | (Some Sort.Int, Some Sort.Ptr) -> Some Sort.Ptr
-        | (Some Sort.Ptr, Some Sort.Int) -> Some Sort.Ptr
-        | (Some Sort.Ptr, Some Sort.Ptr) -> if op = Minus then Some Sort.Int else None 
-        | _                              -> None 
-      end
-  | Ite(p,e1,e2) -> 
+      sortcheck_op f (e1, op, e2)
+
+  | Ite (p, e1, e2) -> 
       if sortcheck_pred f p then 
         match Misc.map_pair (sortcheck_expr f) (e1, e2) with
         | (Some t1, Some t2) when t1 = t2 -> Some t1 
         | _ -> None
       else None
+  
   | App (uf, es) -> begin
       let ft = try f uf with _ -> assertf "ERROR: unknown uf = %s" (Symbol.to_string uf) in
       match ft with
@@ -642,12 +636,20 @@ let rec sortcheck_expr f e =
   end
   | _ -> None
 
+and sortcheck_op f (e1, op, e2) = 
+  match Misc.map_pair (sortcheck_expr f) (e1, e2) with
+  | (Some Sort.Int, Some Sort.Int) -> 
+      Some Sort.Int
+  | (Some (Sort.Ptr s), Some Sort.Int) 
+  | (Some Sort.Int, Some (Sort.Ptr s)) -> 
+      Some (Sort.Ptr s)
+  | (Some (Sort.Ptr s), Some (Sort.Ptr s')) 
+    when op = Minus && s = s' -> 
+      Some Sort.Int 
+  | _ -> None 
+ 
 and sortcheck_rel f (e1, r, e2) = 
-  let t1o, t2o = (e1,e2) 
-                 |> Misc.map_pair (sortcheck_expr f) 
-(*                 |> Misc.map_pair (Misc.maybe_map (function Sort.Ptr ->Sort.Int | x -> x)) 
-  *)
-            in
+  let t1o, t2o = (e1,e2) |> Misc.map_pair (sortcheck_expr f) in
   match r, t1o, t2o with
   | Eq, Some t1, Some t2 
   | Ne, Some t1, Some t2 when t1 = t2 -> true 

@@ -26,7 +26,7 @@ let parse_error msg =
 %token TIMES 
 %token DIV 
 %token QM DOT ASGN
-%token INT PTR BOOL UNINT FUNC
+%token OBJ INT PTR BOOL UNINT FUNC
 %token SRT AXM CST WF SOL QUL ADP DDP
 %token ENV GRD LHS RHS REF
 
@@ -80,11 +80,12 @@ sortsne:
 
 
 sort:
-    INT                                 { So.Int }
-  | PTR                                 { So.Ptr }
+  | INT                                 { So.Int }
   | BOOL                                { So.Bool }
-  | UNINT Id                            { So.Unint ($2) }
-  | FUNC LPAREN sorts RPAREN            { So.Func ($3) }
+  | PTR                                 { So.Ptr ""}
+  | PTR Id                              { So.Ptr $2 }
+  | OBJ                                 { So.Obj } 
+  | FUNC LPAREN sorts RPAREN            { So.Func $3 }
   ;
 
 

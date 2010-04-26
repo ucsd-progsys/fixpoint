@@ -115,12 +115,12 @@ let axioms = []
 
 let builtins = 
   SM.empty 
-  |> SM.add tag_n  (So.Func [So.Unint "obj"; So.Int])
+  |> SM.add tag_n  (So.Func [So.Obj; So.Int])
   |> SM.add div_n  (So.Func [So.Int; So.Int; So.Int]) 
   |> SM.add iofb_n (So.Func [So.Bool; So.Int])
   |> SM.add bofi_n (So.Func [So.Int; So.Bool])
 
-let unint_t  = So.Unint "obj"
+(* let unint_t  = So.Unint "obj" *)
 
 let select_t = So.Func [So.Int; So.Int]
 
@@ -151,10 +151,9 @@ let z3VarType me t =
   let lookup me = function
     | So.Bool 	 -> me.tbool
     | So.Int 	 
-    | So.Ptr     
-    | So.Unint _ 
-    | So.Func _  -> me.tint 
-    | So.Array _ -> failure "MATCH ERROR: TPZ3.z3VarType" in
+    | So.Ptr _    
+    | So.Obj  
+    | So.Func _  -> me.tint in 
   Misc.do_memo me.tydt (lookup me) t t
     
 let z3ArgTypes me = function 
@@ -234,21 +233,21 @@ and z3Cast me env a t =
   if st = st' then a else cast me env a (st, st')  
 
 and z3Rel me env (e1, r, e2) =
-  let a1 , a2  = Misc.map_pair (z3Exp me env) (e1, e2) in
-  let t1o, t2o = (e1,e2) |> Misc.map_pair (A.sortcheck_expr (varSort env))
-                         |> Misc.map_pair (Misc.maybe_map (function So.Ptr -> So.Int | x -> x)) in
-  match r, t1o, t2o with 
-  | A.Eq, Some t1, Some t2 when t1 = t2                  -> Z3.mk_eq me.c a1 a2 
-  | A.Ne, Some t1, Some t2 when t1 = t2                  -> Z3.mk_distinct me.c [|a1; a2|]
-  | A.Gt, Some t1, Some t2 when t1 = t2 && t1 != So.Bool -> Z3.mk_gt me.c a1 a2
-  | A.Ge, Some t1, Some t2 when t1 = t2 && t1 != So.Bool -> Z3.mk_ge me.c a1 a2
-  | A.Lt, Some t1, Some t2 when t1 = t2 && t1 != So.Bool -> Z3.mk_lt me.c a1 a2
-  | A.Le, Some t1, Some t2 when t1 = t2 && t1 != So.Bool -> Z3.mk_le me.c a1 a2
-  | _, _, _ -> 
-      SM.iter (fun s t -> Format.printf "@[%a :: %a@]@." Sy.print s So.print t) env;
-      Format.printf "@[%a@]@.@." P.print (A.pAtom (e1, r, e2));
-      assertf "ERROR: type error in z3Rel"
- 
+  if A.sortcheck_pred (varSort env) (A.pAtom (e1, r, e2)) then 
+    let a1, a2 = Misc.map_pair (z3Exp me env) (e1, e2) in 
+    match r with 
+    | A.Eq -> Z3.mk_eq me.c a1 a2 
+    | A.Ne -> Z3.mk_distinct me.c [|a1; a2|]
+    | A.Gt -> Z3.mk_gt me.c a1 a2
+    | A.Ge -> Z3.mk_ge me.c a1 a2
+    | A.Lt -> Z3.mk_lt me.c a1 a2
+    | A.Le -> Z3.mk_le me.c a1 a2
+  else begin 
+    SM.iter (fun s t -> Format.printf "@[%a :: %a@]@." Sy.print s So.print t) env;
+    Format.printf "@[%a@]@.@." P.print (A.pAtom (e1, r, e2));
+    assertf "ERROR: type error in z3Rel"
+  end
+
 and z3App me env p zes =
   match funSort env p with
   | So.Func ft ->

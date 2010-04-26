@@ -40,10 +40,12 @@ module Sort :
       | Int 
       | Bool 
       | Ptr   of string
+      | Obj
       | Func  of t list
    (* | Array of t * t  *)
    (* | Unint of string *)
-    
+
+
     val to_string : t -> string
     val print : Format.formatter -> t -> unit
   end
