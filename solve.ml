@@ -151,8 +151,8 @@ let dump_solution_cluster s =
      |> List.map snd 
      |> Misc.groupby key_of_quals
      |> List.map begin function [] -> assertf "impossible" | (ps::_ as pss) -> 
-         Co.cprintf Co.ol_solve "SolnCluster: preds %d = size %d \n"
-           (List.length ps) (List.length pss)
+          Co.cprintf Co.ol_solve "SolnCluster: preds %d = size %d \n"
+            (List.length ps) (List.length pss)
         end
 
 let print_solution_stats ppf s = 
