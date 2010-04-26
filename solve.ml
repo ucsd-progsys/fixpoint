@@ -71,7 +71,7 @@ let hashtbl_incr_frequency t k =
 let hashtbl_print_frequency t = 
   Misc.hashtbl_to_list t 
   |> Misc.groupby snd
-  |> List.map (function ((_,n)::_) as xs -> (n, List.length xs)) 
+  |> List.map (function ((_,n)::_) as xs -> (n, List.length xs) | _ -> assertf "impossible") 
   |> List.sort compare
   |> List.iter (fun (n,m) -> Format.printf "ITERFREQ: %d times %d constraints \n" n m)
 
@@ -150,7 +150,7 @@ let dump_solution_cluster s =
    s |> Sy.sm_to_list 
      |> List.map snd 
      |> Misc.groupby key_of_quals
-     |> List.map begin fun (ps::_ as pss) -> 
+     |> List.map begin function [] -> assertf "impossible" | (ps::_ as pss) -> 
          Co.cprintf Co.ol_solve "SolnCluster: preds %d = size %d \n"
            (List.length ps) (List.length pss)
         end

@@ -37,11 +37,12 @@
 module Sort :
   sig
     type t = 
+      | Var  of int
       | Int 
       | Bool 
-      | Ptr   of string
+      | Ptr  of string
       | Obj
-      | Func  of t list
+      | Func of t list
    (* | Array of t * t  *)
    (* | Unint of string *)
 

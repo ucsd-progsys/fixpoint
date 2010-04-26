@@ -36,15 +36,17 @@ module Sort =
   struct
     
     type t = 
+      | Var of int
       | Int 
       | Bool 
-      | Ptr   of string
+      | Ptr  of string
       | Obj
-      | Func  of t list
+      | Func of t list
    (* | Array of t * t  *)
    (* | Unint of string *)
 
     let rec to_string = function
+      | Var i   -> Printf.sprintf "'a%d" i
       | Int     -> "int"
       | Bool    -> "bool"
       | Obj     -> "obj"

@@ -153,8 +153,9 @@ let z3VarType me t =
     | So.Int 	 
     | So.Ptr _    
     | So.Obj  
-    | So.Func _  -> me.tint in 
-  Misc.do_memo me.tydt (lookup me) t t
+    | So.Func _  -> me.tint 
+    | t          -> failure "ERROR: unexpected type %s in z3VarType \n" (So.to_string t)
+  in Misc.do_memo me.tydt (lookup me) t t
     
 let z3ArgTypes me = function 
   | So.Func ts -> (match List.rev_map (z3VarType me) ts with
