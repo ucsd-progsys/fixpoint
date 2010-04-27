@@ -80,7 +80,7 @@ let collect_apps_from_pred p =
   let apps = ref [] in
   let f_exp e =
     match E.unwrap e with
-    | A.App (s, es) -> apps := (s, List.length es) :: !apps
+    | A.App (s, _, es) -> apps := (s, List.length es) :: !apps
     | t -> () in
   P.iter (fun _ -> ()) f_exp p; !apps
 
@@ -178,7 +178,7 @@ and print_expr_as_c ppf expr =
       F.fprintf ppf "%a" A.Constant.print c
   | A.Var v ->
       F.fprintf ppf "%a" Sy.print v
-  | A.App (f, es) ->
+  | A.App (f, _, es) ->
       F.fprintf ppf "%a(%a)" Sy.print f
         (Misc.pprint_many false ", " print_expr_as_c) es
   | A.Bin (e1, op, e2) ->
@@ -192,7 +192,7 @@ and print_expr_as_c ppf expr =
         print_expr_as_c e1
         print_expr_as_c e2
   | A.Fld (s, e) ->
-      print_expr_as_c ppf (A.eApp (Sy.of_string ("field" ^ Sy.to_string s), [e]))
+      print_expr_as_c ppf (A.eApp (Sy.of_string ("field" ^ Sy.to_string s), [], [e]))
 
 let print_var_as_c ppf = function
   | PVar v -> F.fprintf ppf "%a" Sy.print v

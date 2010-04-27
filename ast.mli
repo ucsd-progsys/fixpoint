@@ -37,18 +37,16 @@
 module Sort :
   sig
     type t = 
-      | Var  of int
       | Int 
-      | Bool 
-      | Ptr  of string
-      | Obj
-      | Func of t list
-   (* | Array of t * t  *)
-   (* | Unint of string *)
-
-
+      | Bool                            
+      | Obj                             (* generic uninterpreted object *)
+      | Var of int                      (* type-var *)
+      | Ptr  of string                  (* c-pointer *)
+      | Func of int * t list            (* type-var-arity, in-types @ [out-type] *)
     val to_string : t -> string
     val print : Format.formatter -> t -> unit
+    val concretize : t list -> t -> t   (* [concretize ts t] each tvar in t < len ts output is monotype *)
+    val is_monotype : t -> bool
   end
 
 module Symbol : 
@@ -86,7 +84,7 @@ type expr = expr_int * tag
 and expr_int =
   | Con of Constant.t
   | Var of Symbol.t
-  | App of Symbol.t * expr list
+  | App of Symbol.t * Sort.t list * expr list
   | Bin of expr * bop * expr  
   | Ite of pred * expr * expr
   | Fld of Symbol.t * expr             (* NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
@@ -107,7 +105,7 @@ and pred_int =
 (* Constructors : expressions *)
 val eCon : Constant.t -> expr
 val eVar : Symbol.t -> expr
-val eApp : Symbol.t * expr list -> expr
+val eApp : Symbol.t * Sort.t list * expr list -> expr
 val eBin : expr * bop * expr -> expr 
 val eIte : pred * expr * expr -> expr
 val eFld : Symbol.t * expr -> expr

@@ -19,7 +19,7 @@ let parse_error msg =
 %token TRUE FALSE
 %token LPAREN  RPAREN LB RB LC RC
 %token EQ NE GT GE LT LE
-%token AND OR NOT IMPL FORALL SEMI COLON MID
+%token AND OR NOT IMPL FORALL SEMI COMMA COLON MID
 %token EOF
 %token PLUS
 %token MINUS
@@ -85,7 +85,8 @@ sort:
   | PTR                                 { So.Ptr ""}
   | PTR Id                              { So.Ptr $2 }
   | OBJ                                 { So.Obj } 
-  | FUNC LPAREN sorts RPAREN            { So.Func $3 }
+  | FUNC LPAREN sorts RPAREN            { So.Func (0, $3) }
+  | FUNC LPAREN Num COMMA sorts RPAREN  { So.Func ($3, $5) }
   ;
 
 
@@ -142,7 +143,7 @@ expr:
   | Num 				{ A.eCon (A.Constant.Int $1) }
   | MINUS Num 				{ A.eCon (A.Constant.Int (-1 * $2)) }
   | expr bop expr                       { A.eBin ($1, $2, $3) }
-  | Id LPAREN exprs RPAREN		{ A.eApp ((Sy.of_string $1), $3) }
+  | Id LPAREN sorts COMMA exprs RPAREN  { A.eApp ((Sy.of_string $1), $3, $5) }
   | pred QM expr COLON expr             { A.eIte ($1,$3,$5) }
   | expr DOT Id                         { A.eFld ((Sy.of_string $3), $1) }
   | LPAREN expr RPAREN                  { $2 }
