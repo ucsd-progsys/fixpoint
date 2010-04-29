@@ -30,23 +30,34 @@
  * (2) when destructed via pattern-matching, one must discard the ID
  *)
 
-(**********************************************************)
-(********************** Base Logic  ***********************)
-(**********************************************************)
+(*******************************************************)
+(********************** Base Logic  ********************)
+(*******************************************************)
 
 module Sort :
   sig
-    type t = 
-      | Int 
-      | Bool                            
-      | Obj                             (* generic uninterpreted object *)
-      | Var of int                      (* type-var *)
-      | Ptr  of string                  (* c-pointer *)
-      | Func of int * t list            (* type-var-arity, in-types @ [out-type] *)
-    val to_string : t -> string
-    val print : Format.formatter -> t -> unit
-    val concretize : t list -> t -> t   (* [concretize ts t] each tvar in t < len ts output is monotype *)
-    val is_monotype : t -> bool
+    type loc = 
+      | Loc  of string 
+      | Lvar of int
+
+    type t    
+    type sub
+    
+    val to_string   : t -> string
+    val print       : Format.formatter -> t -> unit
+    
+    val t_obj       : t
+    val t_bool      : t
+    val t_int       : t
+    val t_generic   : int -> t
+    val t_ptr       : loc -> t
+    val t_func      : int -> t list -> t
+    
+    val is_bool     : t -> bool
+    val funtypes_of_t : t -> (t list * t) option
+    
+    val unify       : t list -> t list -> sub option
+    val apply       : sub -> t -> t
   end
 
 module Symbol : 
@@ -84,7 +95,7 @@ type expr = expr_int * tag
 and expr_int =
   | Con of Constant.t
   | Var of Symbol.t
-  | App of Symbol.t * Sort.t list * expr list
+  | App of Symbol.t * expr list
   | Bin of expr * bop * expr  
   | Ite of pred * expr * expr
   | Fld of Symbol.t * expr             (* NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
@@ -105,7 +116,7 @@ and pred_int =
 (* Constructors : expressions *)
 val eCon : Constant.t -> expr
 val eVar : Symbol.t -> expr
-val eApp : Symbol.t * Sort.t list * expr list -> expr
+val eApp : Symbol.t * expr list -> expr
 val eBin : expr * bop * expr -> expr 
 val eIte : pred * expr * expr -> expr
 val eFld : Symbol.t * expr -> expr
@@ -173,8 +184,10 @@ end
 module Qualifier : 
   sig
     type t 
-    val create: Symbol.t option -> Sort.t -> pred -> t 
-    val sort_of_t: t -> Sort.t
-    val pred_of_t: t -> pred
+    val create    : Symbol.t -> Sort.t -> pred -> t 
+    val vv_of_t   : t -> Symbol.t
+    val pred_of_t : t -> pred
+    val sort_of_t : t -> Sort.t
+    val vv_of_t   : t -> Symbol.t
     val print     : Format.formatter -> t -> unit
   end

@@ -97,8 +97,8 @@ let nb_unsatLHS         = ref 0
 (********************** Misc. Constants *********************************)
 (************************************************************************)
 
-let bofi_n = Sy.of_string "_BOFI"
-let iofb_n = Sy.of_string "_IOFB"
+(* let bofi_n = Sy.of_string "_BOFI" *)
+(* let iofb_n = Sy.of_string "_IOFB" *)
 let div_n  = Sy.of_string "_DIV"
 let tag_n  = Sy.of_string "_TAG"
 
@@ -114,15 +114,15 @@ let axioms = []
                        A.pAtom (A.eVar x, A.Eq, A.one)))]
  *)
 
-(* JHALA: TBD these are related to ML and should be in DSOLVE, not here *)
+(* TBD these are related to ML and should be in DSOLVE, not here *)
 let builtins = 
   SM.empty 
-  |> SM.add tag_n  (So.Func (0, [So.Obj; So.Int]))
-  |> SM.add div_n  (So.Func (0, [So.Int; So.Int; So.Int])) 
-  |> SM.add iofb_n (So.Func (0, [So.Bool; So.Int]))
-  |> SM.add bofi_n (So.Func (0, [So.Int; So.Bool]))
+  |> SM.add tag_n  (So.t_func 0 [So.t_obj; So.t_int])
+  |> SM.add div_n  (So.t_func 0 [So.t_int; So.t_int; So.t_int]) 
+(*|> SM.add iofb_n (So.Func (0, [So.Bool; So.Int])) *)
+(*|> SM.add bofi_n (So.Func (0, [So.Int; So.Bool])) *)
 
-let select_t = So.Func (0, [So.Int; So.Int])
+let select_t = So.t_func 0 [So.t_int; So.t_int]
 
 let mk_select, is_select =
   let ss = "SELECT" in
@@ -148,21 +148,12 @@ let funSort env s =
         failure "ERROR: could not type function %s in TPZ3 \n" (Sy.to_string s) 
 
 let z3VarType me t =
-  let lookup me = function
-    | So.Bool 	 -> me.tbool
-    | So.Int 	 
-    | So.Ptr _    
-    | So.Obj  
-    | So.Func _  -> me.tint 
-    | t          -> failure "ERROR: unexpected type %s in z3VarType \n" (So.to_string t)
-  in Misc.do_memo me.tydt (lookup me) t t
+  Misc.do_memo me.tydt begin fun t -> 
+    if So.is_bool t 
+    then me.tbool 
+    else me.tint
+  end t t
     
-let z3ArgTypes me = function 
-  | So.Func (_, ts) ->
-      ts |> List.map (z3VarType me)
-         |> Misc.list_snoc
-  | _ -> assertf "MATCH ERROR: z3ArgTypes" 
-
 (***********************************************************************)
 (********************** Identifiers ************************************)
 (***********************************************************************)
@@ -189,14 +180,17 @@ let z3Bind me x t =
   Z3.mk_string_symbol me.c (fresh "z3b")
 
 let z3Fun me env p t k = 
-  Misc.do_memo me.funt
-    (fun () ->
-      let (rt, ts) = z3ArgTypes me t in
-      let sym      = Z3.mk_string_symbol me.c (fresh "z3f") in
-      let rv       = Z3.mk_func_decl me.c sym (Array.of_list ts) rt in
-      let _        = me.vars <- (Fun (p,k))::me.vars in
-      rv) 
-    () (Fun (p,k))
+  Misc.do_memo me.funt begin fun _ -> 
+    match So.funtypes_of_t t with
+    | None          -> assertf "MATCH ERROR: z3ArgTypes" 
+    | Some (ts, rt) ->
+        let ts = List.map (z3VarType me) ts in
+        let rt = z3VarType me rt in
+        let cf = Z3.mk_string_symbol me.c (fresh "z3f") in
+        let rv = Z3.mk_func_decl me.c cf (Array.of_list ts) rt in
+        let _  = me.vars <- (Fun (p,k))::me.vars in
+        rv
+  end () (Fun (p, k))
 
 (************************************************************************)
 (********************** Pred/Expr Transl ********************************)
@@ -222,6 +216,8 @@ let z3Relf = function
   | _    -> failure "MATCH FAILURE: TPZ3.z3Rel"
 *)
 
+(* TBD: casting int -> bool etc. nonsense, shouldnt happen here 
+
 let rec cast me env a = function 
   | ("bool", "int") -> z3App me env iofb_n [] [a]
   | ("int", "bool") -> z3App me env bofi_n [] [a]
@@ -231,8 +227,9 @@ and z3Cast me env a t =
   let (st, st') = (Z3.get_type me.c a, z3VarType me t) 
                   |> Misc.map_pair (ast_type_to_string me) in
   if st = st' then a else cast me env a (st, st')  
+*)
 
-and z3Rel me env (e1, r, e2) =
+let rec z3Rel me env (e1, r, e2) =
   if A.sortcheck_pred (varSort env) (A.pAtom (e1, r, e2)) then 
     let a1, a2 = Misc.map_pair (z3Exp me env) (e1, e2) in 
     match r with 
@@ -248,24 +245,18 @@ and z3Rel me env (e1, r, e2) =
     assertf "ERROR: type error in z3Rel"
   end
 
-and z3App me env p ts zes =
-  let t = funSort env p in
-  match So.concretize ts t with
-  | So.Func (n, ft) as t when n = List.length ts ->
-      let cf  = z3Fun me env p t (List.length zes) in
-      let zts = Misc.chop_last ft in
-      let zes = List.map2 (z3Cast me env) zes zts in
-      Z3.mk_app me.c cf (Array.of_list zes)
-  | _ -> 
-      failure "ERROR: TPZ3.z3App p=%s f=%s" (Sy.to_string p) (So.to_string t)
+and z3App me env p zes =
+  let t  = funSort env p in
+  let cf = z3Fun me env p t (List.length zes) in
+  Z3.mk_app me.c cf (Array.of_list zes)
 
 and z3Exp me env = function
   | A.Con (A.Constant.Int i), _ -> 
       Z3.mk_int me.c i me.tint 
   | A.Var s, _ -> 
       z3Var me env s
-  | A.App (f, ts, es), _ -> 
-      z3App me env f ts (List.map (z3Exp me env) es)
+  | A.App (f, es), _ -> 
+      z3App me env f (List.map (z3Exp me env) es)
   | A.Bin (e1, A.Plus, e2), _ ->
       Z3.mk_add me.c (Array.map (z3Exp me env) [|e1; e2|])
   | A.Bin (e1, A.Minus, e2), _ ->
@@ -275,11 +266,11 @@ and z3Exp me env = function
   | A.Bin (e1, A.Times, e2), _ ->
       Z3.mk_mul me.c (Array.map (z3Exp me env) [|e1; e2|])
   | A.Bin (e1, A.Div, e2), _ -> 
-      z3App me env div_n [] (List.map (z3Exp me env) [e1;e2])  
+      z3App me env div_n (List.map (z3Exp me env) [e1;e2])  
   | A.Ite (e1, e2, e3), _ -> 
       Z3.mk_ite me.c (z3Pred me env e1) (z3Exp me env e2) (z3Exp me env e3)
   | A.Fld (f, e), _ -> 
-      z3App me env (mk_select f) [] [z3Exp me env e] (** REQUIRES: disjoint field names *)
+      z3App me env (mk_select f) [z3Exp me env e] (** REQUIRES: disjoint field names *)
 
 and z3Pred me env = function
   | A.True, _ -> 

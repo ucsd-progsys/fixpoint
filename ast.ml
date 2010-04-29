@@ -34,27 +34,55 @@ open Misc.Ops
 
 module Sort = 
   struct
+    type loc = 
+      | Loc  of string 
+      | Lvar of int
+
     type t = 
       | Int 
       | Bool                            
-      | Obj                     (* generic uninterpreted object *)
+      | Obj                     
       | Var of int              (* type-var *)
-      | Ptr  of string          (* c-pointer *)
+      | Ptr of loc              (* c-pointer *)
       | Func of int * t list    (* type-var-arity, in-types @ [out-type] *)
+
+    type sub = { locs: (int * string) list; 
+                 vars: (int * t) list; }
+
+    (*
+    let is_loc_string s = 
+      let re = Str.regexp "[a-zA-Z]+[0-9]+" in 
+      Str.string_match re s 0
+    
+    let loc_of_string = fun s -> let _ = asserts (is_loc_string s) in Loc s
+    let loc_of_index  = fun i -> Lvar i
+    *)
+
+    let t_obj       = Obj
+    let t_bool      = Bool
+    let t_int       = Int
+    let t_generic   = fun i -> let _ = asserts (0 <= i) "t_generic" in Var i
+    let t_ptr       = fun l -> Ptr l
+    let t_func      = fun i ts -> Func (i, ts)
+
+    let loc_to_string = function
+      | Loc s  -> s
+      | Lvar i -> string_of_int i
 
     let rec to_string = function
       | Var i        -> Printf.sprintf "'a_%d" i
       | Int          -> "int"
       | Bool         -> "bool"
       | Obj          -> "obj"
-      | Ptr s        -> Printf.sprintf "ptr(%s)" s
+      | Ptr l        -> Printf.sprintf "ptr(%s)" (loc_to_string l) 
       | Func (n, ts) -> ts |> List.map to_string 
                            |> String.concat " ; " 
                            |> Printf.sprintf "func(%d, [%s])" n 
 
     let to_string_short = function
-      | Func _  -> "func"
-      | t       -> to_string t      
+      | Func _ -> "func"
+   (* | Ptr _  -> "ptr"  *)
+      | t      -> to_string t      
 
     let print fmt t = 
       t |> to_string 
@@ -74,6 +102,15 @@ module Sort =
           | t     -> t
       end
 
+    let is_bool = function
+      | Bool -> true
+      | _    -> false
+
+    let funtypes_of_t = function
+      | Func (_, ts) -> Some (ts |> Misc.list_snoc |> Misc.swap)
+      | _            -> None
+
+    (*
     let concretize ts = function 
       | Func (n, ats) when n = List.length ts -> 
           Func (n, List.map (subs_tvar ts) ats)
@@ -82,6 +119,10 @@ module Sort =
 
     let is_monotype t = 
       fold (fun b t -> b && (match t with Var _ -> false | _ -> true)) true t
+    *)
+
+    let unify ts ts' = failwith "TBD"
+    let apply s t    = failwith "TBD"
 
   end
 
@@ -162,7 +203,7 @@ type expr = expr_int * tag
 and expr_int =
   | Con of Constant.t
   | Var of Symbol.t
-  | App of Symbol.t * Sort.t list * expr list
+  | App of Symbol.t * expr list
   | Bin of expr * bop * expr  
   | Ite of pred * expr * expr
   | Fld of Symbol.t * expr             (* NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
@@ -215,9 +256,8 @@ module ExprHashconsStruct = struct
           c1 = c2
       | Var x1, Var x2 -> 
           x1 = x2
-      | App (s1, t1s, e1s), App (s2, t2s, e2s) ->
+      | App (s1, e1s), App (s2, e2s) ->
 	  (s1 = s2) && 
-          (List.for_all2 (=) t1s t2s) && 
           (try List.for_all2 (==) e1s e2s with _ -> false)
       | Bin (e1, op1, e1'), Bin (e2, op2, e2') ->
           op1 = op2 && e1 == e2 && e1' == e2'
@@ -233,7 +273,7 @@ module ExprHashconsStruct = struct
         x
     | Var x -> 
         Hashtbl.hash x
-    | App (s, _, es) -> 
+    | App (s, es) -> 
         list_hash ((Hashtbl.hash s) + 1) es 
     | Bin ((_,id1), op, (_,id2)) -> 
         (Hashtbl.hash op) + 1 + (2 * id1) + id2 
@@ -302,7 +342,7 @@ let one  = ewr (Con (Constant.Int(1)))
 (* Constructors: Expressions *)
 let eCon = fun c -> ewr (Con c)
 let eVar = fun s -> ewr (Var s)
-let eApp = fun (s, ts, es) -> ewr (App (s, ts, es))
+let eApp = fun (s, es) -> ewr (App (s, es))
 let eBin = fun (e1, op, e2) -> ewr (Bin (e1, op, e2)) 
 let eIte = fun (ip,te,ee) -> ewr (Ite(ip,te,ee))
 let eFld = fun (s,e) -> ewr (Fld (s,e))
@@ -358,10 +398,9 @@ let rec expr_to_string e =
       Constant.to_string c
   | Var s -> 
       Symbol.to_string s
-  | App (s, ts, es) ->
-      Printf.sprintf "%s([%s], [%s])" 
+  | App (s, es) ->
+      Printf.sprintf "%s([%s])" 
         (Symbol.to_string s)
-        (ts |> List.map Sort.to_string |> String.concat "; ") 
         (es |> List.map expr_to_string |> String.concat "; ")
   | Bin (e1, op, e2) ->
       Printf.sprintf "(%s %s %s)" 
@@ -428,8 +467,8 @@ and expr_map hp he fp fe e =
         match euw e with
         | Con _ | Var _ as e1 -> 
             e1
-        | App (f, ts, es) ->
-            App (f, ts, List.map em es)
+        | App (f, es) ->
+            App (f, List.map em es)
         | Bin (e1, op, e2) ->
             Bin (em e1, op, em e2)
         | Ite (ip, te, ee) ->
@@ -456,7 +495,7 @@ let rec pred_iter fp fe pw =
 and expr_iter fp fe ew =
   begin match puw ew with
     | Con _ | Var _    -> ()
-    | App (_, _, es)   -> List.iter (expr_iter fp fe) es
+    | App (_, es)   -> List.iter (expr_iter fp fe) es
     | Bin (e1, _, e2)  -> expr_iter fp fe e1; expr_iter fp fe e2
     | Ite (ip, te, ee) -> pred_iter fp fe ip; expr_iter fp fe te; expr_iter fp fe ee
     | Fld (_, e1)      -> expr_iter fp fe e1
@@ -499,7 +538,7 @@ module Expression =
       let xs = ref Symbol.SSet.empty in
       iter un begin function 
         | (Var x), _ 
-        | (App (x,_,_)),_ -> xs := Symbol.SSet.add x !xs
+        | (App (x,_)),_ -> xs := Symbol.SSet.add x !xs
         | _               -> ()
       end e;
       Symbol.SSet.elements !xs |> List.sort compare
@@ -536,7 +575,7 @@ module Predicate =
         let xs = ref Symbol.SSet.empty in
         iter un begin function 
           | (Var x), _ 
-          | (App (x,_,_)),_ -> xs := Symbol.SSet.add x !xs;
+          | (App (x,_)),_ -> xs := Symbol.SSet.add x !xs;
           | _               -> ()
         end p; 
         Symbol.SSet.elements !xs |> List.sort compare
@@ -633,9 +672,9 @@ let rec fixdiv = function
       pNot (fixdiv p) 
   | p -> p
 
-(**********************************************************************************)
-(*************** Type Checking Expressions and Predicates *************************)
-(**********************************************************************************)
+(***************************************************************************)
+(************* Type Checking Expressions and Predicates ********************)
+(***************************************************************************)
 
 let rec sortcheck_expr f e = 
   match euw e with
@@ -653,19 +692,18 @@ let rec sortcheck_expr f e =
         | _ -> None
       else None
   
-  | App (uf, ts, es) ->
+  | App (uf, es) ->
       uf |> Misc.do_catchf ("ERROR: unknown uf = "^uf) f
-         |> Sort.concretize ts 
+         |> Sort.funtypes_of_t 
          |> begin function 
-             | Sort.Func (_, ts') -> 
-                 let o_t, i_ts = Misc.list_snoc ts' in
-                 let _         = assert (List.length es = List.length i_ts) in
-                 let e_ts      = List.map (sortcheck_expr f) es in
-                 if List.for_all2 (fun ti te -> Some ti = te) i_ts e_ts then 
-                   Some o_t 
-                 else 
-                   None
-             | _ -> None
+             | None -> None 
+             | Some (i_ts, o_t) -> 
+                 let _    = assert (List.length es = List.length i_ts) in
+                 let e_ts = List.map (sortcheck_expr f) es in
+                 begin match Sort.unify i_ts e_ts with
+                 | None   -> None
+                 | Some s -> Some (Sort.apply s o_t)
+                 end
             end
   
   | _ -> None
@@ -774,33 +812,35 @@ let rec simplify_pred ((p, _) as pred) =
     | _ -> pred
 
 
-(********************************************************************************)
-(*********************************** Qualifiers *********************************)
-(********************************************************************************)
+(**************************************************************************)
+(***************************** Qualifiers *********************************)
+(**************************************************************************)
 
 module Qualifier = struct
   
-  type t = Sort.t * pred
+  type t = Symbol.t * Sort.t * pred
   
-  let sort_of_t = fst 
-  
-  let pred_of_t = snd 
-  
+  let vv_of_t   = fst3 
+  let sort_of_t = snd3
+  let pred_of_t = thd3
+ 
+  (*
   let create vo t p =
     match vo with 
     | None -> 
         (t, p)
     | Some v ->
       (t, Predicate.subst p v (eVar (Symbol.value_variable t)))
+  *)
 
-  let print ppf (t, p) = 
+  let create = fun v t p -> (v, t, p)
+
+  let print ppf (v, t, p) = 
     Format.fprintf ppf "qualif qq(%a:%a):%a \n" 
-      Symbol.print (Symbol.value_variable t)
+      Symbol.print v
       Sort.print t
       Predicate.print p
 end
-
-
 
 (* {{{
 let rec expr_subst hp he e x e' =

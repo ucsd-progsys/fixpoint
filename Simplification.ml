@@ -29,9 +29,9 @@ let rec expr_apply_defs edefs pdefs ((e, _) as expr) =
 		  expr'
 	      with Not_found -> expr
 	    end
-	| Ast.App (v, ts, es) -> 
+	| Ast.App (v, es) -> 
 	    let edefs' = Sy.SMap.remove v edefs in
-	      Ast.eApp (v, ts, List.map (expr_apply_defs edefs' pdefs) es)
+	      Ast.eApp (v, List.map (expr_apply_defs edefs' pdefs) es)
 	| Ast.Bin (e1, op, e2) -> 
 	    Ast.eBin (expr_apply_defs edefs pdefs e1, op, expr_apply_defs edefs pdefs e2)
 	| Ast.Ite (p, e1, e2) -> 

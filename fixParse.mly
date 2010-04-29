@@ -63,8 +63,7 @@ def:
   | WF  COLON wf                        { C.Wfc $3 }
   | SOL COLON Id ASGN preds             { C.Sol ((Sy.of_string $3), $5) }
   | QUL Id LPAREN Id COLON sort RPAREN COLON pred  
-                                        { let v = Sy.of_string $4 in
-                                          C.Qul (A.Qualifier.create (Some v) $6 $9) }
+                                        { C.Qul (A.Qualifier.create (Sy.of_string $4) $6 $9) }
   | dep                                 { C.Dep $1 }
   ;
 
@@ -78,15 +77,13 @@ sortsne:
   | sort SEMI sortsne                   { $1 :: $3 }
   ;
 
-
 sort:
-  | INT                                 { So.Int }
-  | BOOL                                { So.Bool }
-  | PTR                                 { So.Ptr ""}
-  | PTR Id                              { So.Ptr $2 }
-  | OBJ                                 { So.Obj } 
-  | FUNC LPAREN sorts RPAREN            { So.Func (0, $3) }
-  | FUNC LPAREN Num COMMA sorts RPAREN  { So.Func ($3, $5) }
+  | INT                                 { So.t_int }
+  | BOOL                                { So.t_bool }
+  | PTR                                 { So.t_ptr (So.Lvar 0) }
+  | OBJ                                 { So.t_obj } 
+  | FUNC LPAREN sorts RPAREN            { So.t_func 0 $3 }
+  | FUNC LPAREN Num COMMA sorts RPAREN  { So.t_func $3 $5 }
   ;
 
 
@@ -143,7 +140,7 @@ expr:
   | Num 				{ A.eCon (A.Constant.Int $1) }
   | MINUS Num 				{ A.eCon (A.Constant.Int (-1 * $2)) }
   | expr bop expr                       { A.eBin ($1, $2, $3) }
-  | Id LPAREN sorts COMMA exprs RPAREN  { A.eApp ((Sy.of_string $1), $3, $5) }
+  | Id LPAREN  exprs RPAREN             { A.eApp ((Sy.of_string $1), $3) }
   | pred QM expr COLON expr             { A.eIte ($1,$3,$5) }
   | expr DOT Id                         { A.eFld ((Sy.of_string $3), $1) }
   | LPAREN expr RPAREN                  { $2 }

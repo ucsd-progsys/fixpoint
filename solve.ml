@@ -28,7 +28,7 @@ module A  = Ast
 module Co = Constants
 module P  = A.Predicate
 module E  = A.Expression
-module S  = A.Sort
+module So = A.Sort
 module Q  = A.Qualifier
 module PH = A.Predicate.Hash
 module Sy = A.Symbol
@@ -212,26 +212,29 @@ let varmatch (x, y) =
   else true
 
 let valid_binding xys = 
-  (dupfree_binding xys) && 
-  (List.for_all varmatch xys)
+  (dupfree_binding xys) && (List.for_all varmatch xys)
 
 let valid_bindings ys x = 
   ys |> List.map (fun y -> (x, y))
      |> List.filter varmatch 
 
-let inst_qual ys (q : Q.t) : Q.t list =
-  let p    = Q.pred_of_t q in
-  let t    = Q.sort_of_t q in
-  let xs   = p |> P.support                        (* vars of q *)
-               |> List.filter Sy.is_wild           (* placevs of q *)
-               |> Misc.sort_and_compact in         (* duplicate free placevs *)
-  match xs with [] -> [q] | _ ->
-    let xyss = List.map (valid_bindings ys) xs     (* candidate bindings *)
-               |> Misc.product                     (* generate combinations *) 
-               |> List.filter valid_binding        (* remove bogus bindings *)
-               |> List.map (List.map (Misc.app_snd A.eVar)) in (* instantiations *)
-    let ps'  = List.rev_map (P.substs p) xyss in
-    List.map (Q.create None t) ps'
+let inst_qual ys t' (q : Q.t) : Q.t list =
+  let v  = Q.vv_of_t   q in
+  let p  = Q.pred_of_t q in
+  let v' = Sy.value_variable t' in
+  let p' = P.subst p v (A.eVar v') in
+  match P.support p' |> List.filter Sy.is_wild with
+  | [] -> 
+      [Q.create v' t' p']
+  | xs -> 
+      xs
+      |> Misc.sort_and_compact
+      |> List.map (valid_bindings ys)              (* candidate bindings    *)
+      |> Misc.product                              (* generate combinations *) 
+      |> List.filter valid_binding                 (* remove bogus bindings *)
+      |> List.map (List.map (Misc.app_snd A.eVar)) (* instantiations        *)
+      |> List.rev_map (P.substs p')                (* substituted preds     *)
+      |> List.map (Q.create v' t' )                (* qualifiers            *)
 
 let inst_ext (qs : Q.t list) s wf = 
   let r    = C.reft_of_wf wf in
@@ -239,8 +242,10 @@ let inst_ext (qs : Q.t list) s wf =
   let s    = List.fold_left (fun s k -> C.sol_add s k [] |> snd) s ks in
   let env  = C.env_of_wf wf in
   let ys   = SM.fold (fun y _ ys -> y::ys) env [] in
-  let env' = SM.add (fst3 r) r env in 
-  qs |> Misc.flap (inst_qual ys)
+  let env' = SM.add (fst3 r) r env in
+  let t    = snd3 r in
+  qs |> List.filter (fun q -> not (So.unify [t] [Q.sort_of_t q] = None))
+     |> Misc.flap (inst_qual ys (snd3 r))
      |> Misc.filter (wellformed env')
      |> Misc.map Q.pred_of_t 
      |> Misc.cross_product ks 
