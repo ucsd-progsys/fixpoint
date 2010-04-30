@@ -121,8 +121,39 @@ module Sort =
       fold (fun b t -> b && (match t with Var _ -> false | _ -> true)) true t
     *)
 
-    let unify ts ts' = failwith "TBD"
-    let apply s t    = failwith "TBD"
+
+    let lookup_var = fun s i -> try Some (List.assoc i s.vars) with Not_found -> None
+    let lookup_loc = fun s j -> try Some (List.assoc j s.locs) with Not_found -> None
+    
+    let unifyt s = function 
+      | (Var i), ct -> 
+          begin match lookup_var s i with 
+          | Some ct' when ct = ct' -> Some s
+          | Some _                 -> None
+          | None                   -> Some {s with vars = (i,ct) :: s.vars}
+          end
+      | Ptr (Lvar j), Ptr (Loc cl) ->
+          begin match lookup_loc s j with 
+          | Some cl' when cl' = cl -> Some s
+          | Some _                 -> None
+          | None                   -> Some {s with locs = (j,cl) :: s.locs}
+          end
+      | Int, Int | Bool, Bool | Obj, Obj -> Some s
+      | _        -> None
+    
+    let unify ats cts =
+      let _ = assert (List.length ats = List.length cts) in
+      List.combine ats cts 
+      |> Misc.maybe_fold unifyt {vars = []; locs = []}
+
+
+
+    let apply s = 
+      map begin fun t -> match t with
+          | Var i        -> (match lookup_var s i with Some t' -> t' | _ -> t)
+          | Ptr (Lvar j) -> (match lookup_loc s j with Some l -> Ptr (Loc l) | _ -> t)
+          | _            -> t
+      end
 
   end
 
@@ -699,11 +730,14 @@ let rec sortcheck_expr f e =
              | None -> None 
              | Some (i_ts, o_t) -> 
                  let _    = assert (List.length es = List.length i_ts) in
-                 let e_ts = List.map (sortcheck_expr f) es in
-                 begin match Sort.unify i_ts e_ts with
-                 | None   -> None
-                 | Some s -> Some (Sort.apply s o_t)
-                 end
+                 let e_ts = es |> List.map (sortcheck_expr f) |> Misc.map_partial id in
+                 if List.length e_ts <> List.length i_ts then 
+                   None 
+                 else
+                   begin match Sort.unify i_ts e_ts with
+                   | None   -> None
+                   | Some s -> Some (Sort.apply s o_t)
+                   end
             end
   
   | _ -> None
