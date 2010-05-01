@@ -30,7 +30,7 @@ module A  = Ast
 module Co = Constants
 module P  = A.Predicate
 module E  = A.Expression
-module S  = A.Sort
+module So = A.Sort
 module Q  = A.Qualifier
 module PH = A.Predicate.Hash
 module Sy = A.Symbol
@@ -46,7 +46,6 @@ let mydebug = false
 (***************************************************************)
 
 exception Out_of_scope of Ast.Symbol.t 
-
 
 
 (* 1. check ids are distinct, return max id *)
@@ -75,8 +74,12 @@ let phase3 cs =
       let _ = Format.printf "Invalid Constraints 3a in \n %a " (C.print_t None) c in
       let _ = 0/0 in () in
     SM.iter begin fun x (_,t,_) ->
-      try asserts (t = (Hashtbl.find memo x)) "Invalid Constraints 3b: %d" id
-      with Not_found -> Hashtbl.replace memo x t
+      if Hashtbl.mem memo x then 
+        let xt = Hashtbl.find memo x in
+        asserts (t = xt) "Invalid Constraints 3b: %d (%s is %s and %s)" 
+          id (Sy.to_string x) (So.to_string t) (So.to_string xt)
+      else 
+        Hashtbl.replace memo x t
     end env
   end cs;
   cs

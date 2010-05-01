@@ -81,7 +81,7 @@ module Sort =
 
     let to_string_short = function
       | Func _ -> "func"
-   (* | Ptr _  -> "ptr"  *)
+   (* | Ptr _  -> "ptr" *)
       | t      -> to_string t      
 
     let print fmt t = 
@@ -109,6 +109,11 @@ module Sort =
     let funtypes_of_t = function
       | Func (_, ts) -> Some (ts |> Misc.list_snoc |> Misc.swap)
       | _            -> None
+
+    let compat t1 t2 = match t1, t2 with
+      | (Ptr _), (Ptr _) -> true
+      | _                -> t1 = t2
+
 
     (*
     let concretize ts = function 

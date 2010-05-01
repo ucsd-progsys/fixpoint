@@ -55,7 +55,8 @@ module Sort :
     
     val is_bool     : t -> bool
     val funtypes_of_t : t -> (t list * t) option
-    
+ 
+ (* val compat      : t -> t -> bool *)
     val unify       : t list -> t list -> sub option
     val apply       : sub -> t -> t
   end
