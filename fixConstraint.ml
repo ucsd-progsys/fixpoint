@@ -39,7 +39,7 @@ type dep  = Adp of tag * tag | Ddp of tag * tag | Ddp_s of tag | Ddp_t of tag
 
 type subs = (Sy.t * A.expr) list                         (* [x,e] *)
 type refa = Conc of A.pred | Kvar of subs * Sy.t
-type reft = Sy.t * A.Sort.t * (refa list)                (* { VV: t | [ra] } *)
+type reft = Sy.t * A.Sort.t * refa list                (* { VV: t | [ra] } *)
 type envt = reft SM.t
 type soln = A.pred list SM.t
 type wf   = envt * reft * (id option)

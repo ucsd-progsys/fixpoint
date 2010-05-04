@@ -181,7 +181,7 @@ let z3Bind me x t =
 
 let z3Fun me env p t k = 
   Misc.do_memo me.funt begin fun _ -> 
-    match So.funtypes_of_t t with
+    match So.func_of_t t with
     | None          -> assertf "MATCH ERROR: z3ArgTypes" 
     | Some (ts, rt) ->
         let ts = List.map (z3VarType me) ts in

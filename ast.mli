@@ -52,9 +52,10 @@ module Sort :
     val t_generic   : int -> t
     val t_ptr       : loc -> t
     val t_func      : int -> t list -> t
-    
+   
     val is_bool     : t -> bool
-    val funtypes_of_t : t -> (t list * t) option
+    val func_of_t   : t -> (t list * t) option
+    val ptr_of_t    : t -> loc option
  
  (* val compat      : t -> t -> bool *)
     val unify       : t list -> t list -> sub option

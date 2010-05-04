@@ -106,9 +106,13 @@ module Sort =
       | Bool -> true
       | _    -> false
 
-    let funtypes_of_t = function
+    let func_of_t = function
       | Func (_, ts) -> Some (ts |> Misc.list_snoc |> Misc.swap)
       | _            -> None
+
+    let ptr_of_t = function
+      | Ptr l -> Some l
+      | _     -> None
 
     let compat t1 t2 = match t1, t2 with
       | (Ptr _), (Ptr _) -> true
@@ -730,7 +734,7 @@ let rec sortcheck_expr f e =
   
   | App (uf, es) ->
       uf |> Misc.do_catchf ("ERROR: unknown uf = "^uf) f
-         |> Sort.funtypes_of_t 
+         |> Sort.func_of_t 
          |> begin function 
              | None -> None 
              | Some (i_ts, o_t) -> 
