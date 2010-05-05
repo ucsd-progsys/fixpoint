@@ -143,6 +143,7 @@ expr:
   | Id LPAREN  exprs RPAREN             { A.eApp ((Sy.of_string $1), $3) }
   | pred QM expr COLON expr             { A.eIte ($1,$3,$5) }
   | expr DOT Id                         { A.eFld ((Sy.of_string $3), $1) }
+  | LPAREN expr COLON sort RPAREN       { A.eCst ($2, $4) }
   | LPAREN expr RPAREN                  { $2 }
   ;
 

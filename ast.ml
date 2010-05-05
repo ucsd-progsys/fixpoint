@@ -45,7 +45,7 @@ module Sort =
       | Var of int              (* type-var *)
       | Ptr of loc              (* c-pointer *)
       | Func of int * t list    (* type-var-arity, in-types @ [out-type] *)
-
+    
     type sub = { locs: (int * string) list; 
                  vars: (int * t) list; }
 
@@ -115,9 +115,10 @@ module Sort =
       | _     -> None
 
     let compat t1 t2 = match t1, t2 with
-      | (Ptr _), (Ptr _) -> true
-      | _                -> t1 = t2
-
+      | Int, (Ptr _) -> true
+      | (Ptr _), Int -> true
+      | _            -> t1 = t2
+    
 
     (*
     let concretize ts = function 
@@ -247,7 +248,8 @@ and expr_int =
   | Bin of expr * bop * expr  
   | Ite of pred * expr * expr
   | Fld of Symbol.t * expr             (* NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
-      
+  | Cst of expr * Sort.t 
+
 and pred = pred_int * tag
 
 and pred_int =
@@ -321,6 +323,8 @@ module ExprHashconsStruct = struct
         32 + (4 * id1) + (2 * id2) + id3
     | Fld (s, (_,id)) ->
         (Hashtbl.hash s) + 12 + id
+    | Cst ((_, id), t) ->
+        id + Hashtbl.hash (Sort.to_string t)
 end
   
 module ExprHashcons = Hashcons(ExprHashconsStruct)
@@ -386,6 +390,8 @@ let eApp = fun (s, es) -> ewr (App (s, es))
 let eBin = fun (e1, op, e2) -> ewr (Bin (e1, op, e2)) 
 let eIte = fun (ip,te,ee) -> ewr (Ite(ip,te,ee))
 let eFld = fun (s,e) -> ewr (Fld (s,e))
+let eCst = fun (e,t) -> ewr (Cst (e, t))
+
 let eTim = function 
   | (Con (Constant.Int n1), _), (Con (Constant.Int n2), _) -> 
       ewr (Con (Constant.Int (n1 * n2)))
@@ -450,7 +456,9 @@ let rec expr_to_string e =
         (pred_to_string ip) (expr_to_string te) (expr_to_string ee)
   | Fld(s,e) -> 
       Printf.sprintf "%s.%s" (expr_to_string e) s 
-     
+  | Cst(e,t) ->
+      Printf.sprintf "(%s : %s)" (expr_to_string e) (Sort.to_string t)
+
 and pred_to_string p = 
   match puw p with
     | True -> 
@@ -514,7 +522,9 @@ and expr_map hp he fp fe e =
         | Ite (ip, te, ee) ->
             Ite (pred_map hp he fp fe ip, em te, em ee) 
         | Fld (s, e1) -> 
-            Fld (s, em e1) in
+            Fld (s, em e1) 
+        | Cst (e1, t) -> 
+            Cst (em e1, t) in
       let rv = fe (ewr e') in
       let _  = ExprHash.add he e rv in
       rv
@@ -539,6 +549,7 @@ and expr_iter fp fe ew =
     | Bin (e1, _, e2)  -> expr_iter fp fe e1; expr_iter fp fe e2
     | Ite (ip, te, ee) -> pred_iter fp fe ip; expr_iter fp fe te; expr_iter fp fe ee
     | Fld (_, e1)      -> expr_iter fp fe e1
+    | Cst (e1, _)      -> expr_iter fp fe e1
   end;
   fe ew
 
@@ -748,8 +759,12 @@ let rec sortcheck_expr f e =
                    | Some s -> Some (Sort.apply s o_t)
                    end
             end
-  
-  | _ -> None
+
+  | Cst (e1, t) ->
+      begin match sortcheck_expr f e1 with
+            | Some t1 when Sort.compat t t1 -> Some t
+            | _                             -> None 
+      end
 
 and sortcheck_op f (e1, op, e2) = 
   match Misc.map_pair (sortcheck_expr f) (e1, e2) with

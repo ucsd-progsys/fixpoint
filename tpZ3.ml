@@ -271,6 +271,8 @@ and z3Exp me env = function
       Z3.mk_ite me.c (z3Pred me env e1) (z3Exp me env e2) (z3Exp me env e3)
   | A.Fld (f, e), _ -> 
       z3App me env (mk_select f) [z3Exp me env e] (** REQUIRES: disjoint field names *)
+  | A.Cst (e, _), _ -> 
+      z3Exp me env e
 
 and z3Pred me env = function
   | A.True, _ -> 

@@ -101,7 +101,8 @@ and expr_int =
   | Bin of expr * bop * expr  
   | Ite of pred * expr * expr
   | Fld of Symbol.t * expr             (* NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
-      
+  | Cst of expr * Sort.t   
+
 and pred = pred_int * tag
 
 and pred_int =
@@ -122,7 +123,7 @@ val eApp : Symbol.t * expr list -> expr
 val eBin : expr * bop * expr -> expr 
 val eIte : pred * expr * expr -> expr
 val eFld : Symbol.t * expr -> expr
-
+val eCst : expr * Sort.t -> expr
 (* Constructors : predicates *)
 val pTrue  : pred
 val pFalse : pred
