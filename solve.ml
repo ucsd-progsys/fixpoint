@@ -223,6 +223,7 @@ let inst_qual ys t' (q : Q.t) : Q.t list =
   let p  = Q.pred_of_t q in
   let v' = Sy.value_variable t' in
   let p' = P.subst p v (A.eVar v') in
+  begin
   match P.support p' |> List.filter Sy.is_wild with
   | [] -> 
       [Q.create v' t' p']
@@ -235,6 +236,8 @@ let inst_qual ys t' (q : Q.t) : Q.t list =
       |> List.map (List.map (Misc.app_snd A.eVar)) (* instantiations        *)
       |> List.rev_map (P.substs p')                (* substituted preds     *)
       |> List.map (Q.create v' t' )                (* qualifiers            *)
+  end
+(*  >> F.printf "inst_qual q = %a: \n%a" Q.print q (Misc.pprint_many true "" Q.print) *)
 
 let inst_ext (qs : Q.t list) s wf = 
   let r    = C.reft_of_wf wf in
@@ -253,10 +256,8 @@ let inst_ext (qs : Q.t list) s wf =
      |> snd
 
 let inst wfs qs s =
-  (* Co.bprintf mydebug "%a" (Misc.pprint_many true "\n" (C.print_wf None)) wfs; *)
-  let rv = List.fold_left (inst_ext qs) s wfs in
-  let _ = Printf.printf "varmatch_ctr = %d \n" !varmatch_ctr in
-  rv
+  wfs |> List.fold_left (inst_ext qs) s
+      >> (fun _ -> Printf.printf "varmatch_ctr = %d \n" !varmatch_ctr)
 
 (***************************************************************)
 (******************** Iterative Refinement *********************)

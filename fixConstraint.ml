@@ -59,7 +59,7 @@ type deft = Srt of Ast.Sort.t
           | Qul of Ast.Qualifier.t
           | Dep of dep
 
-let mydebug = true
+let mydebug = false 
 
 (*************************************************************)
 (************************** Misc.  ***************************)

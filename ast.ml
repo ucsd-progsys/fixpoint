@@ -49,6 +49,7 @@ module Sort =
     type sub = { locs: (int * string) list; 
                  vars: (int * t) list; }
 
+    
     (*
     let is_loc_string s = 
       let re = Str.regexp "[a-zA-Z]+[0-9]+" in 
@@ -87,6 +88,13 @@ module Sort =
     let print fmt t = 
       t |> to_string 
         |> Format.fprintf fmt "%s"
+
+    let sub_to_string {locs = ls; vars = vs} =
+      let lts = fun (i, s) -> Printf.sprintf "(%d := %s)" i s in
+      let vts = fun (i, t) -> Printf.sprintf "(%d := %s)" i (to_string t) in
+      Printf.sprintf "locs := %s, vars := %s \n" 
+        (String.concat "" (List.map lts ls)) 
+        (String.concat "" (List.map vts vs)) 
 
     let rec map f = function 
       | Func (n, ts) -> Func (n, List.map (map f) ts)
@@ -142,21 +150,29 @@ module Sort =
           | Some _                 -> None
           | None                   -> Some {s with vars = (i,ct) :: s.vars}
           end
-      | Ptr (Lvar j), Ptr (Loc cl) ->
+    
+     | Ptr (Loc cl), Ptr (Lvar j)
+     | Ptr (Lvar j), Ptr (Loc cl) ->
           begin match lookup_loc s j with 
           | Some cl' when cl' = cl -> Some s
           | Some _                 -> None
           | None                   -> Some {s with locs = (j,cl) :: s.locs}
           end
-      | Int, Int | Bool, Bool | Obj, Obj -> Some s
+
+      | Int, Int | Bool, Bool | Obj, Obj -> 
+          Some s
+      
       | _        -> None
     
     let unify ats cts =
-      let _ = assert (List.length ats = List.length cts) in
+      let _ = asserts (List.length ats = List.length cts) "ERROR: unify sorts" in
       List.combine ats cts 
       |> Misc.maybe_fold unifyt {vars = []; locs = []}
-
-
+(*      >> (fun so -> Printf.printf "unify: [%s] ~ [%s] = %s \n" 
+                      (String.concat "; " (List.map to_string ats))
+                      (String.concat "; " (List.map to_string cts))
+                      (match so with None -> "NONE" | Some s -> sub_to_string s))
+*)
 
     let apply s = 
       map begin fun t -> match t with
