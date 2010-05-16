@@ -31,24 +31,26 @@ let parse_error msg =
 %token ENV GRD LHS RHS REF
 
 %start defs 
+%start sols
 
-%type <FixConstraint.deft list>    defs
-%type <FixConstraint.deft>         def
-%type <So.t list>               sorts, sortsne 
-%type <So.t>                    sort
-%type <(Sy.t * So.t) list>      binds, bindsne 
-%type <A.pred list>             preds, predsne
-%type <A.pred>                  pred
-%type <A.expr list>             exprs, exprsne
-%type <A.expr>                  expr
-%type <A.brel>                  brel 
-%type <A.bop>                   bop 
-%type <C.t>                     cstr
-%type <C.envt>                  env
-%type <C.reft>                  reft
-%type <C.refa list>             refas, refasne
-%type <C.refa>                  refa
-%type <C.subs>                  subs
+%type <FixConstraint.deft list>              defs
+%type <FixConstraint.deft>                   def
+%type <(Ast.Symbol.t * Ast.pred list) list>  sols
+%type <So.t list>                            sorts, sortsne 
+%type <So.t>                                 sort
+%type <(Sy.t * So.t) list>                   binds, bindsne 
+%type <A.pred list>                          preds, predsne
+%type <A.pred>                               pred
+%type <A.expr list>                          exprs, exprsne
+%type <A.expr>                               expr
+%type <A.brel>                               brel 
+%type <A.bop>                                bop 
+%type <C.t>                                  cstr
+%type <C.envt>                               env
+%type <C.reft>                               reft
+%type <C.refa list>                          refas, refasne
+%type <C.refa>                               refa
+%type <C.subs>                               subs
 
 %%
 defs:
@@ -61,7 +63,7 @@ def:
   | AXM COLON pred                      { C.Axm $3 }
   | CST COLON cstr                      { C.Cst $3 }
   | WF  COLON wf                        { C.Wfc $3 }
-  | SOL COLON Id ASGN preds             { C.Sol ((Sy.of_string $3), $5) }
+  | sol                                 { let sym, preds = $1 in C.Sol (sym, preds) }
   | QUL Id LPAREN Id COLON sort RPAREN COLON pred  
                                         { C.Qul (A.Qualifier.create (Sy.of_string $4) $6 $9) }
   | dep                                 { C.Dep $1 }
@@ -228,4 +230,10 @@ subs:
                                         { [] }
   | LB Id ASGN expr RB subs             { ((Sy.of_string $2), $4) :: $6 } 
 
+sol:
+    SOL COLON Id ASGN preds             { ((Sy.of_string $3), $5) }
+
+sols:
+             { [] }
+  | sol sols { $1 :: $2 }
 

@@ -65,7 +65,6 @@ val sol_merge        : soln -> soln -> soln
 val group_sol_add    : soln -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) list -> (bool * soln)
 val group_sol_update : soln -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) list -> (bool * soln)
 
-
 (* to print a constraint "c" do:
    Format.printf "%a" (print_t None) c
 

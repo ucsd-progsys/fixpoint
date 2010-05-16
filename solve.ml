@@ -330,6 +330,20 @@ let save fname me s =
   F.fprintf ppf "@[%a@] \n" C.print_soln s;
   close_out oc
 
+(* API *)
+let save_soln fname s =
+  let oc  = open_out fname in
+  let ppf = F.formatter_of_out_channel oc in
+  F.fprintf ppf "@[%a@] \n" C.print_soln s;
+  close_out oc
+
+(* API *)
+let load_soln f =
+  let _    = Errorline.startFile f in
+  let ic   = open_in f in
+  let sols = Lexing.from_channel ic |> FixParse.sols FixLex.token in
+  let _    = close_in ic in
+  List.fold_left (fun sol (k, ps) -> SM.add k ps sol) SM.empty sols
 
 (*
 (***********************************************************************)
