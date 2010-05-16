@@ -102,7 +102,8 @@ let preds_kvars_of_reft reft =
   end ([], []) (C.ras_of_reft reft)
 
 let simplify_subs xes =
-  xes |> List.filter (fun (x, e) -> not (P.is_tauto (pAtom (eVar x, Eq, e))))
+  xes 
+  |> List.filter (fun (x, e) -> not (P.is_tauto (pAtom (eVar x, Eq, e))))
 
 let simplify_kvar (xes, kvar) =
   simplify_subs xes, kvar 
