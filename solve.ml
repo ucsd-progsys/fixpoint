@@ -120,7 +120,7 @@ let refine me s c =
     (if C.is_simple c 
     then (ignore(stat_simple_refines += 1); kqs1) 
      else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps) x2))
-  >> (fun _ -> c |> C.id_of_t |> F.printf "Constraint: %d : ")
+(*  >> (fun _ -> c |> C.id_of_t |> F.printf "Constraint: %d : ") *)
   |> C.group_sol_update s k2s 
 
 (***************************************************************)
