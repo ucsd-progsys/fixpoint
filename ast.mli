@@ -142,6 +142,7 @@ val print_stats : unit -> unit
 val fixdiv      : pred -> pred
 val zero        : expr
 val one         : expr
+val bot         : expr
 
 (* val neg_brel : brel -> brel 
    val push_neg : 
