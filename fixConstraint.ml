@@ -162,7 +162,7 @@ let non_trivial env =
 (* API *)
 let preds_of_refa s   = function
   | Conc p       -> [p]
-  | Kvar (xes,k) -> List.map (Misc.flip P.substs xes) (sol_read s k)
+  | Kvar (xes,k) -> List.map (Misc.flip A.substs_pred xes) (sol_read s k)
 
 (* API *)
 let preds_of_reft s (_,_,ras) =
@@ -326,7 +326,7 @@ let print_soln ppf sm =
 (***************************************************************)
 
 let theta_ra subs = function
-  | Conc p          -> Conc (P.substs p subs)
+  | Conc p          -> Conc (A.substs_pred p subs)
   | Kvar (subs', k) -> Kvar (subs ++ subs', k)
 
 (* API *)

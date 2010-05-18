@@ -83,7 +83,7 @@ let hashtbl_print_frequency t =
 let rhs_cands s = function
   | C.Kvar (xes, k) -> 
       k |> C.sol_read s 
-        |> List.map (fun q -> ((k,q), P.substs q xes))
+        |> List.map (fun q -> ((k,q), A.substs_pred q xes))
   | _ -> []
 
 let check_tp me env vv t lps =  function [] -> [] | rcs ->
@@ -234,7 +234,7 @@ let inst_qual ys t' (q : Q.t) : Q.t list =
       |> Misc.product                              (* generate combinations *) 
       |> List.filter valid_binding                 (* remove bogus bindings *)
       |> List.map (List.map (Misc.app_snd A.eVar)) (* instantiations        *)
-      |> List.rev_map (P.substs p')                (* substituted preds     *)
+      |> List.rev_map (A.substs_pred p')           (* substituted preds     *)
       |> List.map (Q.create v' t' )                (* qualifiers            *)
   end
 (*  >> F.printf "inst_qual q = %a: \n%a" Q.print q (Misc.pprint_many true "" Q.print) *)

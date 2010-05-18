@@ -102,6 +102,7 @@ and expr_int =
   | Ite of pred * expr * expr
   | Fld of Symbol.t * expr             (* NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
   | Cst of expr * Sort.t   
+  | Bot
 
 and pred = pred_int * tag
 
@@ -145,6 +146,7 @@ val one         : expr
 (* val neg_brel : brel -> brel 
    val push_neg : 
  *)
+val substs_pred    : pred -> (Symbol.t * expr) list -> pred 
 val simplify_pred  : pred -> pred
 val sortcheck_expr : (Symbol.t -> Sort.t) -> expr -> Sort.t option
 val sortcheck_pred : (Symbol.t -> Sort.t) -> pred -> bool
@@ -176,7 +178,7 @@ sig
   val unwrap    : pred -> pred_int
   val support   : pred -> Symbol.t list
   val subst     : pred -> Symbol.t -> expr -> pred
-  val substs    : pred -> (Symbol.t * expr) list -> pred
+(* val substs    : pred -> (Symbol.t * expr) list -> pred *)
   val map       : (pred -> pred) -> (expr -> expr) -> pred -> pred 
   val iter      : (pred -> unit) -> (expr -> unit) -> pred -> unit 
   val is_contra : pred -> bool

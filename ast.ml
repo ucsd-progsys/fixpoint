@@ -265,6 +265,7 @@ and expr_int =
   | Ite of pred * expr * expr
   | Fld of Symbol.t * expr             (* NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
   | Cst of expr * Sort.t 
+  | Bot
 
 and pred = pred_int * tag
 
@@ -341,6 +342,8 @@ module ExprHashconsStruct = struct
         (Hashtbl.hash s) + 12 + id
     | Cst ((_, id), t) ->
         id + Hashtbl.hash (Sort.to_string t)
+    | Bot ->
+        0
 end
   
 module ExprHashcons = Hashcons(ExprHashconsStruct)
@@ -398,6 +401,7 @@ let puw = PredHashcons.unwrap
 
 let zero = ewr (Con (Constant.Int(0)))
 let one  = ewr (Con (Constant.Int(1)))
+let bot  = ewr (Bot)
 
 (* Constructors: Expressions *)
 let eCon = fun c -> ewr (Con c)
@@ -407,6 +411,7 @@ let eBin = fun (e1, op, e2) -> ewr (Bin (e1, op, e2))
 let eIte = fun (ip,te,ee) -> ewr (Ite(ip,te,ee))
 let eFld = fun (s,e) -> ewr (Fld (s,e))
 let eCst = fun (e,t) -> ewr (Cst (e, t))
+
 
 let eTim = function 
   | (Con (Constant.Int n1), _), (Con (Constant.Int n2), _) -> 
@@ -474,6 +479,9 @@ let rec expr_to_string e =
       Printf.sprintf "%s.%s" (expr_to_string e) s 
   | Cst(e,t) ->
       Printf.sprintf "(%s : %s)" (expr_to_string e) (Sort.to_string t)
+  | Bot ->
+      Printf.sprintf "_|_" 
+
 
 and pred_to_string p = 
   match puw p with
@@ -529,7 +537,7 @@ and expr_map hp he fp fe e =
     try ExprHash.find he e with Not_found -> begin
       let e' = 
         match euw e with
-        | Con _ | Var _ as e1 -> 
+        | Con _ | Var _ | Bot as e1 -> 
             e1
         | App (f, es) ->
             App (f, List.map em es)
@@ -612,6 +620,14 @@ module Expression =
 
     let unwrap = euw
 
+    let has_bot p =
+      let r = ref false in
+      iter un begin function 
+        | Bot, _ -> r := true
+        | _      -> ()
+      end p; 
+      !r
+
   end
     
 module Predicate =
@@ -672,7 +688,14 @@ module Predicate =
 	| Imp (p1, p2), _     ->  p1 == p2 (* matching (p -> p) && (p -> p)) *) 
         | True, _             -> true
         | _                   -> false
-      
+
+      let has_bot p =
+        let r = ref false in
+        iter un begin function 
+          | Bot, _ -> r := true
+          | _      -> ()
+        end p; 
+        !r
 
     end
 
@@ -745,13 +768,16 @@ let rec fixdiv = function
 
 let rec sortcheck_expr f e = 
   match euw e with
+  | Bot   -> 
+      None
   | Con c -> 
       Some Sort.Int 
   | Var s -> 
       (try Some (f s) with _ -> None)
   | Bin (e1, op, e2) -> 
       sortcheck_op f (e1, op, e2)
-
+  | Bot   -> 
+      None
   | Ite (p, e1, e2) -> 
       if sortcheck_pred f p then 
         match Misc.map_pair (sortcheck_expr f) (e1, e2) with
@@ -828,9 +854,35 @@ and sortcheck_pred f p =
         let f' = fun x -> try List.assoc x qs with _ -> f x in
         sortcheck_pred f' p
 
-(********************************************************************************)
-(****************** Simplifying Expressions and Predicates **********************)
-(********************************************************************************)
+(***************************************************************************)
+(************* Simplifying Expressions and Predicates **********************)
+(***************************************************************************)
+
+let pred_of_bool = function true -> pTrue | false -> pFalse
+
+let rec remove_bot pol ((p, _) as pred) =
+  match p with
+  | Not p  -> 
+      pNot (remove_bot (not pol) p)
+  | Imp (p, q) ->
+      pImp (remove_bot (not pol) p, remove_bot pol q)
+  | Forall (qs, p) ->
+      pForall (qs, remove_bot pol p)
+  | And ps ->
+      ps |> List.map (remove_bot pol) |> pAnd
+  | Or ps -> 
+      ps |> List.map (remove_bot pol) |> pOr
+  | Bexp e when Expression.has_bot e ->
+      pred_of_bool pol
+  | Atom (e1, _, e2) when Expression.has_bot e1 || Expression.has_bot e2 -> 
+      pred_of_bool pol
+  | _ -> 
+      pred
+
+let remove_bot p = 
+  if Predicate.has_bot p 
+  then remove_bot true p 
+  else p
 
 let neg_brel = function 
   | Eq -> Ne
@@ -885,6 +937,9 @@ let rec simplify_pred ((p, _) as pred) =
                              | ps  -> pOr ps)
     | _ -> pred
 
+(* API *)
+let simplify_pred = remove_bot <+> simplify_pred
+let substs_pred   = fun p xes -> Predicate.substs p xes |> simplify_pred
 
 (**************************************************************************)
 (***************************** Qualifiers *********************************)
