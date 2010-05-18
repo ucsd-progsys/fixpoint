@@ -330,7 +330,7 @@ let theta_ra subs = function
   | Kvar (subs', k) -> Kvar (subs ++ subs', k)
 
 (* API *)
-let make_reft     = fun v so ras -> (v, so, ras)
+let make_reft     = fun v so ras -> (v, so, List.map (theta_ra []) ras)
 let vv_of_reft    = fst3
 let sort_of_reft  = snd3
 let ras_of_reft   = thd3
@@ -349,7 +349,7 @@ let make_t      = fun env p r1 r2 io is ->
                     let env' = non_trivial env in
                     { full    = env ; 
                       nontriv = env'; 
-                      guard   = p; 
+                      guard   = A.simplify_pred p; 
                       lhs     = r1 (* strengthen_reft env' r1 *); 
                       rhs     = r2; 
                       ido     = io;

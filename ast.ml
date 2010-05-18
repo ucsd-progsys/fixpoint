@@ -568,7 +568,7 @@ let rec pred_iter fp fe pw =
 
 and expr_iter fp fe ew =
   begin match puw ew with
-    | Con _ | Var _    -> ()
+    | Con _ | Var _ | Bot   -> ()
     | App (_, es)   -> List.iter (expr_iter fp fe) es
     | Bin (e1, _, e2)  -> expr_iter fp fe e1; expr_iter fp fe e2
     | Ite (ip, te, ee) -> pred_iter fp fe ip; expr_iter fp fe te; expr_iter fp fe ee
