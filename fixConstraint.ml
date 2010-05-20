@@ -227,8 +227,7 @@ let print_sub ppf (x,e) =
 
 let print_refineatom ppf = function
   | Conc p        -> F.fprintf ppf "%a" P.print p
-  | Kvar (xes, k) -> F.fprintf ppf "%a%a" Sy.print k 
-                       (Misc.pprint_many false "" print_sub) xes
+  | Kvar (xes, k) -> F.fprintf ppf "%a%a" Sy.print k (Misc.pprint_many false "" print_sub) xes
 
 let print_ras so ppf ras = 
   match so with 
@@ -292,34 +291,17 @@ let print_t so ppf {full=env;guard=g;lhs=r1;rhs=r2;ido=io; tag=is} =
 
 
 (* API *) 
-let to_string c = Misc.fsprintf (print_t None) c
-
-let refa_to_string = function
-  | Conc p -> P.to_string p
-  | Kvar (subs, sym) ->
-      Printf.sprintf "%s%s" (Sy.to_string sym)
-	(List.map
-	   (fun (s, e) -> 
-	      Printf.sprintf "[%s/%s]" 
-		(E.to_string e) (Sy.to_string s)
-	   ) subs |> String.concat "")
-
-let reft_to_string (vv, sort, ras) =
-  Printf.sprintf "{%s:%s | [%s]}"
-    (Sy.to_string vv)
-    (Ast.Sort.to_string sort)
-    (List.map refa_to_string ras |> String.concat ", ")
-
-let binding_to_string (vv, reft) =
-  Printf.sprintf "%s:%s" (Sy.to_string vv) (reft_to_string reft)
+let to_string         = Misc.fsprintf (print_t None)
+let refa_to_string    = Misc.fsprintf print_refineatom 
+let reft_to_string    = Misc.fsprintf (print_reft None)
+let binding_to_string = Misc.fsprintf (print_binding None) 
 
 (* API *)
 let print_soln ppf sm =
-  SM.iter 
-    (fun k ps -> 
-      F.fprintf ppf "solution: %a := [%a] \n"  
-        Sy.print k (Misc.pprint_many false ";" P.print) ps)
-    sm
+  SM.iter begin fun k ps -> 
+    F.fprintf ppf "solution: %a := [%a] \n"  
+    Sy.print k (Misc.pprint_many false ";" P.print) ps
+  end sm
 
 (***************************************************************)
 (*********************** Getter/Setter *************************)

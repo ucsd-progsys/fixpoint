@@ -28,6 +28,8 @@ module SM = Ast.Symbol.SMap
 module Co = Constants 
 module C  = FixConstraint
 module F  = Format
+module Si = Simplify (* Simplification *)
+
 open Misc.Ops
 
 let dump cs ws =
@@ -45,9 +47,9 @@ let main () =
     if !Co.simplify_t then
       Misc.map_partial 
 	(fun t -> 
-	   let st = Simplification.simplify_t t in
-	     if Simplification.is_tauto_t st then None else Some st
-	) cs |> Simplification.simplify_ts
+	   let st = Si.simplify_t t in
+	     if Si.is_tauto_t st then None else Some st
+	) cs |> Si.simplify_ts
     else cs in
     begin
       match !Co.latex_file with

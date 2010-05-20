@@ -21,23 +21,7 @@
  *
  *)
 
-(***************************************************************)
-(**** This module implements constraint indexing ***************)
-(***************************************************************)
-
-type t
-type wkl
-
-(** indexing and dependencies *)
-val to_list      : t -> FixConstraint.t list 
-val to_live_list : t -> FixConstraint.t list
-val create       : FixConstraint.dep list -> FixConstraint.t list -> t 
-val deps         : t -> FixConstraint.t -> FixConstraint.t list
-
-(** worklist manipulation *)
-val wpush        : t -> wkl -> FixConstraint.t list -> wkl 
-val wpop         : t -> wkl -> FixConstraint.t option * wkl
-val winit        : t -> wkl
-
-(** printing *)
-val print        : Format.formatter -> t -> unit  
+val simplify_t          : FixConstraint.t -> FixConstraint.t
+val simplify_ts         : FixConstraint.t list -> FixConstraint.t list
+val is_tauto_t          : FixConstraint.t -> bool
+val preds_kvars_of_reft : FixConstraint.reft -> (Ast.pred list * (FixConstraint.subs * Ast.Symbol.t) list)

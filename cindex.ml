@@ -31,6 +31,8 @@ module Co = Constants
 module C  = FixConstraint
 module IM = Misc.IntMap
 module SM = Ast.Symbol.SMap 
+module P  = Ast.Predicate
+
 open Misc.Ops
 
 (***********************************************************************)
@@ -68,6 +70,7 @@ type t =
     rnkm : rank IM.t;              (* id   -> dependency rank *)
     depm : C.id list IM.t;         (* id   -> successor ids *)
     pend : (C.id, unit) H.t;       (* id   -> is in wkl ? *)
+    livm : unit IM.t;              (* id   -> unit, keys are "live" constraints *)
     rtm  : unit IM.t;              (* rank -> unit, keys are "root" sccs *) 
     ds   : C.dep list;             (* add/del dep list *)
   }
@@ -157,14 +160,39 @@ let make_rootm rankm ijs =
     if ir <> jr then IM.remove jr sccm else sccm
   end sccm ijs
 
+let is_rhs_conc = 
+  C.rhs_of_t <+>
+  C.ras_of_reft <+> 
+  List.exists (function C.Conc p -> not (P.is_tauto p) | _ -> false)
+
+let im_findall i im = try IM.find i im with Not_found -> []
+
+(* A constraint c is non-live if its rhs is a k variable that is not
+ * (transitively) read. 
+ * roots := { c | (rhs_of_t c) has a concrete predicate }
+ * lives := PRE*(roots) where Pre* is refl-trans-clos of the depends-on relation *)
+let make_livem cm real_deps =
+  let dm  = List.fold_left (fun im (i, j) -> IM.add j (i :: (im_findall j im)) im) IM.empty real_deps in
+  let js = IM.fold (fun i c roots -> if is_rhs_conc c then i::roots else roots) cm [] in
+  (js, IM.empty)
+  |> Misc.fixpoint begin fun (js, vm) ->
+       let vm = List.fold_left (fun vm j -> IM.add j () vm) vm js in
+       let js = js |> Misc.flap (fun j -> im_findall j dm) 
+                   |> List.filter (fun j -> not (IM.mem j vm)) in
+       ((js, vm), js != [])
+     end
+  |> fst |> snd 
+
 let make_rank_map ds cm =
-  let (dm, real_deps) = make_deps cm in
+  let dm, real_deps = make_deps cm in
   let deps  = adjust_deps cm ds real_deps in
   let ids   = cm |> Misc.intmap_bindings |> Misc.map fst in
   let ranks = Fcommon.scc_rank "constraint" (string_of_cid cm) ids deps in
   let rankm = make_rankm cm ranks in
   let rootm = make_rootm rankm deps in
-  (dm, rankm, rootm)
+  let livem = make_livem cm real_deps in 
+  (dm, rankm, rootm, livem)
+
 
 (***********************************************************************)
 (**************************** API **************************************)
@@ -172,9 +200,9 @@ let make_rank_map ds cm =
 
 (* API *)
 let create ds cs =
-  let cm            = List.fold_left (fun cm c -> IM.add (C.id_of_t c) c cm) IM.empty cs in
-  let (dm, rm, rtm) = BS.time "make rank map" (make_rank_map ds) cm in
-  {cnst = cm; ds = ds; rnkm = rm; depm = dm; rtm = rtm; pend = H.create 17}
+  let cm              = List.fold_left (fun cm c -> IM.add (C.id_of_t c) c cm) IM.empty cs in
+  let dm, rm, rtm, lm = BS.time "make rank map" (make_rank_map ds) cm in
+  {cnst = cm; ds = ds; rnkm = rm; depm = dm; rtm = rtm; livm = lm; pend = H.create 17}
 
 (* API *) 
 let deps me c =
@@ -184,6 +212,12 @@ let deps me c =
 (* API *)
 let to_list me = 
   me.cnst |> Misc.intmap_bindings |> Misc.map snd
+
+(* API *)
+let to_live_list me =
+  me.cnst |> Misc.intmap_bindings 
+          |> Misc.map_partial (fun (i,c) -> if IM.mem i me.livm then Some c else None)
+
 
 let sort_iter_ref_constraints me f = 
   me.rnkm |> Misc.intmap_bindings
