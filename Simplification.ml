@@ -138,24 +138,29 @@ let simplify_t t =
   let lhs_ps, lhs_ks = preds_kvars_of_reft lhs in
   let body_pred = Ast.pAnd (C.grd_of_t t :: List.rev_append lhs_ps env_ps) in
   let edefs, pdefs = defs_of_pred (Sy.SMap.empty, Sy.SMap.empty) body_pred in
+    (*
     Printf.printf "\nbody_pred edefs map for %d\n" (C.id_of_t t);
     Sy.SMap.iter (fun v exp ->
 		    Printf.printf "%s -> %s\n" (Sy.to_string v) (E.to_string exp)
 		 ) edefs;
     Printf.printf "edef for lhs_vv %s = %s (simplified %s)\n" (Sy.to_string lhs_vv) 
       (try Sy.SMap.find lhs_vv edefs |> E.to_string with Not_found -> "none")
-      (try Sy.SMap.find lhs_vv edefs |> expr_apply_defs edefs pdefs |> E.to_string with Not_found -> "none");
+      (try 
+	 Sy.SMap.find lhs_vv edefs 
+         |> expr_apply_defs edefs pdefs 
+	 |> E.to_string with Not_found -> "none");
+    *)
   let kvar_to_simple_Kvar (subs, sym) = C.Kvar (subs_apply_defs edefs pdefs subs |> simplify_subs, sym) in
   let senv = 
     Sy.SMap.mapi (fun bv (vv, sort, ks) -> 
 		    List.map kvar_to_simple_Kvar ks |>	C.make_reft vv sort) pfree_env in
-    Printf.printf "body_pred: %s\n" (P.to_string body_pred);
+(*     Printf.printf "body_pred: %s\n" (P.to_string body_pred); *)
   let sgrd' = pred_apply_defs edefs pdefs body_pred |> Ast.simplify_pred in
   let sgrd = 
     try
       Ast.pAnd [sgrd'; Ast.pAtom (Ast.eVar lhs_vv, Ast.Eq, Sy.SMap.find lhs_vv edefs |> expr_apply_defs edefs pdefs)]
     with Not_found -> sgrd' in
-    Printf.printf "simplified body_pred: %s\n" (P.to_string sgrd);
+(*    Printf.printf "simplified body_pred: %s\n" (P.to_string sgrd); *)
   let slhs = List.map kvar_to_simple_Kvar lhs_ks |> C.make_reft (C.vv_of_reft lhs) (C.sort_of_reft lhs) in
   let rhs = C.rhs_of_t t in
   let rhs_ps, rhs_ks = preds_kvars_of_reft rhs in
