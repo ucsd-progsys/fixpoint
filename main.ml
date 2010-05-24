@@ -27,6 +27,7 @@
 module BS = BNstats
 module SM = Ast.Symbol.SMap
 module Co = Constants 
+module Si = (* Simplify *) Simplification 
 module C  = FixConstraint
 module S  = Solve
 module F  = Format
@@ -78,8 +79,8 @@ let dump_imp (_,_,a,b,_,_,_) =
 
 let dump_simp (ts, ps, cs, ws, ds, qs, s0) = 
   let a     = get_arity cs in
-  let cs    = cs |> List.map Simplification.simplify_t 
-                 |> List.filter (not <.> Simplification.is_tauto_t)    in
+  let cs    = cs |> List.map Si.simplify_t 
+                 |> List.filter (not <.> Si.is_tauto_t)    in
   let ctx,_ = BS.time "create" (S.create ts SM.empty ps a ds cs ws) [] in
   let _     = BS.time "save" (S.save !Co.save_file ctx) s0 in
   exit 1

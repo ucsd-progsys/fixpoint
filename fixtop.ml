@@ -28,7 +28,7 @@ module SM = Ast.Symbol.SMap
 module Co = Constants 
 module C  = FixConstraint
 module F  = Format
-module Si = (* Simplify *) Simplification 
+module Si = (* Simplify *) Simplification
 
 open Misc.Ops
 

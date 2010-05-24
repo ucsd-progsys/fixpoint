@@ -444,11 +444,13 @@ let find_kv_wf_scope wfs kv =
 (* map each k variable to variables in its scope *)
 (* k variables no appearing in any rhs don't have any scope *)
 let mk_kv_scope ?(with_card=true) ?(hcs=[]) out ts wfs sol =
+  (*
   List.iter (fun wf -> 
 	       let env = C.env_of_wf wf in
 	       let bvs = Sy.SMap.fold (fun bv _ sofar -> symbol_to_armc bv :: sofar) env [] in
 		 Printf.printf "wf: %s : %s\n" (C.reft_of_wf wf |> C.reft_to_string) (String.concat ", " bvs)
 	    ) wfs;
+  *)
   let hcs = if hcs = [] then List.map t_to_horn_clause ts else hcs in
   let hc_deps = List.map hc_to_dep hcs in
   let kv_scope_aux =
@@ -677,7 +679,7 @@ let bv_to_ks_of_t init t =
 	 sofar
     ) (C.env_of_t t) init
 
-let aux ts = 
+let aux ts hcs = 
   (* print k variable for each bound variable *)
   List.iter
     (fun t ->
@@ -746,9 +748,26 @@ let aux ts =
 	       (C.id_of_t t)
 	       (List.map (fun (_, sy) -> Sy.to_string sy) kvs |> List.sort compare |> String.concat ", ")
 	 | _ -> ()
-    ) ts
-  
+    ) ts;
+  (* print hcs in compact form *)
+  List.iter 
+    (fun hc ->
+       let body_kvars = 
+	 List.map (fun (subs, kvar) -> Sy.to_string kvar) hc.body_kvars |> List.sort compare in
+       Printf.printf "%s\n" (hc.tag :: ": " :: body_kvars  |> String.concat ", ")
 
+	 
+
+
+       
+(*
+      body_pred = preds_to_pred body_ps; 
+      body_kvars = body_ks; 
+      head_pred = preds_to_pred head_ps; 
+      head_kvar_opt = head_kvar_opt;
+      tag = try string_of_int (C.id_of_t t) with _ -> failure "ERROR: t_to_horn_clause: anonymous constraint %s" (C.to_string t);
+*)
+    ) hcs 
 
 let to_cfg_armc out ts wfs sol =
   print_endline "Translating to ARMC. ToHC.to_cfg_armc";
@@ -859,7 +878,8 @@ error(pc(%s)).
       ) hcs;
     output_string out "/*\n";
     List.iter (fun t -> Printf.fprintf out "%s\n" (C.to_string t)) ts;
+    List.iter (fun hc -> Printf.fprintf out "%s\n\n" (horn_clause_to_string hc)) hcs;
     output_string out "*/\n";
-    aux ts
+    aux ts hcs
 
 
