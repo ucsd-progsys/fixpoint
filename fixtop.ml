@@ -45,11 +45,10 @@ let main () =
   let fs, (_,_,cs,ws,_,_,sol) = Toplevel.read_inputs usage in
   let cs = 
     if !Co.simplify_t then
-      Misc.map_partial 
-	(fun t -> 
-	   let st = Si.simplify_t t in
-	     if Si.is_tauto_t st then None else Some st
-	) cs |> Si.simplify_ts
+      Misc.map_partial begin fun t -> 
+        let st = Si.simplify_t t in
+	if Si.is_tauto_t st then None else Some st
+      end cs |> Si.simplify_ts
     else cs in
     begin
       match !Co.latex_file with
