@@ -1,0 +1,2208 @@
+constraint:
+  env  [y_168:{AA_0 : int | []};
+        y_116:{AA_0 : int | []};
+        x_77:{AA_0 : int | [true;k27]};
+        x_167:{AA_0 : int | []};
+        x_115:{AA_0 : int | []};
+        true_0:{AA_0 : bool | [(AA_0 = true_0)]};
+        test_predicate_254:{AA_0 : bool | []};
+        false_0:{AA_0 : bool | [(AA_0 = false_0)]};
+        f_76:{AA_0 : func(0, [int ; obj]) | []};
+        __tag_36:{AA_0 : func(0, [obj ; int]) | []};
+        _'seq_257:{AA_0 : obj | [true;k29]};
+        _'3_78:{AA_0 : bool | []};
+        _'1_79:{AA_0 : int | [(AA_0 = (x_77 + 1))]};
+        Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+        Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+        Open_wronly_0:{AA_0 : obj | [(AA_0 = Open_wronly_0)]};
+        Open_trunc_0:{AA_0 : obj | [(AA_0 = Open_trunc_0)]};
+        Open_text_0:{AA_0 : obj | [(AA_0 = Open_text_0)]};
+        Open_rdonly_0:{AA_0 : obj | [(AA_0 = Open_rdonly_0)]};
+        Open_nonblock_0:{AA_0 : obj | [(AA_0 = Open_nonblock_0)]};
+        Open_excl_0:{AA_0 : obj | [(AA_0 = Open_excl_0)]};
+        Open_creat_0:{AA_0 : obj | [(AA_0 = Open_creat_0)]};
+        Open_binary_0:{AA_0 : obj | [(AA_0 = Open_binary_0)]};
+        Open_append_0:{AA_0 : obj | [(AA_0 = Open_append_0)]};
+        None_0:{AA_0 : obj | [(AA_0 = None_0)]};
+        FP_zero_0:{AA_0 : obj | [(AA_0 = FP_zero_0)]};
+        FP_subnormal_0:{AA_0 : obj | [(AA_0 = FP_subnormal_0)]};
+        FP_normal_0:{AA_0 : obj | [(AA_0 = FP_normal_0)]};
+        FP_nan_0:{AA_0 : obj | [(AA_0 = FP_nan_0)]};
+        FP_infinite_0:{AA_0 : obj | [(AA_0 = FP_infinite_0)]};
+        FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_2:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_2)]};
+        FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+        FIXPOINTSYMBOL_0:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_0)]}] 
+ grd true 
+ lhs {AA_0 : int | [(AA_0 = _'1_79)]} 
+ rhs {AA_0 : int | [k2[_0:=_0]]} 
+ id 1  
+ 
+constraint:
+  env  [y_168:{AA_0 : int | []};
+        y_116:{AA_0 : int | []};
+        x_77:{AA_0 : int | [true;k27]};
+        x_167:{AA_0 : int | []};
+        x_115:{AA_0 : int | []};
+        true_0:{AA_0 : bool | [(AA_0 = true_0)]};
+        test_predicate_254:{AA_0 : bool | []};
+        false_0:{AA_0 : bool | [(AA_0 = false_0)]};
+        f_76:{AA_0 : func(0, [int ; obj]) | []};
+        __tag_36:{AA_0 : func(0, [obj ; int]) | []};
+        _'seq_257:{AA_0 : obj | [true;k29]};
+        _'3_78:{AA_0 : bool | []};
+        _'1_79:{AA_0 : int | []};
+        Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+        Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+        Open_wronly_0:{AA_0 : obj | [(AA_0 = Open_wronly_0)]};
+        Open_trunc_0:{AA_0 : obj | [(AA_0 = Open_trunc_0)]};
+        Open_text_0:{AA_0 : obj | [(AA_0 = Open_text_0)]};
+        Open_rdonly_0:{AA_0 : obj | [(AA_0 = Open_rdonly_0)]};
+        Open_nonblock_0:{AA_0 : obj | [(AA_0 = Open_nonblock_0)]};
+        Open_excl_0:{AA_0 : obj | [(AA_0 = Open_excl_0)]};
+        Open_creat_0:{AA_0 : obj | [(AA_0 = Open_creat_0)]};
+        Open_binary_0:{AA_0 : obj | [(AA_0 = Open_binary_0)]};
+        Open_append_0:{AA_0 : obj | [(AA_0 = Open_append_0)]};
+        None_0:{AA_0 : obj | [(AA_0 = None_0)]};
+        FP_zero_0:{AA_0 : obj | [(AA_0 = FP_zero_0)]};
+        FP_subnormal_0:{AA_0 : obj | [(AA_0 = FP_subnormal_0)]};
+        FP_normal_0:{AA_0 : obj | [(AA_0 = FP_normal_0)]};
+        FP_nan_0:{AA_0 : obj | [(AA_0 = FP_nan_0)]};
+        FP_infinite_0:{AA_0 : obj | [(AA_0 = FP_infinite_0)]};
+        FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_2:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_2)]};
+        FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+        FIXPOINTSYMBOL_0:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_0)]}] 
+ grd true 
+ lhs {AA_0 : int | [(AA_0 = x_77)]} 
+ rhs {AA_0 : int | [true]} 
+ id 2  
+ 
+constraint:
+  env  [y_168:{AA_0 : int | []};
+        y_116:{AA_0 : int | []};
+        x_77:{AA_0 : int | [true;k27]};
+        x_167:{AA_0 : int | []};
+        x_115:{AA_0 : int | []};
+        true_0:{AA_0 : bool | [(AA_0 = true_0)]};
+        test_predicate_254:{AA_0 : bool | []};
+        false_0:{AA_0 : bool | [(AA_0 = false_0)]};
+        f_76:{AA_0 : func(0, [int ; obj]) | []};
+        __tag_36:{AA_0 : func(0, [obj ; int]) | []};
+        _'seq_257:{AA_0 : obj | [true;k29]};
+        _'3_78:{AA_0 : bool | []};
+        _'1_79:{AA_0 : int | []};
+        Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+        Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+        Open_wronly_0:{AA_0 : obj | [(AA_0 = Open_wronly_0)]};
+        Open_trunc_0:{AA_0 : obj | [(AA_0 = Open_trunc_0)]};
+        Open_text_0:{AA_0 : obj | [(AA_0 = Open_text_0)]};
+        Open_rdonly_0:{AA_0 : obj | [(AA_0 = Open_rdonly_0)]};
+        Open_nonblock_0:{AA_0 : obj | [(AA_0 = Open_nonblock_0)]};
+        Open_excl_0:{AA_0 : obj | [(AA_0 = Open_excl_0)]};
+        Open_creat_0:{AA_0 : obj | [(AA_0 = Open_creat_0)]};
+        Open_binary_0:{AA_0 : obj | [(AA_0 = Open_binary_0)]};
+        Open_append_0:{AA_0 : obj | [(AA_0 = Open_append_0)]};
+        None_0:{AA_0 : obj | [(AA_0 = None_0)]};
+        FP_zero_0:{AA_0 : obj | [(AA_0 = FP_zero_0)]};
+        FP_subnormal_0:{AA_0 : obj | [(AA_0 = FP_subnormal_0)]};
+        FP_normal_0:{AA_0 : obj | [(AA_0 = FP_normal_0)]};
+        FP_nan_0:{AA_0 : obj | [(AA_0 = FP_nan_0)]};
+        FP_infinite_0:{AA_0 : obj | [(AA_0 = FP_infinite_0)]};
+        FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_2:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_2)]};
+        FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+        FIXPOINTSYMBOL_0:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_0)]}] 
+ grd true 
+ lhs {AA_0 : int | [(AA_0 = 1)]} 
+ rhs {AA_0 : int | [true]} 
+ id 3  
+ 
+constraint:
+  env  [y_168:{AA_0 : int | []};
+        y_116:{AA_0 : int | []};
+        x_77:{AA_0 : int | [true;k27]};
+        x_167:{AA_0 : int | []};
+        x_115:{AA_0 : int | []};
+        true_0:{AA_0 : bool | [(AA_0 = true_0)]};
+        test_predicate_254:{AA_0 : bool | []};
+        false_0:{AA_0 : bool | [(AA_0 = false_0)]};
+        f_76:{AA_0 : func(0, [int ; obj]) | []};
+        __tag_36:{AA_0 : func(0, [obj ; int]) | []};
+        _'seq_257:{AA_0 : obj | [true;k29]};
+        _'3_78:{AA_0 : bool | []};
+        _'1_79:{AA_0 : int | [(AA_0 = (x_77 + 1))]};
+        Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+        Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+        Open_wronly_0:{AA_0 : obj | [(AA_0 = Open_wronly_0)]};
+        Open_trunc_0:{AA_0 : obj | [(AA_0 = Open_trunc_0)]};
+        Open_text_0:{AA_0 : obj | [(AA_0 = Open_text_0)]};
+        Open_rdonly_0:{AA_0 : obj | [(AA_0 = Open_rdonly_0)]};
+        Open_nonblock_0:{AA_0 : obj | [(AA_0 = Open_nonblock_0)]};
+        Open_excl_0:{AA_0 : obj | [(AA_0 = Open_excl_0)]};
+        Open_creat_0:{AA_0 : obj | [(AA_0 = Open_creat_0)]};
+        Open_binary_0:{AA_0 : obj | [(AA_0 = Open_binary_0)]};
+        Open_append_0:{AA_0 : obj | [(AA_0 = Open_append_0)]};
+        None_0:{AA_0 : obj | [(AA_0 = None_0)]};
+        FP_zero_0:{AA_0 : obj | [(AA_0 = FP_zero_0)]};
+        FP_subnormal_0:{AA_0 : obj | [(AA_0 = FP_subnormal_0)]};
+        FP_normal_0:{AA_0 : obj | [(AA_0 = FP_normal_0)]};
+        FP_nan_0:{AA_0 : obj | [(AA_0 = FP_nan_0)]};
+        FP_infinite_0:{AA_0 : obj | [(AA_0 = FP_infinite_0)]};
+        FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_2:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_2)]};
+        FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+        FIXPOINTSYMBOL_0:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_0)]}] 
+ grd true 
+ lhs {AA_0 : obj | [true;k46[x_77:=_'1_79];k1[x_77:=_'1_79]]} 
+ rhs {AA_0 : obj | [k38]} 
+ id 4  
+ 
+constraint:
+  env  [y_168:{AA_0 : int | []};
+        y_116:{AA_0 : int | []};
+        x_77:{AA_0 : int | [true;k27]};
+        x_167:{AA_0 : int | []};
+        x_115:{AA_0 : int | []};
+        true_0:{AA_0 : bool | [(AA_0 = true_0)]};
+        test_predicate_254:{AA_0 : bool | [(AA_0 = _'3_78)]};
+        false_0:{AA_0 : bool | [(AA_0 = false_0)]};
+        f_76:{AA_0 : func(0, [int ; obj]) | []};
+        __tag_36:{AA_0 : func(0, [obj ; int]) | []};
+        _'seq_257:{AA_0 : obj | []};
+        _'3_78:{AA_0 : bool | [&& [((Bexp AA_0) -> (x_77 > 0)) ; ((x_77 > 0) -> (Bexp AA_0))]]};
+        _'1_79:{AA_0 : int | []};
+        Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+        Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+        Open_wronly_0:{AA_0 : obj | [(AA_0 = Open_wronly_0)]};
+        Open_trunc_0:{AA_0 : obj | [(AA_0 = Open_trunc_0)]};
+        Open_text_0:{AA_0 : obj | [(AA_0 = Open_text_0)]};
+        Open_rdonly_0:{AA_0 : obj | [(AA_0 = Open_rdonly_0)]};
+        Open_nonblock_0:{AA_0 : obj | [(AA_0 = Open_nonblock_0)]};
+        Open_excl_0:{AA_0 : obj | [(AA_0 = Open_excl_0)]};
+        Open_creat_0:{AA_0 : obj | [(AA_0 = Open_creat_0)]};
+        Open_binary_0:{AA_0 : obj | [(AA_0 = Open_binary_0)]};
+        Open_append_0:{AA_0 : obj | [(AA_0 = Open_append_0)]};
+        None_0:{AA_0 : obj | [(AA_0 = None_0)]};
+        FP_zero_0:{AA_0 : obj | [(AA_0 = FP_zero_0)]};
+        FP_subnormal_0:{AA_0 : obj | [(AA_0 = FP_subnormal_0)]};
+        FP_normal_0:{AA_0 : obj | [(AA_0 = FP_normal_0)]};
+        FP_nan_0:{AA_0 : obj | [(AA_0 = FP_nan_0)]};
+        FP_infinite_0:{AA_0 : obj | [(AA_0 = FP_infinite_0)]};
+        FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_2:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_2)]};
+        FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+        FIXPOINTSYMBOL_0:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_0)]}] 
+ grd true 
+ lhs {AA_0 : obj | [true]} 
+ rhs {AA_0 : obj | [(Bexp test_predicate_254)]} 
+ id 5  
+ 
+constraint:
+  env  [y_168:{AA_0 : int | []};
+        y_116:{AA_0 : int | []};
+        x_77:{AA_0 : int | [true;k27]};
+        x_167:{AA_0 : int | []};
+        x_115:{AA_0 : int | []};
+        true_0:{AA_0 : bool | [(AA_0 = true_0)]};
+        test_predicate_254:{AA_0 : bool | [(AA_0 = _'3_78)]};
+        false_0:{AA_0 : bool | [(AA_0 = false_0)]};
+        f_76:{AA_0 : func(0, [int ; obj]) | []};
+        __tag_36:{AA_0 : func(0, [obj ; int]) | []};
+        _'seq_257:{AA_0 : obj | []};
+        _'3_78:{AA_0 : bool | [&& [((Bexp AA_0) -> (x_77 > 0)) ; ((x_77 > 0) -> (Bexp AA_0))]]};
+        _'1_79:{AA_0 : int | []};
+        Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+        Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+        Open_wronly_0:{AA_0 : obj | [(AA_0 = Open_wronly_0)]};
+        Open_trunc_0:{AA_0 : obj | [(AA_0 = Open_trunc_0)]};
+        Open_text_0:{AA_0 : obj | [(AA_0 = Open_text_0)]};
+        Open_rdonly_0:{AA_0 : obj | [(AA_0 = Open_rdonly_0)]};
+        Open_nonblock_0:{AA_0 : obj | [(AA_0 = Open_nonblock_0)]};
+        Open_excl_0:{AA_0 : obj | [(AA_0 = Open_excl_0)]};
+        Open_creat_0:{AA_0 : obj | [(AA_0 = Open_creat_0)]};
+        Open_binary_0:{AA_0 : obj | [(AA_0 = Open_binary_0)]};
+        Open_append_0:{AA_0 : obj | [(AA_0 = Open_append_0)]};
+        None_0:{AA_0 : obj | [(AA_0 = None_0)]};
+        FP_zero_0:{AA_0 : obj | [(AA_0 = FP_zero_0)]};
+        FP_subnormal_0:{AA_0 : obj | [(AA_0 = FP_subnormal_0)]};
+        FP_normal_0:{AA_0 : obj | [(AA_0 = FP_normal_0)]};
+        FP_nan_0:{AA_0 : obj | [(AA_0 = FP_nan_0)]};
+        FP_infinite_0:{AA_0 : obj | [(AA_0 = FP_infinite_0)]};
+        FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_2:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_2)]};
+        FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+        FIXPOINTSYMBOL_0:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_0)]}] 
+ grd true 
+ lhs {AA_0 : obj | [(Bexp test_predicate_254)]} 
+ rhs {AA_0 : obj | [k36]} 
+ id 6  
+ 
+constraint:
+  env  [y_168:{AA_0 : int | []};
+        y_116:{AA_0 : int | []};
+        x_77:{AA_0 : int | [true;k27]};
+        x_167:{AA_0 : int | []};
+        x_115:{AA_0 : int | []};
+        true_0:{AA_0 : bool | [(AA_0 = true_0)]};
+        test_predicate_254:{AA_0 : bool | []};
+        false_0:{AA_0 : bool | [(AA_0 = false_0)]};
+        f_76:{AA_0 : func(0, [int ; obj]) | []};
+        __tag_36:{AA_0 : func(0, [obj ; int]) | []};
+        _'seq_257:{AA_0 : obj | []};
+        _'3_78:{AA_0 : bool | []};
+        _'1_79:{AA_0 : int | []};
+        Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+        Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+        Open_wronly_0:{AA_0 : obj | [(AA_0 = Open_wronly_0)]};
+        Open_trunc_0:{AA_0 : obj | [(AA_0 = Open_trunc_0)]};
+        Open_text_0:{AA_0 : obj | [(AA_0 = Open_text_0)]};
+        Open_rdonly_0:{AA_0 : obj | [(AA_0 = Open_rdonly_0)]};
+        Open_nonblock_0:{AA_0 : obj | [(AA_0 = Open_nonblock_0)]};
+        Open_excl_0:{AA_0 : obj | [(AA_0 = Open_excl_0)]};
+        Open_creat_0:{AA_0 : obj | [(AA_0 = Open_creat_0)]};
+        Open_binary_0:{AA_0 : obj | [(AA_0 = Open_binary_0)]};
+        Open_append_0:{AA_0 : obj | [(AA_0 = Open_append_0)]};
+        None_0:{AA_0 : obj | [(AA_0 = None_0)]};
+        FP_zero_0:{AA_0 : obj | [(AA_0 = FP_zero_0)]};
+        FP_subnormal_0:{AA_0 : obj | [(AA_0 = FP_subnormal_0)]};
+        FP_normal_0:{AA_0 : obj | [(AA_0 = FP_normal_0)]};
+        FP_nan_0:{AA_0 : obj | [(AA_0 = FP_nan_0)]};
+        FP_infinite_0:{AA_0 : obj | [(AA_0 = FP_infinite_0)]};
+        FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_2:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_2)]};
+        FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+        FIXPOINTSYMBOL_0:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_0)]}] 
+ grd true 
+ lhs {AA_0 : int | [(AA_0 = x_77)]} 
+ rhs {AA_0 : int | [k33[_0:=_0]]} 
+ id 7  
+ 
+constraint:
+  env  [y_168:{AA_0 : int | []};
+        y_116:{AA_0 : int | []};
+        x_77:{AA_0 : int | [true;k27]};
+        x_167:{AA_0 : int | []};
+        x_115:{AA_0 : int | []};
+        true_0:{AA_0 : bool | [(AA_0 = true_0)]};
+        test_predicate_254:{AA_0 : bool | []};
+        false_0:{AA_0 : bool | [(AA_0 = false_0)]};
+        f_76:{AA_0 : func(0, [int ; obj]) | []};
+        __tag_36:{AA_0 : func(0, [obj ; int]) | []};
+        _'seq_257:{AA_0 : obj | []};
+        _'3_78:{AA_0 : bool | []};
+        _'1_79:{AA_0 : int | []};
+        Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+        Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+        Open_wronly_0:{AA_0 : obj | [(AA_0 = Open_wronly_0)]};
+        Open_trunc_0:{AA_0 : obj | [(AA_0 = Open_trunc_0)]};
+        Open_text_0:{AA_0 : obj | [(AA_0 = Open_text_0)]};
+        Open_rdonly_0:{AA_0 : obj | [(AA_0 = Open_rdonly_0)]};
+        Open_nonblock_0:{AA_0 : obj | [(AA_0 = Open_nonblock_0)]};
+        Open_excl_0:{AA_0 : obj | [(AA_0 = Open_excl_0)]};
+        Open_creat_0:{AA_0 : obj | [(AA_0 = Open_creat_0)]};
+        Open_binary_0:{AA_0 : obj | [(AA_0 = Open_binary_0)]};
+        Open_append_0:{AA_0 : obj | [(AA_0 = Open_append_0)]};
+        None_0:{AA_0 : obj | [(AA_0 = None_0)]};
+        FP_zero_0:{AA_0 : obj | [(AA_0 = FP_zero_0)]};
+        FP_subnormal_0:{AA_0 : obj | [(AA_0 = FP_subnormal_0)]};
+        FP_normal_0:{AA_0 : obj | [(AA_0 = FP_normal_0)]};
+        FP_nan_0:{AA_0 : obj | [(AA_0 = FP_nan_0)]};
+        FP_infinite_0:{AA_0 : obj | [(AA_0 = FP_infinite_0)]};
+        FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_2:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_2)]};
+        FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+        FIXPOINTSYMBOL_0:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_0)]}] 
+ grd true 
+ lhs {AA_0 : int | [(AA_0 = x_77)]} 
+ rhs {AA_0 : int | [true]} 
+ id 8  
+ 
+constraint:
+  env  [y_168:{AA_0 : int | []};
+        y_116:{AA_0 : int | []};
+        x_77:{AA_0 : int | [true;k27]};
+        x_167:{AA_0 : int | []};
+        x_115:{AA_0 : int | []};
+        true_0:{AA_0 : bool | [(AA_0 = true_0)]};
+        test_predicate_254:{AA_0 : bool | []};
+        false_0:{AA_0 : bool | [(AA_0 = false_0)]};
+        f_76:{AA_0 : func(0, [int ; obj]) | []};
+        __tag_36:{AA_0 : func(0, [obj ; int]) | []};
+        _'seq_257:{AA_0 : obj | []};
+        _'3_78:{AA_0 : bool | []};
+        _'1_79:{AA_0 : int | []};
+        Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+        Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+        Open_wronly_0:{AA_0 : obj | [(AA_0 = Open_wronly_0)]};
+        Open_trunc_0:{AA_0 : obj | [(AA_0 = Open_trunc_0)]};
+        Open_text_0:{AA_0 : obj | [(AA_0 = Open_text_0)]};
+        Open_rdonly_0:{AA_0 : obj | [(AA_0 = Open_rdonly_0)]};
+        Open_nonblock_0:{AA_0 : obj | [(AA_0 = Open_nonblock_0)]};
+        Open_excl_0:{AA_0 : obj | [(AA_0 = Open_excl_0)]};
+        Open_creat_0:{AA_0 : obj | [(AA_0 = Open_creat_0)]};
+        Open_binary_0:{AA_0 : obj | [(AA_0 = Open_binary_0)]};
+        Open_append_0:{AA_0 : obj | [(AA_0 = Open_append_0)]};
+        None_0:{AA_0 : obj | [(AA_0 = None_0)]};
+        FP_zero_0:{AA_0 : obj | [(AA_0 = FP_zero_0)]};
+        FP_subnormal_0:{AA_0 : obj | [(AA_0 = FP_subnormal_0)]};
+        FP_normal_0:{AA_0 : obj | [(AA_0 = FP_normal_0)]};
+        FP_nan_0:{AA_0 : obj | [(AA_0 = FP_nan_0)]};
+        FP_infinite_0:{AA_0 : obj | [(AA_0 = FP_infinite_0)]};
+        FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_2:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_2)]};
+        FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+        FIXPOINTSYMBOL_0:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_0)]}] 
+ grd true 
+ lhs {AA_0 : int | [(AA_0 = 0)]} 
+ rhs {AA_0 : int | [k33[x_167:=x_77][_0:=supr_251]]} 
+ id 9  
+ 
+constraint:
+  env  [y_168:{AA_0 : int | []};
+        y_116:{AA_0 : int | []};
+        x_77:{AA_0 : int | [true;k27]};
+        x_167:{AA_0 : int | []};
+        x_115:{AA_0 : int | []};
+        true_0:{AA_0 : bool | [(AA_0 = true_0)]};
+        test_predicate_254:{AA_0 : bool | []};
+        false_0:{AA_0 : bool | [(AA_0 = false_0)]};
+        f_76:{AA_0 : func(0, [int ; obj]) | []};
+        __tag_36:{AA_0 : func(0, [obj ; int]) | []};
+        _'seq_257:{AA_0 : obj | []};
+        _'3_78:{AA_0 : bool | []};
+        _'1_79:{AA_0 : int | []};
+        Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+        Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+        Open_wronly_0:{AA_0 : obj | [(AA_0 = Open_wronly_0)]};
+        Open_trunc_0:{AA_0 : obj | [(AA_0 = Open_trunc_0)]};
+        Open_text_0:{AA_0 : obj | [(AA_0 = Open_text_0)]};
+        Open_rdonly_0:{AA_0 : obj | [(AA_0 = Open_rdonly_0)]};
+        Open_nonblock_0:{AA_0 : obj | [(AA_0 = Open_nonblock_0)]};
+        Open_excl_0:{AA_0 : obj | [(AA_0 = Open_excl_0)]};
+        Open_creat_0:{AA_0 : obj | [(AA_0 = Open_creat_0)]};
+        Open_binary_0:{AA_0 : obj | [(AA_0 = Open_binary_0)]};
+        Open_append_0:{AA_0 : obj | [(AA_0 = Open_append_0)]};
+        None_0:{AA_0 : obj | [(AA_0 = None_0)]};
+        FP_zero_0:{AA_0 : obj | [(AA_0 = FP_zero_0)]};
+        FP_subnormal_0:{AA_0 : obj | [(AA_0 = FP_subnormal_0)]};
+        FP_normal_0:{AA_0 : obj | [(AA_0 = FP_normal_0)]};
+        FP_nan_0:{AA_0 : obj | [(AA_0 = FP_nan_0)]};
+        FP_infinite_0:{AA_0 : obj | [(AA_0 = FP_infinite_0)]};
+        FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_2:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_2)]};
+        FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+        FIXPOINTSYMBOL_0:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_0)]}] 
+ grd true 
+ lhs {AA_0 : int | [(AA_0 = 0)]} 
+ rhs {AA_0 : int | [true]} 
+ id 10  
+ 
+constraint:
+  env  [y_168:{AA_0 : int | []};
+        y_116:{AA_0 : int | []};
+        x_77:{AA_0 : int | [true;k27]};
+        x_167:{AA_0 : int | []};
+        x_115:{AA_0 : int | []};
+        true_0:{AA_0 : bool | [(AA_0 = true_0)]};
+        test_predicate_254:{AA_0 : bool | []};
+        false_0:{AA_0 : bool | [(AA_0 = false_0)]};
+        f_76:{AA_0 : func(0, [int ; obj]) | []};
+        __tag_36:{AA_0 : func(0, [obj ; int]) | []};
+        _'seq_257:{AA_0 : obj | []};
+        _'3_78:{AA_0 : bool | [&& [((Bexp AA_0) -> (x_77 > 0)) ; ((x_77 > 0) -> (Bexp AA_0))]]};
+        _'1_79:{AA_0 : int | []};
+        Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+        Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+        Open_wronly_0:{AA_0 : obj | [(AA_0 = Open_wronly_0)]};
+        Open_trunc_0:{AA_0 : obj | [(AA_0 = Open_trunc_0)]};
+        Open_text_0:{AA_0 : obj | [(AA_0 = Open_text_0)]};
+        Open_rdonly_0:{AA_0 : obj | [(AA_0 = Open_rdonly_0)]};
+        Open_nonblock_0:{AA_0 : obj | [(AA_0 = Open_nonblock_0)]};
+        Open_excl_0:{AA_0 : obj | [(AA_0 = Open_excl_0)]};
+        Open_creat_0:{AA_0 : obj | [(AA_0 = Open_creat_0)]};
+        Open_binary_0:{AA_0 : obj | [(AA_0 = Open_binary_0)]};
+        Open_append_0:{AA_0 : obj | [(AA_0 = Open_append_0)]};
+        None_0:{AA_0 : obj | [(AA_0 = None_0)]};
+        FP_zero_0:{AA_0 : obj | [(AA_0 = FP_zero_0)]};
+        FP_subnormal_0:{AA_0 : obj | [(AA_0 = FP_subnormal_0)]};
+        FP_normal_0:{AA_0 : obj | [(AA_0 = FP_normal_0)]};
+        FP_nan_0:{AA_0 : obj | [(AA_0 = FP_nan_0)]};
+        FP_infinite_0:{AA_0 : obj | [(AA_0 = FP_infinite_0)]};
+        FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_2:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_2)]};
+        FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+        FIXPOINTSYMBOL_0:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_0)]}] 
+ grd true 
+ lhs {AA_0 : obj | [true;k36]} 
+ rhs {AA_0 : obj | [k29]} 
+ id 11  
+ 
+constraint:
+  env  [y_168:{AA_0 : int | []};
+        y_116:{AA_0 : int | []};
+        x_77:{AA_0 : int | [true;k27]};
+        x_167:{AA_0 : int | []};
+        x_115:{AA_0 : int | []};
+        true_0:{AA_0 : bool | [(AA_0 = true_0)]};
+        test_predicate_254:{AA_0 : bool | []};
+        false_0:{AA_0 : bool | [(AA_0 = false_0)]};
+        f_76:{AA_0 : func(0, [int ; obj]) | []};
+        __tag_36:{AA_0 : func(0, [obj ; int]) | []};
+        _'seq_257:{AA_0 : obj | [true;k29]};
+        _'3_78:{AA_0 : bool | []};
+        _'1_79:{AA_0 : int | []};
+        Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+        Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+        Open_wronly_0:{AA_0 : obj | [(AA_0 = Open_wronly_0)]};
+        Open_trunc_0:{AA_0 : obj | [(AA_0 = Open_trunc_0)]};
+        Open_text_0:{AA_0 : obj | [(AA_0 = Open_text_0)]};
+        Open_rdonly_0:{AA_0 : obj | [(AA_0 = Open_rdonly_0)]};
+        Open_nonblock_0:{AA_0 : obj | [(AA_0 = Open_nonblock_0)]};
+        Open_excl_0:{AA_0 : obj | [(AA_0 = Open_excl_0)]};
+        Open_creat_0:{AA_0 : obj | [(AA_0 = Open_creat_0)]};
+        Open_binary_0:{AA_0 : obj | [(AA_0 = Open_binary_0)]};
+        Open_append_0:{AA_0 : obj | [(AA_0 = Open_append_0)]};
+        None_0:{AA_0 : obj | [(AA_0 = None_0)]};
+        FP_zero_0:{AA_0 : obj | [(AA_0 = FP_zero_0)]};
+        FP_subnormal_0:{AA_0 : obj | [(AA_0 = FP_subnormal_0)]};
+        FP_normal_0:{AA_0 : obj | [(AA_0 = FP_normal_0)]};
+        FP_nan_0:{AA_0 : obj | [(AA_0 = FP_nan_0)]};
+        FP_infinite_0:{AA_0 : obj | [(AA_0 = FP_infinite_0)]};
+        FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_2:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_2)]};
+        FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+        FIXPOINTSYMBOL_0:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_0)]}] 
+ grd true 
+ lhs {AA_0 : obj | [true;k38]} 
+ rhs {AA_0 : obj | [k28]} 
+ id 12  
+ 
+constraint:
+  env  [y_168:{AA_0 : int | []};
+        y_116:{AA_0 : int | []};
+        x_77:{AA_0 : int | [true;k27]};
+        x_167:{AA_0 : int | []};
+        x_115:{AA_0 : int | []};
+        true_0:{AA_0 : bool | [(AA_0 = true_0)]};
+        test_predicate_254:{AA_0 : bool | []};
+        false_0:{AA_0 : bool | [(AA_0 = false_0)]};
+        f_76:{AA_0 : func(0, [int ; obj]) | []};
+        __tag_36:{AA_0 : func(0, [obj ; int]) | []};
+        _'seq_257:{AA_0 : obj | []};
+        _'3_78:{AA_0 : bool | []};
+        _'1_79:{AA_0 : int | []};
+        Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+        Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+        Open_wronly_0:{AA_0 : obj | [(AA_0 = Open_wronly_0)]};
+        Open_trunc_0:{AA_0 : obj | [(AA_0 = Open_trunc_0)]};
+        Open_text_0:{AA_0 : obj | [(AA_0 = Open_text_0)]};
+        Open_rdonly_0:{AA_0 : obj | [(AA_0 = Open_rdonly_0)]};
+        Open_nonblock_0:{AA_0 : obj | [(AA_0 = Open_nonblock_0)]};
+        Open_excl_0:{AA_0 : obj | [(AA_0 = Open_excl_0)]};
+        Open_creat_0:{AA_0 : obj | [(AA_0 = Open_creat_0)]};
+        Open_binary_0:{AA_0 : obj | [(AA_0 = Open_binary_0)]};
+        Open_append_0:{AA_0 : obj | [(AA_0 = Open_append_0)]};
+        None_0:{AA_0 : obj | [(AA_0 = None_0)]};
+        FP_zero_0:{AA_0 : obj | [(AA_0 = FP_zero_0)]};
+        FP_subnormal_0:{AA_0 : obj | [(AA_0 = FP_subnormal_0)]};
+        FP_normal_0:{AA_0 : obj | [(AA_0 = FP_normal_0)]};
+        FP_nan_0:{AA_0 : obj | [(AA_0 = FP_nan_0)]};
+        FP_infinite_0:{AA_0 : obj | [(AA_0 = FP_infinite_0)]};
+        FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_2:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_2)]};
+        FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+        FIXPOINTSYMBOL_0:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_0)]}] 
+ grd true 
+ lhs {AA_0 : obj | [true;k28]} 
+ rhs {AA_0 : obj | [k26]} 
+ id 13  
+ 
+constraint:
+  env  [y_168:{AA_0 : int | []};
+        y_116:{AA_0 : int | []};
+        x_77:{AA_0 : int | []};
+        x_167:{AA_0 : int | []};
+        x_115:{AA_0 : int | []};
+        true_0:{AA_0 : bool | [(AA_0 = true_0)]};
+        test_predicate_254:{AA_0 : bool | []};
+        false_0:{AA_0 : bool | [(AA_0 = false_0)]};
+        f_76:{AA_0 : func(0, [int ; obj]) | []};
+        __tag_36:{AA_0 : func(0, [obj ; int]) | []};
+        _'seq_257:{AA_0 : obj | []};
+        _'3_78:{AA_0 : bool | []};
+        _'1_79:{AA_0 : int | []};
+        Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+        Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+        Open_wronly_0:{AA_0 : obj | [(AA_0 = Open_wronly_0)]};
+        Open_trunc_0:{AA_0 : obj | [(AA_0 = Open_trunc_0)]};
+        Open_text_0:{AA_0 : obj | [(AA_0 = Open_text_0)]};
+        Open_rdonly_0:{AA_0 : obj | [(AA_0 = Open_rdonly_0)]};
+        Open_nonblock_0:{AA_0 : obj | [(AA_0 = Open_nonblock_0)]};
+        Open_excl_0:{AA_0 : obj | [(AA_0 = Open_excl_0)]};
+        Open_creat_0:{AA_0 : obj | [(AA_0 = Open_creat_0)]};
+        Open_binary_0:{AA_0 : obj | [(AA_0 = Open_binary_0)]};
+        Open_append_0:{AA_0 : obj | [(AA_0 = Open_append_0)]};
+        None_0:{AA_0 : obj | [(AA_0 = None_0)]};
+        FP_zero_0:{AA_0 : obj | [(AA_0 = FP_zero_0)]};
+        FP_subnormal_0:{AA_0 : obj | [(AA_0 = FP_subnormal_0)]};
+        FP_normal_0:{AA_0 : obj | [(AA_0 = FP_normal_0)]};
+        FP_nan_0:{AA_0 : obj | [(AA_0 = FP_nan_0)]};
+        FP_infinite_0:{AA_0 : obj | [(AA_0 = FP_infinite_0)]};
+        FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_2:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_2)]};
+        FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+        FIXPOINTSYMBOL_0:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_0)]}] 
+ grd true 
+ lhs {AA_0 : int | [true;k2]} 
+ rhs {AA_0 : int | [k27[_0:=_0]]} 
+ id 14  
+ 
+constraint:
+  env  [y_168:{AA_0 : int | []};
+        y_116:{AA_0 : int | []};
+        x_77:{AA_0 : int | [true;k2]};
+        x_167:{AA_0 : int | []};
+        x_115:{AA_0 : int | []};
+        true_0:{AA_0 : bool | [(AA_0 = true_0)]};
+        test_predicate_254:{AA_0 : bool | []};
+        false_0:{AA_0 : bool | [(AA_0 = false_0)]};
+        f_76:{AA_0 : func(0, [int ; obj]) | []};
+        __tag_36:{AA_0 : func(0, [obj ; int]) | []};
+        _'seq_257:{AA_0 : obj | []};
+        _'3_78:{AA_0 : bool | []};
+        _'1_79:{AA_0 : int | []};
+        Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+        Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+        Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+        Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+        Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+        Open_wronly_0:{AA_0 : obj | [(AA_0 = Open_wronly_0)]};
+        Open_trunc_0:{AA_0 : obj | [(AA_0 = Open_trunc_0)]};
+        Open_text_0:{AA_0 : obj | [(AA_0 = Open_text_0)]};
+        Open_rdonly_0:{AA_0 : obj | [(AA_0 = Open_rdonly_0)]};
+        Open_nonblock_0:{AA_0 : obj | [(AA_0 = Open_nonblock_0)]};
+        Open_excl_0:{AA_0 : obj | [(AA_0 = Open_excl_0)]};
+        Open_creat_0:{AA_0 : obj | [(AA_0 = Open_creat_0)]};
+        Open_binary_0:{AA_0 : obj | [(AA_0 = Open_binary_0)]};
+        Open_append_0:{AA_0 : obj | [(AA_0 = Open_append_0)]};
+        None_0:{AA_0 : obj | [(AA_0 = None_0)]};
+        FP_zero_0:{AA_0 : obj | [(AA_0 = FP_zero_0)]};
+        FP_subnormal_0:{AA_0 : obj | [(AA_0 = FP_subnormal_0)]};
+        FP_normal_0:{AA_0 : obj | [(AA_0 = FP_normal_0)]};
+        FP_nan_0:{AA_0 : obj | [(AA_0 = FP_nan_0)]};
+        FP_infinite_0:{AA_0 : obj | [(AA_0 = FP_infinite_0)]};
+        FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+        FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_2:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_2)]};
+        FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+        FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+        FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+        FIXPOINTSYMBOL_0:{AA_0 : obj | [(AA_0 = FIXPOINTSYMBOL_0)]}] 
+ grd true 
+ lhs {AA_0 : obj | [true;k26]} 
+ rhs {AA_0 : obj | [k1]} 
+ id 15  
+ 
+ 
+wf: env [x_77:{AA_0 : int | []};
+             true_0:{AA_0 : bool | []};
+             false_0:{AA_0 : bool | []};
+             f_76:{AA_0 : func(0, [int ; obj]) | []};
+             _'seq_257:{AA_0 : obj | []};
+             _'1_79:{AA_0 : int | []};
+             Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+             Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+             Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+             Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+             Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+             Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+             Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+             Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+             Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+             Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+             Open_wronly_0:{AA_0 : obj | []};
+             Open_trunc_0:{AA_0 : obj | []};
+             Open_text_0:{AA_0 : obj | []};
+             Open_rdonly_0:{AA_0 : obj | []};
+             Open_nonblock_0:{AA_0 : obj | []};
+             Open_excl_0:{AA_0 : obj | []};
+             Open_creat_0:{AA_0 : obj | []};
+             Open_binary_0:{AA_0 : obj | []};
+             Open_append_0:{AA_0 : obj | []};
+             None_0:{AA_0 : obj | []};
+             FP_zero_0:{AA_0 : obj | []};
+             FP_subnormal_0:{AA_0 : obj | []};
+             FP_normal_0:{AA_0 : obj | []};
+             FP_nan_0:{AA_0 : obj | []};
+             FP_infinite_0:{AA_0 : obj | []};
+             FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+             FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+             FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+             FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+             FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+             FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+             FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+             FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+             FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+             FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+             FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+             FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+             FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+             FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+             FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+             FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+             FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+             AA_0:{AA_0 : int | []}] 
+     reft {AA_0 : int | [k2]} 
+      
+     
+wf: env [x_77:{AA_0 : int | []};
+               true_0:{AA_0 : bool | []};
+               false_0:{AA_0 : bool | []};
+               f_76:{AA_0 : func(0, [int ; obj]) | []};
+               _'seq_257:{AA_0 : obj | []};
+               _'1_79:{AA_0 : int | []};
+               Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+               Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+               Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+               Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+               Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+               Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+               Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+               Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+               Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+               Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+               Open_wronly_0:{AA_0 : obj | []};
+               Open_trunc_0:{AA_0 : obj | []};
+               Open_text_0:{AA_0 : obj | []};
+               Open_rdonly_0:{AA_0 : obj | []};
+               Open_nonblock_0:{AA_0 : obj | []};
+               Open_excl_0:{AA_0 : obj | []};
+               Open_creat_0:{AA_0 : obj | []};
+               Open_binary_0:{AA_0 : obj | []};
+               Open_append_0:{AA_0 : obj | []};
+               None_0:{AA_0 : obj | []};
+               FP_zero_0:{AA_0 : obj | []};
+               FP_subnormal_0:{AA_0 : obj | []};
+               FP_normal_0:{AA_0 : obj | []};
+               FP_nan_0:{AA_0 : obj | []};
+               FP_infinite_0:{AA_0 : obj | []};
+               FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+               FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+               FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+               FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+               FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+               FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+               FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+               FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+               FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+               FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+               FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+               FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+               FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+               FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+               FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+               FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+               FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+               AA_0:{AA_0 : obj | []}] 
+       reft {AA_0 : obj | [k1]} 
+        
+       
+wf: env [x_77:{AA_0 : int | []};
+                 true_0:{AA_0 : bool | []};
+                 false_0:{AA_0 : bool | []};
+                 f_76:{AA_0 : func(0, [int ; obj]) | []};
+                 _'seq_257:{AA_0 : obj | []};
+                 _'1_79:{AA_0 : int | []};
+                 Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                 Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                 Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                 Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                 Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                 Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                 Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                 Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                 Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                 Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                 Open_wronly_0:{AA_0 : obj | []};
+                 Open_trunc_0:{AA_0 : obj | []};
+                 Open_text_0:{AA_0 : obj | []};
+                 Open_rdonly_0:{AA_0 : obj | []};
+                 Open_nonblock_0:{AA_0 : obj | []};
+                 Open_excl_0:{AA_0 : obj | []};
+                 Open_creat_0:{AA_0 : obj | []};
+                 Open_binary_0:{AA_0 : obj | []};
+                 Open_append_0:{AA_0 : obj | []};
+                 None_0:{AA_0 : obj | []};
+                 FP_zero_0:{AA_0 : obj | []};
+                 FP_subnormal_0:{AA_0 : obj | []};
+                 FP_normal_0:{AA_0 : obj | []};
+                 FP_nan_0:{AA_0 : obj | []};
+                 FP_infinite_0:{AA_0 : obj | []};
+                 FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                 FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                 FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                 FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                 FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                 FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                 FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                 FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                 FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                 FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                 FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                 FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                 FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                 FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                 FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                 FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                 FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                 AA_0:{AA_0 : obj | []}] 
+         reft {AA_0 : obj | [k46]} 
+          
+         
+wf: env [x_77:{AA_0 : int | []};
+                   true_0:{AA_0 : bool | []};
+                   false_0:{AA_0 : bool | []};
+                   f_76:{AA_0 : func(0, [int ; obj]) | []};
+                   _'seq_257:{AA_0 : obj | []};
+                   _'1_79:{AA_0 : int | []};
+                   Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                   Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                   Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                   Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                   Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                   Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                   Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                   Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                   Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                   Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                   Open_wronly_0:{AA_0 : obj | []};
+                   Open_trunc_0:{AA_0 : obj | []};
+                   Open_text_0:{AA_0 : obj | []};
+                   Open_rdonly_0:{AA_0 : obj | []};
+                   Open_nonblock_0:{AA_0 : obj | []};
+                   Open_excl_0:{AA_0 : obj | []};
+                   Open_creat_0:{AA_0 : obj | []};
+                   Open_binary_0:{AA_0 : obj | []};
+                   Open_append_0:{AA_0 : obj | []};
+                   None_0:{AA_0 : obj | []};
+                   FP_zero_0:{AA_0 : obj | []};
+                   FP_subnormal_0:{AA_0 : obj | []};
+                   FP_normal_0:{AA_0 : obj | []};
+                   FP_nan_0:{AA_0 : obj | []};
+                   FP_infinite_0:{AA_0 : obj | []};
+                   FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                   FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                   FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                   FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                   FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                   FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                   FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                   FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                   FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                   FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                   FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                   FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                   FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                   FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                   FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                   FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                   FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                   AA_0:{AA_0 : int | []}] 
+           reft {AA_0 : int | [(AA_0 = (x_77 + 1))]} 
+            
+           
+wf: env [x_77:{AA_0 : int | []};
+                     true_0:{AA_0 : bool | []};
+                     false_0:{AA_0 : bool | []};
+                     f_76:{AA_0 : func(0, [int ; obj]) | []};
+                     _'seq_257:{AA_0 : obj | []};
+                     Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                     Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                     Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                     Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                     Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                     Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                     Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                     Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                     Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                     Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                     Open_wronly_0:{AA_0 : obj | []};
+                     Open_trunc_0:{AA_0 : obj | []};
+                     Open_text_0:{AA_0 : obj | []};
+                     Open_rdonly_0:{AA_0 : obj | []};
+                     Open_nonblock_0:{AA_0 : obj | []};
+                     Open_excl_0:{AA_0 : obj | []};
+                     Open_creat_0:{AA_0 : obj | []};
+                     Open_binary_0:{AA_0 : obj | []};
+                     Open_append_0:{AA_0 : obj | []};
+                     None_0:{AA_0 : obj | []};
+                     FP_zero_0:{AA_0 : obj | []};
+                     FP_subnormal_0:{AA_0 : obj | []};
+                     FP_normal_0:{AA_0 : obj | []};
+                     FP_nan_0:{AA_0 : obj | []};
+                     FP_infinite_0:{AA_0 : obj | []};
+                     FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                     FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                     FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                     FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                     FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                     FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                     FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                     FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                     FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                     FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                     FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                     FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                     FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                     FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                     FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                     FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                     FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                     AA_0:{AA_0 : int | []}] 
+             reft {AA_0 : int | [true]} 
+              
+             
+wf: env [x_77:{AA_0 : int | []};
+                       x_115:{AA_0 : int | []};
+                       true_0:{AA_0 : bool | []};
+                       false_0:{AA_0 : bool | []};
+                       f_76:{AA_0 : func(0, [int ; obj]) | []};
+                       _'seq_257:{AA_0 : obj | []};
+                       Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                       Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                       Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                       Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                       Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                       Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                       Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                       Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                       Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                       Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                       Open_wronly_0:{AA_0 : obj | []};
+                       Open_trunc_0:{AA_0 : obj | []};
+                       Open_text_0:{AA_0 : obj | []};
+                       Open_rdonly_0:{AA_0 : obj | []};
+                       Open_nonblock_0:{AA_0 : obj | []};
+                       Open_excl_0:{AA_0 : obj | []};
+                       Open_creat_0:{AA_0 : obj | []};
+                       Open_binary_0:{AA_0 : obj | []};
+                       Open_append_0:{AA_0 : obj | []};
+                       None_0:{AA_0 : obj | []};
+                       FP_zero_0:{AA_0 : obj | []};
+                       FP_subnormal_0:{AA_0 : obj | []};
+                       FP_normal_0:{AA_0 : obj | []};
+                       FP_nan_0:{AA_0 : obj | []};
+                       FP_infinite_0:{AA_0 : obj | []};
+                       FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                       FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                       FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                       FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                       FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                       FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                       FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                       FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                       FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                       FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                       FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                       FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                       FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                       FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                       FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                       FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                       FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                       AA_0:{AA_0 : int | []}] 
+               reft {AA_0 : int | [true]} 
+                
+               
+wf: env [y_116:{AA_0 : int | []};
+                         x_77:{AA_0 : int | []};
+                         x_115:{AA_0 : int | []};
+                         true_0:{AA_0 : bool | []};
+                         false_0:{AA_0 : bool | []};
+                         f_76:{AA_0 : func(0, [int ; obj]) | []};
+                         _'seq_257:{AA_0 : obj | []};
+                         Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                         Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                         Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                         Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                         Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                         Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                         Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                         Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                         Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                         Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                         Open_wronly_0:{AA_0 : obj | []};
+                         Open_trunc_0:{AA_0 : obj | []};
+                         Open_text_0:{AA_0 : obj | []};
+                         Open_rdonly_0:{AA_0 : obj | []};
+                         Open_nonblock_0:{AA_0 : obj | []};
+                         Open_excl_0:{AA_0 : obj | []};
+                         Open_creat_0:{AA_0 : obj | []};
+                         Open_binary_0:{AA_0 : obj | []};
+                         Open_append_0:{AA_0 : obj | []};
+                         None_0:{AA_0 : obj | []};
+                         FP_zero_0:{AA_0 : obj | []};
+                         FP_subnormal_0:{AA_0 : obj | []};
+                         FP_normal_0:{AA_0 : obj | []};
+                         FP_nan_0:{AA_0 : obj | []};
+                         FP_infinite_0:{AA_0 : obj | []};
+                         FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                         FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                         FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                         FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                         FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                         FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                         FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                         FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                         FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                         FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                         FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                         FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                         FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                         FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                         FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                         FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                         FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                         AA_0:{AA_0 : int | []}] 
+                 reft {AA_0 : int | [(AA_0 = (x_115 + y_116))]} 
+                  
+                 
+wf: env [x_77:{AA_0 : int | []};
+                           true_0:{AA_0 : bool | []};
+                           false_0:{AA_0 : bool | []};
+                           f_76:{AA_0 : func(0, [int ; obj]) | []};
+                           _'seq_257:{AA_0 : obj | []};
+                           Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                           Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                           Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                           Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                           Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                           Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                           Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                           Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                           Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                           Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                           Open_wronly_0:{AA_0 : obj | []};
+                           Open_trunc_0:{AA_0 : obj | []};
+                           Open_text_0:{AA_0 : obj | []};
+                           Open_rdonly_0:{AA_0 : obj | []};
+                           Open_nonblock_0:{AA_0 : obj | []};
+                           Open_excl_0:{AA_0 : obj | []};
+                           Open_creat_0:{AA_0 : obj | []};
+                           Open_binary_0:{AA_0 : obj | []};
+                           Open_append_0:{AA_0 : obj | []};
+                           None_0:{AA_0 : obj | []};
+                           FP_zero_0:{AA_0 : obj | []};
+                           FP_subnormal_0:{AA_0 : obj | []};
+                           FP_normal_0:{AA_0 : obj | []};
+                           FP_nan_0:{AA_0 : obj | []};
+                           FP_infinite_0:{AA_0 : obj | []};
+                           FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                           FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                           FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                           FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                           FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                           FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                           FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                           FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                           FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                           FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                           FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                           FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                           FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                           FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                           FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                           FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                           FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                           AA_0:{AA_0 : int | []}] 
+                   reft {AA_0 : int | [k27]} 
+                    
+                   
+wf: env [x_77:{AA_0 : int | []};
+                             true_0:{AA_0 : bool | []};
+                             false_0:{AA_0 : bool | []};
+                             f_76:{AA_0 : func(0, [int ; obj]) | []};
+                             _'seq_257:{AA_0 : obj | []};
+                             Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                             Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                             Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                             Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                             Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                             Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                             Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                             Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                             Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                             Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                             Open_wronly_0:{AA_0 : obj | []};
+                             Open_trunc_0:{AA_0 : obj | []};
+                             Open_text_0:{AA_0 : obj | []};
+                             Open_rdonly_0:{AA_0 : obj | []};
+                             Open_nonblock_0:{AA_0 : obj | []};
+                             Open_excl_0:{AA_0 : obj | []};
+                             Open_creat_0:{AA_0 : obj | []};
+                             Open_binary_0:{AA_0 : obj | []};
+                             Open_append_0:{AA_0 : obj | []};
+                             None_0:{AA_0 : obj | []};
+                             FP_zero_0:{AA_0 : obj | []};
+                             FP_subnormal_0:{AA_0 : obj | []};
+                             FP_normal_0:{AA_0 : obj | []};
+                             FP_nan_0:{AA_0 : obj | []};
+                             FP_infinite_0:{AA_0 : obj | []};
+                             FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                             FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                             FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                             FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                             FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                             FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                             FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                             FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                             FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                             FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                             FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                             FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                             FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                             FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                             FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                             FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                             FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                             AA_0:{AA_0 : obj | []}] 
+                     reft {AA_0 : obj | [k38]} 
+                      
+                     
+wf: env [x_77:{AA_0 : int | []};
+                               true_0:{AA_0 : bool | []};
+                               false_0:{AA_0 : bool | []};
+                               f_76:{AA_0 : func(0, [int ; obj]) | []};
+                               _'3_78:{AA_0 : bool | []};
+                               Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                               Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                               Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                               Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                               Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                               Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                               Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                               Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                               Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                               Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                               Open_wronly_0:{AA_0 : obj | []};
+                               Open_trunc_0:{AA_0 : obj | []};
+                               Open_text_0:{AA_0 : obj | []};
+                               Open_rdonly_0:{AA_0 : obj | []};
+                               Open_nonblock_0:{AA_0 : obj | []};
+                               Open_excl_0:{AA_0 : obj | []};
+                               Open_creat_0:{AA_0 : obj | []};
+                               Open_binary_0:{AA_0 : obj | []};
+                               Open_append_0:{AA_0 : obj | []};
+                               None_0:{AA_0 : obj | []};
+                               FP_zero_0:{AA_0 : obj | []};
+                               FP_subnormal_0:{AA_0 : obj | []};
+                               FP_normal_0:{AA_0 : obj | []};
+                               FP_nan_0:{AA_0 : obj | []};
+                               FP_infinite_0:{AA_0 : obj | []};
+                               FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                               FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                               FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                               FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                               FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                               FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                               FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                               FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                               FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                               FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                               FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                               FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                               FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                               FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                               FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                               FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                               FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                               AA_0:{AA_0 : bool | []}] 
+                       reft {AA_0 : bool | [&& [((Bexp AA_0) -> (x_77 > 0)) ; ((x_77 > 0) -> (Bexp AA_0))]]} 
+                        
+                       
+wf: env [x_77:{AA_0 : int | []};
+                                 true_0:{AA_0 : bool | []};
+                                 test_predicate_254:{AA_0 : bool | []};
+                                 false_0:{AA_0 : bool | []};
+                                 f_76:{AA_0 : func(0, [int ; obj]) | []};
+                                 _'3_78:{AA_0 : bool | []};
+                                 Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                                 Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                                 Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                                 Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                 Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                                 Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                                 Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                                 Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                                 Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                                 Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                                 Open_wronly_0:{AA_0 : obj | []};
+                                 Open_trunc_0:{AA_0 : obj | []};
+                                 Open_text_0:{AA_0 : obj | []};
+                                 Open_rdonly_0:{AA_0 : obj | []};
+                                 Open_nonblock_0:{AA_0 : obj | []};
+                                 Open_excl_0:{AA_0 : obj | []};
+                                 Open_creat_0:{AA_0 : obj | []};
+                                 Open_binary_0:{AA_0 : obj | []};
+                                 Open_append_0:{AA_0 : obj | []};
+                                 None_0:{AA_0 : obj | []};
+                                 FP_zero_0:{AA_0 : obj | []};
+                                 FP_subnormal_0:{AA_0 : obj | []};
+                                 FP_normal_0:{AA_0 : obj | []};
+                                 FP_nan_0:{AA_0 : obj | []};
+                                 FP_infinite_0:{AA_0 : obj | []};
+                                 FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                 FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                                 FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                                 FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                                 FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                                 FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                 FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                 FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                                 FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                 FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                 FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                 FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                 FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                 FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                 FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                 FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                                 FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                                 AA_0:{AA_0 : obj | []}] 
+                         reft {AA_0 : obj | [k36]} 
+                          
+                         
+wf: env [x_77:{AA_0 : int | []};
+                                   true_0:{AA_0 : bool | []};
+                                   false_0:{AA_0 : bool | []};
+                                   f_76:{AA_0 : func(0, [int ; obj]) | []};
+                                   Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                                   Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                                   Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                                   Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                   Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                                   Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                                   Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                                   Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                                   Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                                   Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                                   Open_wronly_0:{AA_0 : obj | []};
+                                   Open_trunc_0:{AA_0 : obj | []};
+                                   Open_text_0:{AA_0 : obj | []};
+                                   Open_rdonly_0:{AA_0 : obj | []};
+                                   Open_nonblock_0:{AA_0 : obj | []};
+                                   Open_excl_0:{AA_0 : obj | []};
+                                   Open_creat_0:{AA_0 : obj | []};
+                                   Open_binary_0:{AA_0 : obj | []};
+                                   Open_append_0:{AA_0 : obj | []};
+                                   None_0:{AA_0 : obj | []};
+                                   FP_zero_0:{AA_0 : obj | []};
+                                   FP_subnormal_0:{AA_0 : obj | []};
+                                   FP_normal_0:{AA_0 : obj | []};
+                                   FP_nan_0:{AA_0 : obj | []};
+                                   FP_infinite_0:{AA_0 : obj | []};
+                                   FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                   FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                                   FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                                   FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                                   FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                                   FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                   FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                   FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                                   FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                   FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                   FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                   FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                   FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                   FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                   FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                   FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                                   FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                                   AA_0:{AA_0 : int | []}] 
+                           reft {AA_0 : int | [k33]} 
+                            
+                           
+wf: env [x_77:{AA_0 : int | []};
+                                     true_0:{AA_0 : bool | []};
+                                     false_0:{AA_0 : bool | []};
+                                     f_76:{AA_0 : func(0, [int ; obj]) | []};
+                                     Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                                     Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                                     Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                                     Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                     Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                                     Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                                     Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                                     Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                                     Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                                     Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                                     Open_wronly_0:{AA_0 : obj | []};
+                                     Open_trunc_0:{AA_0 : obj | []};
+                                     Open_text_0:{AA_0 : obj | []};
+                                     Open_rdonly_0:{AA_0 : obj | []};
+                                     Open_nonblock_0:{AA_0 : obj | []};
+                                     Open_excl_0:{AA_0 : obj | []};
+                                     Open_creat_0:{AA_0 : obj | []};
+                                     Open_binary_0:{AA_0 : obj | []};
+                                     Open_append_0:{AA_0 : obj | []};
+                                     None_0:{AA_0 : obj | []};
+                                     FP_zero_0:{AA_0 : obj | []};
+                                     FP_subnormal_0:{AA_0 : obj | []};
+                                     FP_normal_0:{AA_0 : obj | []};
+                                     FP_nan_0:{AA_0 : obj | []};
+                                     FP_infinite_0:{AA_0 : obj | []};
+                                     FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                     FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                                     FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                                     FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                                     FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                                     FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                     FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                     FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                                     FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                     FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                     FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                     FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                     FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                     FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                     FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                     FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                                     FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                                     AA_0:{AA_0 : int | []}] 
+                             reft {AA_0 : int | [true]} 
+                              
+                             
+wf: env [x_77:{AA_0 : int | []};
+                                       x_167:{AA_0 : int | []};
+                                       true_0:{AA_0 : bool | []};
+                                       false_0:{AA_0 : bool | []};
+                                       f_76:{AA_0 : func(0, [int ; obj]) | []};
+                                       Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                                       Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                                       Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                                       Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                       Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                                       Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                                       Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                                       Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                                       Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                                       Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                                       Open_wronly_0:{AA_0 : obj | []};
+                                       Open_trunc_0:{AA_0 : obj | []};
+                                       Open_text_0:{AA_0 : obj | []};
+                                       Open_rdonly_0:{AA_0 : obj | []};
+                                       Open_nonblock_0:{AA_0 : obj | []};
+                                       Open_excl_0:{AA_0 : obj | []};
+                                       Open_creat_0:{AA_0 : obj | []};
+                                       Open_binary_0:{AA_0 : obj | []};
+                                       Open_append_0:{AA_0 : obj | []};
+                                       None_0:{AA_0 : obj | []};
+                                       FP_zero_0:{AA_0 : obj | []};
+                                       FP_subnormal_0:{AA_0 : obj | []};
+                                       FP_normal_0:{AA_0 : obj | []};
+                                       FP_nan_0:{AA_0 : obj | []};
+                                       FP_infinite_0:{AA_0 : obj | []};
+                                       FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                       FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                                       FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                                       FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                                       FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                                       FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                       FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                       FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                                       FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                       FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                       FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                       FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                       FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                       FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                       FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                       FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                                       FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                                       AA_0:{AA_0 : int | []}] 
+                               reft {AA_0 : int | [k33]} 
+                                
+                               
+wf: env [x_77:{AA_0 : int | []};
+                                         x_167:{AA_0 : int | []};
+                                         true_0:{AA_0 : bool | []};
+                                         false_0:{AA_0 : bool | []};
+                                         f_76:{AA_0 : func(0, [int ; obj]) | []};
+                                         Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                                         Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                                         Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                                         Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                         Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                                         Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                                         Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                                         Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                                         Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                                         Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                                         Open_wronly_0:{AA_0 : obj | []};
+                                         Open_trunc_0:{AA_0 : obj | []};
+                                         Open_text_0:{AA_0 : obj | []};
+                                         Open_rdonly_0:{AA_0 : obj | []};
+                                         Open_nonblock_0:{AA_0 : obj | []};
+                                         Open_excl_0:{AA_0 : obj | []};
+                                         Open_creat_0:{AA_0 : obj | []};
+                                         Open_binary_0:{AA_0 : obj | []};
+                                         Open_append_0:{AA_0 : obj | []};
+                                         None_0:{AA_0 : obj | []};
+                                         FP_zero_0:{AA_0 : obj | []};
+                                         FP_subnormal_0:{AA_0 : obj | []};
+                                         FP_normal_0:{AA_0 : obj | []};
+                                         FP_nan_0:{AA_0 : obj | []};
+                                         FP_infinite_0:{AA_0 : obj | []};
+                                         FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                         FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                                         FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                                         FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                                         FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                                         FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                         FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                         FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                                         FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                         FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                         FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                         FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                         FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                         FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                         FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                         FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                                         FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                                         AA_0:{AA_0 : int | []}] 
+                                 reft {AA_0 : int | [true]} 
+                                  
+                                 
+wf: env [y_168:{AA_0 : int | []};
+                                           x_77:{AA_0 : int | []};
+                                           x_167:{AA_0 : int | []};
+                                           true_0:{AA_0 : bool | []};
+                                           false_0:{AA_0 : bool | []};
+                                           f_76:{AA_0 : func(0, [int ; obj]) | []};
+                                           Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                                           Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                                           Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                                           Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                           Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                                           Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                                           Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                                           Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                                           Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                                           Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                                           Open_wronly_0:{AA_0 : obj | []};
+                                           Open_trunc_0:{AA_0 : obj | []};
+                                           Open_text_0:{AA_0 : obj | []};
+                                           Open_rdonly_0:{AA_0 : obj | []};
+                                           Open_nonblock_0:{AA_0 : obj | []};
+                                           Open_excl_0:{AA_0 : obj | []};
+                                           Open_creat_0:{AA_0 : obj | []};
+                                           Open_binary_0:{AA_0 : obj | []};
+                                           Open_append_0:{AA_0 : obj | []};
+                                           None_0:{AA_0 : obj | []};
+                                           FP_zero_0:{AA_0 : obj | []};
+                                           FP_subnormal_0:{AA_0 : obj | []};
+                                           FP_normal_0:{AA_0 : obj | []};
+                                           FP_nan_0:{AA_0 : obj | []};
+                                           FP_infinite_0:{AA_0 : obj | []};
+                                           FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                           FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                                           FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                                           FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                                           FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                                           FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                           FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                           FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                                           FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                           FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                           FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                           FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                           FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                           FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                           FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                           FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                                           FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                                           AA_0:{AA_0 : bool | []}] 
+                                   reft {AA_0 : bool | [&& [((Bexp AA_0) -> (x_167 > y_168)) ; ((x_167 > y_168) -> (Bexp AA_0))]]} 
+                                    
+                                   
+wf: env [x_77:{AA_0 : int | []};
+                                             true_0:{AA_0 : bool | []};
+                                             false_0:{AA_0 : bool | []};
+                                             f_76:{AA_0 : func(0, [int ; obj]) | []};
+                                             Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                                             Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                                             Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                                             Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                             Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                                             Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                                             Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                                             Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                                             Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                                             Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                                             Open_wronly_0:{AA_0 : obj | []};
+                                             Open_trunc_0:{AA_0 : obj | []};
+                                             Open_text_0:{AA_0 : obj | []};
+                                             Open_rdonly_0:{AA_0 : obj | []};
+                                             Open_nonblock_0:{AA_0 : obj | []};
+                                             Open_excl_0:{AA_0 : obj | []};
+                                             Open_creat_0:{AA_0 : obj | []};
+                                             Open_binary_0:{AA_0 : obj | []};
+                                             Open_append_0:{AA_0 : obj | []};
+                                             None_0:{AA_0 : obj | []};
+                                             FP_zero_0:{AA_0 : obj | []};
+                                             FP_subnormal_0:{AA_0 : obj | []};
+                                             FP_normal_0:{AA_0 : obj | []};
+                                             FP_nan_0:{AA_0 : obj | []};
+                                             FP_infinite_0:{AA_0 : obj | []};
+                                             FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                             FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                                             FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                                             FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                                             FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                                             FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                             FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                             FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                                             FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                             FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                             FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                             FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                             FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                             FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                             FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                             FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                                             FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                                             AA_0:{AA_0 : int | []}] 
+                                     reft {AA_0 : int | [k27]} 
+                                      
+                                     
+wf: env [x_77:{AA_0 : int | []};
+                                               true_0:{AA_0 : bool | []};
+                                               false_0:{AA_0 : bool | []};
+                                               f_76:{AA_0 : func(0, [int ; obj]) | []};
+                                               Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                                               Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                                               Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                                               Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                               Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                                               Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                                               Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                                               Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                                               Pervasives_0.ignore:{AA_0 : func(0, [obj ; obj]) | []};
+                                               Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                                               Open_wronly_0:{AA_0 : obj | []};
+                                               Open_trunc_0:{AA_0 : obj | []};
+                                               Open_text_0:{AA_0 : obj | []};
+                                               Open_rdonly_0:{AA_0 : obj | []};
+                                               Open_nonblock_0:{AA_0 : obj | []};
+                                               Open_excl_0:{AA_0 : obj | []};
+                                               Open_creat_0:{AA_0 : obj | []};
+                                               Open_binary_0:{AA_0 : obj | []};
+                                               Open_append_0:{AA_0 : obj | []};
+                                               None_0:{AA_0 : obj | []};
+                                               FP_zero_0:{AA_0 : obj | []};
+                                               FP_subnormal_0:{AA_0 : obj | []};
+                                               FP_normal_0:{AA_0 : obj | []};
+                                               FP_nan_0:{AA_0 : obj | []};
+                                               FP_infinite_0:{AA_0 : obj | []};
+                                               FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                               FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                                               FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                                               FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                                               FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                                               FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                               FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                               FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                                               FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                               FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                               FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                               FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                               FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                               FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                               FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                               FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                                               FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                                               AA_0:{AA_0 : obj | []}] 
+                                       reft {AA_0 : obj | [k29]} 
+                                        
+                                       
+wf: env [x_77:{AA_0 : int | []};
+                                                 true_0:{AA_0 : bool | []};
+                                                 false_0:{AA_0 : bool | []};
+                                                 f_76:{AA_0 : func(0, [int ; obj]) | []};
+                                                 Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                                                 Pervasives_0.succ:{AA_0 : func(0, [int ; int]) | []};
+                                                 Pervasives_0.pred:{AA_0 : func(0, [int ; int]) | []};
+                                                 Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                                 Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                                                 Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                                                 Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                                                 Pervasives_0.land:{AA_0 : func(0, [int ; int ; int]) | []};
+                                                 Pervasives_0.ignore:
+                                                 {AA_0 : func(0, [obj ; obj]) | []};
+                                                 Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                                                 Open_wronly_0:{AA_0 : obj | []};
+                                                 Open_trunc_0:{AA_0 : obj | []};
+                                                 Open_text_0:{AA_0 : obj | []};
+                                                 Open_rdonly_0:{AA_0 : obj | []};
+                                                 Open_nonblock_0:{AA_0 : obj | []};
+                                                 Open_excl_0:{AA_0 : obj | []};
+                                                 Open_creat_0:{AA_0 : obj | []};
+                                                 Open_binary_0:{AA_0 : obj | []};
+                                                 Open_append_0:{AA_0 : obj | []};
+                                                 None_0:{AA_0 : obj | []};
+                                                 FP_zero_0:{AA_0 : obj | []};
+                                                 FP_subnormal_0:{AA_0 : obj | []};
+                                                 FP_normal_0:{AA_0 : obj | []};
+                                                 FP_nan_0:{AA_0 : obj | []};
+                                                 FP_infinite_0:{AA_0 : obj | []};
+                                                 FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                 FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                                                 FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                                                 FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                                                 FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                                                 FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                                 FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                 FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                                                 FIXPOINTSYMBOL_16:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                                 FIXPOINTSYMBOL_15:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                 FIXPOINTSYMBOL_14:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                 FIXPOINTSYMBOL_13:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                 FIXPOINTSYMBOL_12:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                 FIXPOINTSYMBOL_11:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                 FIXPOINTSYMBOL_10:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                 FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                                                 FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                                                 AA_0:{AA_0 : obj | []}] 
+                                         reft {AA_0 : obj | [k28]} 
+                                          
+                                         
+wf: env [true_0:{AA_0 : bool | []};
+                                                   false_0:{AA_0 : bool | []};
+                                                   f_76:{AA_0 : func(0, [int ; obj]) | []};
+                                                   Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                                                   Pervasives_0.succ:
+                                                   {AA_0 : func(0, [int ; int]) | []};
+                                                   Pervasives_0.pred:
+                                                   {AA_0 : func(0, [int ; int]) | []};
+                                                   Pervasives_0.or:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                                   Pervasives_0.not:{AA_0 : func(0, [bool ; bool]) | []};
+                                                   Pervasives_0.mod:{AA_0 : func(0, [int ; int ; int]) | []};
+                                                   Pervasives_0.lsr:{AA_0 : func(0, [int ; int ; int]) | []};
+                                                   Pervasives_0.land:
+                                                   {AA_0 : func(0, [int ; int ; int]) | []};
+                                                   Pervasives_0.ignore:
+                                                   {AA_0 : func(0, [obj ; obj]) | []};
+                                                   Pervasives_0.abs:{AA_0 : func(0, [int ; int]) | []};
+                                                   Open_wronly_0:{AA_0 : obj | []};
+                                                   Open_trunc_0:{AA_0 : obj | []};
+                                                   Open_text_0:{AA_0 : obj | []};
+                                                   Open_rdonly_0:{AA_0 : obj | []};
+                                                   Open_nonblock_0:{AA_0 : obj | []};
+                                                   Open_excl_0:{AA_0 : obj | []};
+                                                   Open_creat_0:{AA_0 : obj | []};
+                                                   Open_binary_0:{AA_0 : obj | []};
+                                                   Open_append_0:{AA_0 : obj | []};
+                                                   None_0:{AA_0 : obj | []};
+                                                   FP_zero_0:{AA_0 : obj | []};
+                                                   FP_subnormal_0:{AA_0 : obj | []};
+                                                   FP_normal_0:{AA_0 : obj | []};
+                                                   FP_nan_0:{AA_0 : obj | []};
+                                                   FP_infinite_0:{AA_0 : obj | []};
+                                                   FIXPOINTSYMBOL_9:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                   FIXPOINTSYMBOL_8:{AA_0 : func(0, [int ; int ; int]) | []};
+                                                   FIXPOINTSYMBOL_7:{AA_0 : func(0, [int ; int ; int]) | []};
+                                                   FIXPOINTSYMBOL_6:{AA_0 : func(0, [int ; int ; int]) | []};
+                                                   FIXPOINTSYMBOL_5:{AA_0 : func(0, [int ; int ; int]) | []};
+                                                   FIXPOINTSYMBOL_4:{AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                                   FIXPOINTSYMBOL_3:{AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                   FIXPOINTSYMBOL_2:{AA_0 : obj | []};
+                                                   FIXPOINTSYMBOL_16:
+                                                   {AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                                   FIXPOINTSYMBOL_15:
+                                                   {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                   FIXPOINTSYMBOL_14:
+                                                   {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                   FIXPOINTSYMBOL_13:
+                                                   {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                   FIXPOINTSYMBOL_12:
+                                                   {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                   FIXPOINTSYMBOL_11:
+                                                   {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                   FIXPOINTSYMBOL_10:
+                                                   {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                   FIXPOINTSYMBOL_1:{AA_0 : func(0, [obj ; obj ; obj]) | []};
+                                                   FIXPOINTSYMBOL_0:{AA_0 : obj | []};
+                                                   AA_0:{AA_0 : int | []}] 
+                                           reft {AA_0 : int | [k27]} 
+                                            
+                                           
+wf: env [x_77:{AA_0 : int | []};
+                                                     true_0:{AA_0 : bool | []};
+                                                     false_0:{AA_0 : bool | []};
+                                                     f_76:{AA_0 : func(0, [int ; obj]) | []};
+                                                     Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                                                     Pervasives_0.succ:
+                                                     {AA_0 : func(0, [int ; int]) | []};
+                                                     Pervasives_0.pred:
+                                                     {AA_0 : func(0, [int ; int]) | []};
+                                                     Pervasives_0.or:
+                                                     {AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                                     Pervasives_0.not:
+                                                     {AA_0 : func(0, [bool ; bool]) | []};
+                                                     Pervasives_0.mod:
+                                                     {AA_0 : func(0, [int ; int ; int]) | []};
+                                                     Pervasives_0.lsr:
+                                                     {AA_0 : func(0, [int ; int ; int]) | []};
+                                                     Pervasives_0.land:
+                                                     {AA_0 : func(0, [int ; int ; int]) | []};
+                                                     Pervasives_0.ignore:
+                                                     {AA_0 : func(0, [obj ; obj]) | []};
+                                                     Pervasives_0.abs:
+                                                     {AA_0 : func(0, [int ; int]) | []};
+                                                     Open_wronly_0:{AA_0 : obj | []};
+                                                     Open_trunc_0:{AA_0 : obj | []};
+                                                     Open_text_0:{AA_0 : obj | []};
+                                                     Open_rdonly_0:{AA_0 : obj | []};
+                                                     Open_nonblock_0:
+                                                     {AA_0 : obj | []};
+                                                     Open_excl_0:{AA_0 : obj | []};
+                                                     Open_creat_0:{AA_0 : obj | []};
+                                                     Open_binary_0:{AA_0 : obj | []};
+                                                     Open_append_0:{AA_0 : obj | []};
+                                                     None_0:{AA_0 : obj | []};
+                                                     FP_zero_0:{AA_0 : obj | []};
+                                                     FP_subnormal_0:{AA_0 : obj | []};
+                                                     FP_normal_0:{AA_0 : obj | []};
+                                                     FP_nan_0:{AA_0 : obj | []};
+                                                     FP_infinite_0:{AA_0 : obj | []};
+                                                     FIXPOINTSYMBOL_9:
+                                                     {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                     FIXPOINTSYMBOL_8:
+                                                     {AA_0 : func(0, [int ; int ; int]) | []};
+                                                     FIXPOINTSYMBOL_7:
+                                                     {AA_0 : func(0, [int ; int ; int]) | []};
+                                                     FIXPOINTSYMBOL_6:
+                                                     {AA_0 : func(0, [int ; int ; int]) | []};
+                                                     FIXPOINTSYMBOL_5:
+                                                     {AA_0 : func(0, [int ; int ; int]) | []};
+                                                     FIXPOINTSYMBOL_4:
+                                                     {AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                                     FIXPOINTSYMBOL_3:
+                                                     {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                     FIXPOINTSYMBOL_2:
+                                                     {AA_0 : obj | []};
+                                                     FIXPOINTSYMBOL_16:
+                                                     {AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                                     FIXPOINTSYMBOL_15:
+                                                     {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                     FIXPOINTSYMBOL_14:
+                                                     {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                     FIXPOINTSYMBOL_13:
+                                                     {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                     FIXPOINTSYMBOL_12:
+                                                     {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                     FIXPOINTSYMBOL_11:
+                                                     {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                     FIXPOINTSYMBOL_10:
+                                                     {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                     FIXPOINTSYMBOL_1:
+                                                     {AA_0 : func(0, [obj ; obj ; obj]) | []};
+                                                     FIXPOINTSYMBOL_0:
+                                                     {AA_0 : obj | []};
+                                                     AA_0:{AA_0 : obj | []}] 
+                                             reft {AA_0 : obj | [k26]} 
+                                              
+                                             
+wf: env [true_0:{AA_0 : bool | []};
+                                                       false_0:{AA_0 : bool | []};
+                                                       f_76:{AA_0 : func(0, [int ; obj]) | []};
+                                                       Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                                                       Pervasives_0.succ:
+                                                       {AA_0 : func(0, [int ; int]) | []};
+                                                       Pervasives_0.pred:
+                                                       {AA_0 : func(0, [int ; int]) | []};
+                                                       Pervasives_0.or:
+                                                       {AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                                       Pervasives_0.not:
+                                                       {AA_0 : func(0, [bool ; bool]) | []};
+                                                       Pervasives_0.mod:
+                                                       {AA_0 : func(0, [int ; int ; int]) | []};
+                                                       Pervasives_0.lsr:
+                                                       {AA_0 : func(0, [int ; int ; int]) | []};
+                                                       Pervasives_0.land:
+                                                       {AA_0 : func(0, [int ; int ; int]) | []};
+                                                       Pervasives_0.ignore:
+                                                       {AA_0 : func(0, [obj ; obj]) | []};
+                                                       Pervasives_0.abs:
+                                                       {AA_0 : func(0, [int ; int]) | []};
+                                                       Open_wronly_0:
+                                                       {AA_0 : obj | []};
+                                                       Open_trunc_0:{AA_0 : obj | []};
+                                                       Open_text_0:{AA_0 : obj | []};
+                                                       Open_rdonly_0:
+                                                       {AA_0 : obj | []};
+                                                       Open_nonblock_0:
+                                                       {AA_0 : obj | []};
+                                                       Open_excl_0:{AA_0 : obj | []};
+                                                       Open_creat_0:{AA_0 : obj | []};
+                                                       Open_binary_0:
+                                                       {AA_0 : obj | []};
+                                                       Open_append_0:
+                                                       {AA_0 : obj | []};
+                                                       None_0:{AA_0 : obj | []};
+                                                       FP_zero_0:{AA_0 : obj | []};
+                                                       FP_subnormal_0:
+                                                       {AA_0 : obj | []};
+                                                       FP_normal_0:{AA_0 : obj | []};
+                                                       FP_nan_0:{AA_0 : obj | []};
+                                                       FP_infinite_0:
+                                                       {AA_0 : obj | []};
+                                                       FIXPOINTSYMBOL_9:
+                                                       {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                       FIXPOINTSYMBOL_8:
+                                                       {AA_0 : func(0, [int ; int ; int]) | []};
+                                                       FIXPOINTSYMBOL_7:
+                                                       {AA_0 : func(0, [int ; int ; int]) | []};
+                                                       FIXPOINTSYMBOL_6:
+                                                       {AA_0 : func(0, [int ; int ; int]) | []};
+                                                       FIXPOINTSYMBOL_5:
+                                                       {AA_0 : func(0, [int ; int ; int]) | []};
+                                                       FIXPOINTSYMBOL_4:
+                                                       {AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                                       FIXPOINTSYMBOL_3:
+                                                       {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                       FIXPOINTSYMBOL_2:
+                                                       {AA_0 : obj | []};
+                                                       FIXPOINTSYMBOL_16:
+                                                       {AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                                       FIXPOINTSYMBOL_15:
+                                                       {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                       FIXPOINTSYMBOL_14:
+                                                       {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                       FIXPOINTSYMBOL_13:
+                                                       {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                       FIXPOINTSYMBOL_12:
+                                                       {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                       FIXPOINTSYMBOL_11:
+                                                       {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                       FIXPOINTSYMBOL_10:
+                                                       {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                       FIXPOINTSYMBOL_1:
+                                                       {AA_0 : func(0, [obj ; obj ; obj]) | []};
+                                                       FIXPOINTSYMBOL_0:
+                                                       {AA_0 : obj | []};
+                                                       AA_0:{AA_0 : int | []}] 
+                                               reft {AA_0 : int | [k2]} 
+                                                
+                                               
+wf: env [x_77:{AA_0 : int | []};
+                                                         true_0:{AA_0 : bool | []};
+                                                         false_0:{AA_0 : bool | []};
+                                                         f_76:{AA_0 : func(0, [int ; obj]) | []};
+                                                         Some_0:{AA_0 : func(0, [obj ; obj]) | []};
+                                                         Pervasives_0.succ:
+                                                         {AA_0 : func(0, [int ; int]) | []};
+                                                         Pervasives_0.pred:
+                                                         {AA_0 : func(0, [int ; int]) | []};
+                                                         Pervasives_0.or:
+                                                         {AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                                         Pervasives_0.not:
+                                                         {AA_0 : func(0, [bool ; bool]) | []};
+                                                         Pervasives_0.mod:
+                                                         {AA_0 : func(0, [int ; int ; int]) | []};
+                                                         Pervasives_0.lsr:
+                                                         {AA_0 : func(0, [int ; int ; int]) | []};
+                                                         Pervasives_0.land:
+                                                         {AA_0 : func(0, [int ; int ; int]) | []};
+                                                         Pervasives_0.ignore:
+                                                         {AA_0 : func(0, [obj ; obj]) | []};
+                                                         Pervasives_0.abs:
+                                                         {AA_0 : func(0, [int ; int]) | []};
+                                                         Open_wronly_0:
+                                                         {AA_0 : obj | []};
+                                                         Open_trunc_0:
+                                                         {AA_0 : obj | []};
+                                                         Open_text_0:
+                                                         {AA_0 : obj | []};
+                                                         Open_rdonly_0:
+                                                         {AA_0 : obj | []};
+                                                         Open_nonblock_0:
+                                                         {AA_0 : obj | []};
+                                                         Open_excl_0:
+                                                         {AA_0 : obj | []};
+                                                         Open_creat_0:
+                                                         {AA_0 : obj | []};
+                                                         Open_binary_0:
+                                                         {AA_0 : obj | []};
+                                                         Open_append_0:
+                                                         {AA_0 : obj | []};
+                                                         None_0:{AA_0 : obj | []};
+                                                         FP_zero_0:{AA_0 : obj | []};
+                                                         FP_subnormal_0:
+                                                         {AA_0 : obj | []};
+                                                         FP_normal_0:
+                                                         {AA_0 : obj | []};
+                                                         FP_nan_0:{AA_0 : obj | []};
+                                                         FP_infinite_0:
+                                                         {AA_0 : obj | []};
+                                                         FIXPOINTSYMBOL_9:
+                                                         {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                         FIXPOINTSYMBOL_8:
+                                                         {AA_0 : func(0, [int ; int ; int]) | []};
+                                                         FIXPOINTSYMBOL_7:
+                                                         {AA_0 : func(0, [int ; int ; int]) | []};
+                                                         FIXPOINTSYMBOL_6:
+                                                         {AA_0 : func(0, [int ; int ; int]) | []};
+                                                         FIXPOINTSYMBOL_5:
+                                                         {AA_0 : func(0, [int ; int ; int]) | []};
+                                                         FIXPOINTSYMBOL_4:
+                                                         {AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                                         FIXPOINTSYMBOL_3:
+                                                         {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                         FIXPOINTSYMBOL_2:
+                                                         {AA_0 : obj | []};
+                                                         FIXPOINTSYMBOL_16:
+                                                         {AA_0 : func(0, [bool ; bool ; bool]) | []};
+                                                         FIXPOINTSYMBOL_15:
+                                                         {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                         FIXPOINTSYMBOL_14:
+                                                         {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                         FIXPOINTSYMBOL_13:
+                                                         {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                         FIXPOINTSYMBOL_12:
+                                                         {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                         FIXPOINTSYMBOL_11:
+                                                         {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                         FIXPOINTSYMBOL_10:
+                                                         {AA_0 : func(0, [obj ; obj ; bool]) | []};
+                                                         FIXPOINTSYMBOL_1:
+                                                         {AA_0 : func(0, [obj ; obj ; obj]) | []};
+                                                         FIXPOINTSYMBOL_0:
+                                                         {AA_0 : obj | []};
+                                                         AA_0:{AA_0 : obj | []}] 
+                                                 reft {AA_0 : obj | [k1]} 
+                                                  
+                                                 
+solution: k1 := [(1 = 0);(1 = 0)] 
+solution: k2 := [(1 = 0);(AA_0 != 1);(AA_0 <= 1);(AA_0 >= 1);(AA_0 != 0);(AA_0 <= 0);(AA_0 >= 0);(AA_0 >= 0);(AA_0 != 0);(1 = 0);(0 <= AA_0)] 
+solution: k26 := [(1 = 0);(1 = 0)] 
+solution: k27 := [(1 = 0);(AA_0 != 1);(AA_0 <= 1);(AA_0 >= 1);(AA_0 != 0);(AA_0 <= 0);(AA_0 >= 0);(AA_0 >= 0);(AA_0 != 0);(1 = 0);(0 <= AA_0)] 
+solution: k28 := [(1 = 0);(1 = 0)] 
+solution: k29 := [(1 = 0);(1 = 0)] 
+solution: k33 := [(1 = 0);(AA_0 = x_77);(AA_0 >= x_77);(AA_0 <= x_77);(AA_0 != x_77);(AA_0 != 1);(AA_0 <= 1);(AA_0 >= 1);(AA_0 != 0);(AA_0 <= 0);(AA_0 >= 0);(AA_0 >= 0);(AA_0 = (x_77 / x_77));(AA_0 = (x_77 - x_77));(AA_0 = (x_77 - 1));(AA_0 = (x_77 - (x_77 * (x_77 / x_77))));(AA_0 = (x_77 + x_77));(AA_0 = (x_77 + 1));(AA_0 = (x_77 * x_77));(AA_0 != 0);(1 = 0);(0 <= AA_0);((x_77 > 0) -> (AA_0 < x_77));((x_77 >= 0) -> (AA_0 >= 0));(&& [(x_77 >= 0) ; (x_77 >= 0)] -> (AA_0 >= 0));(&& [(x_77 >= 0) ; (x_77 >= 0)] -> && [(AA_0 >= 0) ; && [(AA_0 <= x_77) ; (AA_0 <= x_77)]])] 
+solution: k36 := [(1 = 0);(1 = 0)] 
+solution: k38 := [(1 = 0);(1 = 0)] 
+solution: k46 := [(1 = 0);(1 = 0)] 
+ 
