@@ -160,10 +160,22 @@ let simplify_env em pm ks_env =
   end ks_env
 
 let simplify_grd em pm vv t p =
-  (try Some (Sy.SMap.find vv em) with Not_found -> None)
+  let _  = Format.printf "simplify_grd [1]: %a \n" P.print p in
+  let p  = pred_apply_defs em pm p in
+  let _  = Format.printf "simplify_grd [2]: %a \n" P.print p in
+  begin try 
+    Sy.SMap.find vv em 
+    |> expr_apply_defs em pm
+    |> (fun vve -> pAnd [p; pAtom (eVar vv, Eq, vve)])
+  with Not_found -> p end
+  >> Format.printf "simplify_grd [3]: %a \n" P.print
+
+(*  (try Some (Sy.SMap.find vv em) with Not_found -> None)
   |> (function None -> p | Some vve -> pAnd [p; pAtom (eVar vv, Eq, vve)])
+  >> Format.printf "pre-simplified body_pred: %a \n" P.print 
   |> pred_apply_defs em pm
   >> Format.printf "simplified body_pred: %a \n" P.print 
+*)
 
 let simplify_refa em pm = function 
   | C.Conc p          -> C.Conc (pred_apply_defs em pm p) 
@@ -171,11 +183,14 @@ let simplify_refa em pm = function
 
 (* API *)
 let simplify_t c = 
+  let _              = Format.printf "============== Simplifying %d ============== \n" (C.id_of_t c) in
   let env_ps, ks_env = c |> C.env_of_t |> preds_kvars_of_env in
   let l_ps, l_ks     = c |> C.lhs_of_t |> preds_kvars_of_reft in
   let vv, t          = c |> C.lhs_of_t |> Misc.tmap2 (C.vv_of_reft, C.sort_of_reft) in
-  let bodyp          = Ast.pAnd ([C.grd_of_t c] ++ l_ps ++ env_ps) >> Format.printf "body_pred: %a \n" P.print in
-  let em, pm         = defs_of_pred bodyp                          >> print_em_pm c in
+  let bodyp          = Ast.pAnd ([C.grd_of_t c] ++ l_ps ++ env_ps) 
+                       >> Format.printf "body_pred: %a \n" P.print in
+  let em, pm         = defs_of_pred bodyp                          
+                       >> print_em_pm c in
 
   let senv           = simplify_env em pm ks_env in
   let sgrd           = simplify_grd em pm vv t bodyp in
