@@ -130,6 +130,8 @@ let print_em_pm t (em, pm) =
   let vve' = expr_apply_defs em pm vve in
   Format.printf "\nbodyp em map for %d\n" id ;
   Sy.SMap.iter (fun x e -> Format.printf "%a -> %a\n" Sy.print x  E.print e) em;
+  Format.printf "\nbodyp pm map for %d\n" id ;
+  Sy.SMap.iter (fun x p -> Format.printf "%a -> %a\n" Sy.print x  P.print p) pm;
   Format.printf "edef for vv %a = %a (simplified %a)\n" Sy.print vv E.print vve E.print vve'
 
 let preds_kvars_of_reft reft =
@@ -169,13 +171,6 @@ let simplify_grd em pm vv t p =
     |> (fun vve -> pAnd [p; pAtom (eVar vv, Eq, vve)])
   with Not_found -> p end
   >> Format.printf "simplify_grd [3]: %a \n" P.print
-
-(*  (try Some (Sy.SMap.find vv em) with Not_found -> None)
-  |> (function None -> p | Some vve -> pAnd [p; pAtom (eVar vv, Eq, vve)])
-  >> Format.printf "pre-simplified body_pred: %a \n" P.print 
-  |> pred_apply_defs em pm
-  >> Format.printf "simplified body_pred: %a \n" P.print 
-*)
 
 let simplify_refa em pm = function 
   | C.Conc p          -> C.Conc (pred_apply_defs em pm p) 
