@@ -21,11 +21,12 @@
  *
  *)
 
-
-module C = FixConstraint
-module P = Ast.Predicate
-module E = Ast.Expression
+module IM = Misc.IntMap
+module C  = FixConstraint
+module P  = Ast.Predicate
+module E  = Ast.Expression
 module Sy = Ast.Symbol
+
 open Misc.Ops
 open Ast
 
@@ -202,3 +203,4 @@ let is_tauto_t t =
   t |> C.rhs_of_t 
     |> C.ras_of_reft 
     |> (function [C.Conc p] -> P.is_tauto p | [] -> true | _ -> false)
+

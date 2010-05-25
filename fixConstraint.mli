@@ -49,6 +49,7 @@ val kvars_of_reft    : reft -> (subs * Ast.Symbol.t) list
 val kvars_of_t       : t -> (subs * Ast.Symbol.t) list
 val apply_solution   : soln -> reft -> reft
 
+val is_conc_refa     : refa -> bool
 val preds_of_refa    : soln -> refa -> Ast.pred list
 val preds_of_reft    : soln -> reft -> Ast.pred list
 val preds_of_lhs     : soln -> t -> Ast.pred list

@@ -160,6 +160,11 @@ let non_trivial env =
   end env SM.empty
 
 (* API *)
+let is_conc_refa = function
+  | Conc _ -> true
+  | _      -> false
+
+(* API *)
 let preds_of_refa s   = function
   | Conc p       -> [p]
   | Kvar (xes,k) -> List.map (Misc.flip A.substs_pred xes) (sol_read s k)
