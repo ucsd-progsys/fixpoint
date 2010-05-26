@@ -28,19 +28,20 @@ open Misc.Ops
 (********************* Build Graph of Kvar Dependencies *****************)
 (************************************************************************)
 
-module K : Graph.Sig.COMPARABLE with type t = C.refa = struct
+module V : Graph.Sig.COMPARABLE with type t = C.refa = struct
   type t = C.refa
   let hash    = C.refa_to_string <+> Hashtbl.hash
   let compare = fun x y -> compare (C.refa_to_string x) (C.refa_to_string)
   let equal   = fun x y -> equal (C.refa_to_string x) (C.refa_to_string y)
 end
 
-module I : Graph.Sig.ORDERED_TYPE_DFT with type t = int = struct
+module Id : Graph.Sig.ORDERED_TYPE_DFT with type t = int = struct
   type t = int
   let compare = compare
 end
 
-module G   = Graph.Imperative.Digraph.ConcreteLabeled(K)(I)
+module G   = Graph.Imperative.Digraph.ConcreteLabeled(V)(Id)
+module VS  = Set.Make(V)
 
 type t = G.t
 
@@ -84,16 +85,41 @@ let kvaro_of_refa     = function C.Kvar (_,k) -> Some k | _ -> None
 (********************* (Backwards) Reachability *************************) 
 (************************************************************************)
 
-let pre_star g vs = 
+let vset_of_list vs = List.fold_left (fun s v -> VS.add v s) VS.empty vs
+let pre_star g vs =
+  (vs, SM.empty)
+  |> Misc.fixpoint begin function 
+     | [], r -> false, ([], r)
+     | ws, r -> ws |> List.filter (fun v -> not (VS.mem v r)) 
+                   |> Misc.tmap2 (Misc.flap (G.pred g), vset_of_list <+> VS.union r)
+                   |> (fun x -> true, x) 
+     end 
+  |> fst |> snd 
+  |> VS.elements
+
+
+ (*
+
+let pre_star g vs =
+  let pre = function 
+    | [], r -> false, ([], r)
+    | ws, r -> ws |> List.filter (fun v -> not (VS.mem v r)) 
+                  |> Misc.tmap2 (Misc.flap (G.pred g), vset_of_list <+> VS.union r)
+                  |> (fun x -> true, x) 
+  in (vs, SM.empty) |> Misc.fixpoint pre |> fst |> snd |> VS.elements
+
+
   let pre = function 
     | ([], pm) -> 
         false, ([], pm) 
-    | (vs, pm) -> 
+    | (vs, pm) ->
+        let pm' = List.fold_left (fun pm -> VS.add v pm) pm vs in
         let pm' = List.fold_left (fun pm -> SM.add (C.refa_to_string v) v pm) pm vs in
         let vs' = vs |> Misc.flap (G.pred g) 
                      |> List.filter (fun v -> not (SM.mem (C.refa_to_string v) pm)) in
         true, (vs', pm')
-  in (vs, SM.empty) |> Misc.fixpoint pre |> snd |> Misc.sm_to_range 
+  in (vs, SM.empty) |> Misc.fixpoint pre |> fst |> snd |> Misc.sm_to_range 
+*)
 
 (************************************************************************)
 (********************************* API **********************************) 

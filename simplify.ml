@@ -20,7 +20,7 @@
  * TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *
  *)
-
+module Co = Constants
 module IM = Misc.IntMap
 module C  = FixConstraint
 module P  = Ast.Predicate
@@ -29,6 +29,8 @@ module Sy = Ast.Symbol
 
 open Misc.Ops
 open Ast
+
+let mydebug = false
 
 let defs_of_pred = 
   let rec dofp (em, pm) p = match p with
@@ -129,11 +131,11 @@ let print_em_pm t (em, pm) =
   let vv   = t |> C.lhs_of_t |> C.vv_of_reft in
   let vve  = try Sy.SMap.find vv em with Not_found -> bot in
   let vve' = expr_apply_defs em pm vve in
-  Format.printf "\nbodyp em map for %d\n" id ;
-  Sy.SMap.iter (fun x e -> Format.printf "%a -> %a\n" Sy.print x  E.print e) em;
-  Format.printf "\nbodyp pm map for %d\n" id ;
-  Sy.SMap.iter (fun x p -> Format.printf "%a -> %a\n" Sy.print x  P.print p) pm;
-  Format.printf "edef for vv %a = %a (simplified %a)\n" Sy.print vv E.print vve E.print vve'
+  Co.bprintf mydebug "\nbodyp em map for %d\n" id ;
+  Sy.SMap.iter (fun x e -> Co.bprintf mydebug "%a -> %a\n" Sy.print x  E.print e) em;
+  Co.bprintf mydebug "\nbodyp pm map for %d\n" id ;
+  Sy.SMap.iter (fun x p -> Co.bprintf mydebug "%a -> %a\n" Sy.print x  P.print p) pm;
+  Co.bprintf mydebug "edef for vv %a = %a (simplified %a)\n" Sy.print vv E.print vve E.print vve'
 
 let preds_kvars_of_reft reft =
   List.fold_left begin fun (ps, ks) -> function 
@@ -163,15 +165,15 @@ let simplify_env em pm ks_env =
   end ks_env
 
 let simplify_grd em pm vv t p =
-  let _  = Format.printf "simplify_grd [1]: %a \n" P.print p in
+  let _  = Co.bprintf mydebug "simplify_grd [1]: %a \n" P.print p in
   let p  = pred_apply_defs em pm p in
-  let _  = Format.printf "simplify_grd [2]: %a \n" P.print p in
+  let _  = Co.bprintf mydebug "simplify_grd [2]: %a \n" P.print p in
   begin try 
     Sy.SMap.find vv em 
     |> expr_apply_defs em pm
     |> (fun vve -> pAnd [p; pAtom (eVar vv, Eq, vve)])
   with Not_found -> p end
-  >> Format.printf "simplify_grd [3]: %a \n" P.print
+  >> Co.bprintf mydebug "simplify_grd [3]: %a \n" P.print
 
 let simplify_refa em pm = function 
   | C.Conc p          -> C.Conc (pred_apply_defs em pm p) 
@@ -179,12 +181,13 @@ let simplify_refa em pm = function
 
 (* API *)
 let simplify_t c = 
-  let _              = Format.printf "============== Simplifying %d ============== \n" (C.id_of_t c) in
+  let id             = c |> C.id_of_t in
+  let _              = Co.bprintf mydebug "============== Simplifying %d ============== \n"id in
   let env_ps, ks_env = c |> C.env_of_t |> preds_kvars_of_env in
   let l_ps, l_ks     = c |> C.lhs_of_t |> preds_kvars_of_reft in
   let vv, t          = c |> C.lhs_of_t |> Misc.tmap2 (C.vv_of_reft, C.sort_of_reft) in
   let bodyp          = Ast.pAnd ([C.grd_of_t c] ++ l_ps ++ env_ps) 
-                       >> Format.printf "body_pred: %a \n" P.print in
+                       >> Co.bprintf mydebug "body_pred: %a \n" P.print in
   let em, pm         = defs_of_pred bodyp                          
                        >> print_em_pm c in
 

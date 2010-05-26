@@ -22,12 +22,11 @@
 
 (* This file is part of the LiquidC Project *)
 
+open Misc.Ops
 
 module Prover : ProverArch.PROVER = struct
-
-  type t = int
-  let create _ _ _         = failwith "TBD: TpNull.create"
+  type t = unit
+  let create _ _ _         = () 
   let set_filter _ _ _ _ _ = failwith "TBD: TpNull.set_filter"
   let print_stats _ _      = failwith "TBD: TpNull.print_stats"
-
 end

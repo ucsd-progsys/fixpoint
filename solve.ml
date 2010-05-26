@@ -35,7 +35,7 @@ module Sy = A.Symbol
 module SM = Sy.SMap
 module C  = FixConstraint
 module Ci = Cindex
-module TP = TpZ3.Prover (* TpNull.Prover *) 
+module TP = (* TpZ3.Prover *) TpNull.Prover 
 module PP = Prepass
 
 open Misc.Ops
@@ -257,7 +257,7 @@ let inst_ext (qs : Q.t list) s wf =
 
 let inst wfs qs s =
   wfs |> List.fold_left (inst_ext qs) s
-      >> (fun _ -> Printf.printf "varmatch_ctr = %d \n" !varmatch_ctr)
+      >> (fun _ -> Co.bprintf mydebug "varmatch_ctr = %d \n" !varmatch_ctr)
 
 (***************************************************************)
 (******************** Iterative Refinement *********************)
