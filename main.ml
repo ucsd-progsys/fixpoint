@@ -76,18 +76,23 @@ let dump_imp (_,_,a,b,_,_,_) =
 (***************** Generate Simplified Constraints ***************)
 (*****************************************************************)
 
-let simplify_t x = if !Co.dump_simp = "andrey" 
-                   then Simplification.simplify_t x
-                   else Simplify.simplify_t x
+let simplify_t x =  if !Co.dump_simp = "andrey" 
+                    then Simplification.simplify_t x
+                    else Simplify.simplify_t x
 
-let is_tauto_t x = if !Co.dump_simp = "andrey" 
-                   then Simplification.is_tauto_t x
-                   else Simplify.is_tauto_t x
+let is_tauto_t x =  if !Co.dump_simp = "andrey" 
+                    then Simplification.is_tauto_t x
+                    else Simplify.is_tauto_t x
+
+let simplify_ts x = if !Co.dump_simp = "andrey" 
+                    then Simplification.simplify_ts x
+                    else Simplify.simplify_ts x
 
 let dump_simp (ts, ps, cs, ws, ds, qs, s0) = 
   let a     = get_arity cs in
   let cs    = cs |> List.map simplify_t 
                  |> List.filter (not <.> is_tauto_t)
+                 |> simplify_ts
                  >> Kvgraph.kv_stats in
   let ctx,_ = BS.time "create" (S.create ts SM.empty ps a ds cs ws) [] in
   let _     = BS.time "save" (S.save !Co.save_file ctx) s0 in
