@@ -20,7 +20,8 @@
  * TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *)
 
-module SM = Misc.StringMap
+module Sy = Ast.Symbol
+module P  = Ast.Predicate 
 module C  = FixConstraint
 open Misc.Ops
 
@@ -31,12 +32,13 @@ open Misc.Ops
 module V : Graph.Sig.COMPARABLE with type t = C.refa = struct
   type t = C.refa
   let hash    = C.refa_to_string <+> Hashtbl.hash
-  let compare = fun x y -> compare (C.refa_to_string x) (C.refa_to_string)
-  let equal   = fun x y -> equal (C.refa_to_string x) (C.refa_to_string y)
+  let compare = fun x y -> compare (C.refa_to_string x) (C.refa_to_string y)
+  let equal   = fun x y -> C.refa_to_string x = C.refa_to_string y
 end
 
 module Id : Graph.Sig.ORDERED_TYPE_DFT with type t = int = struct
   type t = int
+  let default = 0
   let compare = compare
 end
 
@@ -59,17 +61,17 @@ let edges_of_t c =
               |> kvars_of_env 
               |> List.map (fun (_,k) -> C.Kvar ([], k)) in
   let lps = c |> C.grd_of_t 
-              |> (fun p -> if P.is_tauto p then [] else [p]) in
+              |> (fun p -> if P.is_tauto p then [] else [C.Conc p]) in
   let rs  = c |> C.rhs_of_t 
               |> C.ras_of_reft 
-              |> List.map (fun C.Kvar (_,k) -> C.Kvar ([], k) | ra -> ra) in
+              |> List.map (function C.Kvar (_,k) -> C.Kvar ([], k) | ra -> ra) in
   rs |> Misc.cross_product (lps ++ lks)  
      |> List.map (fun (ra, ra') -> (ra, C.id_of_t c, ra'))
 
 (* API *)
 let create cs =
   let g = G.create () in
-  let _ = List.iter ((List.iter (G.add_edge g)) <.> edges_of_t) cs in
+  let _ = List.iter ((List.iter (G.add_edge_e g)) <.> edges_of_t) cs in
   g
 
 (************************************************************************)
@@ -77,8 +79,6 @@ let create cs =
 (************************************************************************)
 
 let vertices_of_graph = fun g -> G.fold_vertex (fun v acc -> v::acc) g []
-let kvars_of_graph    = vertices_of_graph <+> List.filter (not <+> C.is_conc_refa)
-let concs_of_graph    = vertices_of_graph <+> List.filter is_conc_refa
 let kvaro_of_refa     = function C.Kvar (_,k) -> Some k | _ -> None
 
 (************************************************************************)
@@ -87,12 +87,12 @@ let kvaro_of_refa     = function C.Kvar (_,k) -> Some k | _ -> None
 
 let vset_of_list vs = List.fold_left (fun s v -> VS.add v s) VS.empty vs
 let pre_star g vs =
-  (vs, SM.empty)
+  (vs, VS.empty)
   |> Misc.fixpoint begin function 
-     | [], r -> false, ([], r)
+     | [], r -> ([], r), false
      | ws, r -> ws |> List.filter (fun v -> not (VS.mem v r)) 
                    |> Misc.tmap2 (Misc.flap (G.pred g), vset_of_list <+> VS.union r)
-                   |> (fun x -> true, x) 
+                   |> (fun x -> x, true) 
      end 
   |> fst |> snd 
   |> VS.elements
@@ -126,19 +126,35 @@ let pre_star g vs =
 (************************************************************************)
 
 let single_write_kvars g = 
-  g |> kvars_of_graph 
+  g |> vertices_of_graph
+    |> List.filter (not <.> C.is_conc_refa)
     |> List.filter (fun v -> match G.pred g v with [_] -> true | _ -> false)
     |> Misc.map_partial kvaro_of_refa 
 
 let undefined_kvars g = 
-  g |> kvars_of_graph 
+  g |> vertices_of_graph
+    |> List.filter (not <.> C.is_conc_refa)
     |> List.filter (fun v -> match G.pred g v with [] -> true | _ -> false)
     |> Misc.map_partial kvaro_of_refa 
 
 let cone_kvars g = 
-  g |> concs_of_graph 
+  g |> vertices_of_graph
+    |> List.filter C.is_conc_refa
     |> pre_star g
-    |> List.filter (not <+> C.is_conc_refa)
+    |> List.filter (not <.> C.is_conc_refa)
     |> Misc.map_partial kvaro_of_refa 
-    
 
+(*************************************************************************)
+(******************* For now, a single function API **********************)
+(*************************************************************************)
+
+let print_ks s ks = 
+  Format.printf "[KVG] %s %a \n" s 
+  (Misc.pprint_many false "," Sy.print) ks
+
+let kv_stats cs = 
+  cs |> create
+     >> (single_write_kvars <+> print_ks "single write kvs:")
+     >> (undefined_kvars    <+> print_ks "undefined kvs:")
+     >> (cone_kvars         <+> print_ks "cone kvs:")
+     |> ignore
