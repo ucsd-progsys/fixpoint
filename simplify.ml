@@ -216,8 +216,20 @@ let is_tauto_t c =
 let simplify_ts cs = 
   cs |> List.map simplify_t
      |> List.filter (not <.> is_tauto_t) 
-     |> Cindex.create [] 
-     |> Cindex.to_live_list
-     >> Kvgraph.kv_stats
 end
 
+module Cone : SIMPLIFIER = struct
+
+let simplify_ts cs =
+  let g  = Kvgraph.create () in
+  cs |> Cindex.create [] 
+     |> Cindex.to_live_list
+     >> Kvgraph.add g
+     >> (fun _ -> Kvgraph.print_stats g)
+  
+end
+
+(* API *)
+let simplify_ts cs =
+  cs |> Syntactic.simplify_ts
+     |> Cone.simplify_ts

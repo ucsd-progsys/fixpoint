@@ -20,14 +20,7 @@
  * TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *)
 
-(*
 type t
-val create              : FixConstraint.t list -> t
-val single_write_kvars  : t -> Ast.Symbol.t list
-val undefined_kvars     : t -> Ast.Symbol.t list
-val cone_kvars          : t -> Ast.Symbol.t list
-*)
-
-val kv_stats            : FixConstraint.t list -> unit
-
-
+val create      : unit -> t
+val add         : t -> FixConstraint.t list -> unit
+val print_stats : t -> unit

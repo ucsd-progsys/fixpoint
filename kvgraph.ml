@@ -96,12 +96,6 @@ let edges_of_t c =
   rs |> Misc.cross_product (lks ++ gps ++ eks)  
      |> List.map (fun (ra, ra') -> (ra, C.id_of_t c, ra'))
 
-(* API *)
-let create cs =
-  G.create ()
-  >> (fun g -> List.iter ((List.iter (G.add_edge_e g)) <.> edges_of_t) cs)
-  >> dump_graph (!Constants.save_file^".dot")
-
 (************************************************************************)
 (*************************** Misc. Accessors ****************************) 
 (************************************************************************)
@@ -159,17 +153,22 @@ let cone_kvars g =
     |> Misc.map_partial kvaro_of_refa 
 
 (*************************************************************************)
-(******************* For now, a single function API **********************)
+(******************************* API *************************************)
 (*************************************************************************)
 
 let print_ks s ks = 
   Format.printf "[KVG] %s %a \n" s 
   (Misc.pprint_many false "," Sy.print) ks
 
-let kv_stats cs = 
-  cs |> create
-     >> (single_write_kvars <+> print_ks "single write kvs:")
-     >> (multi_write_kvars  <+> print_ks "multi write kvs:")
-     >> (undefined_kvars    <+> print_ks "undefined kvs:")
-     >> (cone_kvars         <+> print_ks "cone kvs:")
-     |> ignore
+(* API *)
+let create = fun () -> G.create ()
+let add    = fun g -> List.iter (List.iter (G.add_edge_e g) <.> edges_of_t)
+
+(* API *)
+let print_stats g = 
+  g >> dump_graph (!Constants.save_file^".dot")
+    >> (single_write_kvars <+> print_ks "single write kvs:")
+    >> (multi_write_kvars  <+> print_ks "multi write kvs:")
+    >> (undefined_kvars    <+> print_ks "undefined kvs:")
+    >> (cone_kvars         <+> print_ks "cone kvs:")
+    |> ignore
