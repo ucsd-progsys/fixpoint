@@ -125,29 +125,6 @@ let pre_star g vs =
   |> fst |> snd 
   |> VS.elements
 
-
-(*
-let pre_star g vs =
-  let pre = function 
-    | [], r -> false, ([], r)
-    | ws, r -> ws |> List.filter (fun v -> not (VS.mem v r)) 
-                  |> Misc.tmap2 (Misc.flap (G.pred g), vset_of_list <+> VS.union r)
-                  |> (fun x -> true, x) 
-  in (vs, SM.empty) |> Misc.fixpoint pre |> fst |> snd |> VS.elements
-
-
-  let pre = function 
-    | ([], pm) -> 
-        false, ([], pm) 
-    | (vs, pm) ->
-        let pm' = List.fold_left (fun pm -> VS.add v pm) pm vs in
-        let pm' = List.fold_left (fun pm -> SM.add (C.refa_to_string v) v pm) pm vs in
-        let vs' = vs |> Misc.flap (G.pred g) 
-                     |> List.filter (fun v -> not (SM.mem (C.refa_to_string v) pm)) in
-        true, (vs', pm')
-  in (vs, SM.empty) |> Misc.fixpoint pre |> fst |> snd |> Misc.sm_to_range 
-*)
-
 (************************************************************************)
 (********************************* API **********************************) 
 (************************************************************************)

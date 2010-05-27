@@ -85,6 +85,7 @@ val group_sol_update : soln -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) li
 val print_env        : soln option -> Format.formatter -> envt -> unit
 val print_wf         : soln option -> Format.formatter -> wf -> unit
 val print_t          : soln option -> Format.formatter -> t -> unit
+val print_nt_t       : soln option -> Format.formatter -> t -> unit
 val print_reft       : soln option -> Format.formatter -> reft -> unit
 val print_binding    : soln option -> Format.formatter -> (Ast.Symbol.t * reft) -> unit
 val print_soln       : Format.formatter -> soln -> unit

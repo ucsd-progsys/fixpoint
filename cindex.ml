@@ -172,7 +172,7 @@ let im_findall i im = try IM.find i im with Not_found -> []
  * roots := { c | (rhs_of_t c) has a concrete predicate }
  * lives := PRE*(roots) where Pre* is refl-trans-clos of the depends-on relation *)
 let make_livem cm real_deps =
-  let dm  = List.fold_left (fun im (i, j) -> IM.add j (i :: (im_findall j im)) im) IM.empty real_deps in
+  let dm = List.fold_left (fun im (i, j) -> IM.add j (i :: (im_findall j im)) im) IM.empty real_deps in
   let js = IM.fold (fun i c roots -> if is_rhs_conc c then i::roots else roots) cm [] in
   (js, IM.empty)
   |> Misc.fixpoint begin fun (js, vm) ->

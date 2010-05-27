@@ -150,7 +150,7 @@ let preds_kvars_of_env env =
     let t        = C.sort_of_reft r in
     let rps, rks = preds_kvars_of_reft r in
     let ps'      = List.map (fun p -> P.subst p vv xe) rps ++ ps in
-    let env'     = match rks with [] -> env | _ -> Sy.SMap.add x (vv, t, rks) env in
+    let env'     = (* match rks with [] -> env | _ -> *) Sy.SMap.add x (vv, t, rks) env in
     ps', env'
   end env ([], Sy.SMap.empty)
 
@@ -198,12 +198,16 @@ let simplify_t c =
   
   C.make_t senv sgrd slhs srhs (C.ido_of_t c) (C.tag_of_t c)
 
-(* API *)
-let simplify_ts = Cindex.create [] <+> Cindex.to_live_list
+let is_tauto_t c =
+  c |> C.rhs_of_t 
+    |> C.ras_of_reft 
+    |> (function [] -> true | [C.Conc p] -> P.is_tauto p | _ -> false)
 
 (* API *)
-let is_tauto_t t =
-  t |> C.rhs_of_t 
-    |> C.ras_of_reft 
-    |> (function [C.Conc p] -> P.is_tauto p | [] -> true | _ -> false)
+let simplify_ts cs = 
+  cs |> List.map simplify_t
+     |> List.filter (not <.> is_tauto_t) 
+     |> Cindex.create [] 
+     |> Cindex.to_live_list
+     >> Kvgraph.kv_stats
 

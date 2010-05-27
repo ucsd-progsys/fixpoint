@@ -29,11 +29,15 @@ let parse f =
   rv
 
 let read_inputs usage = 
+  print_now "\n \n \n \n \n";
+  print_now "========================================================\n";
   print_now "© Copyright 2009 Regents of the University of California. ";
   print_now "All Rights Reserved.\n";
+  print_now "========================================================\n";
+  print_now (Sys.argv |> Array.to_list |> String.concat " ");
+  print_now "\n========================================================\n";
   let fs = ref [] in
   let _  = Arg.parse Co.arg_spec (fun s -> fs := s::!fs) usage in
-  let _  = print_now "Fixpoint: Parsing \n" in
   let fq = BS.time "parse" (Misc.flap parse) !fs |> sift in 
   (!fs, fq)
 
