@@ -101,7 +101,16 @@ let edges_of_t c =
 (************************************************************************)
 
 let vertices_of_graph = fun g -> G.fold_vertex (fun v acc -> v::acc) g []
-let kvaro_of_refa     = function C.Kvar (_,k) -> Some k | _ -> None
+
+let filter_kvars f g =
+  g  |> vertices_of_graph
+     |> List.filter (not <.> C.is_conc_refa)
+     |> List.filter f 
+
+let in_edges g vs =
+  vs |> Misc.flap (G.pred_e g)
+     |> List.map snd3
+     |> Misc.sort_and_compact
 
 (************************************************************************)
 (********************* (Backwards) Reachability *************************) 
@@ -123,18 +132,10 @@ let pre_star g vs =
 (********************************* API **********************************) 
 (************************************************************************)
 
-let filter_kvars f g =
-  g |> vertices_of_graph
-    |> List.filter (not <.> C.is_conc_refa)
-    |> List.filter f 
-    |> Misc.map_partial kvaro_of_refa 
-
 let is_num_write g f v = 
-  v |> G.pred_e g
-    |> List.map snd3
-    |> Misc.sort_and_compact
-    |> List.length 
-    |> f
+  [v] |> in_edges g 
+      |> List.length 
+      |> f
 
 let single_write_kvars g =
   filter_kvars (is_num_write g ((=) 1)) g
@@ -145,24 +146,37 @@ let undefined_kvars g =
 let multi_write_kvars g =
   filter_kvars (is_num_write g ((<) 1)) g
  
-let cone_kvars g = 
+let cone_nodes g = 
   g |> vertices_of_graph
     |> List.filter C.is_conc_refa
     |> pre_star g
-    |> List.filter (not <.> C.is_conc_refa)
-    |> Misc.map_partial kvaro_of_refa 
+
 
 (*************************************************************************)
 (******************************* API *************************************)
 (*************************************************************************)
 
-let print_ks s ks = 
-  Format.printf "[KVG] %s %a \n" s 
-  (Misc.pprint_many false "," Sy.print) ks
+let print_ks s ks =
+  ks |> Misc.map_partial (function C.Kvar (_,k) -> Some k | _ -> None)
+     |> Format.printf "[KVG] %s %a \n" s (Misc.pprint_many false "," Sy.print) 
+
 
 (* API *)
 let create = fun () -> G.create ()
-let add    = fun g -> List.iter (List.iter (G.add_edge_e g) <.> edges_of_t)
+let add    = fun cs g -> List.iter (List.iter (G.add_edge_e g) <.> edges_of_t) cs
+
+
+
+
+(* API *)
+let cone_kvars g = 
+  g |> cone_nodes
+    |> List.filter (not <.> C.is_conc_refa)
+
+(* API *)
+let cone_ids g = 
+  g |> cone_nodes 
+    |> in_edges g
 
 (* API *)
 let print_stats g = 

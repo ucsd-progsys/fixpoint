@@ -22,5 +22,7 @@
 
 type t
 val create      : unit -> t
-val add         : t -> FixConstraint.t list -> unit
+val add         : FixConstraint.t list -> t -> unit
 val print_stats : t -> unit
+val cone_ids    : t -> FixConstraint.id list
+

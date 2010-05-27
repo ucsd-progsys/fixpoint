@@ -219,14 +219,13 @@ let simplify_ts cs =
 end
 
 module Cone : SIMPLIFIER = struct
-
-let simplify_ts cs =
-  let g  = Kvgraph.create () in
-  cs |> Cindex.create [] 
-     |> Cindex.to_live_list
-     >> Kvgraph.add g
-     >> (fun _ -> Kvgraph.print_stats g)
-  
+  let simplify_ts cs =
+    let cm = List.fold_left (fun cm c -> IM.add (C.id_of_t c) c cm) IM.empty cs in 
+    Kvgraph.create ()
+    >> Kvgraph.add cs
+    >> Kvgraph.print_stats
+    |> Kvgraph.cone_ids 
+    |> List.map (fun id -> IM.find id cm)
 end
 
 (* API *)
