@@ -108,14 +108,6 @@ let subs_apply_defs edefs pdefs subs =
 let kvar_apply_defs edefs pdefs (subs, sym) = 
   subs_apply_defs edefs pdefs subs, sym
 
-let preds_kvars_of_reft reft =
-  List.fold_left 
-    (fun (ps, ks) r ->
-       match r with
-	 | C.Conc p -> p :: ps, ks
-	 | C.Kvar (subs, kvar) -> ps, (subs, kvar) :: ks 
-    ) ([], []) (C.ras_of_reft reft)
-
 let simplify_subs subs =
   List.filter (fun (s, e) -> not(P.is_tauto (Ast.pAtom (Ast.eVar s, Ast.Eq, e)))) subs
 
@@ -129,13 +121,13 @@ let simplify_t t =
 	 let vv = C.vv_of_reft reft in
 	 let bv_expr = Ast.eVar bv in
 	 let sort = C.sort_of_reft reft in
-	 let reft_ps, reft_ks = preds_kvars_of_reft reft in
+	 let reft_ps, reft_ks = C.preds_kvars_of_reft reft in
 	   (List.rev_append (List.map (fun p -> P.subst p vv bv_expr) reft_ps) ps,
 	    if reft_ks = [] then env else Sy.SMap.add bv (vv, sort, reft_ks) env)
       ) (C.env_of_t t) ([], Sy.SMap.empty) in
   let lhs = C.lhs_of_t t in
   let lhs_vv = C.vv_of_reft lhs in
-  let lhs_ps, lhs_ks = preds_kvars_of_reft lhs in
+  let lhs_ps, lhs_ks = C.preds_kvars_of_reft lhs in
   let body_pred = Ast.pAnd (C.grd_of_t t :: List.rev_append lhs_ps env_ps) in
   let edefs, pdefs = defs_of_pred (Sy.SMap.empty, Sy.SMap.empty) body_pred in
     (*
@@ -163,7 +155,7 @@ let simplify_t t =
 (*    Printf.printf "simplified body_pred: %s\n" (P.to_string sgrd); *)
   let slhs = List.map kvar_to_simple_Kvar lhs_ks |> C.make_reft (C.vv_of_reft lhs) (C.sort_of_reft lhs) in
   let rhs = C.rhs_of_t t in
-  let rhs_ps, rhs_ks = preds_kvars_of_reft rhs in
+  let rhs_ps, rhs_ks = C.preds_kvars_of_reft rhs in
   let srhs_pred = pred_apply_defs edefs pdefs (Ast.pAnd rhs_ps) |> Ast.simplify_pred in
   let srhs_ks = List.map kvar_to_simple_Kvar rhs_ks in
   let srhs =  (if P.is_tauto srhs_pred then srhs_ks else (C.Conc srhs_pred) :: srhs_ks) |> 
@@ -178,7 +170,7 @@ let simplify_ts ts =
       let pruned_ts, rest_ts = 
 	List.partition
 	  (fun t ->
-	     match C.rhs_of_t t |> preds_kvars_of_reft with
+	     match C.rhs_of_t t |> C.preds_kvars_of_reft with
 	       | [], [(_, sy)] ->
 		   List.for_all 
 		     (fun t' -> 

@@ -20,6 +20,7 @@
  * TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *
  *)
+
 module Co = Constants
 module IM = Misc.IntMap
 module C  = FixConstraint
@@ -30,7 +31,23 @@ module Sy = Ast.Symbol
 open Misc.Ops
 open Ast
 
+
 let mydebug = false
+
+(****************************************************************************)
+(************** Generic Simplification/Transformation API *******************)
+(****************************************************************************)
+
+module type SIMPLIFIER =
+  sig
+    val simplify_ts: FixConstraint.t list -> FixConstraint.t list
+  end
+
+(****************************************************************************)
+(******************* Syntactic Simplification/Transformation API ************)
+(****************************************************************************)
+
+module Syntactic : SIMPLIFIER = struct
 
 let defs_of_pred = 
   let rec dofp (em, pm) p = match p with
@@ -45,7 +62,6 @@ let defs_of_pred =
         List.fold_left dofp (em, pm) ps
     | _ -> em, pm
   in dofp (Sy.SMap.empty, Sy.SMap.empty)
-
 
 let rec expr_apply_defs em pm expr = 
   let ef = expr_apply_defs em pm in
@@ -124,7 +140,6 @@ let pred_apply_defs em fm p =
 
 let subs_apply_defs em pm xes =
   List.map (Misc.app_snd (expr_apply_defs em pm)) xes
- 
 
 let print_em_pm t (em, pm) =
   let id   = t |> C.id_of_t in
@@ -137,18 +152,12 @@ let print_em_pm t (em, pm) =
   Sy.SMap.iter (fun x p -> Co.bprintf mydebug "%a -> %a\n" Sy.print x  P.print p) pm;
   Co.bprintf mydebug "edef for vv %a = %a (simplified %a)\n" Sy.print vv E.print vve E.print vve'
 
-let preds_kvars_of_reft reft =
-  List.fold_left begin fun (ps, ks) -> function 
-    | C.Conc p -> p :: ps, ks
-    | C.Kvar (xes, kvar) -> ps, (xes, kvar) :: ks 
-  end ([], []) (C.ras_of_reft reft)
-
 let preds_kvars_of_env env =
   Sy.SMap.fold begin fun x r (ps, env) -> 
     let vv       = C.vv_of_reft r in
     let xe       = Ast.eVar x in
     let t        = C.sort_of_reft r in
-    let rps, rks = preds_kvars_of_reft r in
+    let rps, rks = C.preds_kvars_of_reft r in
     let ps'      = List.map (fun p -> P.subst p vv xe) rps ++ ps in
     let env'     = (* match rks with [] -> env | _ -> *) Sy.SMap.add x (vv, t, rks) env in
     ps', env'
@@ -184,7 +193,7 @@ let simplify_t c =
   let id             = c |> C.id_of_t in
   let _              = Co.bprintf mydebug "============== Simplifying %d ============== \n"id in
   let env_ps, ks_env = c |> C.env_of_t |> preds_kvars_of_env in
-  let l_ps, l_ks     = c |> C.lhs_of_t |> preds_kvars_of_reft in
+  let l_ps, l_ks     = c |> C.lhs_of_t |> C.preds_kvars_of_reft in
   let vv, t          = c |> C.lhs_of_t |> Misc.tmap2 (C.vv_of_reft, C.sort_of_reft) in
   let bodyp          = Ast.pAnd ([C.grd_of_t c] ++ l_ps ++ env_ps) 
                        >> Co.bprintf mydebug "body_pred: %a \n" P.print in
@@ -210,4 +219,5 @@ let simplify_ts cs =
      |> Cindex.create [] 
      |> Cindex.to_live_list
      >> Kvgraph.kv_stats
+end
 

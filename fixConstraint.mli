@@ -52,6 +52,8 @@ val apply_solution   : soln -> reft -> reft
 val is_conc_refa     : refa -> bool
 val preds_of_refa    : soln -> refa -> Ast.pred list
 val preds_of_reft    : soln -> reft -> Ast.pred list
+val preds_kvars_of_reft : reft -> (Ast.pred list * (subs * Ast.Symbol.t) list)
+
 val preds_of_lhs     : soln -> t -> Ast.pred list
 val vars_of_t        : soln -> t -> Ast.Symbol.t list
 

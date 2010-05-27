@@ -380,3 +380,12 @@ let make_dep b xo yo =
   | false, Some t, None    -> Ddp_s t
   | false, None  , Some t' -> Ddp_t t'
   | _                      -> assertf "FixConstraint.make_dep: match failure"
+
+(* API *)
+let preds_kvars_of_reft reft =
+  List.fold_left begin fun (ps, ks) -> function 
+    | Conc p -> p :: ps, ks
+    | Kvar (xes, kvar) -> ps, (xes, kvar) :: ks 
+  end ([], []) (ras_of_reft reft)
+
+
