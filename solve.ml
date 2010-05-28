@@ -317,7 +317,7 @@ let solve me (s : C.soln) =
 let create ts sm ps a ds cs ws qs =
   let s   = BS.time "Qual Inst" (inst ws qs) SM.empty in
   let sri = cs >> F.printf "Pre-Simplify\n%a" print_constr_stats 
-               |> BS.time  "Simplify" Simplify.simplify_ts
+               |> BS.time  "Simplify" FixSimplify.simplify_ts
                >> F.printf "Post-Simplify\n%a" print_constr_stats
                |> BS.time  "Validation" (PP.validate a s)
                |> BS.time  "Ref Index" Ci.create ds in

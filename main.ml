@@ -80,7 +80,7 @@ let simplify_ts x = if !Co.dump_simp = "andrey"
                     then (x |> List.map Simplification.simplify_t 
                             |> List.filter (not <.> Simplification.is_tauto_t)
                             |> Simplification.simplify_ts)
-                    else Simplify.simplify_ts x
+                    else FixSimplify.simplify_ts x
 
 let dump_simp (ts, ps, cs, ws, ds, qs, s0) = 
   let a     = get_arity cs in
