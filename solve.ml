@@ -165,13 +165,14 @@ let print_solution_stats ppf s =
   F.fprintf ppf "# Vars: (Total=%d, False=%d) Quals: (Total=%d, Avg=%f, Max=%d, Min=%d)\n" 
                 (Sy.sm_length s) bot sum avg max min
 
-let print_solver_stats ppf me = 
-  let cs   = Ci.to_list me.sri in 
+let print_constr_stats ppf cs = 
   let cn   = List.length cs in
   let scn  = List.length (List.filter C.is_simple cs) in
-  F.fprintf ppf "#constraints = %d \n" cn;
-  F.fprintf ppf "#simple constraints = %d \n" scn;
-  F.fprintf ppf "#Refine Iterations = %d (si=%d tp=%d unsatLHS=%d emptyRHS=%d) \n"
+  F.fprintf ppf "#Constraints: %d (simple = %d) \n" cn scn
+
+let print_solver_stats ppf me = 
+  print_constr_stats ppf (Ci.to_list me.sri); 
+  F.fprintf ppf "#Iterations = %d (si=%d tp=%d unsatLHS=%d emptyRHS=%d) \n"
     !stat_refines !stat_simple_refines !stat_tp_refines !stat_unsatLHS !stat_emptyRHS;
   F.fprintf ppf "#Queries: umatch=%d, match=%d, ask=%d, valid=%d\n" 
     !stat_umatches !stat_matches !stat_imp_queries !stat_valid_queries;
@@ -314,13 +315,22 @@ let solve me (s : C.soln) =
 
 (* API *)
 let create ts sm ps a ds cs ws qs =
-  let s   = BS.time "Qual inst" (inst ws qs) SM.empty in
-  let cs' = BS.time "validation" (PP.validate a s) cs in
-  let _   = asserts (List.length cs = List.length cs') "Validation fails" in
-  let sri = BS.time "Ref index" Ci.create ds cs' in
+  let s   = BS.time "Qual Inst" (inst ws qs) SM.empty in
+  let sri = cs >> F.printf "Pre-Simplify\n%a" print_constr_stats 
+               |> BS.time  "Simplify" Simplify.simplify_ts
+               >> F.printf "Post-Simplify\n%a" print_constr_stats
+               |> BS.time  "Validation" (PP.validate a s)
+               |> BS.time  "Ref Index" Ci.create ds in
   let tpc = TP.create ts sm ps in
   ({ tpc = tpc; sri = sri; ws = ws; tt = Timer.create "fixpoint iters"}, s)
  
+(*
+  let cs  = BS.time "Simplify" Simplify.simplify_ts cs in 
+  let cs' = BS.time "Validation" (PP.validate a s) cs in
+  let sri = BS.time "Ref Index" Ci.create ds cs' in
+*)
+  
+
 (* API *)
 let save fname me s =
   let oc  = open_out fname in

@@ -122,8 +122,9 @@ let phase5 s cs =
   end cs
 
 let validate a s cs =
-  let f a s = phase1 <+> phase2 <+> phase3 <+> phase4 a <+> phase5 s in 
-  BS.time "validate shapes" (f a s) cs
+  cs 
+  |> phase1 |> phase2 |> phase3 |> phase4 a |> phase5 s
+  >> (fun cs' -> asserts (List.length cs = List.length cs') "Validation")
 
 (***************************************************************)
 (****************** Pruning Unconstrained Vars *****************)
