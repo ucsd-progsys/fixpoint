@@ -219,8 +219,9 @@ module Symbol =
     let print fmt s =
       to_string s |> Format.fprintf fmt "%s" 
 
-    let value_variable t = 
-      "VV_"^(Sort.to_string_short t)
+    let value_variable = function
+      | Sort.Ptr l -> Printf.sprintf "VV_ptr_%s" (Sort.loc_to_string l)
+      | t          -> Printf.sprintf "VV_%s" (Sort.to_string_short t)
 
     let is_value_variable s = Misc.is_prefix "VV_" s 
 

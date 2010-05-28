@@ -31,7 +31,7 @@ let parse f =
 let read_inputs usage = 
   print_now "\n \n \n \n \n";
   print_now "========================================================\n";
-  print_now "© Copyright 2009 Regents of the University of California. ";
+  print_now "© Copyright 2009 Regents of the University of California.\n";
   print_now "All Rights Reserved.\n";
   print_now "========================================================\n";
   print_now (Sys.argv |> Array.to_list |> String.concat " ");

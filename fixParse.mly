@@ -83,6 +83,7 @@ sort:
   | INT                                 { So.t_int }
   | BOOL                                { So.t_bool }
   | PTR                                 { So.t_ptr (So.Lvar 0) }
+  | PTR LPAREN Id RPAREN                { So.t_ptr (So.Loc $3) }
   | OBJ                                 { So.t_obj } 
   | FUNC LPAREN sorts RPAREN            { So.t_func 0 $3 }
   | FUNC LPAREN Num COMMA sorts RPAREN  { So.t_func $3 $5 }
