@@ -460,7 +460,7 @@ let mk_kv_scope ?(with_card=true) ?(hcs=[]) out ts wfs sol =
 			     Sy.SMap.fold (fun bv _ scope' ->
 					     StrSet.add (symbol_to_armc bv) scope'
 					  ) (C.env_of_t t) StrSet.empty in
-			   let _, rhs_kvs = C.rhs_of_t t |> Simplification.preds_kvars_of_reft in
+			   let _, rhs_kvs = C.rhs_of_t t |> C.preds_kvars_of_reft in
 			     (* add these bound vars to the scope of each k var in rhs of t *)
 			     List.fold_left (fun kv_scope'' kv ->
 					       StrMap.add kv (StrSet.union 
