@@ -1,6 +1,6 @@
 include ../../config.make
 
-LIBS=-libs unix,str,z3dummy,graph
+LIBS=-libs unix,str,graph
 
 DIRS=-I misc
 
