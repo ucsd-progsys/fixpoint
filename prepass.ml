@@ -121,9 +121,13 @@ let phase5 s cs =
     true
   end cs
 
+
+(* API *)
+let index = phase1 <+> phase2
+
+(* API *)
 let validate a s cs =
-  cs 
-  |> phase1 |> phase2 |> phase3 |> phase4 a |> phase5 s
+  cs |> phase3 |> phase4 a |> phase5 s
   >> (fun cs' -> asserts (List.length cs = List.length cs') "Validation")
 
 (***************************************************************)
@@ -144,6 +148,15 @@ let true_unconstrained s sri =
   sri |> Cindex.to_list 
       |> unconstrained_kvars 
       |> List.fold_left (fun s kv -> SM.add kv [] s) s
+
+(* API *)
+let true_unconstrained s sri = 
+  if !Co.true_unconstrained then 
+    let _ = F.printf "Fixpoint: Pruning unconstrained kvars \n" 
+    in true_unconstrained s sri
+  else 
+    let _ = F.printf "Fixpoint: NOT Pruning unconstrained kvars \n" 
+    in s
 
 (***************************************************************)
 (*********************** Constraint Profiling  *****************)
@@ -191,7 +204,6 @@ let profile2 sri =
       |> List.length
       |> fun n -> Co.cprintf Co.ol_solve_stats "Constraint Clusters = %d \n" n
 
-let profile sri = 
-  profile1 sri;
-  profile2 sri
+(* API *) 
+let profile sri = sri >> profile1 >> profile2 |> ignore 
 

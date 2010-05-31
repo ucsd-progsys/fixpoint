@@ -288,19 +288,14 @@ let rec acsolve me w s =
       let w''       = if ch then Ci.deps me.sri c |> Ci.wpush me.sri w' else w' in 
       acsolve me w'' s' 
 
+
+
 (* API *)
 let solve me (s : C.soln) = 
   let _  = F.printf "Fixpoint: Validating Initial Solution \n" in
   let _  = BS.time "profile" PP.profile me.sri in
-  let s  = if !Co.true_unconstrained then 
-             let _ = F.printf "Fixpoint: Pruning unconstrained kvars \n" in
-             PP.true_unconstrained s me.sri
-           else 
-             let _ = F.printf "Fixpoint: NOT Pruning unconstrained kvars \n" in
-             s in
-  let _  = Co.cprintf Co.ol_insane "%a" Ci.print me.sri;  
-           Co.cprintf Co.ol_insane "%a" C.print_soln s;
-           dump me s in
+  let s  = PP.true_unconstrained s me.sri in
+  let _  = Co.cprintf Co.ol_insane "%a%a" Ci.print me.sri C.print_soln s; dump me s in
   let _  = F.printf "Fixpoint: Initialize Worklist \n" in
   let w  = BS.time "init wkl" Ci.winit me.sri in 
   let s  = BS.time "cleanup"  SM.map (Misc.sort_and_compact) s in
@@ -309,19 +304,19 @@ let solve me (s : C.soln) =
   let _  = dump me s in
   let _  = F.printf "Fixpoint: Testing Solution \n" in
   let u  = BS.time "testing solution" (unsat_constraints me) s in
-  let _  = if u != [] then F.printf "Unsatisfied Constraints:\n %a"
-                          (Misc.pprint_many true "\n" (C.print_t None)) u in
+  let _  = if u != [] then F.printf "Unsatisfied Constraints:\n %a" (Misc.pprint_many true "\n" (C.print_t None)) u in
   (s, u)
 
 (* API *)
 let create ts sm ps a ds cs ws qs =
-  let s   = BS.time "Qual Inst" (inst ws qs) SM.empty in
-  let sri = cs >> F.printf "Pre-Simplify\n%a" print_constr_stats 
-               |> BS.time  "Simplify" FixSimplify.simplify_ts
-               >> F.printf "Post-Simplify\n%a" print_constr_stats
-               |> BS.time  "Validation" (PP.validate a s)
-               |> BS.time  "Ref Index" Ci.create ds in
   let tpc = TP.create ts sm ps in
+  let s   = BS.time "Qual Inst" (inst ws qs) SM.empty in
+  let sri = cs >> F.printf "Pre-Simplify Stats\n%a" print_constr_stats 
+               |> BS.time  "PP.index" PP.index
+               |> BS.time  "Simplify" FixSimplify.simplify_ts
+               >> F.printf "Post-Simplify Stats\n%a" print_constr_stats
+               |> BS.time  "PP.Validation" (PP.validate a s)
+               |> BS.time  "Ref Index" Ci.create ds in
   ({ tpc = tpc; sri = sri; ws = ws; tt = Timer.create "fixpoint iters"}, s)
  
 (*

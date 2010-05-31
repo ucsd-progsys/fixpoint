@@ -86,8 +86,11 @@ let rec expr_apply_defs em pm expr =
       let e2', b2' = ef e2 in
       eIte (p', e1', e2'), (b' || b1' || b2')
   | Fld (v, e), _ -> 
-      let e', b' = ef e in
+      let e', b'   = ef e in
       eFld (v, e'), b'
+  | Cst (e, t), _ ->
+      let e', b'   = ef e in
+      eCst (e', t), b'
 
 and pred_apply_defs em pm pred =
   let ef = expr_apply_defs em pm in

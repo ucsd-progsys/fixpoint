@@ -24,6 +24,7 @@
 (** This module implements various constraint validation and simplification 
  *  prepasses *)
 
-val validate: int -> FixConstraint.soln -> FixConstraint.t list -> FixConstraint.t list
+val index             : FixConstraint.t list -> FixConstraint.t list
+val validate          : int -> FixConstraint.soln -> FixConstraint.t list -> FixConstraint.t list
 val true_unconstrained: FixConstraint.soln -> Cindex.t ->  FixConstraint.soln
-val profile: Cindex.t -> unit
+val profile           : Cindex.t -> unit

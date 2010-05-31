@@ -777,8 +777,6 @@ let rec sortcheck_expr f e =
       (try Some (f s) with _ -> None)
   | Bin (e1, op, e2) -> 
       sortcheck_op f (e1, op, e2)
-  | Bot   -> 
-      None
   | Ite (p, e1, e2) -> 
       if sortcheck_pred f p then 
         match Misc.map_pair (sortcheck_expr f) (e1, e2) with
@@ -808,6 +806,7 @@ let rec sortcheck_expr f e =
             | Some t1 when Sort.compat t t1 -> Some t
             | _                             -> None 
       end
+  | _ -> assertf "Ast.sortcheck_expr: unhandled expr = %s" (Expression.to_string e)
 
 and sortcheck_op f (e1, op, e2) = 
   match Misc.map_pair (sortcheck_expr f) (e1, e2) with
