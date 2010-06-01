@@ -21,6 +21,7 @@
  *
  *)
 
+module BS = BNstats
 module Co = Constants
 module IM = Misc.IntMap
 module C  = FixConstraint
@@ -249,20 +250,35 @@ module EliminateK : SIMPLIFIER = struct
     g  : Kvgraph.t;
     cm : FixConstraint.t IM.t;
   }
-   (* 
-  val merge      : k -> cs (write) -> cs (read) -> cs (merged)
-  val elim_k     : t -> k -> t
-  val elim_ks    : t -> ks -> t
-  val simplify_ts: cs -> cs
-  val create     : cs -> t
-  *)
 
-  let simplify_ts = fun cs -> cs
+  let to_ts (me:t) : C.t list = failwith "TBD"
+  let from_ts (cs: C.t list) : t = failwith "TBD"
+  let add (cs: C.t list)  (me:t) : t = failwith "TBD"
+  let remove (c:C.t list) (me:t) : t = failwith "TBD"
+  let kreads (me:t) (k:Sy.t) : C.t list = failwith "TBD"
+  let kwrites (me:t) (k:Sy.t) : C.t list = failwith "TBD"
+  let select_ks (me:t) : Sy.t list = failwith "TBD"
 
+  let merge (k:Sy.t) (wcs:C.t list) (rcs:C.t list) :C.t list = failwith "TBD" 
+  
+  let elim_k (me:t) (k:Sy.t) : t =
+    let rcs = kreads me k in 
+    let wcs = kwrites me k in
+    if Misc.disjoint wcs rcs then 
+      me |> add (merge k wcs rcs) |> remove (rcs ++ wcs)
+    else 
+      me
 
+  let simplify_ts cs =
+    let me = from_ts cs in
+    me |> select_ks 
+       |> List.fold_left elim_k me 
+       |> to_ts 
 end
 
 (* API *)
 let simplify_ts cs =
-  cs |> Syntactic.simplify_ts
-     |> Cone.simplify_ts
+  cs |> BS.time "add ids  1" C.add_ids
+     |> BS.time "simplify 1" Syntactic.simplify_ts           (* termination bug *)
+     |> BS.time "simplify 2" Cone.simplify_ts
+     |> BS.time "add ids  2" C.add_ids

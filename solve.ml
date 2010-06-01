@@ -307,14 +307,11 @@ let solve me (s : C.soln) =
   let _  = if u != [] then F.printf "Unsatisfied Constraints:\n %a" (Misc.pprint_many true "\n" (C.print_t None)) u in
   (s, u)
 
-
-
 (* API *)
 let create ts sm ps a ds cs ws qs =
   let tpc = TP.create ts sm ps in
   let s   = BS.time "Qual Inst" (inst ws qs) SM.empty in
   let sri = cs >> F.printf "Pre-Simplify Stats\n%a" print_constr_stats 
-               |> BS.time  "C.add_ids" C.add_ids
                |> BS.time  "Simplify" FixSimplify.simplify_ts
                >> F.printf "Post-Simplify Stats\n%a" print_constr_stats
                |> BS.time  "PP.Validation" (PP.validate a s)
