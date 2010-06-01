@@ -47,21 +47,6 @@ let mydebug = false
 
 exception Out_of_scope of Ast.Symbol.t 
 
-
-(* 1. check ids are distinct, return max id *)
-let phase1 cs =
-  let ids = Misc.map_partial C.ido_of_t cs in
-  let _   = asserts (Misc.distinct ids) "Invalid Constraints 1" in
-  (List.fold_left max 0 ids), cs
-
-(* 2. add distinct ids to each constraint *)
-let phase2 (tmax, cs) =
-  Misc.mapfold begin fun j c -> match C.ido_of_t c with
-    | None -> (j+1, C.make_t (C.env_of_t c) (C.grd_of_t c) (C.lhs_of_t c) (C.rhs_of_t c) (Some j) (C.tag_of_t c))
-    | _    -> (j, c)
-  end (tmax + 1) cs
-  |> snd
-
 (* 3. check that sorts are consistent across constraints *)
 let phase3 cs =
   let memo = Hashtbl.create 17 in
@@ -121,9 +106,6 @@ let phase5 s cs =
     true
   end cs
 
-
-(* API *)
-let index = phase1 <+> phase2
 
 (* API *)
 let validate a s cs =

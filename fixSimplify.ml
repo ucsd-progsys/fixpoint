@@ -31,20 +31,26 @@ module Sy = Ast.Symbol
 open Misc.Ops
 open Ast
 
-
 let mydebug = false
+
+
+(****************************************************************************)
+(************************** Index Constraint by Id **************************)
+(****************************************************************************)
+
+let make_cm = List.fold_left (fun cm c -> IM.add (C.id_of_t c) c cm) IM.empty 
+let find_cm = fun cm id -> IM.find id cm
 
 (****************************************************************************)
 (************** Generic Simplification/Transformation API *******************)
 (****************************************************************************)
 
-module type SIMPLIFIER =
-  sig
-    val simplify_ts: FixConstraint.t list -> FixConstraint.t list
-  end
+module type SIMPLIFIER = sig
+  val simplify_ts: FixConstraint.t list -> FixConstraint.t list
+end
 
 (****************************************************************************)
-(******************* Syntactic Simplification/Transformation API ************)
+(******************* Syntactic Simplification *******************************)
 (****************************************************************************)
 
 module Syntactic : SIMPLIFIER = struct
@@ -221,14 +227,39 @@ let simplify_ts cs =
      |> List.filter (not <.> is_tauto_t) 
 end
 
+(****************************************************************************)
+(*** Cone-of-Influence: Remove Constraints that don't reach constant-pred ***)
+(****************************************************************************)
+
 module Cone : SIMPLIFIER = struct
   let simplify_ts cs =
-    let cm = List.fold_left (fun cm c -> IM.add (C.id_of_t c) c cm) IM.empty cs in 
-    Kvgraph.create ()
-    >> Kvgraph.add cs
-    >> Kvgraph.print_stats
-    |> Kvgraph.cone_ids 
-    |> List.map (fun id -> IM.find id cm)
+    let cm = make_cm cs in 
+    cs |> Kvgraph.add Kvgraph.empty 
+       >> Kvgraph.print_stats
+       |> Kvgraph.cone_ids 
+       |> List.map (find_cm cm) 
+end
+
+(****************************************************************************)
+(***** Merge Write and Read of Kvar: A |- k and B, k |- C  iff A,B |- C  ****)
+(****************************************************************************)
+
+module EliminateK : SIMPLIFIER = struct
+  type t = {
+    g  : Kvgraph.t;
+    cm : FixConstraint.t IM.t;
+  }
+   (* 
+  val merge      : k -> cs (write) -> cs (read) -> cs (merged)
+  val elim_k     : t -> k -> t
+  val elim_ks    : t -> ks -> t
+  val simplify_ts: cs -> cs
+  val create     : cs -> t
+  *)
+
+  let simplify_ts = fun cs -> cs
+
+
 end
 
 (* API *)

@@ -312,7 +312,7 @@ let create ts sm ps a ds cs ws qs =
   let tpc = TP.create ts sm ps in
   let s   = BS.time "Qual Inst" (inst ws qs) SM.empty in
   let sri = cs >> F.printf "Pre-Simplify Stats\n%a" print_constr_stats 
-               |> BS.time  "PP.index" PP.index
+               |> BS.time  "C.index_ts" C.index_ts
                |> BS.time  "Simplify" FixSimplify.simplify_ts
                >> F.printf "Post-Simplify Stats\n%a" print_constr_stats
                |> BS.time  "PP.Validation" (PP.validate a s)

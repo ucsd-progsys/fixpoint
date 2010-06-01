@@ -21,8 +21,8 @@
  *)
 
 type t
-val create      : unit -> t
-val add         : FixConstraint.t list -> t -> unit
+val empty       : t
+val add         : t -> FixConstraint.t list -> t 
 val print_stats : t -> unit
 val cone_ids    : t -> FixConstraint.id list
 

@@ -389,3 +389,27 @@ let preds_kvars_of_reft reft =
   end ([], []) (ras_of_reft reft)
 
 
+(***************************************************************)
+(************* Add Distinct Ids to Constraints *****************)
+(***************************************************************)
+
+(* 1. check ids are distinct, return max id *)
+let max_id cs =
+  cs |> Misc.map_partial ido_of_t 
+     >> (fun ids -> asserts (Misc.distinct ids) "Duplicate Ids")
+     |> List.fold_left max 0
+
+(* 2. add distinct ids to each constraint *)
+let add_id cs tmax =
+  Misc.mapfold begin fun j c -> match c with
+    | {ido = None} -> j+1, {c with ido = Some j}
+    | c            -> j, c
+  end (tmax + 1) cs
+(*  match ido_of_t c with
+    | None -> (j+1, make_t (env_of_t c) (grd_of_t c) (lhs_of_t c) (rhs_of_t c) (Some j) (tag_of_t c))
+    | _    -> (j, c)
+  end (tmax + 1) cs
+ *) |> snd
+
+(* API *)
+let index_ts cs = cs |> max_id |> add_id cs

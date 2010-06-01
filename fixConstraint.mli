@@ -114,7 +114,7 @@ val rhs_of_t         : t -> reft
 val id_of_t          : t -> id
 val ido_of_t         : t -> id option
 val tag_of_t         : t -> tag
-
+val index_ts         : t list -> t list
 val make_wf          : envt -> reft -> id option -> wf
 val env_of_wf        : wf -> envt
 val reft_of_wf       : wf -> reft

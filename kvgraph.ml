@@ -42,7 +42,7 @@ module Id : Graph.Sig.ORDERED_TYPE_DFT with type t = int = struct
   let compare = compare
 end
 
-module G   = Graph.Imperative.Digraph.ConcreteLabeled(V)(Id)
+module G   = Graph.Persistent.Digraph.ConcreteLabeled(V)(Id)
 module VS  = Set.Make(V)
 
 type t = G.t
@@ -106,6 +106,7 @@ let filter_kvars f g =
   g  |> vertices_of_graph
      |> List.filter (not <.> C.is_conc_refa)
      |> List.filter f 
+     |> Misc.sort_and_compact
 
 let in_edges g vs =
   vs |> Misc.flap (G.pred_e g)
@@ -151,7 +152,6 @@ let cone_nodes g =
     |> List.filter C.is_conc_refa
     |> pre_star g
 
-
 (*************************************************************************)
 (******************************* API *************************************)
 (*************************************************************************)
@@ -160,12 +160,9 @@ let print_ks s ks =
   ks |> Misc.map_partial (function C.Kvar (_,k) -> Some k | _ -> None)
      |> Format.printf "[KVG] %s %a \n" s (Misc.pprint_many false "," Sy.print) 
 
-
 (* API *)
-let create = fun () -> G.create ()
-let add    = fun cs g -> List.iter (List.iter (G.add_edge_e g) <.> edges_of_t) cs
-
-
+let empty = G.empty
+let add   = List.fold_left (fun g -> List.fold_left G.add_edge_e g <.> edges_of_t)
 
 
 (* API *)
