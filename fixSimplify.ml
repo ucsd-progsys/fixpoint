@@ -37,11 +37,12 @@ let mydebug = false
 
 
 (****************************************************************************)
-(************************** Index Constraint by Id **************************)
+(*********************************** Misc. **********************************)
 (****************************************************************************)
 
-let make_cm = List.fold_left (fun cm c -> IM.add (C.id_of_t c) c cm) IM.empty 
-let find_cm = fun cm id -> IM.find id cm
+let add_cm     = List.fold_left (fun cm c -> IM.add (C.id_of_t c) c cm) 
+let find_cm    = fun cm id -> IM.find id cm
+let refas_of_k = fun k -> [C.Kvar ([], k)] 
 
 (****************************************************************************)
 (************** Generic Simplification/Transformation API *******************)
@@ -235,7 +236,7 @@ end
 
 module Cone : SIMPLIFIER = struct
   let simplify_ts cs =
-    let cm = make_cm cs in 
+    let cm = add_cm IM.empty cs in 
     cs |> Kg.add Kg.empty 
        >> Kg.print_stats
        |> Kg.cone_ids 
@@ -247,27 +248,43 @@ end
 (****************************************************************************)
 
 module EliminateK : SIMPLIFIER = struct
-  type t = {
-    g  : Kg.t;
-    cm : FixConstraint.t IM.t;
-  }
+  
+  type t = { g  : Kg.t;
+             cm : FixConstraint.t IM.t;
+             id : int; }
 
-  let of_ts = fun cs -> {g = Kg.add Kg.empty cs; cm = make_cm cs}
-  let to_ts = fun me -> me.cm |> Misc.intmap_bindings |> List.map snd
+  let empty  = 
+    { g  = Kg.empty; 
+      cm = IM.empty; 
+      id = 0; }
+ 
+  let add me cs = 
+    let n, cs = C.add_ids me.id cs in 
+    { g  = Kg.add me.g cs; 
+      cm = add_cm me.cm cs; 
+      id = n+1 }
+ 
+  let remove me (k, cs) =
+    { g  = k  |> refas_of_k |> Kg.remove me.g; 
+      cm = cs |> List.map C.id_of_t |> List.fold_left (Misc.switch IM.remove) me.cm;
+      id = me.id; }
+ 
+  let of_ts    = add empty 
+  let to_ts    = fun me -> me.cm |> Misc.intmap_bindings |> List.map snd
+ 
+  let cs_of_k  = fun f me -> refas_of_k <+> f me.g <+> List.map (find_cm me.cm)
+  let rds_of_k = cs_of_k Kg.in_edges
+  let wrs_of_k = cs_of_k Kg.out_edges 
 
-  let add (cs: C.t list)  (me:t) : t = failwith "TBD"
-  let remove (c:C.t list) (me:t) : t = failwith "TBD"
-  let kreads (me:t) (k:Sy.t) : C.t list = failwith "TBD"
-  let kwrites (me:t) (k:Sy.t) : C.t list = failwith "TBD"
   let select_ks (me:t) : Sy.t list = failwith "TBD"
-
   let merge (k:Sy.t) (wcs:C.t list) (rcs:C.t list) :C.t list = failwith "TBD" 
   
   let elim_k (me:t) (k:Sy.t) : t =
-    let rcs = kreads me k in 
-    let wcs = kwrites me k in
+    let rcs = rds_of_k me k in 
+    let wcs = wrs_of_k me k in
     if Misc.disjoint wcs rcs then 
-      me |> add (merge k wcs rcs) |> remove (rcs ++ wcs)
+      me |> Misc.switch add (merge k wcs rcs) 
+         |> Misc.switch remove (k, rcs ++ wcs)
     else 
       me
 
@@ -280,7 +297,8 @@ end
 
 (* API *)
 let simplify_ts cs =
-  cs |> BS.time "add ids  1" C.add_ids
+  cs |> BS.time "add ids  1" (C.add_ids 0)
+     |> snd
      |> BS.time "simplify 1" Syntactic.simplify_ts           (* termination bug *)
      |> BS.time "simplify 2" Cone.simplify_ts
-     |> BS.time "add ids  2" C.add_ids
+     |> BS.time "simplify 3" EliminateK.simplify_ts

@@ -22,7 +22,9 @@
 
 type t
 val empty       : t
+val remove      : t -> FixConstraint.refa list -> t
 val add         : t -> FixConstraint.t list -> t 
 val print_stats : t -> unit
 val cone_ids    : t -> FixConstraint.id list
-
+val in_edges    : t -> FixConstraint.refa list -> FixConstraint.id list
+val out_edges   : t -> FixConstraint.refa list -> FixConstraint.id list

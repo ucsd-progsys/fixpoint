@@ -82,6 +82,11 @@ let kvars_of_env env =
     r |> C.kvars_of_reft |> (fun lks -> lks ++ ks)
   end env []
 
+let dsts_of_t c = 
+  c |> C.rhs_of_t 
+    |> C.ras_of_reft 
+    |> List.map (function C.Kvar (_,k) -> C.Kvar ([], k) | ra -> ra) 
+
 let edges_of_t c =
   let eks = c |> C.env_of_t 
               |> kvars_of_env 
@@ -90,11 +95,9 @@ let edges_of_t c =
               |> (fun p -> if P.is_tauto p then [] else [C.Conc p]) in
   let lks = c |> C.lhs_of_t 
               |> C.ras_of_reft in 
-  let rs  = c |> C.rhs_of_t 
-              |> C.ras_of_reft 
-              |> List.map (function C.Kvar (_,k) -> C.Kvar ([], k) | ra -> ra) in
-  rs |> Misc.cross_product (lks ++ gps ++ eks)  
-     |> List.map (fun (ra, ra') -> (ra, C.id_of_t c, ra'))
+  c |> dsts_of_t
+    |> Misc.cross_product (lks ++ gps ++ eks)  
+    |> List.map (fun (ra, ra') -> (ra, C.id_of_t c, ra'))
 
 (************************************************************************)
 (*************************** Misc. Accessors ****************************) 
@@ -110,6 +113,11 @@ let filter_kvars f g =
 
 let in_edges g vs =
   vs |> Misc.flap (G.pred_e g)
+     |> List.map snd3
+     |> Misc.sort_and_compact
+
+let out_edges g vs =
+  vs |> Misc.flap (G.succ_e g)
      |> List.map snd3
      |> Misc.sort_and_compact
 
@@ -161,8 +169,9 @@ let print_ks s ks =
      |> Format.printf "[KVG] %s %a \n" s (Misc.pprint_many false "," Sy.print) 
 
 (* API *)
-let empty = G.empty
-let add   = List.fold_left (fun g -> List.fold_left G.add_edge_e g <.> edges_of_t)
+let empty  = G.empty
+let add    = List.fold_left (fun g -> List.fold_left G.add_edge_e g <.> edges_of_t)
+let remove = List.fold_left G.remove_vertex 
 
 
 (* API *)

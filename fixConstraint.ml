@@ -393,15 +393,15 @@ let preds_kvars_of_reft reft =
 (************* Add Distinct Ids to Constraints *****************)
 (***************************************************************)
 
-let max_id cs =
+let max_id n cs =
   cs |> Misc.map_partial ido_of_t 
      >> (fun ids -> asserts (Misc.distinct ids) "Duplicate Ids")
-     |> List.fold_left max 0
+     |> List.fold_left max n
 
 (* API *)
-let add_ids cs =
-  cs |> Misc.mapfold begin fun j c -> match c with
-          | {ido = None} -> j+1, {c with ido = Some j}
-          | c            -> j, c
-        end ((max_id cs) + 1)
-     |> snd
+let add_ids n cs =
+  Misc.mapfold begin fun j c -> match c with
+    | {ido = None} -> j+1, {c with ido = Some j}
+    | c            -> j, c
+  end ((max_id n cs) + 1) cs
+
