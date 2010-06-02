@@ -28,6 +28,7 @@ module C  = FixConstraint
 module P  = Ast.Predicate
 module E  = Ast.Expression
 module Sy = Ast.Symbol
+module Kg = Kvgraph
 
 open Misc.Ops
 open Ast
@@ -235,9 +236,9 @@ end
 module Cone : SIMPLIFIER = struct
   let simplify_ts cs =
     let cm = make_cm cs in 
-    cs |> Kvgraph.add Kvgraph.empty 
-       >> Kvgraph.print_stats
-       |> Kvgraph.cone_ids 
+    cs |> Kg.add Kg.empty 
+       >> Kg.print_stats
+       |> Kg.cone_ids 
        |> List.map (find_cm cm) 
 end
 
@@ -247,12 +248,13 @@ end
 
 module EliminateK : SIMPLIFIER = struct
   type t = {
-    g  : Kvgraph.t;
+    g  : Kg.t;
     cm : FixConstraint.t IM.t;
   }
 
-  let to_ts (me:t) : C.t list = failwith "TBD"
-  let from_ts (cs: C.t list) : t = failwith "TBD"
+  let of_ts = fun cs -> {g = Kg.add Kg.empty cs; cm = make_cm cs}
+  let to_ts = fun me -> me.cm |> Misc.intmap_bindings |> List.map snd
+
   let add (cs: C.t list)  (me:t) : t = failwith "TBD"
   let remove (c:C.t list) (me:t) : t = failwith "TBD"
   let kreads (me:t) (k:Sy.t) : C.t list = failwith "TBD"
@@ -270,7 +272,7 @@ module EliminateK : SIMPLIFIER = struct
       me
 
   let simplify_ts cs =
-    let me = from_ts cs in
+    let me = of_ts cs in
     me |> select_ks 
        |> List.fold_left elim_k me 
        |> to_ts 
