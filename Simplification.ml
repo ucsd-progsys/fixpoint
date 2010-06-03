@@ -2,6 +2,7 @@ module C = FixConstraint
 module P = Ast.Predicate
 module E = Ast.Expression
 module Sy = Ast.Symbol
+module Su = Ast.Subst
 
 open Misc.Ops
 
@@ -142,7 +143,7 @@ let simplify_t t =
          |> expr_apply_defs edefs pdefs 
 	 |> E.to_string with Not_found -> "none");
     *)
-  let kvar_to_simple_Kvar (subs, sym) = C.Kvar (subs_apply_defs edefs pdefs subs |> simplify_subs, sym) in
+  let kvar_to_simple_Kvar (subs, sym) = C.Kvar (subs |> Su.to_list |> subs_apply_defs edefs pdefs |> simplify_subs |> Su.of_list, sym) in
   let senv = 
     Sy.SMap.mapi (fun bv (vv, sort, ks) -> 
 		    List.map kvar_to_simple_Kvar ks |>	C.make_reft vv sort) pfree_env in

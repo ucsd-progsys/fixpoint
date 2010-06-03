@@ -5,6 +5,7 @@ module So = A.Sort
 module Sy = A.Symbol
 module E  = A.Expression
 module P  = A.Predicate
+module Su = A.Subst
 module C  = FixConstraint
 
 let parse_error msg =
@@ -50,7 +51,7 @@ let parse_error msg =
 %type <C.reft>                               reft
 %type <C.refa list>                          refas, refasne
 %type <C.refa>                               refa
-%type <C.subs>                               subs
+%type <Su.t>                                 subs
 
 %%
 defs:
@@ -228,8 +229,8 @@ refa:
   ;
 
 subs:
-                                        { [] }
-  | LB Id ASGN expr RB subs             { ((Sy.of_string $2), $4) :: $6 } 
+                                        { Su.empty }
+  | LB Id ASGN expr RB subs             { Su.extend $6 ((Sy.of_string $2), $4) } 
 
 sol:
     SOL COLON Id ASGN preds             { ((Sy.of_string $3), $5) }

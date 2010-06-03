@@ -30,6 +30,7 @@ module P  = A.Predicate
 module Sy = A.Symbol
 module SM = Sy.SMap
 module BS = BNstats
+module Su = Ast.Subst
 
 open Misc.Ops
 
@@ -37,8 +38,7 @@ type tag  = int list
 type id   = int
 type dep  = Adp of tag * tag | Ddp of tag * tag | Ddp_s of tag | Ddp_t of tag
 
-type subs = (Sy.t * A.expr) list                         (* [x,e] *)
-type refa = Conc of A.pred | Kvar of subs * Sy.t
+type refa = Conc of A.pred | Kvar of Su.t * Sy.t
 type reft = Sy.t * A.Sort.t * refa list                (* { VV: t | [ra] } *)
 type envt = reft SM.t
 type soln = A.pred list SM.t
@@ -66,14 +66,14 @@ let mydebug = false
 (*************************************************************)
 
 let is_simple_refatom = function 
-  | Kvar ([], _) -> true
-  | _            -> false
+  | Kvar (s, _) -> Ast.Subst.is_empty s 
+  | _           -> false
 
 let kvars_of_reft (_, _, rs) =
-  Misc.map_partial 
-    (function Kvar (subs,k) -> Some (subs,k) 
-            | _             -> None) 
-    rs
+  Misc.map_partial begin function 
+    | Kvar (subs, k) -> Some (subs,k) 
+    | _              -> None 
+  end rs
 
 let env_of_bindings xrs =
   List.fold_left begin
@@ -166,8 +166,9 @@ let is_conc_refa = function
 
 (* API *)
 let preds_of_refa s   = function
-  | Conc p       -> [p]
-  | Kvar (xes,k) -> List.map (Misc.flip A.substs_pred xes) (sol_read s k)
+  | Conc p      -> [p]
+  | Kvar (su,k) -> k |> sol_read s 
+                     |> List.map (Misc.flip A.substs_pred (Su.to_list su))
 
 (* API *)
 let preds_of_reft s (_,_,ras) =
@@ -227,12 +228,9 @@ let strengthen_reft env ((v,t,ras) as r) =
 (********************** Pretty Printing ***********************)
 (**************************************************************)
 
-let print_sub ppf (x,e) = 
-  F.fprintf ppf "[%a:=%a]" Sy.print x E.print e
-
 let print_refineatom ppf = function
-  | Conc p        -> F.fprintf ppf "%a" P.print p
-  | Kvar (xes, k) -> F.fprintf ppf "%a%a" Sy.print k (Misc.pprint_many false "" print_sub) xes
+  | Conc p       -> F.fprintf ppf "%a" P.print p
+  | Kvar (su, k) -> F.fprintf ppf "%a%a" Sy.print k Su.print su
 
 let print_ras so ppf ras = 
   match so with 
@@ -314,12 +312,12 @@ let print_soln ppf sm =
 (*********************** Getter/Setter *************************)
 (***************************************************************)
 
-let theta_ra subs = function
-  | Conc p          -> Conc (A.substs_pred p subs)
-  | Kvar (subs', k) -> Kvar (subs ++ subs', k)
+let theta_ra (su': Su.t) = function
+  | Conc p       -> Conc (A.substs_pred p (Su.to_list su'))
+  | Kvar (su, k) -> Kvar (Su.concat su su', k) 
 
 (* API *)
-let make_reft     = fun v so ras -> (v, so, List.map (theta_ra []) ras)
+let make_reft     = fun v so ras -> (v, so, List.map (theta_ra Su.empty) ras)
 let vv_of_reft    = fst3
 let sort_of_reft  = snd3
 let ras_of_reft   = thd3

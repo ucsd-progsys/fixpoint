@@ -29,6 +29,7 @@ module P  = Ast.Predicate
 module E  = Ast.Expression
 module Sy = Ast.Symbol
 module Kg = Kvgraph
+module Su = Ast.Subst
 
 open Misc.Ops
 open Ast
@@ -42,7 +43,7 @@ let mydebug = false
 
 let add_cm     = List.fold_left (fun cm c -> IM.add (C.id_of_t c) c cm) 
 let find_cm    = fun cm id -> IM.find id cm
-let refas_of_k = fun k -> [C.Kvar ([], k)] 
+let refas_of_k = fun k -> [C.Kvar (Su.empty, k)] 
 
 (****************************************************************************)
 (************** Generic Simplification/Transformation API *******************)
@@ -175,10 +176,12 @@ let preds_kvars_of_env env =
     ps', env'
   end env ([], Sy.SMap.empty)
 
-let simplify_kvar em pm (xes, sym) =
-  xes |> subs_apply_defs em pm
-      |> List.filter (fun (x,e) -> not (P.is_tauto (pAtom (eVar x, Eq, e))))
-      |> (fun xes -> C.Kvar (xes, sym))
+let simplify_kvar em pm (su, sym) =
+  su |> Su.to_list
+     |> subs_apply_defs em pm
+     |> List.filter (fun (x,e) -> not (P.is_tauto (pAtom (eVar x, Eq, e))))
+     |> Su.of_list
+     |> (fun su -> C.Kvar (su, sym))
 
 let simplify_env em pm ks_env = 
   Sy.SMap.map begin fun (vv, t, ks) -> 
@@ -266,7 +269,7 @@ module EliminateK : SIMPLIFIER = struct
  
   let remove me (k, cs) =
     { g  = Kg.remove me.g [k]; 
-      cm = List.map C.id_of_t cs |> List.fold_left (Misc.switch IM.remove) me.cm;
+      cm = List.map C.id_of_t cs |> List.fold_left (Misc.flip IM.remove) me.cm;
       id = me.id; }
  
   let of_ts     = add empty 
@@ -275,6 +278,26 @@ module EliminateK : SIMPLIFIER = struct
   let rds_of_k  = cs_of_k Kg.in_edges
   let wrs_of_k  = cs_of_k Kg.out_edges 
   let select_ks = fun me -> Kg.single_wr_ks me.g 
+
+  (*
+     Assume that k is written in (1) and read once in (2)
+
+     (1) env1, g1, k_v:r1                       |- k[xi := ai]
+     (2) env2, g2, y:k[xi := bi]                |- r2
+   
+     Now, (1) equiv (1') and (2) equiv (2')
+   
+     (1') env1, g1, #i:{v=ai}, k_v:r1                           |- k[xi := #i]
+     (2') env2, g2, #i:{v=bi}, y:k2[xi := #i]                   |- r2
+  
+     Next, we can merge (1') and (2')
+
+     (1'+2') env1 ++ env2, g1 && g2, #i:{v=ai}, #i:{v=bi}, y:r1 |- r2
+
+     Which simplifies to:
+   
+     (1'+2') env1 ++ env2, g1 && g2 && {ai = bi}, y:r1          |- r2
+  *)
 
   let merge_one k (wc, rc) = failwith "TBD"
 
@@ -286,8 +309,8 @@ module EliminateK : SIMPLIFIER = struct
     let rcs = rds_of_k me k in 
     let wcs = wrs_of_k me k in
     if Misc.disjoint wcs rcs then 
-      me |> Misc.switch add (merge k wcs rcs) 
-         |> Misc.switch remove (k, rcs ++ wcs)
+      me |> Misc.flip add (merge k wcs rcs) 
+         |> Misc.flip remove (k, rcs ++ wcs)
     else me
 
   let simplify_ts cs =

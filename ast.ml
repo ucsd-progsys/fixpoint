@@ -30,6 +30,8 @@
  * (2) when destructed via pattern-matching, one must discard the ID
  *)
 
+module F = Format
+
 open Misc.Ops
 
 module Sort = 
@@ -937,9 +939,6 @@ let rec simplify_pred ((p, _) as pred) =
                              | ps  -> pOr ps)
     | _ -> pred
 
-(* API *)
-let simplify_pred = remove_bot <+> simplify_pred
-let substs_pred   = fun p xes -> Predicate.substs p xes |> simplify_pred
 
 (**************************************************************************)
 (***************************** Qualifiers *********************************)
@@ -970,6 +969,35 @@ module Qualifier = struct
       Sort.print t
       Predicate.print p
 end
+
+(**************************************************************************)
+(*************************** Substitutions ********************************)
+(**************************************************************************)
+
+module Subst = struct
+  type t = (Symbol.t * expr) list          
+  let empty = []
+  let is_empty = function [] -> true | _ -> false
+  
+  let to_list  = fun x -> x
+  let of_list  = fun xes -> failwith "TBD: Subst.of_list"
+  let extend   = fun s (x, e) -> failwith "TBD: Subst.extend"
+  let concat   = fun s1 s2 -> failwith "TBD: Subst.concat"
+
+  let print_sub ppf (x,e) = 
+    F.fprintf ppf "[%a:=%a]" Symbol.print x Expression.print e
+  
+  let print ppf su =
+    su |> to_list |> F.fprintf ppf "%a" (Misc.pprint_many false "" print_sub)
+
+
+
+end
+
+(* API *)
+let simplify_pred = remove_bot <+> simplify_pred
+let substs_pred   = fun p su -> su |> Subst.to_list |> Predicate.substs p |> simplify_pred
+
 
 (* {{{
 let rec expr_subst hp he e x e' =

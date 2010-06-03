@@ -81,7 +81,7 @@ let preds_of_reft reft =
 
 let get_instrs vv decls (subs, kvar) =
   let vars = get_kdecl kvar decls |> List.map (fun v -> TVar v) in
-  let assumes = List.map sub_to_assume subs in
+  let assumes = subs |> Ast.Subst.to_list |> List.map sub_to_assume in
   Rget (kvar, vars) :: assumes @
   [Asgn (PVar vv, List.hd vars)]
 

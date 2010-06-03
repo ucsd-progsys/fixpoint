@@ -23,17 +23,16 @@
 
 (* This module implements basic datatypes and operations on constraints *)
 
+type t                  (* NEVER EVER expose! *) 
+type wf                 (* NEVER EVER expose! *)
+
 type tag  = int list    (* for ordering: must have same dim, lexico-ordered *)
 type id   = int         (* for identifying: must be unique *) 
 type dep                (* dependencies between constraints *)
 
-type subs = (Ast.Symbol.t * Ast.expr) list            (* [x := e] *) 
-type refa = Conc of Ast.pred | Kvar of subs * Ast.Symbol.t
+type refa = Conc of Ast.pred | Kvar of Ast.Subst.t * Ast.Symbol.t
 type reft = Ast.Symbol.t * Ast.Sort.t * refa list   (* { VV: t | [ra] } *)
 type envt = reft Ast.Symbol.SMap.t
-
-type t                  (* NEVER EVER expose! *) 
-type wf                 (* NEVER EVER expose! *)
 
 type soln = Ast.pred list Ast.Symbol.SMap.t
 
@@ -45,14 +44,14 @@ type deft = Srt of Ast.Sort.t
           | Qul of Ast.Qualifier.t
           | Dep of dep 
 
-val kvars_of_reft    : reft -> (subs * Ast.Symbol.t) list
-val kvars_of_t       : t -> (subs * Ast.Symbol.t) list
+val kvars_of_reft    : reft -> (Ast.Subst.t * Ast.Symbol.t) list
+val kvars_of_t       : t -> (Ast.Subst.t * Ast.Symbol.t) list
 val apply_solution   : soln -> reft -> reft
 
 val is_conc_refa     : refa -> bool
 val preds_of_refa    : soln -> refa -> Ast.pred list
 val preds_of_reft    : soln -> reft -> Ast.pred list
-val preds_kvars_of_reft : reft -> (Ast.pred list * (subs * Ast.Symbol.t) list)
+val preds_kvars_of_reft : reft -> (Ast.pred list * (Ast.Subst.t * Ast.Symbol.t) list)
 
 val preds_of_lhs     : soln -> t -> Ast.pred list
 val vars_of_t        : soln -> t -> Ast.Symbol.t list
@@ -104,7 +103,7 @@ val vv_of_reft       : reft -> Ast.Symbol.t
 val sort_of_reft     : reft -> Ast.Sort.t
 val ras_of_reft      : reft -> refa list
 val shape_of_reft    : reft -> reft
-val theta            : subs -> reft -> reft
+val theta            : Ast.Subst.t -> reft -> reft
 
 val make_t           : envt -> Ast.pred -> reft -> reft -> id option -> tag -> t
 val env_of_t         : t -> envt

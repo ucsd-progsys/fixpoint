@@ -29,7 +29,7 @@
 type var   = PVar of Ast.Symbol.t
            | TVar of Ast.Symbol.t
 
-type kvar  = FixConstraint.subs * Ast.Symbol.t
+type kvar  = Ast.Subst.t * Ast.Symbol.t
 
 type decl  = RDecl of Ast.Symbol.t * Ast.Symbol.t list
            | PDecl of Ast.Symbol.t

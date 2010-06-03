@@ -46,7 +46,7 @@ open Misc.Ops
 type var   = PVar of Sy.t
            | TVar of Sy.t
 
-type kvar  = C.subs * Sy.t
+type kvar  = Ast.Subst.t * Sy.t
 
 type decl  = RDecl of Sy.t * Sy.t list
            | PDecl of Sy.t

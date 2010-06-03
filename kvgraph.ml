@@ -22,6 +22,7 @@
 
 module Sy = Ast.Symbol
 module P  = Ast.Predicate 
+module Su = Ast.Subst
 module C  = FixConstraint
 open Misc.Ops
 
@@ -85,12 +86,12 @@ let kvars_of_env env =
 let dsts_of_t c = 
   c |> C.rhs_of_t 
     |> C.ras_of_reft 
-    |> List.map (function C.Kvar (_,k) -> C.Kvar ([], k) | ra -> ra) 
+    |> List.map (function C.Kvar (_,k) -> C.Kvar (Su.empty, k) | ra -> ra) 
 
 let edges_of_t c =
   let eks = c |> C.env_of_t 
               |> kvars_of_env 
-              |> List.map (fun (_,k) -> C.Kvar ([], k)) in
+              |> List.map (fun (_,k) -> C.Kvar (Su.empty, k)) in
   let gps = c |> C.grd_of_t 
               |> (fun p -> if P.is_tauto p then [] else [C.Conc p]) in
   let lks = c |> C.lhs_of_t 

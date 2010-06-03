@@ -81,7 +81,8 @@ let hashtbl_print_frequency t =
 (***************************************************************)
 
 let rhs_cands s = function
-  | C.Kvar (xes, k) -> 
+  | C.Kvar (su, k) -> 
+      let xes = Ast.Subst.to_list su in 
       k |> C.sol_read s 
         |> List.map (fun q -> ((k,q), A.substs_pred q xes))
   | _ -> []

@@ -179,7 +179,6 @@ sig
   val unwrap    : pred -> pred_int
   val support   : pred -> Symbol.t list
   val subst     : pred -> Symbol.t -> expr -> pred
-(* val substs    : pred -> (Symbol.t * expr) list -> pred *)
   val map       : (pred -> pred) -> (expr -> expr) -> pred -> pred 
   val iter      : (pred -> unit) -> (expr -> unit) -> pred -> unit 
   val is_contra : pred -> bool
@@ -197,3 +196,16 @@ module Qualifier :
     val vv_of_t   : t -> Symbol.t
     val print     : Format.formatter -> t -> unit
   end
+
+module Subst : 
+  sig
+    type t
+    val empty     : t
+    val is_empty  : t -> bool
+    val extend    : t -> (Symbol.t * expr) -> t
+    val concat    : t -> t -> t
+    val of_list   : (Symbol.t * expr) list -> t
+    val to_list   : t -> (Symbol.t * expr) list
+    val print     : Format.formatter -> t -> unit
+  end
+ 
