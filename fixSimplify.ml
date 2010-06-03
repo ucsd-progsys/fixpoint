@@ -276,7 +276,9 @@ module EliminateK : SIMPLIFIER = struct
   let cs_of_k   = fun f me k ->  f me.g [k] |> List.map (find_cm me.cm)
   let rds_of_k  = cs_of_k Kg.in_edges
   let wrs_of_k  = cs_of_k Kg.out_edges 
-  let select_ks = fun me -> Kg.single_wr_ks me.g 
+  let select_ks = fun me -> me.g |> Kg.filter_kvars (Kg.is_single_wr me.g) 
+                                 |> List.filter (Kg.is_single_rd me.g)
+
 
   (* Assume that k is written in (1) and read once in (2)
 

@@ -112,6 +112,7 @@ let edges_of_t c =
 
 let vertices_of_graph = fun g -> G.fold_vertex (fun v acc -> v::acc) g []
 
+(* API *)
 let filter_kvars f g =
   g  |> vertices_of_graph
      |> List.filter (not <.> C.is_conc_refa)
@@ -144,7 +145,7 @@ let pre_star g vs =
   |> VS.elements
 
 (************************************************************************)
-(********************************* API **********************************) 
+(****************************** Predicates ******************************) 
 (************************************************************************)
 
 let is_num_write g f v = 
@@ -153,8 +154,8 @@ let is_num_write g f v =
       |> f
 
 let undef_ks     = fun g -> filter_kvars (is_num_write g ((=) 0)) g
-let single_wr_ks = fun g -> filter_kvars (is_num_write g ((=) 1)) g
 let multi_wr_ks  = fun g -> filter_kvars (is_num_write g ((<) 1)) g
+let single_wr_ks = fun g -> filter_kvars (is_num_write g ((=) 1)) g
 
 let cone_nodes g =  
   g |> vertices_of_graph
@@ -170,10 +171,13 @@ let print_ks s ks =
      |> Format.printf "[KVG] %s %a \n" s (Misc.pprint_many false "," Sy.print) 
 
 (* API *)
+let is_single_wr = fun g -> is_num_write g ((=) 1)
+let is_single_rd = fun g -> G.succ_e g <+> Misc.groupby (snd3 <+> fst) <+> List.for_all (function [_] -> true | _ -> false)
+
+(* API *)
 let empty  = G.empty
 let add    = List.fold_left (fun g -> List.fold_left G.add_edge_e g <.> edges_of_t)
 let remove = List.fold_left G.remove_vertex 
-
 
 (* API *)
 let cone_ks g = 
