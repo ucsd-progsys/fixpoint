@@ -988,9 +988,11 @@ module Subst = struct
 
   let extend s (x, e) =
     asserts (not (Symbol.SSet.mem x s.rng)) "Subst.extend invalid";
-    if e = eVar x then s else
-      { em  = Symbol.SMap.add x e s.em; 
-        rng = List.fold_left (Misc.flip Symbol.SSet.add) s.rng (Expression.support e) }
+    match e with 
+    | Var x', _ when x = x' -> 
+        s
+    | _ -> { em  = Symbol.SMap.add x e s.em; 
+             rng = List.fold_left (Misc.flip Symbol.SSet.add) s.rng (Expression.support e) }
 
   let empty     = {em = Symbol.SMap.empty; rng = Symbol.SSet.empty}
   let is_empty  = fun s -> Symbol.SMap.is_empty s.em

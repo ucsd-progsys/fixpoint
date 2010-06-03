@@ -177,9 +177,8 @@ let preds_kvars_of_env env =
   end env ([], Sy.SMap.empty)
 
 let simplify_kvar em pm (su, sym) =
-  su |> Su.to_list
+  su |> Su.to_list 
      |> subs_apply_defs em pm
-     |> List.filter (fun (x,e) -> not (P.is_tauto (pAtom (eVar x, Eq, e))))
      |> Su.of_list
      |> (fun su -> C.Kvar (su, sym))
 
