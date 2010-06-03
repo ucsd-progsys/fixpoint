@@ -274,8 +274,8 @@ module EliminateK : SIMPLIFIER = struct
   let of_ts     = add empty 
   let to_ts     = fun me -> me.cm |> Misc.intmap_bindings |> List.map snd
   let cs_of_k   = fun f me k ->  f me.g [k] |> List.map (find_cm me.cm)
-  let rds_of_k  = cs_of_k Kg.in_edges
-  let wrs_of_k  = cs_of_k Kg.out_edges 
+  let rds_of_k  = cs_of_k Kg.out_edges
+  let wrs_of_k  = cs_of_k Kg.in_edges 
   let select_ks = fun me -> me.g |> Kg.filter_kvars (Kg.is_single_wr me.g) 
                                  |> List.filter (Kg.is_single_rd me.g)
 
