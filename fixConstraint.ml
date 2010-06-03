@@ -75,14 +75,14 @@ let kvars_of_reft (_, _, rs) =
     | _              -> None 
   end rs
 
+let meet (v1, t1, ra1s) (v2, t2, ra2s) = 
+  asserts (v1=v2 && t1=t2) "ERROR: FixConstraint.meet";
+  (v1, t1, Misc.sort_and_compact (ra1s ++ ra2s))
+
 let env_of_bindings xrs =
-  List.fold_left begin
-    fun env (x, r) -> 
-      if not (SM.mem x env) then SM.add x r env else
-        let r' = SM.find x env in
-        ((if not (r = r') then
-          (* Printf.printf *) assertf "WARNING: env_of_bindings : duplicate %s\n" (Sy.to_string x)); 
-         env) 
+  List.fold_left begin fun env (x, r) -> 
+    let r = if SM.mem x env then meet r (SM.find x env) else r in
+    SM.add x r env
   end SM.empty xrs
 
 let bindings_of_env env = 
