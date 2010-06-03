@@ -26,6 +26,9 @@ module Su = Ast.Subst
 module C  = FixConstraint
 open Misc.Ops
 
+type rd = Bnd of Sy.t * Su.t | Lhs of Su.t | Grd | Junk
+
+
 (************************************************************************)
 (********************* Build Graph of Kvar Dependencies *****************)
 (************************************************************************)
@@ -37,9 +40,9 @@ module V : Graph.Sig.COMPARABLE with type t = C.refa = struct
   let equal   = fun x y -> C.refa_to_string x = C.refa_to_string y
 end
 
-module Id : Graph.Sig.ORDERED_TYPE_DFT with type t = int = struct
-  type t = int
-  let default = 0
+module Id : Graph.Sig.ORDERED_TYPE_DFT with type t = int * rd = struct
+  type t = int * rd
+  let default = 0, Junk 
   let compare = compare
 end
 
@@ -63,7 +66,7 @@ module DotGraph = struct
   let vertex_name               = function C.Kvar (_,k) -> Sy.to_string k | ra -> "C"^(string_of_int (V.hash ra))
   let vertex_attributes         = fun ra -> [`Label (C.refa_to_string ra)] 
   let default_edge_attributes   = fun _ -> []
-  let edge_attributes           = fun (_,i,_) -> [`Label (string_of_int i)]
+  let edge_attributes           = fun (_,(i,_),_) -> [`Label (string_of_int i)]
   let get_subgraph              = fun _ -> None
 end
 
@@ -78,9 +81,11 @@ let dump_graph s g =
 (********************* Constraints-to-Graph *****************************) 
 (************************************************************************)
 
-let kvars_of_env env = 
-  Sy.SMap.fold begin fun _ r ks -> 
-    r |> C.kvars_of_reft |> (fun lks -> lks ++ ks)
+let xkvars_of_env env = 
+  Sy.SMap.fold begin fun x r acc -> 
+    r |> C.kvars_of_reft 
+      |> List.map (fun z -> x,z) 
+      |> (fun xks -> xks ++ acc)
   end env []
 
 let dsts_of_t c = 
@@ -90,15 +95,16 @@ let dsts_of_t c =
 
 let edges_of_t c =
   let eks = c |> C.env_of_t 
-              |> kvars_of_env 
-              |> List.map (fun (_,k) -> C.Kvar (Su.empty, k)) in
+              |> xkvars_of_env 
+              |> List.map (fun (x, (su, k)) -> (C.Kvar (Su.empty, k)), Bnd (x, su)) in
   let gps = c |> C.grd_of_t 
-              |> (fun p -> if P.is_tauto p then [] else [C.Conc p]) in
+              |> (fun p -> if P.is_tauto p then [] else [(C.Conc p, Grd)]) in
   let lks = c |> C.lhs_of_t 
-              |> C.ras_of_reft in 
+              |> C.ras_of_reft 
+              |> List.map (function C.Kvar (su, k) -> (C.Kvar (Su.empty, k), Lhs su) | ra -> (ra, Grd)) in 
   c |> dsts_of_t
     |> Misc.cross_product (lks ++ gps ++ eks)  
-    |> List.map (fun (ra, ra') -> (ra, C.id_of_t c, ra'))
+    |> List.map (fun ((ra, l), ra') -> (ra, (C.id_of_t c, l), ra'))
 
 (************************************************************************)
 (*************************** Misc. Accessors ****************************) 
@@ -112,15 +118,14 @@ let filter_kvars f g =
      |> List.filter f 
      |> Misc.sort_and_compact
 
-let in_edges g vs =
-  vs |> Misc.flap (G.pred_e g)
-     |> List.map snd3
+let get_edges f g vs =
+  vs |> Misc.flap (f g)
+     |> List.map (fun (_,(i,_),_) -> i) 
      |> Misc.sort_and_compact
 
-let out_edges g vs =
-  vs |> Misc.flap (G.succ_e g)
-     |> List.map snd3
-     |> Misc.sort_and_compact
+(* APU *)
+let in_edges  = get_edges G.pred_e 
+let out_edges = get_edges G.succ_e
 
 (************************************************************************)
 (********************* (Backwards) Reachability *************************) 

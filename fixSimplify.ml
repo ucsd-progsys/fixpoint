@@ -278,8 +278,7 @@ module EliminateK : SIMPLIFIER = struct
   let wrs_of_k  = cs_of_k Kg.out_edges 
   let select_ks = fun me -> Kg.single_wr_ks me.g 
 
-  (*
-     Assume that k is written in (1) and read once in (2)
+  (* Assume that k is written in (1) and read once in (2)
 
      (1) env1, g1, k_v:r1                       |- k[xi := ai]
      (2) env2, g2, y:k[xi := bi]                |- r2
@@ -298,23 +297,22 @@ module EliminateK : SIMPLIFIER = struct
      (1'+2') env1 ++ env2, g1 && g2 && {ai = bi}, y:r1          |- r2
   *)
 
-  let merge_one k (wc, rc) = failwith "TBD"
+  let deconstr = fun c -> (C.env_of_t c, C.grd_of_t c, C.lhs_of_t c, C.rhs_of_t c)
 
-  let merge k wcs rcs = 
-    Misc.cross_product wcs rcs 
-    |> List.map (merge_one k)
-
-  let eliminate me k =
-    let rcs = rds_of_k me k in 
-    let wcs = wrs_of_k me k in
-    if Misc.disjoint wcs rcs then 
-      me |> Misc.flip add (merge k wcs rcs) 
-         |> Misc.flip remove (k, rcs ++ wcs)
-    else me
+  let merge_one k (wc, rc) = failwith "TBD
+    let env1, g1, l1, r1 = deconstr wc in
+    let env2, g2, l2, r2 = deconstr rc in"
+  
+  let eliminate me (k, wcs, rcs)  =
+    me |> Misc.flip add    (Misc.cross_product wcs rcs |> List.map (merge_one k)) 
+       |> Misc.flip remove (k, wcs ++ rcs)
 
   let simplify_ts cs =
     let me = of_ts cs in
-    me |> select_ks 
+    me |> select_ks
+       |> List.map    (fun k -> (k, wrs_of_k me k, rds_of_k me k))
+       |> List.filter (fun (_,wcs, rcs) -> Misc.disjoint wcs rcs)
+(*       |> List.filter (fun (k,_  , rcs) -> List.for_all (single_read me k) rcs) *)
        |> List.fold_left eliminate me 
        |> to_ts 
 end

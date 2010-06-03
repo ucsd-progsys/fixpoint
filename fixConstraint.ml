@@ -69,15 +69,22 @@ let is_simple_refatom = function
   | Kvar (s, _) -> Ast.Subst.is_empty s 
   | _           -> false
 
+(* API *)
 let kvars_of_reft (_, _, rs) =
   Misc.map_partial begin function 
     | Kvar (subs, k) -> Some (subs,k) 
     | _              -> None 
   end rs
 
+(*
 let meet (v1, t1, ra1s) (v2, t2, ra2s) = 
-  asserts (v1=v2 && t1=t2) "ERROR: FixConstraint.meet";
+  asserts (v1=v2 && t1=t2 && ra1s = ra2s) "ERROR: FixConstraint.meet";
   (v1, t1, Misc.sort_and_compact (ra1s ++ ra2s))
+*)
+
+let meet r1 r2 = 
+  asserts (r1 = r2) "ERROR: FixConstraint.meet"; 
+  r1
 
 let env_of_bindings xrs =
   List.fold_left begin fun env (x, r) -> 
@@ -100,6 +107,16 @@ let kvars_of_t {nontriv = env; lhs = lhs; rhs = rhs} =
   |> SM.fold (fun _ r acc -> r :: acc) env
   |> Misc.flap kvars_of_reft 
 
+(* 
+(* API *)
+let lhs_kvars_of_t {nontriv = env; lhs = lhs} =
+  [lhs] |> SM.fold (fun _ r acc -> r :: acc) env
+        |> Misc.flap kvars_of_reft 
+
+(* API *)
+let kvars_of_t ({rhs = rhs} as c) =
+  (kvars_of_reft rhs) ++ (lhs_kvars_of_t c) 
+*)
 (*************************************************************)
 (******************** Solution Management ********************)
 (*************************************************************)
