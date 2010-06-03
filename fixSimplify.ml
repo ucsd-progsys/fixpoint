@@ -253,6 +253,7 @@ module EliminateK : SIMPLIFIER = struct
              cm : FixConstraint.t IM.t;
              id : int; }
 
+
   let empty  = 
     { g  = Kg.empty; 
       cm = IM.empty; 
@@ -265,33 +266,35 @@ module EliminateK : SIMPLIFIER = struct
       id = n+1 }
  
   let remove me (k, cs) =
-    { g  = k  |> refas_of_k |> Kg.remove me.g; 
-      cm = cs |> List.map C.id_of_t |> List.fold_left (Misc.switch IM.remove) me.cm;
+    { g  = Kg.remove me.g [k]; 
+      cm = List.map C.id_of_t cs |> List.fold_left (Misc.switch IM.remove) me.cm;
       id = me.id; }
  
-  let of_ts    = add empty 
-  let to_ts    = fun me -> me.cm |> Misc.intmap_bindings |> List.map snd
- 
-  let cs_of_k  = fun f me -> refas_of_k <+> f me.g <+> List.map (find_cm me.cm)
-  let rds_of_k = cs_of_k Kg.in_edges
-  let wrs_of_k = cs_of_k Kg.out_edges 
+  let of_ts     = add empty 
+  let to_ts     = fun me -> me.cm |> Misc.intmap_bindings |> List.map snd
+  let cs_of_k   = fun f me k ->  f me.g [k] |> List.map (find_cm me.cm)
+  let rds_of_k  = cs_of_k Kg.in_edges
+  let wrs_of_k  = cs_of_k Kg.out_edges 
+  let select_ks = fun me -> Kg.single_wr_ks me.g 
 
-  let select_ks (me:t) : Sy.t list = failwith "TBD"
-  let merge (k:Sy.t) (wcs:C.t list) (rcs:C.t list) :C.t list = failwith "TBD" 
-  
-  let elim_k (me:t) (k:Sy.t) : t =
+  let merge_one k (wc, rc) = failwith "TBD"
+
+  let merge k wcs rcs = 
+    Misc.cross_product wcs rcs 
+    |> List.map (merge_one k)
+
+  let elimk me k =
     let rcs = rds_of_k me k in 
     let wcs = wrs_of_k me k in
     if Misc.disjoint wcs rcs then 
       me |> Misc.switch add (merge k wcs rcs) 
          |> Misc.switch remove (k, rcs ++ wcs)
-    else 
-      me
+    else me
 
   let simplify_ts cs =
     let me = of_ts cs in
     me |> select_ks 
-       |> List.fold_left elim_k me 
+       |> List.fold_left elimk me 
        |> to_ts 
 end
 

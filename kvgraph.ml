@@ -146,16 +146,11 @@ let is_num_write g f v =
       |> List.length 
       |> f
 
-let single_write_kvars g =
-  filter_kvars (is_num_write g ((=) 1)) g
+let undef_ks     = fun g -> filter_kvars (is_num_write g ((=) 0)) g
+let single_wr_ks = fun g -> filter_kvars (is_num_write g ((=) 1)) g
+let multi_wr_ks  = fun g -> filter_kvars (is_num_write g ((<) 1)) g
 
-let undefined_kvars g =
-  filter_kvars (is_num_write g ((=) 0)) g
-
-let multi_write_kvars g =
-  filter_kvars (is_num_write g ((<) 1)) g
- 
-let cone_nodes g = 
+let cone_nodes g =  
   g |> vertices_of_graph
     |> List.filter C.is_conc_refa
     |> pre_star g
@@ -175,7 +170,7 @@ let remove = List.fold_left G.remove_vertex
 
 
 (* API *)
-let cone_kvars g = 
+let cone_ks g = 
   g |> cone_nodes
     |> List.filter (not <.> C.is_conc_refa)
 
@@ -187,8 +182,8 @@ let cone_ids g =
 (* API *)
 let print_stats g = 
   g >> dump_graph (!Constants.save_file^".dot")
-    >> (single_write_kvars <+> print_ks "single write kvs:")
-    >> (multi_write_kvars  <+> print_ks "multi write kvs:")
-    >> (undefined_kvars    <+> print_ks "undefined kvs:")
-    >> (cone_kvars         <+> print_ks "cone kvs:")
+    >> (single_wr_ks <+> print_ks "single write kvs:")
+    >> (multi_wr_ks  <+> print_ks "multi write kvs:")
+    >> (undef_ks     <+> print_ks "undefined kvs:")
+    >> (cone_ks      <+> print_ks "cone kvs:")
     |> ignore
