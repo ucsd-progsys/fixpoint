@@ -137,21 +137,6 @@ val pIff   : (pred * pred) -> pred
 val pBexp  : expr -> pred
 val pForall: ((Symbol.t * Sort. t) list) * pred -> pred
 
-(* Misc *)
-val print_stats : unit -> unit
-val fixdiv      : pred -> pred
-val zero        : expr
-val one         : expr
-val bot         : expr
-
-(* val neg_brel : brel -> brel 
-   val push_neg : 
- *)
-val substs_pred    : pred -> (Symbol.t * expr) list -> pred 
-val simplify_pred  : pred -> pred
-val sortcheck_expr : (Symbol.t -> Sort.t) -> expr -> Sort.t option
-val sortcheck_pred : (Symbol.t -> Sort.t) -> pred -> bool
-
 module Expression : 
 sig
   module Hash : Hashtbl.S with type key = expr 
@@ -209,3 +194,14 @@ module Subst :
     val print     : Format.formatter -> t -> unit
   end
  
+val print_stats : unit -> unit
+val fixdiv      : pred -> pred
+val zero        : expr
+val one         : expr
+val bot         : expr
+val substs_pred    : pred -> Subst.t -> pred 
+val simplify_pred  : pred -> pred
+val sortcheck_expr : (Symbol.t -> Sort.t) -> expr -> Sort.t option
+val sortcheck_pred : (Symbol.t -> Sort.t) -> pred -> bool
+
+

@@ -80,8 +80,8 @@ let env_of_bindings xrs =
     fun env (x, r) -> 
       if not (SM.mem x env) then SM.add x r env else
         let r' = SM.find x env in
-        ((if not (r = r') then 
-          Printf.printf "WARNING: env_of_bindings : duplicate %s\n" (Sy.to_string x)); 
+        ((if not (r = r') then
+          (* Printf.printf *) assertf "WARNING: env_of_bindings : duplicate %s\n" (Sy.to_string x)); 
          env) 
   end SM.empty xrs
 
@@ -168,7 +168,7 @@ let is_conc_refa = function
 let preds_of_refa s   = function
   | Conc p      -> [p]
   | Kvar (su,k) -> k |> sol_read s 
-                     |> List.map (Misc.flip A.substs_pred (Su.to_list su))
+                     |> List.map (Misc.flip A.substs_pred su)
 
 (* API *)
 let preds_of_reft s (_,_,ras) =
@@ -313,7 +313,7 @@ let print_soln ppf sm =
 (***************************************************************)
 
 let theta_ra (su': Su.t) = function
-  | Conc p       -> Conc (A.substs_pred p (Su.to_list su'))
+  | Conc p       -> Conc (A.substs_pred p su')
   | Kvar (su, k) -> Kvar (Su.concat su su', k) 
 
 (* API *)

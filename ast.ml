@@ -975,22 +975,30 @@ end
 (**************************************************************************)
 
 module Subst = struct
-  type t = (Symbol.t * expr) list          
-  let empty = []
-  let is_empty = function [] -> true | _ -> false
-  
-  let to_list  = fun x -> x
-  let of_list  = fun xes -> failwith "TBD: Subst.of_list"
-  let extend   = fun s (x, e) -> failwith "TBD: Subst.extend"
-  let concat   = fun s1 s2 -> failwith "TBD: Subst.concat"
 
-  let print_sub ppf (x,e) = 
-    F.fprintf ppf "[%a:=%a]" Symbol.print x Expression.print e
-  
-  let print ppf su =
-    su |> to_list |> F.fprintf ppf "%a" (Misc.pprint_many false "" print_sub)
+  type t = { em: expr Symbol.SMap.t; rng : Symbol.SSet.t } 
+  (* INVARIANT: rng \cap dom(em) = \emptyset
+   * A reftype; each Var in expr has refinement: {not (v \in rng)}
+   * Hence, substitutions can be performed in order-independent manner *) 
+ 
+  let valid xes = 
+    xes |> List.split 
+        |> Misc.app_snd (Misc.flap Expression.support)
+        |> Misc.uncurry Misc.disjoint
 
+  let extend s (x, e) =
+    asserts (not (Symbol.SSet.mem x s.rng)) "Subst.extend invalid";
+    if e = eVar x then s else
+      { em  = Symbol.SMap.add x e s.em; 
+        rng = List.fold_left (Misc.flip Symbol.SSet.add) s.rng (Expression.support e) }
 
+  let empty     = {em = Symbol.SMap.empty; rng = Symbol.SSet.empty}
+  let is_empty  = fun s -> Symbol.SMap.is_empty s.em
+  let to_list   = fun s -> Symbol.sm_to_list s.em
+  let of_list   = fun xes -> List.fold_left extend empty xes
+  let concat    = fun s1 s2 -> Symbol.SMap.fold (fun x e s -> extend s (x, e)) s2.em s1 
+  let print_sub = fun ppf (x,e) -> F.fprintf ppf "[%a:=%a]" Symbol.print x Expression.print e
+  let print     = fun ppf -> to_list <+> F.fprintf ppf "%a" (Misc.pprint_many false "" print_sub)
 
 end
 

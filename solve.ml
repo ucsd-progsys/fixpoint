@@ -29,6 +29,7 @@ module Co = Constants
 module P  = A.Predicate
 module E  = A.Expression
 module So = A.Sort
+module Su = A.Subst
 module Q  = A.Qualifier
 module PH = A.Predicate.Hash
 module Sy = A.Symbol
@@ -82,9 +83,8 @@ let hashtbl_print_frequency t =
 
 let rhs_cands s = function
   | C.Kvar (su, k) -> 
-      let xes = Ast.Subst.to_list su in 
       k |> C.sol_read s 
-        |> List.map (fun q -> ((k,q), A.substs_pred q xes))
+        |> List.map (fun q -> ((k,q), A.substs_pred q su))
   | _ -> []
 
 let check_tp me env vv t lps =  function [] -> [] | rcs ->
@@ -232,12 +232,12 @@ let inst_qual ys t' (q : Q.t) : Q.t list =
   | xs -> 
       xs
       |> Misc.sort_and_compact
-      |> List.map (valid_bindings ys)              (* candidate bindings    *)
-      |> Misc.product                              (* generate combinations *) 
-      |> List.filter valid_binding                 (* remove bogus bindings *)
-      |> List.map (List.map (Misc.app_snd A.eVar)) (* instantiations        *)
-      |> List.rev_map (A.substs_pred p')           (* substituted preds     *)
-      |> List.map (Q.create v' t' )                (* qualifiers            *)
+      |> List.map (valid_bindings ys)                   (* candidate bindings    *)
+      |> Misc.product                                   (* generate combinations *) 
+      |> List.filter valid_binding                      (* remove bogus bindings *)
+      |> List.map (List.map (Misc.app_snd A.eVar))      (* instantiations        *)
+      |> List.rev_map (Su.of_list <+> A.substs_pred p') (* substituted preds     *)
+      |> List.map (Q.create v' t' )                     (* qualifiers            *)
   end
 (*  >> F.printf "inst_qual q = %a: \n%a" Q.print q (Misc.pprint_many true "" Q.print) *)
 
