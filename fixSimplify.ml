@@ -253,7 +253,6 @@ module EliminateK : SIMPLIFIER = struct
              cm : FixConstraint.t IM.t;
              id : int; }
 
-
   let empty  = 
     { g  = Kg.empty; 
       cm = IM.empty; 
@@ -283,7 +282,7 @@ module EliminateK : SIMPLIFIER = struct
     Misc.cross_product wcs rcs 
     |> List.map (merge_one k)
 
-  let elimk me k =
+  let eliminate me k =
     let rcs = rds_of_k me k in 
     let wcs = wrs_of_k me k in
     if Misc.disjoint wcs rcs then 
@@ -294,7 +293,7 @@ module EliminateK : SIMPLIFIER = struct
   let simplify_ts cs =
     let me = of_ts cs in
     me |> select_ks 
-       |> List.fold_left elimk me 
+       |> List.fold_left eliminate me 
        |> to_ts 
 end
 
