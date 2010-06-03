@@ -27,8 +27,8 @@ val remove       : t -> FixConstraint.refa list -> t
 val add          : t -> FixConstraint.t list -> t 
 val print_stats  : t -> unit
 val cone_ids     : t -> FixConstraint.id list
-val in_edges     : t -> FixConstraint.refa list -> FixConstraint.id list
-val out_edges    : t -> FixConstraint.refa list -> FixConstraint.id list
+val writes       : t -> FixConstraint.refa list -> FixConstraint.id list
+val reads        : t -> FixConstraint.refa list -> FixConstraint.id list
 val filter_kvars : (FixConstraint.refa -> bool) -> t -> FixConstraint.refa list
 val is_single_wr : t -> FixConstraint.refa -> bool
 val is_single_rd : t -> FixConstraint.refa -> bool

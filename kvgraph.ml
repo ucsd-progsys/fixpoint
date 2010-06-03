@@ -125,8 +125,8 @@ let get_edges f g vs =
      |> Misc.sort_and_compact
 
 (* APU *)
-let in_edges  = get_edges G.pred_e 
-let out_edges = get_edges G.succ_e
+let writes = get_edges G.pred_e 
+let reads  = get_edges G.succ_e
 
 (************************************************************************)
 (********************* (Backwards) Reachability *************************) 
@@ -149,7 +149,7 @@ let pre_star g vs =
 (************************************************************************)
 
 let is_num_write g f v = 
-  [v] |> in_edges g 
+  [v] |> writes g 
       |> List.length 
       |> f
 
@@ -187,7 +187,7 @@ let cone_ks g =
 (* API *)
 let cone_ids g = 
   g |> cone_nodes 
-    |> in_edges g
+    |> writes g
 
 (* API *)
 let print_stats g = 
