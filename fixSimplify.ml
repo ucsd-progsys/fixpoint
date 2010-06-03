@@ -274,26 +274,16 @@ module EliminateK : SIMPLIFIER = struct
   let of_ts     = add empty 
   let to_ts     = fun me -> me.cm |> Misc.intmap_bindings |> List.map snd
   let cs_of_k   = fun f me k ->  f me.g [k] |> List.map (find_cm me.cm)
-  let select_ks = fun me -> me.g |> Kg.filter_kvars (Kg.is_single_wr me.g) 
-                                 |> List.filter (Kg.is_single_rd me.g)
-
 
   (* Assume that k is written in (1) and read once in (2)
-
      (1) env1, g1, k_v:r1                       |- k[xi := ai]
      (2) env2, g2, y:k[xi := bi]                |- r2
-   
      Now, (1) equiv (1') and (2) equiv (2')
-   
      (1') env1, g1, #i:{v=ai}, k_v:r1                           |- k[xi := #i]
      (2') env2, g2, #i:{v=bi}, y:k2[xi := #i]                   |- r2
-  
      Next, we can merge (1') and (2')
-
      (1'+2') env1 ++ env2, g1 && g2, #i:{v=ai}, #i:{v=bi}, y:r1 |- r2
-
      Which simplifies to:
-   
      (1'+2') env1 ++ env2, g1 && g2 && {ai = bi}, y:r1          |- r2
   *)
 
@@ -307,14 +297,18 @@ module EliminateK : SIMPLIFIER = struct
     me |> Misc.flip add    (Misc.cross_product wcs rcs |> List.map (merge_one k)) 
        |> Misc.flip remove (k, wcs ++ rcs)
 
+  let select_ks me = 
+    me.g 
+    |> Kg.filter_kvars (Kg.is_single_wr me.g) 
+    |> List.filter (Kg.is_single_rd me.g)
+    |> List.map    (fun k -> (k, cs_of_k Kg.writes me k, cs_of_k Kg.reads me k))
+    |> List.filter (fun (_,wcs, rcs) -> Misc.disjoint wcs rcs)
+
   let simplify_ts cs =
     let me = of_ts cs in
-    me |> select_ks
-       |> List.map    (fun k -> (k, cs_of_k Kg.writes me k, cs_of_k Kg.reads me k))
-       |> List.filter (fun (_,wcs, rcs) -> Misc.disjoint wcs rcs)
-(*       |> List.filter (fun (k,_  , rcs) -> List.for_all (single_read me k) rcs) *)
-       |> List.fold_left eliminate me 
-       |> to_ts 
+    select_ks me
+    |> List.fold_left eliminate me 
+    |> to_ts 
 end
 
 (* API *)
