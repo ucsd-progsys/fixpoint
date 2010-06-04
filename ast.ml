@@ -432,6 +432,8 @@ let pBexp  = fun e  -> pwr (Bexp e)
 let pImp   = fun (p1,p2) -> pwr (Imp (p1,p2))
 let pIff   = fun (p1,p2) -> pAnd [pImp (p1,p2); pImp (p2,p1)]
 let pForall= fun (qs, p) -> pwr (Forall (qs, p))
+let pEqual = fun (e1,e2) -> pAtom (e1, Eq, e2)
+
 
 module ExprHash = Hashtbl.Make(struct
   type t = expr

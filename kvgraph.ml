@@ -127,7 +127,11 @@ let get_edges f g vs =
 (* APU *)
 let writes  = get_edges G.pred_e 
 let reads   = get_edges G.succ_e
-let k_reads = fun g i k -> failwith "TBD"
+
+(* API *)
+let k_reads g i k = 
+  G.succ_e g k 
+  |> Misc.map_partial (function (_,(j,x),_) when i=j -> Some x | _ -> None)
 
 (************************************************************************)
 (********************* (Backwards) Reachability *************************) 

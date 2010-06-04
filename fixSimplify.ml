@@ -30,6 +30,7 @@ module E  = Ast.Expression
 module Sy = Ast.Symbol
 module Kg = Kvgraph
 module Su = Ast.Subst
+module SM = Ast.Symbol.SMap
 
 open Misc.Ops
 open Ast
@@ -294,8 +295,18 @@ module EliminateK : SIMPLIFIER = struct
      (1'+2') env1 ++ env2, g1 && g2 && {ai = bi}, y:l1          |- r2
   *)
 
-  let meet_env env1 env2 xrs = failwith "TBD"
-  let meet_sub su1 su2 = failwith "TBD"
+  let meet_env env1 env2 xrs =
+    [env1; env2]
+    |> Misc.flap C.bindings_of_env 
+    |> (++) xrs 
+    |> C.env_of_bindings
+
+  let meet_sub su1 su2 =
+    [su1; su2]
+    |> Misc.flap Su.to_list
+    |> Misc.groupby fst 
+    |> List.map (function [(x,e)] -> pEqual (eVar x, e)| [(_,e1);(_,e2)] -> pEqual (e1,e2))
+    |> pAnd
 
   let merge_one me k (wc, rc) =
     let env1, env2       = Misc.map_pair C.env_of_t (wc, rc) in 
@@ -323,9 +334,9 @@ module EliminateK : SIMPLIFIER = struct
 
   let simplify_ts cs =
     let me = of_ts cs in
-    select_ks me
-    |> List.fold_left eliminate me 
-    |> to_ts 
+    me |> select_ks 
+       |> List.fold_left eliminate me 
+       |> to_ts 
 end
 
 (* API *)

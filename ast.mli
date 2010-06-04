@@ -136,6 +136,7 @@ val pImp   : (pred * pred) -> pred
 val pIff   : (pred * pred) -> pred
 val pBexp  : expr -> pred
 val pForall: ((Symbol.t * Sort. t) list) * pred -> pred
+val pEqual : expr * expr -> pred
 
 module Expression : 
 sig
