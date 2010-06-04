@@ -276,25 +276,42 @@ module EliminateK : SIMPLIFIER = struct
   let cs_of_k   = fun f me k ->  f me.g [k] |> List.map (find_cm me.cm)
 
   (* Assume that k is written in (1) and read once in (2)
-     (1) env1, g1, k_v:r1                       |- k[xi := ai]
+     
+     (1) env1, g1, k_v:l1                       |- k[xi := ai]
      (2) env2, g2, y:k[xi := bi]                |- r2
+     
      Now, (1) equiv (1') and (2) equiv (2')
-     (1') env1, g1, #i:{v=ai}, k_v:r1                           |- k[xi := #i]
+     
+     (1') env1, g1, #i:{v=ai}, k_v:l1                           |- k[xi := #i]
      (2') env2, g2, #i:{v=bi}, y:k2[xi := #i]                   |- r2
+     
      Next, we can merge (1') and (2')
-     (1'+2') env1 ++ env2, g1 && g2, #i:{v=ai}, #i:{v=bi}, y:r1 |- r2
+     
+     (1'+2') env1 ++ env2, g1 && g2, #i:{v=ai}, #i:{v=bi}, y:l1 |- r2
+     
      Which simplifies to:
-     (1'+2') env1 ++ env2, g1 && g2 && {ai = bi}, y:r1          |- r2
+     
+     (1'+2') env1 ++ env2, g1 && g2 && {ai = bi}, y:l1          |- r2
   *)
 
-  let deconstr = fun c -> (C.env_of_t c, C.grd_of_t c, C.lhs_of_t c, C.rhs_of_t c)
+  let meet_env env1 env2 xrs = failwith "TBD"
+  let meet_sub su1 su2 = failwith "TBD"
 
-  let merge_one k (wc, rc) = failwith "TBD
-    let env1, g1, l1, r1 = deconstr wc in
-    let env2, g2, l2, r2 = deconstr rc in"
-  
+  let merge_one me k (wc, rc) =
+    let env1, env2       = Misc.map_pair C.env_of_t (wc, rc) in 
+    let g1, g2           = Misc.map_pair C.grd_of_t (wc, rc) in
+    let l1               = C.lhs_of_t wc in
+    let [C.Kvar(su1, k)] = C.rhs_of_t wc |> thd3 in
+    let su2, yr', l'     = match Kg.k_reads me.g (C.id_of_t rc) (C.Kvar (Su.empty, k)) with 
+                           | [Kg.Bnd (y, su2)] -> su2, [(y,l1)], (C.lhs_of_t rc)
+                           | [Kg.Lhs su2]      -> su2, [], l1 in 
+    let env'             = meet_env env1 env2 yr'          in
+    let g'               = pAnd [g1; g2; meet_sub su1 su2] in
+    let r'               = C.rhs_of_t rc                   in
+    C.make_t env' g' l' r' None (C.tag_of_t rc)
+    
   let eliminate me (k, wcs, rcs)  =
-    me |> Misc.flip add    (Misc.cross_product wcs rcs |> List.map (merge_one k)) 
+    me |> Misc.flip add    (Misc.cross_product wcs rcs |> List.map (merge_one me k)) 
        |> Misc.flip remove (k, wcs ++ rcs)
 
   let select_ks me = 

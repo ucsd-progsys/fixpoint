@@ -22,6 +22,8 @@
 
 type t
 
+type rd = Bnd of Ast.Symbol.t * Ast.Subst.t | Lhs of Ast.Subst.t | Grd | Junk
+
 val empty        : t
 val remove       : t -> FixConstraint.refa list -> t
 val add          : t -> FixConstraint.t list -> t 
@@ -29,6 +31,7 @@ val print_stats  : t -> unit
 val cone_ids     : t -> FixConstraint.id list
 val writes       : t -> FixConstraint.refa list -> FixConstraint.id list
 val reads        : t -> FixConstraint.refa list -> FixConstraint.id list
+val k_reads      : t -> FixConstraint.id -> FixConstraint.refa -> rd list
 val filter_kvars : (FixConstraint.refa -> bool) -> t -> FixConstraint.refa list
 val is_single_wr : t -> FixConstraint.refa -> bool
 val is_single_rd : t -> FixConstraint.refa -> bool

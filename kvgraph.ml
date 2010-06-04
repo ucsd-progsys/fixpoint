@@ -125,8 +125,9 @@ let get_edges f g vs =
      |> Misc.sort_and_compact
 
 (* APU *)
-let writes = get_edges G.pred_e 
-let reads  = get_edges G.succ_e
+let writes  = get_edges G.pred_e 
+let reads   = get_edges G.succ_e
+let k_reads = fun g i k -> failwith "TBD"
 
 (************************************************************************)
 (********************* (Backwards) Reachability *************************) 
