@@ -4,6 +4,7 @@
 module C  = FixConstraint
 module Co = Constants 
 module Sy = Ast.Symbol
+module Su = Ast.Subst
 module P = Ast.Predicate
 module E = Ast.Expression
 module StrMap = Map.Make (struct type t = string let compare = compare end)
@@ -227,9 +228,9 @@ type kv_scope = {
 
 type horn_clause = {
   body_pred : Ast.pred;
-  body_kvars : (C.subs * Sy.t) list;
+  body_kvars : (Su.t * Sy.t) list;
   head_pred : Ast.pred;
-  head_kvars : (C.subs * Sy.t) list;
+  head_kvars : (Su.t * Sy.t) list;
   tag : string;
 }
 
@@ -336,7 +337,7 @@ let mk_kv_scope out ts wfs sol =
     List.fold_left
       (fun m wf ->
 	 match C.reft_of_wf wf |> C.ras_of_reft with
-	   | [C.Kvar([], kvar)] ->
+	   | [C.Kvar (subs, kvar)] when Su.is_empty subs ->
 	       let v = symbol_to_armc kvar in
 	       let scope = 
 		 val_vname ::
@@ -360,7 +361,7 @@ let mk_kv_scope out ts wfs sol =
 			  match e with
 			    | Ast.Var v' -> v <> v'
 			    | _ -> true
-		       ) subs |> 
+		       ) (Su.to_list subs) |> 
 	       List.map fst |> List.map symbol_to_armc |> strlist_to_strset in
 	 let scope' = try StrMap.find v m with Not_found -> StrSet.empty in
 	   StrMap.add v (StrSet.union scope scope') m
@@ -433,7 +434,7 @@ let reft_to_armc ?(noquery = false) ?(suffix = "") state reft =
 		 armc_true  (* skip true *)
 	       else
 		 let subs_map = List.fold_left
-		   (fun m (s, e) -> StrMap.add (symbol_to_armc s) e m) StrMap.empty subs in
+		   (fun m (s, e) -> StrMap.add (symbol_to_armc s) e m) StrMap.empty (Su.to_list subs) in
 		 let find_subst v default = 
 		   try StrMap.find v subs_map |> expr_to_armc with Not_found -> default in
 		 let kv = symbol_to_armc sym in
@@ -476,7 +477,7 @@ let t_to_horn_clause t =
   let body_ps, body_ks = 
     Sy.SMap.fold 
       (fun bv reft (ps, ks) -> 
-	 let ps', ks' = preds_kvars_of_reft (C.theta [(C.vv_of_reft reft, Ast.eVar bv)] reft) in
+	 let ps', ks' = preds_kvars_of_reft (C.theta (Su.of_list [(C.vv_of_reft reft, Ast.eVar bv)]) reft) in
 	   List.rev_append ps' ps, List.rev_append ks' ks
       ) (C.env_of_t t) (C.grd_of_t t :: lhs_ps, lhs_ks) in
   let head_ps, head_ks = C.rhs_of_t t |> preds_kvars_of_reft in
@@ -523,7 +524,7 @@ let t_to_armc state t =
     Misc.map_partial
       (fun (bv, reft) ->
 	 if C.ras_of_reft reft <> [] then
-	   Some (reft_to_armc state (C.theta [(C.vv_of_reft reft, Ast.eVar bv)] reft),
+	   Some (reft_to_armc state (C.theta (Su.of_list [(C.vv_of_reft reft, Ast.eVar bv)]) reft),
 		 C.binding_to_string (bv, reft))
 	 else
 	   None

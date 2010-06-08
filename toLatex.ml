@@ -1,6 +1,7 @@
 (* translation of constraints to latex *)
 
-module C  = FixConstraint
+module C = FixConstraint
+module Su = Ast.Subst
 open Misc.Ops
 
 (* print linebreak after each connective in constraint *)
@@ -72,7 +73,7 @@ let refa_to_latex refa =
     | C.Kvar (subs, sym) -> 
 	Printf.sprintf "%s%s" 
 	  (symbol_to_latex sym)
-	  (List.map subst_to_latex subs |> String.concat "")
+	  (List.map subst_to_latex (Su.to_list subs) |> String.concat "")
 let reft_to_latex (v, b, r) = 
   Printf.sprintf "\\{ %s:%s \\mid %s \\}"
     (symbol_to_latex v) (sort_to_latex b) 

@@ -4,6 +4,7 @@
 module C  = FixConstraint
 module Co = Constants 
 module Sy = Ast.Symbol
+module Su = Ast.Subst
 module P = Ast.Predicate
 module E = Ast.Expression
 module StrMap = Map.Make (struct type t = string let compare = compare end)
@@ -36,9 +37,9 @@ type kv_scope = {
 
 type horn_clause = {
   body_pred : Ast.pred;
-  body_kvars : (C.subs * Sy.t) list;
+  body_kvars : (Su.t * Sy.t) list;
   head_pred : Ast.pred;
-  head_kvar_opt : (C.subs * Sy.t) option;
+  head_kvar_opt : (Su.t * Sy.t) option;
   tag : string;
 }
 
@@ -143,7 +144,7 @@ let t_to_horn_clause t =
   let body_ps, body_ks = 
     Sy.SMap.fold 
       (fun bv reft (ps, ks) -> 
-	 let ps', ks' = preds_kvars_of_reft (C.theta [(C.vv_of_reft reft, Ast.eVar bv)] reft) in
+	 let ps', ks' = preds_kvars_of_reft (C.theta (Su.of_list [(C.vv_of_reft reft, Ast.eVar bv)]) reft) in
 	   List.rev_append ps' ps, List.rev_append ks' ks
       ) (C.env_of_t t) (C.grd_of_t t :: lhs_ps, lhs_ks) in
   let head_ps, head_ks = C.rhs_of_t t |> preds_kvars_of_reft in
@@ -285,7 +286,7 @@ let mk_cfg state hcs =
     
 
 let kvar_to_hc_armcs ?(suffix = "") state (subs, sym) = 
-  let subs_map = List.fold_left (fun m (s, e) -> StrMap.add (symbol_to_armc s) e m) StrMap.empty subs in
+  let subs_map = List.fold_left (fun m (s, e) -> StrMap.add (symbol_to_armc s) e m) StrMap.empty (Su.to_list subs) in
   let find_subst v default = try StrMap.find v subs_map |> expr_to_armc with Not_found -> default in
   let kv = symbol_to_armc sym in
   let scope = StrMap.find kv state.kv_scope in
@@ -298,7 +299,7 @@ let kvar_to_hc_armcs ?(suffix = "") state (subs, sym) =
 
 let kvar_to_armcs ?(suffix = "") ?(with_card=true) state (subs, sym) = 
   let subs_map = 
-    List.fold_left (fun m (s, e) -> StrMap.add (symbol_to_armc s) (expr_to_armc e) m) StrMap.empty subs in
+    List.fold_left (fun m (s, e) -> StrMap.add (symbol_to_armc s) (expr_to_armc e) m) StrMap.empty (Su.to_list subs) in
   let find_subst v default = try StrMap.find v subs_map with Not_found -> default in
   let kv = symbol_to_armc sym in
   try
@@ -319,7 +320,7 @@ let kvar_to_armcs ?(suffix = "") ?(with_card=true) state (subs, sym) =
 let hc_to_hcarmc state hc =
   let mk_rule head body tag = Printf.sprintf "hc(%s, [%s], %s)." head body tag in
   let body = 
-    pred_to_armc hc.body_pred :: (List.map (kvar_to_hc_armcs state) hc.body_kvars |> List.flatten) |> 
+    pred_to_armc hc.body_pred :: (List.map (kvar_to_hc_armcs state) hc.body_kvars |> List.flatten) |>  
 	String.concat ", " in
   let prules = 
     if P.is_tauto hc.head_pred then []
@@ -433,8 +434,8 @@ let mk_start_rule state =
 let find_kv_wf_scope wfs kv = 
   let wf =
     try List.find (fun wf -> 
-		     match C.reft_of_wf wf|> C.kvars_of_reft with
-		       | [([], kvar)] -> kv = symbol_to_armc kvar
+		     match C.reft_of_wf wf |> C.kvars_of_reft with
+		       | [(subs, kvar)] -> Su.is_empty subs && kv = symbol_to_armc kvar
 		       | _ -> false
 		  ) wfs 
     with Not_found -> failwith (Printf.sprintf "find_wf_scope: %s" kv)
@@ -722,16 +723,16 @@ let aux ts hcs =
 	   C.lhs_of_t t |> preds_kvars_of_reft, 
 	   C.rhs_of_t t |> preds_kvars_of_reft 
 	 with
-	   | ([], [([], lhs_kv)]), 
-	     ([], [([], rhs_kv)]) -> (* when P.is_tauto lhs_p && P.is_tauto rhs_p -> *)
+	   | ([], [(subs_lhs, lhs_kv)]), ([], [(subs_rhs, rhs_kv)]) 
+	       when Su.is_empty subs_lhs && Su.is_empty subs_rhs -> (* when P.is_tauto lhs_p && P.is_tauto rhs_p -> *)
 	       List.iter
 		 (fun t' ->
 		    match 
 		      C.lhs_of_t t' |> preds_kvars_of_reft, 
 		      C.rhs_of_t t' |> preds_kvars_of_reft 
 		    with
-		      | ([], [([], lhs_kv')]), 
-			([], [([], rhs_kv')]) -> (* when P.is_tauto lhs_p' && P.is_tauto rhs_p' -> *)
+		      | ([], [(subs_lhs', lhs_kv')]), ([], [(subs_rhs', rhs_kv')]) 
+			  when Su.is_empty subs_lhs' && Su.is_empty subs_rhs' -> (* when P.is_tauto lhs_p' && P.is_tauto rhs_p' -> *)
 			  if lhs_kv = rhs_kv' && rhs_kv = lhs_kv' && env_grd_str = env_grd_to_string t' then
 			    Printf.printf "aux equiv %s = %s via %d and %d\n"
 			      (Sy.to_string lhs_kv) (Sy.to_string rhs_kv) (C.id_of_t t) (C.id_of_t t')
@@ -754,19 +755,19 @@ let aux ts hcs =
     (fun hc ->
        let body_kvars = 
 	 List.map (fun (subs, kvar) -> Sy.to_string kvar) hc.body_kvars |> List.sort compare in
-       Printf.printf "%s\n" (hc.tag :: ": " :: body_kvars  |> String.concat ", ")
+	 Printf.printf "%s\n" (hc.tag :: ": " :: body_kvars  |> String.concat ", ")
 
-	 
+	   
 
 
-       
-(*
+	   
+    (*
       body_pred = preds_to_pred body_ps; 
       body_kvars = body_ks; 
       head_pred = preds_to_pred head_ps; 
       head_kvar_opt = head_kvar_opt;
       tag = try string_of_int (C.id_of_t t) with _ -> failure "ERROR: t_to_horn_clause: anonymous constraint %s" (C.to_string t);
-*)
+    *)
     ) hcs 
 
 let to_cfg_armc out ts wfs sol =
