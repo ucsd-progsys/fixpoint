@@ -86,16 +86,6 @@ let main () =
 	| None -> ()
     end;
     begin
-      match !Co.hc_armc_file with
-	| Some f -> 
-	    print_endline "here";
-	    let out = open_out f in
-	      Printf.fprintf out "%% %s\n" (String.concat ", " fs);
-	      ToHC.to_hc_armc out cs ws sol;
-	      close_out out
-	| None -> ()
-    end;
-    begin
       match !Co.dot_file with
 	| Some f -> 
 	    let oc = open_out f in

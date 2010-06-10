@@ -78,24 +78,27 @@ let brel_to_armc = function
   | Ast.Le -> "=<"
 let bind_to_armc (s, t) = (* Andrey: TODO support binders *)
   Printf.sprintf "%s:%s" (symbol_to_armc s) (Ast.Sort.to_string t |> sanitize_symbol)
-let rec expr_to_armc (e, _) = 
-  match e with
-    | Ast.Con c -> constant_to_armc c
-    | Ast.Var s -> mk_data_var exists_kv (symbol_to_armc s)
-    | Ast.App (s, es) -> 
-	if !Co.purify_function_application then "_" else
-	  let str = symbol_to_armc s in
-	    if es = [] then str else
-	      Printf.sprintf "f_%s(%s)" str (List.map expr_to_armc es |> String.concat ", ")
-    | Ast.Bin (e1, op, e2) ->
-	Printf.sprintf "(%s %s %s)" 
-	  (expr_to_armc e1) (bop_to_armc op) (expr_to_armc e2)
-    | Ast.Ite (ip, te, ee) -> 
-	Printf.sprintf "ite(%s, %s, %s)" 
-	  (pred_to_armc ip) (expr_to_armc te) (expr_to_armc ee)
-    | Ast.Fld (s, e) -> 
-	Printf.sprintf "fld(%s, %s)" (expr_to_armc e) (symbol_to_armc s)
-and pred_to_armc (p, _) = 
+let rec expr_to_armc expr = 
+  let e = E.unwrap expr in
+    match e with
+      | Ast.Con c -> constant_to_armc c
+      | Ast.Var s -> mk_data_var exists_kv (symbol_to_armc s)
+      | Ast.App (s, es) -> 
+	  if !Co.purify_function_application then "_" else
+	    let str = symbol_to_armc s in
+	      if es = [] then str else
+		Printf.sprintf "f_%s(%s)" str (List.map expr_to_armc es |> String.concat ", ")
+      | Ast.Bin (e1, op, e2) ->
+	  Printf.sprintf "(%s %s %s)" 
+	    (expr_to_armc e1) (bop_to_armc op) (expr_to_armc e2)
+      | Ast.Ite (ip, te, ee) -> 
+	  Printf.sprintf "ite(%s, %s, %s)" 
+	    (pred_to_armc ip) (expr_to_armc te) (expr_to_armc ee)
+      | Ast.Fld (s, e) -> 
+	  Printf.sprintf "fld(%s, %s)" (expr_to_armc e) (symbol_to_armc s) 
+      | _ -> failwith (Printf.sprintf "expr_to_armc: %s" (E.to_string expr))
+and pred_to_armc pred = 
+  let p = P.unwrap pred in 
     match p with
       | Ast.True -> armc_true
       | Ast.False -> armc_false
@@ -137,7 +140,14 @@ let preds_to_pred ps =
   match ps with 
     | [] -> Ast.pTrue
     | [p] -> p
-    | _ :: _ -> Ast.pAnd ps	  
+    | _ :: _ -> Ast.pAnd ps	 
+
+let rec flatten_pAnd pred =
+  match P.unwrap pred with
+    | Ast.And [] -> []
+    | Ast.And [p] -> flatten_pAnd p
+    | Ast.And ps -> List.map flatten_pAnd ps |> List.flatten
+    | _ -> [pred]
 
 let t_to_horn_clause t =
   let lhs_ps, lhs_ks = C.lhs_of_t t |> preds_kvars_of_reft in
@@ -156,9 +166,9 @@ let t_to_horn_clause t =
 	  failwith (Printf.sprintf "t_to_horn_clause: multiple k's in rhs of %d" (C.id_of_t t));
   in
     {
-      body_pred = preds_to_pred body_ps; 
+      body_pred = Ast.pAnd body_ps |> flatten_pAnd |> preds_to_pred; 
       body_kvars = body_ks; 
-      head_pred = preds_to_pred head_ps; 
+      head_pred = Ast.pAnd head_ps |> flatten_pAnd |> preds_to_pred;
       head_kvar_opt = head_kvar_opt;
       tag = C.id_of_t t |> string_of_int;
     }
@@ -289,13 +299,15 @@ let kvar_to_hc_armcs ?(suffix = "") state (subs, sym) =
   let subs_map = List.fold_left (fun m (s, e) -> StrMap.add (symbol_to_armc s) e m) StrMap.empty (Su.to_list subs) in
   let find_subst v default = try StrMap.find v subs_map |> expr_to_armc with Not_found -> default in
   let kv = symbol_to_armc sym in
-  let scope = StrMap.find kv state.kv_scope in
-    Printf.sprintf "k%s(%s)" 
-      kv (List.map (mk_data_var ~suffix:suffix kv) scope |> String.concat ", ")
-    :: List.map (fun v -> 
-		   Printf.sprintf "%s = %s" 
-		     (mk_data_var ~suffix:suffix kv v) (find_subst v (mk_data_var exists_kv v))
-		) scope  
+    try
+      let scope = StrMap.find kv state.kv_scope in 
+	Printf.sprintf "%s(%s)" 
+	  kv (List.map (mk_data_var ~suffix:suffix kv) scope |> String.concat ", ")
+	:: List.map (fun v -> 
+		       Printf.sprintf "%s = %s" 
+			 (mk_data_var ~suffix:suffix kv v) (find_subst v (mk_data_var exists_kv v))
+		    ) scope 
+    with Not_found -> [armc_true] (* input variable *)
 
 let kvar_to_armcs ?(suffix = "") ?(with_card=true) state (subs, sym) = 
   let subs_map = 
@@ -317,8 +329,8 @@ let kvar_to_armcs ?(suffix = "") ?(with_card=true) state (subs, sym) =
 		  ) data |> String.concat ", "
   with Not_found -> armc_true (* input variable *)
 
-let hc_to_hcarmc state hc =
-  let mk_rule head body tag = Printf.sprintf "hc(%s, [%s], %s)." head body tag in
+let hc_to_rule state hc =
+  let mk_rule head body tag = Printf.sprintf "rule(%s, %s, [%s])." tag head body in
   let body = 
     pred_to_armc hc.body_pred :: (List.map (kvar_to_hc_armcs state) hc.body_kvars |> List.flatten) |>  
 	String.concat ", " in
@@ -330,8 +342,8 @@ let hc_to_hcarmc state hc =
       | Some kvar ->
 	 let head_armcs = kvar_to_hc_armcs ~suffix:primed_suffix state kvar in
 	   [mk_rule 
-	     (List.hd head_armcs)
-	     (body :: List.tl head_armcs |> String.concat ", ")
+	     (List.hd head_armcs) (* kv *)
+	     (body :: (List.tl head_armcs (* subs *)) |> String.concat ", ")
 	     hc.tag]
       | None -> []
   in
@@ -382,7 +394,7 @@ let hc_to_armc ?(cfg=false) ?(with_card=true) ?(with_dataflow=false) state hc =
 let mk_hc_var2names state = 
   List.map
     (fun kv ->
-       Printf.sprintf "var2names(p(pc(k%s), data(%s)), [%s])."
+       Printf.sprintf "var2names(p(pc(%s), data(%s)), [%s])."
 	 kv
 	 (List.map (mk_data_var kv) (StrMap.find kv state.kv_scope) |> String.concat ", ")
 	 (List.map 
@@ -405,7 +417,7 @@ let mk_var2names state =
 let mk_hc_preds state = 
   List.map
     (fun kv ->
-       Printf.sprintf "preds(p(pc(k%s), data(%s)), [])."
+       Printf.sprintf "preds(p(pc(%s), data(%s)), [])."
 	 kv
 	 (List.map (mk_data_var kv) (StrMap.find kv state.kv_scope) |> String.concat ", ")
     ) state.kvs |> String.concat "\n"
@@ -503,11 +515,14 @@ let mk_kv_scope ?(with_card=true) ?(hcs=[]) out ts wfs sol =
       {kvs = kvs; kv_scope = kv_scope; sol = sol}
 
 
-let to_hc_armc out ts wfs sol =
-  print_endline "Translating to HC'ARMC.";
-  let state = mk_kv_scope out ts wfs sol in
+let to_horn out ts wfs sol =
+  print_endline "Translating to Horn clauses.";
+(*  let cex = [1;2;4;5;9;23;24] in   *)
+  let cex = [] in
+  let ts = if cex = [] then ts else List.filter (fun t -> List.mem (C.id_of_t t) cex) ts in
+  let state = mk_kv_scope out ~with_card:false ts wfs sol in
     Printf.fprintf out
-      ":- multifile hc/3, var2names/2, preds/2, error/1.
+      ":- multifile rule/3, var2names/2, preds/2, error/1.
 
 error(%s).
 %s
@@ -521,7 +536,7 @@ error(%s).
 		 List.iter (fun r -> 
 			      output_string out r;
 			      output_string out "\n\n"
-			   ) (t_to_horn_clause t |> hc_to_hcarmc state)
+			   ) (t_to_horn_clause t |> hc_to_rule state)
 	      ) ts
 
 let to_armc out ts wfs sol =
@@ -596,13 +611,3 @@ error(pc(%s)).
     List.iter (fun t -> Printf.fprintf out "%s\n" (C.to_string t)) ts;
     List.iter (fun hc -> Printf.fprintf out "%s\n\n" (horn_clause_to_string hc)) hcs;
     output_string out "*/\n"
-
-
-(* translate to Horn clauses *)
-let to_horn out ts wfs sol = 
-  print_endline "Translating to Horn clauses. ToHC.to_horn";
-  let hcs = List.map t_to_horn_clause ts in
-    List.iter (fun hc -> Printf.fprintf out "%s\n\n" (horn_clause_to_string hc)) hcs;
-    to_hc_armc out ts wfs sol
-
-
