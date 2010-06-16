@@ -76,19 +76,20 @@ let kvars_of_reft (_, _, rs) =
     | _              -> None 
   end rs
 
-(*
-let meet (v1, t1, ra1s) (v2, t2, ra2s) = 
-  asserts (v1=v2 && t1=t2 && ra1s = ra2s) "ERROR: FixConstraint.meet";
+let meet x (v1, t1, ra1s) (v2, t2, ra2s) = 
+  asserts (v1=v2 && t1=t2) "ERROR: FixConstraint.meet x=%s (v1=%s, t1=%s) (v2=%s, t2=%s)" 
+  (Sy.to_string x) (Sy.to_string v1) (A.Sort.to_string t1) (Sy.to_string v2) (A.Sort.to_string t2) ;
   (v1, t1, Misc.sort_and_compact (ra1s ++ ra2s))
-*)
 
+(*
 let meet r1 r2 = 
   asserts (r1 = r2) "ERROR: FixConstraint.meet"; 
   r1
+*)
 
 let env_of_bindings xrs =
   List.fold_left begin fun env (x, r) -> 
-    let r = if SM.mem x env then meet r (SM.find x env) else r in
+    let r = if SM.mem x env then meet x r (SM.find x env) else r in
     SM.add x r env
   end SM.empty xrs
 
@@ -311,8 +312,8 @@ let _print_t b so ppf {full=env;nontriv=nenv;guard=g;lhs=r1;rhs=r2;ido=io;tag=is
     print_tag is
 
 (* API *)
-let print_t           = _print_t !Co.print_nontriv 
-let print_nt_t        = _print_t false
+let print_t           = fun x -> _print_t (not !Constants.print_nontriv) x
+let print_nt_t        = fun x -> _print_t false x
 let to_string         = Misc.fsprintf (print_t None)
 let refa_to_string    = Misc.fsprintf print_refineatom 
 let reft_to_string    = Misc.fsprintf (print_reft None)

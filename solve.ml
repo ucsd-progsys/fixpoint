@@ -331,7 +331,8 @@ let save fname me s =
   let oc  = open_out fname in
   let ppf = F.formatter_of_out_channel oc in
   F.fprintf ppf "@[%a@] \n" Ci.print me.sri;
-  List.iter (F.fprintf ppf "@[%a@] \n" (C.print_wf None)) me.ws;
+  F.fprintf ppf "@[%a@] \n" (Misc.pprint_many true "\n" (C.print_wf None)) me.ws;
+  (* List.iter (F.fprintf ppf "@[%a@] \n" (C.print_wf None)) me.ws; *)
   F.fprintf ppf "@[%a@] \n" C.print_soln s;
   close_out oc
 
