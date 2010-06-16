@@ -311,7 +311,7 @@ let _print_t b so ppf {full=env;nontriv=nenv;guard=g;lhs=r1;rhs=r2;ido=io;tag=is
     print_tag is
 
 (* API *)
-let print_t           = _print_t true 
+let print_t           = _print_t !Co.print_nontriv 
 let print_nt_t        = _print_t false
 let to_string         = Misc.fsprintf (print_t None)
 let refa_to_string    = Misc.fsprintf print_refineatom 

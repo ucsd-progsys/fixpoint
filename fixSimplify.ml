@@ -344,6 +344,7 @@ let simplify_ts cs =
   cs 
   |> BS.time "add ids  1" (C.add_ids 0) 
   |> snd
-  |> (!Co.simplify_t <?> BS.time "simplify 1" Syntactic.simplify_ts)           (* termination bug *)
-  |> (!Co.simplify_t <?> BS.time "simplify 2" Cone.simplify_ts)
+  |> ((* !Co.simplify_t <?> *) BS.time "simplify 1" Syntactic.simplify_ts)           (* termination bug *)
+  |> ((* !Co.simplify_t <?> *) BS.time "simplify 2" Cone.simplify_ts)
   |> (!Co.simplify_t <?> BS.time "simplify 3" EliminateK.simplify_ts)
+  >> (!
