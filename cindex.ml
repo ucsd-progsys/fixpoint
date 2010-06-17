@@ -270,9 +270,8 @@ let winit me =
 
 (* API *) 
 let print ppf me =
-  let printer = if !Co.dump_simp <> "" then C.print_nt_t else C.print_t in 
   List.iter (Format.fprintf ppf "@[%a@] \n" C.print_dep) me.ds; 
-  IM.iter (fun _ c -> Format.fprintf ppf "@[%a@] \n" (printer None) c) me.cnst
+  IM.iter (fun _ c -> Format.fprintf ppf "@[%a@] \n" (C.print_t None) c) me.cnst
   
 (* iter (Format.fprintf ppf "@[%a@.@]" (C.print_t None)) me; *)
   (* if !Co.dump_ref_constraints then begin

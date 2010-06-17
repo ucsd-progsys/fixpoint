@@ -300,8 +300,8 @@ let print_wf so ppf (env, r, io) =
     pprint_id io
 
 
-let _print_t b so ppf {full=env;nontriv=nenv;guard=g;lhs=r1;rhs=r2;ido=io;tag=is} =
-  let env = if b then env else nenv in 
+let print_t so ppf {full=env;nontriv=nenv;guard=g;lhs=r1;rhs=r2;ido=io;tag=is} =
+  let env = if !Constants.print_nontriv then nenv else env in 
   F.fprintf ppf 
   "constraint:@. env  @[[%a]@] @\n grd @[%a@] @\n lhs @[%a@] @\n rhs @[%a@] @\n %a %a @\n"
     (print_env so) env 
@@ -312,8 +312,6 @@ let _print_t b so ppf {full=env;nontriv=nenv;guard=g;lhs=r1;rhs=r2;ido=io;tag=is
     print_tag is
 
 (* API *)
-let print_t           = fun x -> _print_t (not !Constants.print_nontriv) x
-let print_nt_t        = fun x -> _print_t false x
 let to_string         = Misc.fsprintf (print_t None)
 let refa_to_string    = Misc.fsprintf print_refineatom 
 let reft_to_string    = Misc.fsprintf (print_reft None)
