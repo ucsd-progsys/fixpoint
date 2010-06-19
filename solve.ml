@@ -89,8 +89,7 @@ let rhs_cands s = function
 
 let check_tp me env vv t lps =  function [] -> [] | rcs ->
   let env = SM.map snd3 env |> SM.add vv t in
-  let rv  = Misc.do_catch "ERROR: check_tp" 
-              (TP.set_filter me.tpc env vv lps) rcs in
+  let rv  = TP.set_filter me.tpc env vv lps rcs in
   let _   = ignore(stat_tp_refines    += 1);
             ignore(stat_imp_queries   += (List.length rcs));
             ignore(stat_valid_queries += (List.length rv)) in
@@ -135,8 +134,13 @@ let unsat me s c =
   let rhsp     = c |> C.rhs_of_t |> C.preds_of_reft s |> A.pAnd in
   not ((check_tp me env vv t lps [(0, rhsp)]) = [0])
 
+let unsat me s c = 
+  let msg = Printf.sprintf "unsat_cstr %d" (C.id_of_t c) in
+  Misc.do_catch msg (unsat me s) c
+
 let unsat_constraints me s =
-  Ci.to_list me.sri |> List.filter (unsat me s)
+  me.sri |> Ci.to_list |> List.filter (unsat me s)
+
 
 (***************************************************************)
 (************************ Debugging/Stats **********************)

@@ -242,7 +242,7 @@ let rec z3Rel me env (e1, r, e2) =
   else begin 
     SM.iter (fun s t -> Format.printf "@[%a :: %a@]@." Sy.print s So.print t) env;
     Format.printf "@[%a@]@.@." P.print (A.pAtom (e1, r, e2));
-    assertf "ERROR: type error in z3Rel"
+    assertf "ERROR: z3Rel type error"
   end
 
 and z3App me env p zes =
