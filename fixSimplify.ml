@@ -243,7 +243,7 @@ module Cone : SIMPLIFIER = struct
     cs |> Kg.add Kg.empty 
        >> Kg.print_stats
        |> Kg.cone_ids 
-       |> List.map (find_cm cm) 
+       |> List.map (find_cm cm)
 end
 
 (****************************************************************************)
@@ -315,7 +315,8 @@ module EliminateK : SIMPLIFIER = struct
     let [C.Kvar(su1, k)] = C.rhs_of_t wc |> thd3 in
     let su2, yr', l'     = match Kg.k_reads me.g (C.id_of_t rc) (C.Kvar (Su.empty, k)) with 
                            | [Kg.Bnd (y, su2)] -> su2, [(y,l1)], (C.lhs_of_t rc)
-                           | [Kg.Lhs su2]      -> su2, [], l1 in 
+                           | [Kg.Lhs su2]      -> su2, [], l1 
+                           | _                 -> assertf "EliminateK.merge_one" in
     let env'             = meet_env env1 env2 yr'          in
     let g'               = pAnd [g1; g2; meet_sub su1 su2] in
     let r'               = C.rhs_of_t rc                   in
@@ -344,6 +345,6 @@ let simplify_ts cs =
   cs 
   |> BS.time "add ids  1" (C.add_ids 0) 
   |> snd
-  |> (!Co.simplify_t <?> BS.time "simplify 1" Syntactic.simplify_ts)           (* termination bug *)
+  |> (!Co.simplify_t <?> BS.time "simplify 1" Syntactic.simplify_ts) (* termination bug, tickled by C benchmarks *)
   |> (!Co.simplify_t <?> BS.time "simplify 2" Cone.simplify_ts)
   |> (!Co.simplify_t <?> BS.time "simplify 3" EliminateK.simplify_ts)
