@@ -34,6 +34,7 @@ module T  = Toplevel
 
 open Misc.Ops
 
+
 let get_arity = function
   | []   -> assertf "Fixpoint: NO CONSTRAINTS!"
   | c::_ -> c |> C.tag_of_t |> List.length
