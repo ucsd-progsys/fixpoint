@@ -28,6 +28,11 @@ open Misc.Ops
 
 type rd = Bnd of Sy.t * Su.t | Lhs of Su.t | Grd | Junk
 
+let print_rd ppf = function
+  | Bnd (x, su) -> Format.fprintf ppf "Bnd (%a, %a)" Sy.print x Su.print su
+  | Lhs su      -> Format.fprintf ppf "Lhs (%a)" Su.print su
+  | Grd         -> Format.fprintf ppf "Grd"
+  | Junk        -> Format.fprintf ppf "Junk"
 
 (************************************************************************)
 (********************* Build Graph of Kvar Dependencies *****************)
@@ -66,7 +71,7 @@ module DotGraph = struct
   let vertex_name               = function C.Kvar (_,k) -> Sy.to_string k | ra -> "C"^(string_of_int (V.hash ra))
   let vertex_attributes         = fun ra -> [`Label (C.refa_to_string ra)] 
   let default_edge_attributes   = fun _ -> []
-  let edge_attributes           = fun (_,(i,_),_) -> [`Label (string_of_int i)]
+  let edge_attributes           = fun (_,(i,r),_) -> [`Label (Printf.sprintf "%d:%s" i (Misc.fsprintf print_rd r))]
   let get_subgraph              = fun _ -> None
 end
 
@@ -129,9 +134,11 @@ let writes  = get_edges G.pred_e
 let reads   = get_edges G.succ_e
 
 (* API *)
-let k_reads g i k = 
-  G.succ_e g k 
-  |> Misc.map_partial (function (_,(j,x),_) when i=j -> Some x | _ -> None)
+let k_reads g i k =
+  k >> (C.refa_to_string <+> Format.printf "Kvgraph.k_reads [IN] id=%d, k=%s\n" i)
+    |> G.succ_e g 
+    |> Misc.map_partial (function (_,(j,x),_) when i=j -> Some x | _ -> None)
+    >> (Format.printf "Kvgraph.k_reads [OUT] %a \n" (Misc.pprint_many false "," print_rd))
 
 (************************************************************************)
 (********************* (Backwards) Reachability *************************) 

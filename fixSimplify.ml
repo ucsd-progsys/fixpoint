@@ -256,6 +256,9 @@ module EliminateK : SIMPLIFIER = struct
              cm : FixConstraint.t IM.t;
              id : int; }
 
+  let print_k ppf k = 
+    Format.fprintf ppf "%s" (C.refa_to_string k)
+
   let empty  = 
     { g  = Kg.empty; 
       cm = IM.empty; 
@@ -316,26 +319,29 @@ module EliminateK : SIMPLIFIER = struct
     let su2, yr', l'     = match Kg.k_reads me.g (C.id_of_t rc) (C.Kvar (Su.empty, k)) with 
                            | [Kg.Bnd (y, su2)] -> su2, [(y,l1)], (C.lhs_of_t rc)
                            | [Kg.Lhs su2]      -> su2, [], l1 
-                           | _                 -> assertf "EliminateK.merge_one" in
+                           | _ -> assertf "EliminateK.merge_one (k=%s, id=%d)" (Sy.to_string k) (C.id_of_t rc) in
     let env'             = meet_env env1 env2 yr'          in
     let g'               = pAnd [g1; g2; meet_sub su1 su2] in
     let r'               = C.rhs_of_t rc                   in
     C.make_t env' g' l' r' None (C.tag_of_t rc)
     
   let eliminate me (k, wcs, rcs)  =
-    me |> Misc.flip add    (Misc.cross_product wcs rcs |> List.map (merge_one me k)) 
+    me >> (fun _ -> Format.printf "EliminateK.eliminate %s \n" (C.refa_to_string k))  
+       |> Misc.flip add    (Misc.cross_product wcs rcs |> List.map (merge_one me k)) 
        |> Misc.flip remove (k, wcs ++ rcs)
 
   let select_ks me = 
     me.g 
     |> Kg.filter_kvars (Kg.is_single_wr me.g) 
     |> List.filter (Kg.is_single_rd me.g)
-    |> List.map    (fun k -> (k, cs_of_k Kg.writes me k, cs_of_k Kg.reads me k))
+    |> List.map (fun k -> (k, cs_of_k Kg.writes me k, cs_of_k Kg.reads me k))
     |> List.filter (fun (_,wcs, rcs) -> Misc.disjoint wcs rcs)
+    >> (List.map fst3 <+> Format.printf "EliminateK.select_ks [OUT]: %a \n" 
+                          (Misc.pprint_many false "," print_k))
 
   let simplify_ts cs =
     let me = of_ts cs in
-    me |> select_ks 
+    me |> select_ks
        |> List.fold_left eliminate me 
        |> to_ts 
 end
