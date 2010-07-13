@@ -30,9 +30,11 @@ let parse_error msg =
 %token OBJ INT PTR BOOL UNINT FUNC
 %token SRT AXM CST WF SOL QUL ADP DDP
 %token ENV GRD LHS RHS REF
+%token HCID
 
 %start defs 
 %start sols
+%start armc
 
 %type <FixConstraint.deft list>              defs
 %type <FixConstraint.deft>                   def
@@ -52,6 +54,13 @@ let parse_error msg =
 %type <C.refa list>                          refas, refasne
 %type <C.refa>                               refa
 %type <Su.t>                                 subs
+
+%type <Horn.pr>                              pr
+%type <Horn.gd>                              guard
+%type <Horn.gd list>                         guards, guardsne
+%type <Horn.t>                               hc
+%type <Horn.t list>                          horns
+
 
 %%
 defs:
@@ -217,7 +226,8 @@ reft:
 refas:
     LB RB                               { [] }
   | LB refasne RB                       { $2 }
-  
+  ;
+
 refasne:
     refa                                { [$1] }
   | refa SEMI refasne                   { $1 :: $3 }
@@ -231,6 +241,7 @@ refa:
 subs:
                                         { Su.empty }
   | LB Id ASGN expr RB subs             { Su.extend $6 ((Sy.of_string $2), $4) } 
+  ;
 
 sol:
     SOL COLON Id ASGN preds             { ((Sy.of_string $3), $5) }
@@ -238,4 +249,33 @@ sol:
 sols:
              { [] }
   | sol sols { $1 :: $2 }
+  ;
+
+pr: 
+    Id LPAREN  exprs RPAREN             { ((Sy.of_string $1), $3) }
+  | Id                                  { ((Sy.of_string $1), []) }
+  ;
+
+guard:
+    pr                                  { Horn.K ($1) }
+  | pred                                { Horn.C ($1) }
+  ;
+
+guards:
+    LB RB                               { [] }
+  | LB guardsne RB                      { $2 }
+  ;
+
+guardsne:
+    guard                               { [$1] }
+  | guard COMMA guardsne                { $1 :: $3 }
+  ;
+
+hc:
+  | HC LPAREN head COMMA guards COMMA HCID RPAREN DOT {($3, $5)}
+  ;
+
+horns:
+  |          { [] }
+  | hc horns { $1 :: $2 } 
 

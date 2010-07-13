@@ -1003,7 +1003,29 @@ module Subst = struct
   let concat    = fun s1 s2 -> Symbol.SMap.fold (fun x e s -> extend s (x, e)) s2.em s1 
   let print_sub = fun ppf (x,e) -> F.fprintf ppf "[%a:=%a]" Symbol.print x Expression.print e
   let print     = fun ppf -> to_list <+> F.fprintf ppf "%a" (Misc.pprint_many false "" print_sub)
+end
 
+(**************************************************************************)
+(******************* Horn Clauses: Parsing ARMC files *********************)
+(**************************************************************************)
+
+module HornClause = struct
+  
+  type pr = Symbol.t * Expression.t list
+  type gd = C of Predicate.t | K of pr
+  type t  = pr * gd list 
+
+  let print_pr ppf (f, es) = 
+    (f, es) |> eApp |> Expression.print ppf
+
+  let print_gd ppf = function 
+    | C p -> P.print ppf p
+    | K x -> print_pr ppf x 
+
+  let print ppf (hd, gds) = 
+    Format.fprintf ppf "%a :- %a." 
+      print_pr hd 
+      (Misc.pprint_many false "," print_gd) gds
 end
 
 (* API *)

@@ -194,7 +194,16 @@ module Subst :
     val to_list   : t -> (Symbol.t * expr) list
     val print     : Format.formatter -> t -> unit
   end
- 
+
+module Horn :
+  sig
+    type pr = Symbol.t * Expression.t list
+    type gd = C of Predicate.t | K of pr
+    type t  = pr * gd list 
+
+    val print: Format.formatter -> t -> unit
+  end
+
 val print_stats : unit -> unit
 val fixdiv      : pred -> pred
 val zero        : expr

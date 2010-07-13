@@ -94,7 +94,7 @@ let dump_simp (ts, ps, cs, ws, ds, qs, s0) =
 (*********************** Main ************************************)
 (*****************************************************************)
 
-let usage = "Usage: fixpoint <options> [source-files]\noptions are:"
+let usage = "Usage: fixpoint.native <options> [source-files]\noptions are:"
 
 let main () =
   let cs  = usage |> Toplevel.read_inputs |> snd in

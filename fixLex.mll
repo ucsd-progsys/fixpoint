@@ -40,6 +40,8 @@ let small    = ['a'-'z' '$' '_']
 let ws       = [' ' '\009' '\012']
 let pathname = ['a'-'z' 'A'-'Z' '0'-'9' '.' '/' '\\' '-']
 
+let hcid     = ['0'-'9' ',' '-' '[' ']']
+
 rule token = parse
     ['\r''\t'' ']       { token lexbuf}
   | '\n'		{ begin
@@ -101,7 +103,7 @@ rule token = parse
   | "grd"               { GRD }
   | "lhs"               { LHS }
   | "rhs"               { RHS }
-  | "reft"               { REF }
+  | "reft"              { REF }
   | (digit)+	        { let str = Lexing.lexeme lexbuf in
 			  let len = String.length str in
 			  let zero = Char.code '0' in
@@ -117,6 +119,7 @@ rule token = parse
   | '''[^''']*'''          { let str = Lexing.lexeme lexbuf in
 			     let len = String.length str in
 			       Id (String.sub str 1 (len-2)) }
+  | (hcid)+             { HCID }
   | eof			{ EOF }
   | _			{ 
                           begin
