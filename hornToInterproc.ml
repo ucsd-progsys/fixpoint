@@ -35,34 +35,78 @@ let parse f : H.t list =
 (******************* Preprocess HC to get global information ****************)
 (****************************************************************************)
 
-k -> arity
-k -> local vars
-k -> call vars
+(*
+ k -> arity        = #formals
+ k -> bindings     = #temps 
+ k -> max-fun-args = #for wierd interproc reasons 
+ k(x1,x2,x3) = a1 := x1, a2 := x2, a3 := x3; k(a1, a2, a3)
+ *)
 
-k(x1,x2,x3) = a1 := x1, a2 := x2, a3 := x3; k(a1, a2, a3)
+type t = {
+  aritym : int SM.t;            (* k -> arity *)
+  bindm  : string list SM.t;    (* k -> local bindings *)
+  argn   : int                  (* max-fun-args across all ks *)
+}
 
-let arities_of_ts (cs: H.t list) : int SM.t = failwith "TBD"
-
+let create (cs: H.t list) : t = failwith "TBD"
 
 (****************************************************************************)
 (******************* Preprocess HC to get global information ****************)
 (****************************************************************************)
 
-let tx_gd (
+let gen f sep xs =
+  xs |> Misc.map f |> String.concat sep
 
-let tx_hd (h: H.pr) : string = failwith "TBD"
+let geni f sep xs = 
+  xs |> Misc.mapi f |> String.concat sep
 
-let tx_t (c: H.t) : string = failwith "TBD"
+let defn x n =
+  geni (fun i _ -> Printf.sprintf "%s%d : int") ", " (range 0 n)
 
-let tx_ts (k: string, cs: H.t list) : string = failwith "TBD"
+let tx_gd = function
+  | H.C p       -> Printf.sprintf "    assume %s;" (Misc.fsprintf Predicate.print p)
+  | H.K (k, xs) -> Printf.sprintf "    %s () = %s(%s);" 
+                     (geni (Printf.sprintf "a%d = %s;") " " xs)
+                     (geni (fun i _ -> Printf.sprintf "a%d" i) "," xs)
 
-let tx cs = 
+let tx_hd = function 
+  | "error", _ -> "    fail;"
+  | k, xs      -> Printf.sprintf "    assume %s;" 
+                     (geni (fun i x -> Printf.sprintf " z%d == %s " i x) " and ")
 
-1. gather arities of each k
-2. cluster constraints by k
-3. translate constraint list
-        - translate guards
-        - translate head
+let tx_t k (head, guards) : string =
+  Printf.sprintf "%s\n%s" (gen tx_gd "\n" guards) (tx_hd hd)
+
+let tx_def me = function
+  | "error" -> 
+      ""
+  | k -> 
+      let n = try SM.find k me.aritym with Not_found -> assertf "fucked here" in
+      Printf.sprintf "proc %s(%s) returns ()" k (defn "z" n) 
+
+let funargs me = 
+
+let tx_k me (k: string, cs: H.t list) : string = 
+  Printf.sprintf 
+"
+%s
+var %s, %s;
+begin
+  if brandom then
+%s
+  endif
+end
+" 
+(tx_def me k) 
+(defn "a" me.argn) 
+(gen (Printf.sprintf "%s : int") ", " (SM.find k me.bindm)) 
+(gen (tx_t me) "  else\n" cs)
+
+let tx cs =
+  let me  = create cs in
+  cs |> Misc.kgroupby (fun ((k,_),_) -> k)
+     |> List.map (tx_k me)
+     |> String.concat "\n\n"
 
 (***************************************************************************)
 (***************************** Output Clauses ******************************)
