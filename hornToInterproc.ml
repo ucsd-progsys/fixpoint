@@ -11,9 +11,8 @@ open Misc.Ops
 (************************* Parse Horn Clauses ******************************)
 (***************************************************************************)
 
-let tmpname = "tmp"
-
-let clean f : unit =
+let clean f =
+  let tmpname = "tmp" in
   Misc.map_lines_of_file f tmpname begin fun s ->
     if String.length s > 3 && String.sub s 0 3 = "hc(" then
         let ss = Misc.chop s ", " in
@@ -21,12 +20,11 @@ let clean f : unit =
         | [s1; s2; _] -> Printf.sprintf "%s, %s).\n\n" s1 s2
         | ss          -> assertf "bad string: %s" (String.concat "####" ss)
     else ""
-  end
+  end;
+  tmpname
 
 let parse f : H.t list = 
-  let _  = clean f in
-  let _  = Errorline.startFile tmpname in
-  let ic = open_in f in
+  let ic = f |> clean >> Errorline.startFile |> open_in in
   let rv = Lexing.from_channel ic |> HornParse.horns HornLex.token in
   let _  = close_in ic in
   rv
@@ -103,7 +101,7 @@ end
 (tx_def me k) 
 (defn "a" me.argn) 
 (gen (Printf.sprintf "%s : int") ", " (SM.find k me.bindm)) 
-(gen (tx_t me) "  else\n" cs)
+(gen (tx_t me) "  \n  else\n" cs)
 
 let tx cs = 
   let me = create cs in
@@ -116,10 +114,13 @@ let tx cs =
 (***************************** Output Clauses ******************************)
 (***************************************************************************)
 
-let dump cs = 
-  Format.printf "%a\n\n\n" (Misc.pprint_many true "\n" H.print) cs
+let dump f cs =
+  cs >> Format.printf "*************Horn Clauses************\n\n%a\n\n\n" (Misc.pprint_many true "\n" H.print)
+     |> tx 
+     >> Format.printf "***********Interproc Program*********\n\n%s\n\n\n" 
+     |> Misc.write_to_file (f^".ipc")
 
-let usage = "hornToInterproc.native filename.pl"
+let usage = "hornToInterproc.native [filename.pl]"
 
 let main usage = 
   print_now "\n \n \n \n \n";
@@ -131,6 +132,8 @@ let main usage =
   print_now "\n========================================================\n";
   let fs = ref [] in
   let _  = Arg.parse Co.arg_spec (fun s -> fs := s::!fs) usage in
-  !fs |> Misc.flap parse |> dump 
+  match !fs with 
+  | [f] -> parse f |> dump f 
+  | _   -> assertf "I choke on too many/few files!" 
 
 let _ = main usage
