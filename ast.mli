@@ -201,6 +201,7 @@ module Horn :
     type gd = C of pred | K of pr
     type t  = pr * gd list 
     val print: Format.formatter -> t -> unit
+    val support: t -> string list
   end
 
 val print_stats : unit -> unit

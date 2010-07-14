@@ -35,23 +35,23 @@ let parse f : H.t list =
 (******************* Preprocess HC to get global information ****************)
 (****************************************************************************)
 
-(*
- k -> arity        = #formals
- k -> bindings     = #temps 
- k -> max-fun-args = #for wierd interproc reasons 
- k(x1,x2,x3) = a1 := x1, a2 := x2, a3 := x3; k(a1, a2, a3)
- *)
-
 type t = {
   aritym : int SM.t;            (* k -> arity *)
   bindm  : string list SM.t;    (* k -> local bindings *)
   argn   : int                  (* max-fun-args across all ks *)
+  cm     : H.t list SM.t;       (* k -> cs *)
 }
 
-let create (cs: H.t list) : t = failwith "TBD"
+let create (cs: H.t list) : t =
+  let cm = cs |> Misc.kgroupby (fun ((k,_),_) -> k) 
+              |> List.fold_left (fun cm (k,cs) -> SM.add k cs cm) SM.empty in
+  let aritym = SM.map (function (_,xs)::_ -> List.length xs) cm in
+  let bindm  = SM.map ((Misc.flap H.support) <+> Misc.sort_and_compact) in
+  let argn   = SM.fold (fun _ a n -> max a n) aritym 0 in
+  { aritym = aritym; bindm = bindm; argn = argn; cm = cm }
 
 (****************************************************************************)
-(******************* Preprocess HC to get global information ****************)
+(**************************** Generic Sequencers ****************************)
 (****************************************************************************)
 
 let gen f sep xs =
@@ -62,6 +62,10 @@ let geni f sep xs =
 
 let defn x n =
   geni (fun i _ -> Printf.sprintf "%s%d : int") ", " (range 0 n)
+
+(****************************************************************************)
+(********************************* Translation ******************************)
+(****************************************************************************)
 
 let tx_gd = function
   | H.C p       -> Printf.sprintf "    assume %s;" (Misc.fsprintf Predicate.print p)
@@ -84,8 +88,6 @@ let tx_def me = function
       let n = try SM.find k me.aritym with Not_found -> assertf "fucked here" in
       Printf.sprintf "proc %s(%s) returns ()" k (defn "z" n) 
 
-let funargs me = 
-
 let tx_k me (k: string, cs: H.t list) : string = 
   Printf.sprintf 
 "
@@ -102,11 +104,12 @@ end
 (gen (Printf.sprintf "%s : int") ", " (SM.find k me.bindm)) 
 (gen (tx_t me) "  else\n" cs)
 
-let tx cs =
-  let me  = create cs in
-  cs |> Misc.kgroupby (fun ((k,_),_) -> k)
-     |> List.map (tx_k me)
-     |> String.concat "\n\n"
+let tx cs = 
+  let me = create cs in
+  me.cm 
+  |> SM.to_list
+  |> List.map (tx_k me)
+  |> String.concat "\n\n"
 
 (***************************************************************************)
 (***************************** Output Clauses ******************************)

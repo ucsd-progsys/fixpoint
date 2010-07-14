@@ -1026,6 +1026,10 @@ module Horn = struct
     Format.fprintf ppf "%a :- %a." 
       print_pr hd 
       (Misc.pprint_many false "," print_gd) gds
+
+  let support_pr = snd 
+  let support_gd = function K pr -> support_pr pr | C p  -> p |> Predicate.support p |> List.map Symbol.to_string 
+  let support    = fun (hd, gds) -> (support_pr hd) ++ (Misc.flap support_gd gds)
 end
 
 (* API *)
