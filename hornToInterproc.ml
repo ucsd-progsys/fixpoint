@@ -7,13 +7,14 @@ module H  = Ast.Horn
 open Misc.Ops
 
 
+let tmpname1 = "tmp"
+
 (***************************************************************************)
 (************************* Parse Horn Clauses ******************************)
 (***************************************************************************)
 
 let clean f =
-  let tmpname = "tmp" in
-  Misc.map_lines_of_file f tmpname begin fun s ->
+  Misc.map_lines_of_file f tmpname1 begin fun s ->
     if String.length s > 3 && String.sub s 0 3 = "hc(" then
         let ss = Misc.chop s ", " in
         match ss with
@@ -21,7 +22,7 @@ let clean f =
         | ss          -> assertf "bad string: %s" (String.concat "####" ss)
     else ""
   end;
-  tmpname
+  tmpname1
 
 let parse f : H.t list = 
   let ic = f |> clean >> Errorline.startFile |> open_in in
@@ -43,7 +44,11 @@ type t = {
 let create (cs: H.t list) : t =
   let cm = cs |> Misc.kgroupby (fun ((k,_),_) -> k) 
               |> List.fold_left (fun cm (k,cs) -> SM.add k cs cm) SM.empty in
-  let aritym = SM.map (function (_,xs)::_ -> List.length xs) cm in
+  let aritym = SM.map (function ((k, xs),_)::_ -> 
+                         let n = List.length xs in
+                         (* let _ = Printf.printf "Arity(%s) using %s is %d \n" k
+                         (String.concat "," xs) n in *)
+                      n) cm in
   let bindm  = SM.map ((Misc.flap H.support) <+> Misc.sort_and_compact) cm in
   let argn   = SM.fold (fun _ a n -> max a n) aritym 0 in
   { aritym = aritym; bindm = bindm; argn = argn; cm = cm }
@@ -67,8 +72,8 @@ let defn x n =
 
 let tx_gd = function
   | H.C p       -> Printf.sprintf "    assume %s;" (Misc.fsprintf Ast.Predicate.print p)
-  | H.K (k, xs) -> Printf.sprintf "    %s () = %s(%s);" 
-                     (geni (Printf.sprintf "a%d = %s;") " " xs)
+  | H.K (k, xs) -> Printf.sprintf "%s\n    () = %s(%s);" 
+                     (geni (Printf.sprintf "    a%d = %s;") "\n" xs)
                      k
                      (geni (fun i _ -> Printf.sprintf "a%d" i) "," xs)
 
@@ -78,13 +83,14 @@ let tx_hd = function
                      (geni (fun i x -> Printf.sprintf " z%d == %s " i x) " and " xs)
 
 let tx_t k (head, guards) : string =
-  Printf.sprintf "%s\n%s" (gen tx_gd "\n" guards) (tx_hd head)
+  Printf.sprintf "  if brandom then\n%s\n%s\n  else" (gen tx_gd "\n" guards) (tx_hd head)
 
 let tx_def me = function
   | "error" -> 
       ""
   | k -> 
-      let n = try SM.find k me.aritym with Not_found -> assertf "fucked here" in
+      let n = try SM.find k me.aritym with Not_found -> assertf "ERROR:no arity for %s" k in
+      let _ = Printf.printf "Arity(%s) := %d \n" k n in 
       Printf.sprintf "proc %s(%s) returns ()" k (defn "z" n) 
 
 let tx_k me (k, cs) =  
@@ -93,15 +99,21 @@ let tx_k me (k, cs) =
 %s
 var %s, %s;
 begin
-  if brandom then
 %s
-  endif
+    halt;
+  %s  
 end
 " 
 (tx_def me k) 
 (defn "a" me.argn) 
 (gen (Printf.sprintf "%s : int") ", " (SM.find k me.bindm)) 
-(gen (tx_t me) "  \n  else\n" cs)
+(gen (tx_t me) "\n" cs)
+(gen (fun _ -> "endif;") " " cs)
+
+let rewrite_eq s = 
+  if Misc.is_substring s "assume" then 
+    Misc.replace_substring " = " " == " s 
+  else s
 
 let tx cs = 
   let me = create cs in
@@ -109,6 +121,9 @@ let tx cs =
   |> Misc.sm_to_list
   |> List.map (tx_k me)
   |> String.concat "\n\n"
+  |> Misc.flip Misc.chop "\n" 
+  |> List.map rewrite_eq
+  |> String.concat "\n"
 
 (***************************************************************************)
 (***************************** Output Clauses ******************************)
