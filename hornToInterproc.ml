@@ -2,7 +2,7 @@
 module F  = Format
 module BS = BNstats
 module Co = Constants 
-module SM = Ast.Symbol.SMap
+module SM = Misc.StringMap 
 module H  = Ast.Horn
 open Misc.Ops
 
@@ -38,7 +38,7 @@ let parse f : H.t list =
 type t = {
   aritym : int SM.t;            (* k -> arity *)
   bindm  : string list SM.t;    (* k -> local bindings *)
-  argn   : int                  (* max-fun-args across all ks *)
+  argn   : int;                 (* max-fun-args across all ks *)
   cm     : H.t list SM.t;       (* k -> cs *)
 }
 
@@ -46,7 +46,7 @@ let create (cs: H.t list) : t =
   let cm = cs |> Misc.kgroupby (fun ((k,_),_) -> k) 
               |> List.fold_left (fun cm (k,cs) -> SM.add k cs cm) SM.empty in
   let aritym = SM.map (function (_,xs)::_ -> List.length xs) cm in
-  let bindm  = SM.map ((Misc.flap H.support) <+> Misc.sort_and_compact) in
+  let bindm  = SM.map ((Misc.flap H.support) <+> Misc.sort_and_compact) cm in
   let argn   = SM.fold (fun _ a n -> max a n) aritym 0 in
   { aritym = aritym; bindm = bindm; argn = argn; cm = cm }
 
@@ -61,25 +61,26 @@ let geni f sep xs =
   xs |> Misc.mapi f |> String.concat sep
 
 let defn x n =
-  geni (fun i _ -> Printf.sprintf "%s%d : int") ", " (range 0 n)
+  geni (fun i _ -> Printf.sprintf "%s%d : int" x i) ", " (Misc.range 0 n)
 
 (****************************************************************************)
 (********************************* Translation ******************************)
 (****************************************************************************)
 
 let tx_gd = function
-  | H.C p       -> Printf.sprintf "    assume %s;" (Misc.fsprintf Predicate.print p)
+  | H.C p       -> Printf.sprintf "    assume %s;" (Misc.fsprintf Ast.Predicate.print p)
   | H.K (k, xs) -> Printf.sprintf "    %s () = %s(%s);" 
                      (geni (Printf.sprintf "a%d = %s;") " " xs)
+                     k
                      (geni (fun i _ -> Printf.sprintf "a%d" i) "," xs)
 
 let tx_hd = function 
   | "error", _ -> "    fail;"
-  | k, xs      -> Printf.sprintf "    assume %s;" 
-                     (geni (fun i x -> Printf.sprintf " z%d == %s " i x) " and ")
+  | _, xs      -> Printf.sprintf "    assume %s;" 
+                     (geni (fun i x -> Printf.sprintf " z%d == %s " i x) " and " xs)
 
 let tx_t k (head, guards) : string =
-  Printf.sprintf "%s\n%s" (gen tx_gd "\n" guards) (tx_hd hd)
+  Printf.sprintf "%s\n%s" (gen tx_gd "\n" guards) (tx_hd head)
 
 let tx_def me = function
   | "error" -> 
@@ -88,7 +89,7 @@ let tx_def me = function
       let n = try SM.find k me.aritym with Not_found -> assertf "fucked here" in
       Printf.sprintf "proc %s(%s) returns ()" k (defn "z" n) 
 
-let tx_k me (k: string, cs: H.t list) : string = 
+let tx_k me (k, cs) =  
   Printf.sprintf 
 "
 %s
@@ -107,7 +108,7 @@ end
 let tx cs = 
   let me = create cs in
   me.cm 
-  |> SM.to_list
+  |> Misc.sm_to_list
   |> List.map (tx_k me)
   |> String.concat "\n\n"
 
