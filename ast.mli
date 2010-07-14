@@ -197,10 +197,9 @@ module Subst :
 
 module Horn :
   sig
-    type pr = Symbol.t * Expression.t list
-    type gd = C of Predicate.t | K of pr
+    type pr = string * string list
+    type gd = C of pred | K of pr
     type t  = pr * gd list 
-
     val print: Format.formatter -> t -> unit
   end
 

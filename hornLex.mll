@@ -25,21 +25,16 @@
 {
   module E = Errorline
   open E
-  open FixParse 
+  open HornParse 
 	       
   let lexerror msg lexbuf = 
     E.error (Lexing.lexeme_start lexbuf) msg
       
 }
 
-let digit    = ['0'-'9' '-']
 let letdig   = ['0'-'9' 'a'-'z' 'A'-'Z' '_' '@' ''' '.' '#']
-let alphlet  = ['A'-'Z' 'a'-'z' '~' '_' ''' '@' ]
-let capital  = ['A'-'Z']
-let small    = ['a'-'z' '$' '_']
-let ws       = [' ' '\009' '\012']
-let pathname = ['a'-'z' 'A'-'Z' '0'-'9' '.' '/' '\\' '-']
-(* let hcid     = ['0'-'9' ',' '-' '[' ']'] *)
+let small    = ['a'-'z']
+let digit    = ['0'-'9']
 
 rule token = parse
     ['\r''\t'' ']       { token lexbuf}
@@ -62,47 +57,24 @@ rule token = parse
   | ';'                 { SEMI }
   | ','                 { COMMA }
   | ':'                 { COLON }
-  | '|'                 { MID }
   | '+'                 { PLUS }
   | '-'                 { MINUS }
   | '*'                 { TIMES }
   | '/'                 { DIV }
-  | '?'                 { QM }
   | '.'                 { DOT }
-  | "tag"               { TAG }
-  | "id"                { ID }
+  | "hc"                { HC }
   | "Bexp"              { BEXP }
   | "false"             { FALSE }
   | "true"              { TRUE }
-  | ":="                { ASGN }
   | "&&"                { AND }
   | "||"                { OR  }
   | "!="		{ NE }
   | "="		        { EQ }
-  | "<="		{ LE }
+  | "=<"		{ LE }
   | "<"		        { LT }
   | ">="		{ GE }
   | ">"		        { GT }
   | "->"                { IMPL }
-  | "obj"               { OBJ }
-  | "int"               { INT }
-  | "ptr"               { PTR }
-  | "bool"              { BOOL }
-  | "uit"               { UNINT }
-  | "func"              { FUNC }
-  | "sort"              { SRT }
-  | "axiom"             { AXM }
-  | "constraint"        { CST }
-  | "wf"                { WF }
-  | "solution"          { SOL }
-  | "qualif"            { QUL }
-  | "add_dep"           { ADP }
-  | "del_dep"           { DDP }
-  | "env"               { ENV }
-  | "grd"               { GRD }
-  | "lhs"               { LHS }
-  | "rhs"               { RHS }
-  | "reft"              { REF }
   | (digit)+	        { let str = Lexing.lexeme lexbuf in
 			  let len = String.length str in
 			  let zero = Char.code '0' in
@@ -114,11 +86,9 @@ rule token = parse
 			    | i -> accum (acc str.[i]) (d * 10) (i - 1)
 			  in
 			  Num (accum 0 1 (len-1)) }
-  | (alphlet)letdig*	{ Id    (Lexing.lexeme lexbuf) }
-  | '''[^''']*'''          { let str = Lexing.lexeme lexbuf in
-			     let len = String.length str in
-			       Id (String.sub str 1 (len-2)) }
   
+  | '_'(digit)+ 	{ Id (Lexing.lexeme lexbuf) }
+  | (small)letdig+      { Var (Lexing.lexeme lexbuf) } 
   | eof			{ EOF }
   | _			{ 
                           begin

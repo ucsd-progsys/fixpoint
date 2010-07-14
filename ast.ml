@@ -1009,17 +1009,17 @@ end
 (******************* Horn Clauses: Parsing ARMC files *********************)
 (**************************************************************************)
 
-module HornClause = struct
+module Horn = struct
   
-  type pr = Symbol.t * Expression.t list
-  type gd = C of Predicate.t | K of pr
+  type pr = string * string list
+  type gd = C of pred | K of pr
   type t  = pr * gd list 
 
-  let print_pr ppf (f, es) = 
-    (f, es) |> eApp |> Expression.print ppf
-
+  let print_pr ppf (x, xs) = 
+    Format.fprintf ppf "%s(%s)" x (String.concat "," xs) 
+    
   let print_gd ppf = function 
-    | C p -> P.print ppf p
+    | C p -> Predicate.print ppf p
     | K x -> print_pr ppf x 
 
   let print ppf (hd, gds) = 

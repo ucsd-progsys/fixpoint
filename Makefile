@@ -33,3 +33,6 @@ clean:
 
 fixtop:
 	ocamlbuild -r $(LIBS) $(OFLAGS) fixtop.native
+
+horn:
+	ocamlbuild -r $(LIBS) $(OFLAGS) hornToInterproc.native
