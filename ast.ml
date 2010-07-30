@@ -987,9 +987,12 @@ module Subst = struct
 
   let extend s (x, e) =
     let s = Symbol.SMap.map (esub x e) s in
-      match e with
-      | Var x', _ when x = x' -> s
-      | _                     -> Symbol.SMap.add x e s
+      if Symbol.SMap.mem x s then
+        s
+      else
+        match e with
+        | Var x', _ when x = x' -> s
+        | _                     -> Symbol.SMap.add x e s
 
   let empty     = Symbol.SMap.empty
   let is_empty  = Symbol.SMap.is_empty
