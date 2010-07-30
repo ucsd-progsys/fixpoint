@@ -72,7 +72,7 @@ type t =
     depm : C.id list IM.t;         (* id   -> successor ids *)
     pend : (C.id, unit) H.t;       (* id   -> is in wkl ? *)
     livs : IS.t;                   (* {id} members are "live" constraints *)
-    rtm  : unit IM.t;              (* rank -> unit, keys are "root" sccs *) 
+    rts  : IS.t;                   (* {rank} members are "root" sccs *)
     ds   : C.dep list;             (* add/del dep list *)
   }
 
@@ -152,13 +152,13 @@ let make_rankm cm ranks =
                tag   = C.tag_of_t c;} rm
   end IM.empty ranks 
 
-let make_rootm rankm ijs =
+let make_roots rankm ijs =
   let sccs = rankm |> Misc.intmap_bindings |> Misc.map (fun (_,r) -> r.scc) in 
-  let sccm = List.fold_left (fun im scc -> IM.add scc () im) IM.empty sccs in
+  let sccm = List.fold_left (fun is scc -> IS.add scc is) IS.empty sccs in
   List.fold_left begin fun sccm (i,j) ->
     let ir = (IM.find i rankm).scc in
     let jr = (IM.find j rankm).scc in
-    if ir <> jr then IM.remove jr sccm else sccm
+    if ir <> jr then IS.remove jr sccm else sccm
   end sccm ijs
 
 let is_rhs_conc = 
@@ -174,7 +174,7 @@ let is_addall im is = List.fold_left (IS.add |> Misc.flip) im is
  * (transitively) read. 
  * roots := { c | (rhs_of_t c) has a concrete predicate }
  * lives := PRE*(roots) where Pre* is refl-trans-clos of the depends-on relation *)
-let make_livem cm real_deps =
+let make_lives cm real_deps =
   let dm = List.fold_left (fun im (i, j) -> IM.add j (i :: (im_findall j im)) im) IM.empty real_deps in
   let js = IM.fold (fun i c roots -> if is_rhs_conc c then i::roots else roots) cm [] in
   let js = is_addall IS.empty js in
@@ -195,9 +195,9 @@ let make_rank_map ds cm =
   let ids   = cm |> Misc.intmap_bindings |> Misc.map fst in
   let ranks = Fcommon.scc_rank "constraint" (string_of_cid cm) ids deps in
   let rankm = make_rankm cm ranks in
-  let rootm = make_rootm rankm deps in
-  let livem = make_livem cm real_deps in 
-  (dm, rankm, rootm, livem)
+  let roots = make_roots rankm deps in
+  let lives = make_lives cm real_deps in
+  (dm, rankm, roots, lives)
 
 
 (***********************************************************************)
@@ -207,8 +207,8 @@ let make_rank_map ds cm =
 (* API *)
 let create ds cs =
   let cm              = List.fold_left (fun cm c -> IM.add (C.id_of_t c) c cm) IM.empty cs in
-  let dm, rm, rtm, ls = BS.time "make rank map" (make_rank_map ds) cm in
-  {cnst = cm; ds = ds; rnkm = rm; depm = dm; rtm = rtm; livs = ls; pend = H.create 17}
+  let dm, rm, rts, ls = BS.time "make rank map" (make_rank_map ds) cm in
+  {cnst = cm; ds = ds; rnkm = rm; depm = dm; rts = rts; livs = ls; pend = H.create 17}
 
 (* API *) 
 let deps me c =
@@ -262,7 +262,7 @@ let wpop me w =
 
 let roots me =
   IM.fold begin fun id r sccm ->
-   (*  if not (IM.mem r.scc me.rtm) then sccm else *)
+   (*  if not (IM.mem r.scc me.rts) then sccm else *)
       let rs = try IM.find r.scc sccm with Not_found -> [] in
       IM.add r.scc (r::rs) sccm
   end me.rnkm IM.empty
