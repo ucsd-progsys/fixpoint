@@ -30,6 +30,7 @@ module BS = BNstats
 module Co = Constants
 module C  = FixConstraint
 module IM = Misc.IntMap
+module IS = Misc.IntSet
 module SM = Ast.Symbol.SMap 
 module P  = Ast.Predicate
 
@@ -70,7 +71,7 @@ type t =
     rnkm : rank IM.t;              (* id   -> dependency rank *)
     depm : C.id list IM.t;         (* id   -> successor ids *)
     pend : (C.id, unit) H.t;       (* id   -> is in wkl ? *)
-    livm : unit IM.t;              (* id   -> unit, keys are "live" constraints *)
+    livs : IS.t;                   (* {id} members are "live" constraints *)
     rtm  : unit IM.t;              (* rank -> unit, keys are "root" sccs *) 
     ds   : C.dep list;             (* add/del dep list *)
   }
@@ -167,6 +168,8 @@ let is_rhs_conc =
 
 let im_findall i im = try IM.find i im with Not_found -> []
 
+let is_addall im is = List.fold_left (IS.add |> Misc.flip) im is
+
 (* A constraint c is non-live if its rhs is a k variable that is not
  * (transitively) read. 
  * roots := { c | (rhs_of_t c) has a concrete predicate }
@@ -174,12 +177,15 @@ let im_findall i im = try IM.find i im with Not_found -> []
 let make_livem cm real_deps =
   let dm = List.fold_left (fun im (i, j) -> IM.add j (i :: (im_findall j im)) im) IM.empty real_deps in
   let js = IM.fold (fun i c roots -> if is_rhs_conc c then i::roots else roots) cm [] in
-  (js, IM.empty)
+  let js = is_addall IS.empty js in
+  (js, IS.empty)
   |> Misc.fixpoint begin fun (js, vm) ->
-       let vm = List.fold_left (fun vm j -> IM.add j () vm) vm js in
-       let js = js |> Misc.flap (fun j -> im_findall j dm) 
-                   |> List.filter (fun j -> not (IM.mem j vm)) in
-       ((js, vm), js != [])
+       let vm = IS.fold (fun j vm -> IS.add j vm) js vm in
+       let js =
+         IS.fold begin fun j js ->
+              im_findall j dm |> List.filter (fun j -> not (IS.mem j vm)) |> is_addall js
+         end js IS.empty
+       in ((js, vm), js != IS.empty)
      end
   |> fst |> snd 
 
@@ -201,8 +207,8 @@ let make_rank_map ds cm =
 (* API *)
 let create ds cs =
   let cm              = List.fold_left (fun cm c -> IM.add (C.id_of_t c) c cm) IM.empty cs in
-  let dm, rm, rtm, lm = BS.time "make rank map" (make_rank_map ds) cm in
-  {cnst = cm; ds = ds; rnkm = rm; depm = dm; rtm = rtm; livm = lm; pend = H.create 17}
+  let dm, rm, rtm, ls = BS.time "make rank map" (make_rank_map ds) cm in
+  {cnst = cm; ds = ds; rnkm = rm; depm = dm; rtm = rtm; livs = ls; pend = H.create 17}
 
 (* API *) 
 let deps me c =
@@ -216,7 +222,7 @@ let to_list me =
 (* API *)
 let to_live_list me =
   me.cnst |> Misc.intmap_bindings 
-          |> Misc.map_partial (fun (i,c) -> if IM.mem i me.livm then Some c else None)
+          |> Misc.map_partial (fun (i,c) -> if IS.mem i me.livs then Some c else None)
 
 
 let sort_iter_ref_constraints me f = 
