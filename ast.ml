@@ -788,29 +788,41 @@ let rec sortcheck_expr f e =
         | _ -> None
       else None
   
-  | App (uf, es) ->
-      uf |> Misc.do_catchf ("ERROR: unknown uf = "^uf) f
-         |> Sort.func_of_t 
-         |> begin function 
-             | None -> None 
-             | Some (i_ts, o_t) -> 
-                 let _    = assert (List.length es = List.length i_ts) in
-                 let e_ts = es |> List.map (sortcheck_expr f) |> Misc.map_partial id in
-                 if List.length e_ts <> List.length i_ts then 
-                   None 
-                 else
-                   begin match Sort.unify i_ts e_ts with
-                   | None   -> None
-                   | Some s -> Some (Sort.apply s o_t)
-                   end
-            end
-
   | Cst (e1, t) ->
-      begin match sortcheck_expr f e1 with
-            | Some t1 when Sort.compat t t1 -> Some t
-            | _                             -> None 
+      begin match euw e1 with
+        | App (uf, es) -> sortcheck_app f (Some t) uf es
+        | _            ->
+            match sortcheck_expr f e1 with
+              | Some t1 when Sort.compat t t1 -> Some t
+              | _                             -> None 
       end
+
+  | App (uf, es) ->
+      sortcheck_app f None uf es
+
   | _ -> assertf "Ast.sortcheck_expr: unhandled expr = %s" (Expression.to_string e)
+
+and sortcheck_app f so_expected uf es =
+  uf |> Misc.do_catchf ("ERROR: unknown uf = "^uf) f
+     |> Sort.func_of_t 
+     |> function 
+          | None -> None 
+          | Some (i_ts, o_t) -> 
+              let _    = assert (List.length es = List.length i_ts) in
+              let e_ts = es |> List.map (sortcheck_expr f) |> Misc.map_partial id in
+                if List.length e_ts <> List.length i_ts then 
+                  None 
+                else
+                  match Sort.unify i_ts e_ts with
+                    | None   -> None
+                    | Some s ->
+                        let t = Sort.apply s o_t in
+                          match so_expected with
+                            | None    -> Some t
+                            | Some t' ->
+                                match Sort.unify [t] [t'] with
+                                  | None   -> None
+                                  | Some s -> Some (Sort.apply s t)
 
 and sortcheck_op f (e1, op, e2) = 
   match Misc.map_pair (sortcheck_expr f) (e1, e2) with
