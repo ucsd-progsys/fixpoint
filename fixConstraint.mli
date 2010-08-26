@@ -114,9 +114,11 @@ val ido_of_t         : t -> id option
 val tag_of_t         : t -> tag
 val add_ids          : id -> t list -> id * t list
 val make_wf          : envt -> reft -> id option -> wf
+val make_filtered_wf : envt -> reft -> id option -> (Ast.Qualifier.t -> bool) -> wf
 val env_of_wf        : wf -> envt
 val reft_of_wf       : wf -> reft
 val id_of_wf         : wf -> id 
+val filter_of_wf     : wf -> (Ast.Qualifier.t -> bool)
 
 val make_dep         : bool -> tag option -> tag option -> dep
 val matches_deps     : dep list -> tag * tag -> bool

@@ -42,7 +42,7 @@ type refa = Conc of A.pred | Kvar of Su.t * Sy.t
 type reft = Sy.t * A.Sort.t * refa list                (* { VV: t | [ra] } *)
 type envt = reft SM.t
 type soln = A.pred list SM.t
-type wf   = envt * reft * (id option)
+type wf   = envt * reft * (id option) * (A.Qualifier.t -> bool)
 type t    = { full    : envt; 
               nontriv : envt;
               guard   : A.pred;
@@ -293,7 +293,7 @@ let print_dep ppf = function
   | Ddp_t t'    -> F.fprintf ppf "del_dep: * -> [%s]" (string_of_intlist t')
 
 (* API *)
-let print_wf so ppf (env, r, io) = 
+let print_wf so ppf (env, r, io, _) =
   F.fprintf ppf "wf: env @[[%a]@] @\n reft %a @\n %a @\n"
     (print_env so) env
     (print_reft so) r
@@ -358,10 +358,12 @@ let make_t      = fun env p r1 r2 io is ->
                       tag     = is }
 
 (* API *)
-let make_wf     = fun env r io -> (env, r, io)
-let env_of_wf   = fst3
-let reft_of_wf  = snd3
-let id_of_wf    = function (_,_,Some i) -> i | _ -> assertf "C.id_of_wf"
+let make_wf          = fun env r io -> (env, r, io, fun _ -> true)
+let make_filtered_wf = fun env r io fltr -> (env, r, io, fltr)
+let env_of_wf        = fst4
+let reft_of_wf       = snd4
+let id_of_wf         = function (_,_,Some i,_) -> i | _ -> assertf "C.id_of_wf"
+let filter_of_wf     = fth4
 
 
 (* API *)

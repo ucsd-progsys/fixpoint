@@ -256,6 +256,7 @@ let inst_ext (qs : Q.t list) s wf =
   qs |> List.filter (fun q -> not (So.unify [t] [Q.sort_of_t q] = None))
      |> Misc.flap (inst_qual ys (snd3 r))
      |> Misc.filter (wellformed env')
+     |> Misc.filter (C.filter_of_wf wf)
      |> Misc.map Q.pred_of_t 
      |> Misc.cross_product ks 
      |> C.group_sol_add s ks
