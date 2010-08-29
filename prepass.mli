@@ -25,5 +25,6 @@
  *  prepasses *)
 
 val validate          : int -> FixConstraint.soln -> FixConstraint.t list -> FixConstraint.t list
+val validate_wfs      : FixConstraint.wf list -> FixConstraint.wf list
 val true_unconstrained: FixConstraint.soln -> Cindex.t ->  FixConstraint.soln
 val profile           : Cindex.t -> unit

@@ -112,6 +112,28 @@ let validate a s cs =
   cs |> phase3 |> phase4 a |> phase5 s
   >> (fun cs' -> asserts (List.length cs = List.length cs') "Validation")
 
+(******************************************************************************)
+(******************* Validating Well-Formedness Constraints *******************)
+(******************************************************************************)
+
+(* API *)
+let validate_wfs ws =
+     ws
+  |> List.fold_left begin fun (ws, wfvars) wf ->
+        wf
+     |> C.reft_of_wf
+     |> C.kvars_of_reft
+     |> List.fold_left begin fun wfvars (_, k) ->
+         if Sy.SSet.mem k wfvars then
+           let _ = F.printf "ERROR: variable %a is checked for WF twice\n" Sy.print k in
+             assert false
+         else
+           Sy.SSet.add k wfvars
+        end wfvars
+     |> fun wfvars -> (wf :: ws, wfvars)
+     end ([], Sy.SSet.empty)
+  |> fst
+
 (***************************************************************)
 (****************** Pruning Unconstrained Vars *****************)
 (***************************************************************)
