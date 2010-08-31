@@ -73,7 +73,7 @@ module Sort =
       | Lvar i -> string_of_int i
 
     let rec to_string = function
-      | Var i        -> Printf.sprintf "'a_%d" i
+      | Var i        -> Printf.sprintf "@(%d)" i
       | Int          -> "int"
       | Bool         -> "bool"
       | Obj          -> "obj"

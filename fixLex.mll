@@ -23,10 +23,11 @@
  *)
 
 {
+  open Misc.Ops
   module E = Errorline
   open E
   open FixParse 
-	       
+
   let lexerror msg lexbuf = 
     E.error (Lexing.lexeme_start lexbuf) msg
       
@@ -103,6 +104,7 @@ rule token = parse
   | "lhs"               { LHS }
   | "rhs"               { RHS }
   | "reft"              { REF }
+  | "@"                { TVAR } 
   | (digit)+	        { let str = Lexing.lexeme lexbuf in
 			  let len = String.length str in
 			  let zero = Char.code '0' in
@@ -115,9 +117,10 @@ rule token = parse
 			  in
 			  Num (accum 0 1 (len-1)) }
   | (alphlet)letdig*	{ Id    (Lexing.lexeme lexbuf) }
-  | '''[^''']*'''          { let str = Lexing.lexeme lexbuf in
-			     let len = String.length str in
-			       Id (String.sub str 1 (len-2)) }
+
+  | '''[^''']*'''       { let str = Lexing.lexeme lexbuf in
+			  let len = String.length str in
+			  Id (String.sub str 1 (len-2)) }
   
   | eof			{ EOF }
   | _			{ 
