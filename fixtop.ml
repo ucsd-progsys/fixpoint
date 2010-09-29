@@ -86,6 +86,15 @@ let main () =
 	| None -> ()
     end;
     begin
+      match !Co.raw_horn_file with
+	| Some f -> 
+	    let out = open_out f in
+	      Printf.fprintf out "%% %s\n" (String.concat ", " fs);
+	      ToRawHorn.to_raw_horn out cs ws sol;
+	      close_out out
+	| None -> ()
+    end;
+    begin
       match !Co.dot_file with
 	| Some f -> 
 	    let oc = open_out f in

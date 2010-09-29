@@ -152,8 +152,8 @@ let pred_apply_defs em fm p =
     |> fst
     |> simplify_pred
 
-let subs_apply_defs em pm xes =
-  List.map (Misc.app_snd (expr_apply_defs em pm)) xes
+let subs_apply_defs em pm xes = List.map (Misc.app_snd (expr_apply_defs em pm)) xes
+
 
 let print_em_pm t (em, pm) =
   let id   = t |> C.id_of_t in
@@ -351,6 +351,6 @@ let simplify_ts cs =
   cs 
   |> BS.time "add ids  1" (C.add_ids 0) 
   |> snd
-  |> (!Co.simplify_t <?> BS.time "simplify 1" Syntactic.simplify_ts) (* termination bug, tickled by C benchmarks *)
+  |> ((* !Co.simplify_t <?> *) BS.time "simplify 1" Syntactic.simplify_ts) (* termination bug, tickled by C benchmarks *)
   |> (!Co.simplify_t <?> BS.time "simplify 2" Cone.simplify_ts)
   |> (!Co.simplify_t <?> BS.time "simplify 3" EliminateK.simplify_ts)

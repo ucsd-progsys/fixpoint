@@ -124,10 +124,10 @@ let validate_wfs ws =
      |> C.reft_of_wf
      |> C.kvars_of_reft
      |> List.fold_left begin fun wfvars (_, k) ->
-         if Sy.SSet.mem k wfvars then
+         (* if Sy.SSet.mem k wfvars then
            let _ = F.printf "ERROR: variable %a is checked for WF twice\n" Sy.print k in
              assert false
-         else
+         else *)
            Sy.SSet.add k wfvars
         end wfvars
      |> fun wfvars -> (wf :: ws, wfvars)

@@ -54,6 +54,8 @@ module Sort :
     val t_func      : int -> t list -> t
    
     val is_bool     : t -> bool
+    val is_int      : t -> bool
+    val is_func      : t -> bool
     val func_of_t   : t -> (t list * t) option
     val ptr_of_t    : t -> loc option
  

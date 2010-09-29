@@ -116,6 +116,14 @@ module Sort =
       | Bool -> true
       | _    -> false
 
+    let is_int = function
+      | Int -> true
+      | _   -> false
+
+    let is_func = function
+      | Func _ -> true
+      | _   -> false
+
     let func_of_t = function
       | Func (_, ts) -> Some (ts |> Misc.list_snoc |> Misc.swap)
       | _            -> None
