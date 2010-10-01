@@ -93,6 +93,8 @@ def logresults(results):
 
 #####################################################################################
 
+os.environ['LD_LIBRARY_PATH'] = "../z3/lib"
+
 results   = [runtests(dir, expected_status, sys.argv[1:]) for (dir, expected_status) in testdirs]
 logresults(results)
 

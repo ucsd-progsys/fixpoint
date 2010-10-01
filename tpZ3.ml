@@ -46,11 +46,11 @@ type var_ast = Const of Z3.ast | Bound of int * So.t
 
 type t = { 
   c             : Z3.context;
-  tint          : Z3.type_ast;
-  tbool         : Z3.type_ast;
+  tint          : Z3.sort;
+  tbool         : Z3.sort;
   vart          : (decl, var_ast) Hashtbl.t;
-  funt          : (decl, Z3.const_decl_ast) Hashtbl.t;
-  tydt          : (So.t, Z3.type_ast) Hashtbl.t;
+  funt          : (decl, Z3.func_decl) Hashtbl.t;
+  tydt          : (So.t, Z3.sort) Hashtbl.t;
   mutable vars  : decl list ;
   mutable count : int;
   mutable bnd   : int;
@@ -60,19 +60,14 @@ type t = {
 (************************** Pretty Printing ******************************)
 (*************************************************************************)
 
-let ast_type_to_string me a = 
-  a |> Z3.type_ast_to_ast me.c 
-    |> Z3.ast_to_string me.c 
-
 let pprint_decl ppf = function
   | Vbl x 	-> Format.fprintf ppf "%a" Sy.print x 
   | Barrier 	-> Format.fprintf ppf "----@." 
   | Fun (s, i) 	-> Format.fprintf ppf "%a[%i]" Sy.print s i
 
 let dump_ast_type me a = 
-  Z3.get_type me.c a  
-  |> Z3.type_ast_to_ast me.c  
-  |> Z3.ast_to_string me.c  
+  Z3.get_sort me.c a  
+  |> Z3.sort_to_string me.c  
   |> Format.printf "@[z3%s@]@."
 
 let dump_ast me a =
@@ -197,13 +192,13 @@ let z3Fun me env p t k =
 (************************************************************************)
 
 let is_z3_bool me a =
-  a |> Z3.get_type me.c   
-    |> ast_type_to_string me
+  a |> Z3.get_sort me.c   
+    |> Z3.sort_to_string me.c
     |> (=) "bool"
  
 let is_z3_int me a =
-  a |> Z3.get_type me.c   
-    |> ast_type_to_string me
+  a |> Z3.get_sort me.c   
+    |> Z3.sort_to_string me.c
     |> (=) "int"
 
 (* 
@@ -379,10 +374,10 @@ let create ts env ps =
    *)
   let _  = asserts (ts = []) "ERROR: TPZ3.create non-empty sorts!" in
   let c  = Z3.mk_context_x [|("MODEL", "false"); 
-                             ("PARTIAL_MODELS", "true")|] in
+                             ("MODEL_PARTIAL", "true")|] in
   let me = {c     = c; 
-            tint  = Z3.mk_int_type c; 
-            tbool = Z3.mk_bool_type c; 
+            tint  = Z3.mk_int_sort c; 
+            tbool = Z3.mk_bool_sort c; 
             tydt  = Hashtbl.create 37; 
             vart  = Hashtbl.create 37; 
             funt  = Hashtbl.create 37; 
