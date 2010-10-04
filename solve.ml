@@ -36,7 +36,7 @@ module Sy = A.Symbol
 module SM = Sy.SMap
 module C  = FixConstraint
 module Ci = Cindex
-module TP = TpZ3.Prover (* TpNull.Prover *)
+module TP = (* TpZ3.Prover *)  TpNull.Prover
 module PP = Prepass
 
 open Misc.Ops
