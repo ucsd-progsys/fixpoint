@@ -696,9 +696,11 @@ module Predicate =
         fun p -> PredHash.mem t p 
        
 
-      let is_tauto  = function
-        | Atom(e1, Eq, e2), _ -> e1 == e2
-	| Imp (p1, p2), _     ->  p1 == p2 (* matching (p -> p) && (p -> p)) *) 
+      let rec is_tauto  = function
+        | Atom(e1, Eq, e2), _ -> snd e1 == snd e2
+	      | Imp (p1, p2), _     -> snd p1 == snd p2
+        | And ps, _           -> List.for_all is_tauto ps
+        | Or  ps, _           -> List.exists is_tauto ps
         | True, _             -> true
         | _                   -> false
 

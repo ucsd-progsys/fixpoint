@@ -388,7 +388,7 @@ let create ts env ps =
   me
 
 (* API *)
-let set_filter me env vv ps qs =
+let set_filter (me: t) (env: So.t SM.t) (vv: Sy.t) ps qs =
   let _   = ignore(nb_set   += 1); ignore(nb_query += List.length qs) in
   let ps  = BS.time "fixdiv" (List.rev_map A.fixdiv) ps in
   let qs' =
@@ -403,13 +403,13 @@ let set_filter me env vv ps qs =
         (qs' ++ (BS.time "TP filter" (filter me env) qs)) in
   List.map fst qs'
 
-let set_filter me env vv ps qs = 
+(*let set_filter me env vv ps qs = 
   let rv = set_filter me env vv ps qs in
-  (* Co.bprintf mydebug "set_filter \n ps = %a \n |qs| = %d |qs'| = %d \n" 
+   Co.bprintf mydebug "set_filter \n ps = %a \n |qs| = %d |qs'| = %d \n" 
       (Misc.pprint_many false "," P.print) ps
       (List.length qs)
-      (List.length rv); *)
-  rv
+      (List.length rv);
+  rv *)
 
 (* API *)
 let print_stats ppf me =
