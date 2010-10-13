@@ -132,8 +132,10 @@ let sol_query s k =
 
 (* API *)
 let sol_read s k = 
-  try SM.find k s with Not_found -> 
+  try SM.find k s with Not_found -> begin
+    asserti false "ERROR: sol_read : unknown kvar %s \n" (Sy.to_string k);
     failure "ERROR: sol_read : unknown kvar %s \n" (Sy.to_string k)
+  end
 
 (* INV: qs' \subseteq qs *)
 let sol_update s k qs' =
