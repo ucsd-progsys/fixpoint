@@ -67,18 +67,19 @@ module Sort :
 module Symbol : 
   sig 
     type t 
-    module SMap : Map.S with type key = t
-    module SSet : Set.S with type elt = t
-    val is_wild : t -> bool
-    val of_string : string -> t
-    val to_string : t -> string 
-    val is_wild: t -> bool
-    val print : Format.formatter -> t -> unit
-    val value_variable : Sort.t -> t
+    module SMap         : Map.S with type key = t
+    module SSet         : Set.S with type elt = t
+    val mk_wild         : unit -> t  
+    val is_wild         : t -> bool
+    val of_string       : string -> t
+    val to_string       : t -> string 
+    val is_wild         : t -> bool
+    val print           : Format.formatter -> t -> unit
+    val value_variable  : Sort.t -> t
     val is_value_variable : t -> bool
-    val sm_length : 'a SMap.t -> int
-    val sm_filter : (t -> 'a -> bool) -> 'a SMap.t -> 'a SMap.t
-    val sm_to_list : 'a SMap.t -> (t * 'a) list
+    val sm_length       : 'a SMap.t -> int
+    val sm_filter       : (t -> 'a -> bool) -> 'a SMap.t -> 'a SMap.t
+    val sm_to_list      : 'a SMap.t -> (t * 'a) list
   end
 
 module Constant :

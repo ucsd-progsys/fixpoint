@@ -203,6 +203,10 @@ module Symbol =
     module SSet = Set.Make (struct type t = string
                                    let compare i1 i2 = compare i1 i2 end)
 
+    let mk_wild =
+      let t,_ = Misc.mk_int_factory () in
+      t <+> string_of_int <+> (^) "~A"
+
     let is_wild s = 
       if s = "" then false else 
         (s.[0] = '~' || s.[0] = '@')
