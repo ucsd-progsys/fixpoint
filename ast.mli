@@ -216,6 +216,8 @@ val fixdiv         : pred -> pred
 val zero           : expr
 val one            : expr
 val bot            : expr
+
+val unify_pred     : pred -> pred -> Subst.t option
 val substs_pred    : pred -> Subst.t -> pred 
 val simplify_pred  : pred -> pred
 val sortcheck_expr : (Symbol.t -> Sort.t) -> expr -> Sort.t option

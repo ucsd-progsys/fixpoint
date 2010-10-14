@@ -1021,9 +1021,14 @@ module Qualifier = struct
         (t, p)
     | Some v ->
       (t, Predicate.subst p v (eVar (Symbol.value_variable t)))
-  *)
 
   let create = fun v t p -> (v, t, p)
+  
+  *)
+  
+  let create v t p = 
+    let v' = Symbol.value_variable t in 
+    v', t, Predicate.subst p v (eVar v')
 
   let subst  = fun su (v,t,p) -> su |> Subst.to_list |> Predicate.substs p |> create v t
 
@@ -1065,6 +1070,10 @@ end
 let simplify_pred = remove_bot <+> simplify_pred
 let substs_pred   = fun p su -> su |> Subst.to_list |> Predicate.substs p |> simplify_pred
 
+
+(* API *)
+let rec unify_pred p1 p2 = failwith "TODO: Ast.unify_pred"
+and unify_expr e1 e2 = failwith "TODO: Ast.unify_expr"
 
 (* {{{
 let rec expr_subst hp he e x e' =
