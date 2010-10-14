@@ -42,10 +42,22 @@ module PP = Prepass
 open Misc.Ops
 
 type t = {
-  tpc : TP.t;
-  sri : Ci.t;
-  ws  : C.wf list;
-  tt  : Timer.t;
+   tpc : TP.t
+ ; sri : Ci.t
+ ; ws  : C.wf list
+ ; tt  : Timer.t
+   
+ (* Stats *)
+ ; stat_refines        : int ref
+ ; stat_simple_refines : int ref 
+ ; stat_tp_refines     : int ref 
+ ; stat_imp_queries    : int ref 
+ ; stat_valid_queries  : int ref 
+ ; stat_matches        : int ref 
+ ; stat_umatches       : int ref 
+ ; stat_unsatLHS       : int ref 
+ ; stat_emptyRHS       : int ref 
+ ; stat_cfreqt         : (int, int) Hashtbl.t 
 }
 
 let mydebug = false  
@@ -53,17 +65,6 @@ let mydebug = false
 (*************************************************************)
 (********************* Stats *********************************)
 (*************************************************************)
-
-let stat_refines        = ref 0
-let stat_simple_refines = ref 0
-let stat_tp_refines     = ref 0
-let stat_imp_queries    = ref 0
-let stat_valid_queries  = ref 0
-let stat_matches        = ref 0
-let stat_umatches       = ref 0
-let stat_unsatLHS       = ref 0
-let stat_emptyRHS       = ref 0
-let stat_cfreqt         = Hashtbl.create 37
 
 let hashtbl_incr_frequency t k = 
   let n = try Hashtbl.find t k with Not_found -> 0 in
@@ -90,13 +91,13 @@ let rhs_cands s = function
 let check_tp me env vv t lps =  function [] -> [] | rcs ->
   let env = SM.map snd3 env |> SM.add vv t in
   let rv  = TP.set_filter me.tpc env vv lps rcs in
-  let _   = ignore(stat_tp_refines    += 1);
-            ignore(stat_imp_queries   += (List.length rcs));
-            ignore(stat_valid_queries += (List.length rv)) in
+  let _   = ignore(me.stat_tp_refines    += 1);
+            ignore(me.stat_imp_queries   += (List.length rcs));
+            ignore(me.stat_valid_queries += (List.length rv)) in
   rv
 
 let refine me s c =
-  let _   = stat_refines += 1 in
+  let _   = me.stat_refines += 1 in
   let env = C.env_of_t c in
   let (vv1, t1, _) = C.lhs_of_t c in
   let (_,_,ra2s) as r2 = C.rhs_of_t c in
@@ -104,24 +105,29 @@ let refine me s c =
   let lps = BS.time "preds_of_lhs" (C.preds_of_lhs s) c in
   let rcs = BS.time "rhs_cands" (Misc.flap (rhs_cands s)) ra2s in
   if rcs = [] then
-    let _ = stat_emptyRHS += 1 in
+    let _ = me.stat_emptyRHS += 1 in
     (false, s)
   else if BS.time "lhs_contra" (List.exists P.is_contra) lps then 
-    let _ = stat_unsatLHS += 1 in
-    let _ = stat_umatches += (List.length rcs) in
+    let _ = me.stat_unsatLHS += 1 in
+    let _ = me.stat_umatches += (List.length rcs) in
     (false, s)
   else
     let rcs     = List.filter (fun (_,p) -> not (P.is_contra p)) rcs in
     let lt      = PH.create 17 in
     let _       = List.iter (fun p -> PH.add lt p ()) lps in
     let (x1,x2) = List.partition (fun (_,p) -> PH.mem lt p) rcs in
-    let _       = stat_matches += (List.length x1) in
+    let _       = me.stat_matches += (List.length x1) in
     let kqs1    = List.map fst x1 in
     (if C.is_simple c 
-    then (ignore(stat_simple_refines += 1); kqs1) 
+    then (ignore(me.stat_simple_refines += 1); kqs1) 
      else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps) x2))
 (*  >> (fun _ -> c |> C.id_of_t |> F.printf "Constraint: %d : ") *)
   |> C.group_sol_update s k2s 
+
+
+(* API *)
+let force = failwith "TBD: solve.force"
+let force_binds = failwith "TBD: solve.force"
 
 (***************************************************************)
 (************************* Satisfaction ************************)
@@ -178,12 +184,14 @@ let print_constr_stats ppf cs =
 let print_solver_stats ppf me = 
   print_constr_stats ppf (Ci.to_list me.sri); 
   F.fprintf ppf "#Iterations = %d (si=%d tp=%d unsatLHS=%d emptyRHS=%d) \n"
-    !stat_refines !stat_simple_refines !stat_tp_refines !stat_unsatLHS !stat_emptyRHS;
+    !(me.stat_refines) !(me.stat_simple_refines) !(me.stat_tp_refines)
+    !(me.stat_unsatLHS) !(me.stat_emptyRHS);
   F.fprintf ppf "#Queries: umatch=%d, match=%d, ask=%d, valid=%d\n" 
-    !stat_umatches !stat_matches !stat_imp_queries !stat_valid_queries;
+    !(me.stat_umatches) !(me.stat_matches) !(me.stat_imp_queries)
+    !(me.stat_valid_queries);
   F.fprintf ppf "%a" TP.print_stats me.tpc;
   F.fprintf ppf "Iteration Frequency: \n";
-  hashtbl_print_frequency stat_cfreqt;
+  hashtbl_print_frequency me.stat_cfreqt;
   F.fprintf ppf "Iteration Periods: @[%a@] \n" Timer.print me.tt;
   F.fprintf ppf "finished solver_stats \n"
 
@@ -272,8 +280,8 @@ let inst wfs qs s =
 
 let log_iter_stats me s = 
   (if Co.ck_olev Co.ol_insane then F.printf "%a" C.print_soln s);
-  (if !stat_refines mod 100 = 0 then 
-     let msg = Printf.sprintf "num refines=%d" !stat_refines in 
+  (if !(me.stat_refines) mod 100 = 0 then 
+     let msg = Printf.sprintf "num refines=%d" !(me.stat_refines) in 
      let _   = Timer.log_event me.tt (Some msg) in
      let _   = F.printf "%s" msg in 
      let _   = F.printf "%a \n" print_solution_stats s in
@@ -288,10 +296,10 @@ let rec acsolve me w s =
       s 
   | (Some c, w') ->
       let (ch, s')  = BS.time "refine" (refine me s) c in
-      let _ = hashtbl_incr_frequency stat_cfreqt (C.id_of_t c) in  
+      let _ = hashtbl_incr_frequency me.stat_cfreqt (C.id_of_t c) in  
       let _ = Co.bprintf mydebug "iter=%d id=%d ch=%b %a \n" 
-              !stat_refines (C.id_of_t c) ch C.print_tag (C.tag_of_t c) in
-      let w''       = if ch then Ci.deps me.sri c |> Ci.wpush me.sri w' else w' in 
+              !(me.stat_refines) (C.id_of_t c) ch C.print_tag (C.tag_of_t c) in
+      let w'' = if ch then Ci.deps me.sri c |> Ci.wpush me.sri w' else w' in 
       acsolve me w'' s' 
 
 
@@ -323,7 +331,22 @@ let create ts sm ps a ds cs ws qs =
                >> F.printf "Post-Simplify Stats\n%a" print_constr_stats
                |> BS.time  "PP.Validation" (PP.validate a s)
                |> BS.time  "Ref Index" Ci.create ds in
-  ({ tpc = tpc; sri = sri; ws = ws; tt = Timer.create "fixpoint iters"}, s)
+  ({ tpc                 = tpc
+   ; sri                 = sri
+   ; ws                  = ws
+   (* Stats *)
+   ; tt                  = Timer.create "fixpoint iters"
+   ; stat_refines        = ref 0
+   ; stat_simple_refines = ref 0
+   ; stat_tp_refines     = ref 0
+   ; stat_imp_queries    = ref 0
+   ; stat_valid_queries  = ref 0
+   ; stat_matches        = ref 0
+   ; stat_umatches       = ref 0
+   ; stat_unsatLHS       = ref 0
+   ; stat_emptyRHS       = ref 0
+   ; stat_cfreqt         = Hashtbl.create 37
+   }, s)
  
 (*
   let cs  = BS.time "Simplify" Simplify.simplify_ts cs in 

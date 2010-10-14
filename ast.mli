@@ -80,6 +80,7 @@ module Symbol :
     val sm_length       : 'a SMap.t -> int
     val sm_filter       : (t -> 'a -> bool) -> 'a SMap.t -> 'a SMap.t
     val sm_to_list      : 'a SMap.t -> (t * 'a) list
+    val sm_of_list      : (t * 'a) list -> 'a SMap.t
   end
 
 module Constant :

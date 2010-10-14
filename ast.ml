@@ -249,7 +249,11 @@ module Symbol =
 
     let sm_to_list sm =
       SMap.fold (fun x y acc -> (x,y)::acc) sm []
-  
+    
+    let sm_of_list xs = 
+      List.fold_left (fun sm (k,v) -> SMap.add k v sm) SMap.empty xs 
+
+
   end
 
 module Constant =
