@@ -414,19 +414,18 @@ let euw = ExprHashcons.unwrap
 let pwr = PredHashcons.wrap 
 let puw = PredHashcons.unwrap
 
-let zero = ewr (Con (Constant.Int(0)))
-let one  = ewr (Con (Constant.Int(1)))
-let bot  = ewr (Bot)
-
 (* Constructors: Expressions *)
-let eCon = fun c -> ewr (Con c)
+let eCon = fun c -> ewr  (Con c)
+let eInt = fun i -> eCon (Constant.Int i)
+let zero = eInt 0
+let one  = eInt 1
+let bot  = ewr (Bot)
 let eVar = fun s -> ewr (Var s)
 let eApp = fun (s, es) -> ewr (App (s, es))
 let eBin = fun (e1, op, e2) -> ewr (Bin (e1, op, e2)) 
 let eIte = fun (ip,te,ee) -> ewr (Ite(ip,te,ee))
 let eFld = fun (s,e) -> ewr (Fld (s,e))
 let eCst = fun (e,t) -> ewr (Cst (e, t))
-
 
 let eTim = function 
   | (Con (Constant.Int n1), _), (Con (Constant.Int n2), _) -> 
@@ -967,37 +966,6 @@ let rec simplify_pred ((p, _) as pred) =
                              | ps  -> pOr ps)
     | _ -> pred
 
-
-(**************************************************************************)
-(***************************** Qualifiers *********************************)
-(**************************************************************************)
-
-module Qualifier = struct
-  
-  type t = Symbol.t * Sort.t * pred
-  
-  let vv_of_t   = fst3 
-  let sort_of_t = snd3
-  let pred_of_t = thd3
- 
-  (*
-  let create vo t p =
-    match vo with 
-    | None -> 
-        (t, p)
-    | Some v ->
-      (t, Predicate.subst p v (eVar (Symbol.value_variable t)))
-  *)
-
-  let create = fun v t p -> (v, t, p)
-
-  let print ppf (v, t, p) = 
-    Format.fprintf ppf "qualif qq(%a:%a):%a \n" 
-      Symbol.print v
-      Sort.print t
-      Predicate.print p
-end
-
 (**************************************************************************)
 (*************************** Substitutions ********************************)
 (**************************************************************************)
@@ -1027,6 +995,39 @@ module Subst = struct
   let concat    = fun s1 s2 -> Symbol.SMap.fold (fun x e s -> extend s (x, e)) s2 s1
   let print_sub = fun ppf (x,e) -> F.fprintf ppf "[%a:=%a]" Symbol.print x Expression.print e
   let print     = fun ppf -> to_list <+> F.fprintf ppf "%a" (Misc.pprint_many false "" print_sub)
+end
+
+
+(**************************************************************************)
+(***************************** Qualifiers *********************************)
+(**************************************************************************)
+
+module Qualifier = struct
+  
+  type t = Symbol.t * Sort.t * pred
+  
+  let vv_of_t   = fst3 
+  let sort_of_t = snd3
+  let pred_of_t = thd3
+ 
+  (*
+  let create vo t p =
+    match vo with 
+    | None -> 
+        (t, p)
+    | Some v ->
+      (t, Predicate.subst p v (eVar (Symbol.value_variable t)))
+  *)
+
+  let create = fun v t p -> (v, t, p)
+
+  let subst  = fun su (v,t,p) -> su |> Subst.to_list |> Predicate.substs p |> create v t
+
+  let print ppf (v, t, p) = 
+    Format.fprintf ppf "qualif qq(%a:%a):%a \n" 
+      Symbol.print v
+      Sort.print t
+      Predicate.print p
 end
 
 (**************************************************************************)

@@ -121,6 +121,7 @@ and pred_int =
   | Forall of ((Symbol.t * Sort.t) list) * pred
 
 (* Constructors : expressions *)
+val eInt : int -> expr
 val eCon : Constant.t -> expr
 val eVar : Symbol.t -> expr
 val eApp : Symbol.t * expr list -> expr
@@ -175,17 +176,6 @@ sig
   (* val size      : pred -> int *)
 end
 
-module Qualifier : 
-  sig
-    type t 
-    val create    : Symbol.t -> Sort.t -> pred -> t 
-    val vv_of_t   : t -> Symbol.t
-    val pred_of_t : t -> pred
-    val sort_of_t : t -> Sort.t
-    val vv_of_t   : t -> Symbol.t
-    val print     : Format.formatter -> t -> unit
-  end
-
 module Subst : 
   sig
     type t
@@ -198,6 +188,19 @@ module Subst :
     val print     : Format.formatter -> t -> unit
   end
 
+
+module Qualifier : 
+  sig
+    type t 
+    val create    : Symbol.t -> Sort.t -> pred -> t 
+    val vv_of_t   : t -> Symbol.t
+    val pred_of_t : t -> pred
+    val sort_of_t : t -> Sort.t
+    val vv_of_t   : t -> Symbol.t
+    val subst     : Subst.t -> t -> t
+    val print     : Format.formatter -> t -> unit
+  end
+
 module Horn :
   sig
     type pr = string * string list
@@ -207,14 +210,13 @@ module Horn :
     val support: t -> string list
   end
 
-val print_stats : unit -> unit
-val fixdiv      : pred -> pred
-val zero        : expr
-val one         : expr
-val bot         : expr
+val print_stats    : unit -> unit
+val fixdiv         : pred -> pred
+val zero           : expr
+val one            : expr
+val bot            : expr
 val substs_pred    : pred -> Subst.t -> pred 
 val simplify_pred  : pred -> pred
 val sortcheck_expr : (Symbol.t -> Sort.t) -> expr -> Sort.t option
 val sortcheck_pred : (Symbol.t -> Sort.t) -> pred -> bool
-
 
