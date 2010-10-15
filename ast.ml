@@ -629,6 +629,9 @@ module Expression =
     let subst e x e' =
       map id (esub x e') e
 
+    let substs e xes =
+      map id (fun e -> List.fold_left (esub |> Misc.uncurry |> Misc.flip) e xes) e
+
     let support e =
       let xs = ref Symbol.SSet.empty in
       iter un begin function 
@@ -1071,9 +1074,73 @@ let simplify_pred = remove_bot <+> simplify_pred
 let substs_pred   = fun p su -> su |> Subst.to_list |> Predicate.substs p |> simplify_pred
 
 
+(****************************************************************************)
+(******************** Unification of Predicates *****************************)
+(****************************************************************************)
+
+
+exception DoesNotUnify 
+
+let rec pUnify = function
+  | (Atom (e1, r1, e1'), _), (Atom (e2, r2, e2'), _) when r1 = r2 ->
+      let s1       = eUnify (e1, e2) in
+      let e1', e2' = Misc.map_pair ((Misc.flip Expression.substs) s1) (e1', e2') in
+      let s2       = eUnify (e2', e2') in
+      s1 ++ s2
+  | (Bexp e1, _), (Bexp e2, _) ->
+      eUnify (e1, e2)
+  | (Not p1, _), (Not p2, _) ->
+      pUnify (p1, p2)
+  | (Imp (p1, p1'), _), (Imp (p2, p2'), _) ->
+      psUnify ([p1; p1'], [p2; p2'])
+  
+  | (And p1s, _), (And p2s, _) 
+  | (Or p1s, _), (Or p2s, _) 
+    when List.length p1s = List.length p2s ->
+      psUnify (p1s, p2s)
+  | _, _ -> raise DoesNotUnify
+
+and psUnify (p1s, p2s) =
+  let _ = asserts (List.length p1s = List.length p2s) "psUnify" in
+  List.fold_left2 begin fun s p1 p2 ->
+    (p1, p2) 
+    |> Misc.map_pair (fun p -> Predicate.substs p s)
+    |> pUnify
+    |> (fun s' -> s' ++ s)
+  end [] p1s p2s
+
+and eUnify = function
+  | (Con c1, _), (Con c2, _) when c1 = c2 ->
+      []
+  | (Var x1, _), (Var x2, _) when x1 = x2 ->
+      []
+  | (Bin (e1, op1, e1'),_), (Bin (e2, op2, e2'), _) when op1 = op2 ->
+      esUnify ([e1; e1'], [e2; e2'])
+  | (Ite (p1, e1, e1'),_), (Ite (p2, e2, e2'), _) ->
+      let s = pUnify (p1, p2) in
+      let [e1; e1'; e2; e2'] = List.map ((Misc.flip Expression.substs) s) [e1; e1; e2; e2'] in
+      esUnify ([e1; e1'], [e2; e2'])
+  | (Cst (e1, t1),_), (Cst (e2, t2),_) when t1 = t2 ->
+      eUnify (e1, e2)
+  | (App (uf1, e1s), _), (App (uf2, e2s),_) when uf1 = uf2 ->
+      esUnify (e1s, e2s)
+  | e, (Var x, _) | (Var x, _), e when Symbol.is_wild x ->
+      [(x, e)]
+  | _, _ -> raise DoesNotUnify 
+
+and esUnify (e1s, e2s) =
+  let _ = asserts (List.length e1s = List.length e2s) "esUnify" in
+  List.fold_left2 begin fun s e1 e2 ->
+    (e1, e2) 
+    |> Misc.map_pair (fun e -> Expression.substs e s)
+    |> eUnify
+    |> (fun s' -> s' ++ s)
+  end [] e1s e2s
+
 (* API *)
-let rec unify_pred p1 p2 = failwith "TODO: Ast.unify_pred"
-and unify_expr e1 e2 = failwith "TODO: Ast.unify_expr"
+let unify_pred p1 p2 = try pUnify (p1, p2) |> Subst.of_list |> some with DoesNotUnify -> None 
+
+
 
 (* {{{
 let rec expr_subst hp he e x e' =
