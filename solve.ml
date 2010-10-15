@@ -126,8 +126,8 @@ let refine me s c =
 
 
 (* API *)
-let force = failwith "TBD: solve.force"
-let force_binds = failwith "TBD: solve.force"
+let force _ = failwith "TBD: solve.force"
+let force_binds _ = failwith "TBD: solve.force"
 
 (***************************************************************)
 (************************* Satisfaction ************************)
