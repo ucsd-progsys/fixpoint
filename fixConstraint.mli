@@ -44,6 +44,7 @@ type deft = Srt of Ast.Sort.t
           | Qul of Ast.Qualifier.t
           | Dep of dep 
 
+val fresh_kvar       : unit -> Ast.Symbol.t
 val kvars_of_reft    : reft -> (Ast.Subst.t * Ast.Symbol.t) list
 val kvars_of_t       : t -> (Ast.Subst.t * Ast.Symbol.t) list
 val apply_solution   : soln -> reft -> reft

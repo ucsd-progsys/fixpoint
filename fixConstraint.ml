@@ -70,6 +70,11 @@ let is_simple_refatom = function
   | _           -> false
 
 (* API *)
+let fresh_kvar = 
+  let tick, _  = Misc.mk_int_factory () in
+  tick <+> string_of_int <+> (^) "k_" <+> Sy.of_string
+
+(* API *)
 let kvars_of_reft (_, _, rs) =
   Misc.map_partial begin function 
     | Kvar (subs, k) -> Some (subs,k) 
