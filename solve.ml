@@ -123,12 +123,10 @@ let refine me s c =
      else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps) x2))
     |> C.group_sol_update s k2s 
 
-
+(*  
 let normalize_qual = fun t q -> Q.create (Q.vv_of_t q) t (Q.pred_of_t q)
 
-let force_one me s qs (env, ((v, t, _) as r)) : Ast.pred =
-failwith "TODO"
-(*  
+let force_one me s qs (env, ((v, t, _) as r)) : Ast.pred = failwith "TODO"
 let k  = C.fresh kvar () in
   let t  = C.sort_of_reft r in
   let s = qs |>: (fun q -> Q.create (Q.vv_of_t q) t (Q.pred_of_t q))
@@ -137,13 +135,12 @@ let k  = C.fresh kvar () in
   let c = env |- reft <: k
   let s = refine me s' c |> snd in
   s[k]
-*)
 
 (* API *)
 let force_binds me s qs = force_one me s qs |> Misc.app_snd |> List.map
 let force _             = failwith "TBD: solve.force"
 
-
+*)
 (***************************************************************)
 (************************* Satisfaction ************************)
 (***************************************************************)
