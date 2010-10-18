@@ -822,6 +822,7 @@ let rec sortcheck_expr f e =
 
   | _ -> assertf "Ast.sortcheck_expr: unhandled expr = %s" (Expression.to_string e)
 
+(* TODO: OMG! 5 levels of matching!!!!! *)
 and sortcheck_app f so_expected uf es =
   uf |> Misc.do_catchf ("ERROR: unknown uf = "^uf) f
      |> Sort.func_of_t 
@@ -1081,11 +1082,13 @@ let substs_pred   = fun p su -> su |> Subst.to_list |> Predicate.substs p |> sim
 
 exception DoesNotUnify 
 
-let rec pUnify = function
+let rec pUnify (p1, p2) = 
+  let res = 
+    match p1, p2 with
   | (Atom (e1, r1, e1'), _), (Atom (e2, r2, e2'), _) when r1 = r2 ->
       let s1       = eUnify (e1, e2) in
       let e1', e2' = Misc.map_pair ((Misc.flip Expression.substs) s1) (e1', e2') in
-      let s2       = eUnify (e2', e2') in
+      let s2       = eUnify (e1', e2') in
       s1 ++ s2
   | (Bexp e1, _), (Bexp e2, _) ->
       eUnify (e1, e2)
@@ -1099,6 +1102,10 @@ let rec pUnify = function
     when List.length p1s = List.length p2s ->
       psUnify (p1s, p2s)
   | _, _ -> raise DoesNotUnify
+  in
+  let _ = Format.printf "pUnify: p1 is %a, p2 is %a, subst = %a \n" 
+          Predicate.print p1 Predicate.print p2 Subst.print (Subst.of_list res) in
+  res
 
 and psUnify (p1s, p2s) =
   let _ = asserts (List.length p1s = List.length p2s) "psUnify" in
@@ -1118,7 +1125,7 @@ and eUnify = function
       esUnify ([e1; e1'], [e2; e2'])
   | (Ite (p1, e1, e1'),_), (Ite (p2, e2, e2'), _) ->
       let s = pUnify (p1, p2) in
-      let [e1; e1'; e2; e2'] = List.map ((Misc.flip Expression.substs) s) [e1; e1; e2; e2'] in
+      let [e1; e1'; e2; e2'] = List.map ((Misc.flip Expression.substs) s) [e1; e1'; e2; e2'] in
       esUnify ([e1; e1'], [e2; e2'])
   | (Cst (e1, t1),_), (Cst (e2, t2),_) when t1 = t2 ->
       eUnify (e1, e2)
