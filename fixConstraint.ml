@@ -127,6 +127,8 @@ let kvars_of_t ({rhs = rhs} as c) =
 (******************** Solution Management ********************)
 (*************************************************************)
 
+exception UnmappedKvar of Sy.t
+
 (* API *)
 let sol_cleanup s = 
   SM.map Misc.sort_and_compact s
@@ -138,8 +140,9 @@ let sol_query s k =
 (* API *)
 let sol_read s k = 
   try SM.find k s with Not_found -> begin
-    asserti false "ERROR: sol_read : unknown kvar %s \n" (Sy.to_string k);
-    failure "ERROR: sol_read : unknown kvar %s \n" (Sy.to_string k)
+    Printf.printf "ERROR: sol_read : unknown kvar %s \n" (Sy.to_string k); raise (UnmappedKvar k)
+    (* asserti false "ERROR: sol_read : unknown kvar %s \n" (Sy.to_string k) 
+     failure "ERROR: sol_read : unknown kvar %s \n" (Sy.to_string k) *) 
   end
 
 (* INV: qs' \subseteq qs *)
