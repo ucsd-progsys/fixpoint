@@ -284,6 +284,8 @@ and z3Pred me env = function
       Z3.mk_or me.c (Array.of_list (List.map (z3Pred me env) ps))
   | A.Imp (p1, p2), _ -> 
       Z3.mk_implies me.c (z3Pred me env p1) (z3Pred me env p2)
+  | A.Iff (p1, p2), _ ->
+      Z3.mk_iff me.c (z3Pred me env p1) (z3Pred me env p2)
   | A.Atom (e1, r, e2), _ ->
       z3Rel me env (e1, r, e2)
   | A.Bexp e, _ -> 

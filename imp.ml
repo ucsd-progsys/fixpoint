@@ -167,6 +167,8 @@ let rec print_predicate_as_c ppf pred =
       F.fprintf ppf "!(%a)" print_predicate_as_c p
   | A.Imp (p1, p2) ->
       print_predicate_as_c ppf (A.pOr [A.pNot p1; p2])
+  | A.Iff (p1, p2) ->
+      print_predicate_as_c ppf (A.pAnd [A.pImp (p1, p2); A.pImp (p2, p1)])
   | A.Bexp e ->
       print_expr_as_c ppf e
   | A.Forall (ds, p) ->
