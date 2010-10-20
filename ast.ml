@@ -34,6 +34,8 @@ module F = Format
 
 open Misc.Ops
 
+let mydebug = false
+
 module Sort = 
   struct
     type loc = 
@@ -1103,8 +1105,9 @@ let rec pUnify (p1, p2) =
       psUnify (p1s, p2s)
   | _, _ -> raise DoesNotUnify
   in
-  let _ = Format.printf "pUnify: p1 is %a, p2 is %a, subst = %a \n" 
-          Predicate.print p1 Predicate.print p2 Subst.print (Subst.of_list res) in
+  let _ = if mydebug then 
+          (Format.printf "pUnify: p1 is %a, p2 is %a, subst = %a \n" 
+          Predicate.print p1 Predicate.print p2 Subst.print (Subst.of_list res)) in
   res
 
 and psUnify (p1s, p2s) =
