@@ -220,6 +220,7 @@ val bot            : expr
 val unify_pred     : pred -> pred -> Subst.t option
 val substs_pred    : pred -> Subst.t -> pred 
 val simplify_pred  : pred -> pred
+val conjuncts      : pred -> pred list
 val sortcheck_expr : (Symbol.t -> Sort.t) -> expr -> Sort.t option
 val sortcheck_pred : (Symbol.t -> Sort.t) -> pred -> bool
 
