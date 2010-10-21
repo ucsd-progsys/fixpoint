@@ -370,8 +370,7 @@ let filter me env ps =
 
 (* API *)
 let create ts env ps =
-  (* let _  = Co.bprintf mydebug "TP.create ps = %a \n" (Misc.pprint_many false "," P.print) ps in 
-   *)
+  (* let _  = Co.bprintf mydebug "TP.create ps = %a \n" (Misc.pprint_many false "," P.print) ps in  *)
   let _  = asserts (ts = []) "ERROR: TPZ3.create non-empty sorts!" in
   let c  = Z3.mk_context_x [|("MODEL", "false"); 
                              ("MODEL_PARTIAL", "true")|] in
@@ -382,9 +381,7 @@ let create ts env ps =
             vart  = Hashtbl.create 37; 
             funt  = Hashtbl.create 37; 
             vars  = []; count = 0; bnd = 0} in
-  let _  = List.iter 
-             (fun p -> z3Pred me env p |> assert_axiom me)
-             (axioms ++ ps) in
+  let _  = List.iter (z3Pred me env <+> assert_axiom me) (axioms ++ ps) in
   me
 
 (* API *)
