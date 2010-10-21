@@ -123,6 +123,7 @@ and pred_int =
   | Forall of ((Symbol.t * Sort.t) list) * pred
 
 (* Constructors : expressions *)
+val eTim : expr * expr -> expr
 val eInt : int -> expr
 val eCon : Constant.t -> expr
 val eVar : Symbol.t -> expr
