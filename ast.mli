@@ -117,6 +117,7 @@ and pred_int =
   | Or   of pred list
   | Not  of pred
   | Imp  of pred * pred
+  | Iff  of pred * pred
   | Bexp of expr
   | Atom of expr * brel * expr 
   | Forall of ((Symbol.t * Sort.t) list) * pred

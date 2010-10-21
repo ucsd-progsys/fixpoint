@@ -22,7 +22,7 @@ let parse_error msg =
 %token TRUE FALSE
 %token LPAREN  RPAREN LB RB LC RC
 %token EQ NE GT GE LT LE
-%token AND OR NOT IMPL FORALL SEMI COMMA COLON MID
+%token AND OR NOT IMPL IFF FORALL SEMI COMMA COLON MID
 %token EOF
 %token PLUS
 %token MINUS
@@ -127,6 +127,7 @@ pred:
   | OR  preds 	        		{ A.pOr  ($2) }
   | NOT pred				{ A.pNot ($2) }
   | pred IMPL pred			{ A.pImp ($1, $3) }
+  | pred IFF pred                       { A.pIff ($1, $3) }
   | expr brel expr                      { A.pAtom ($1, $2, $3) }
   | FORALL binds DOT pred               { A.pForall ($2, $4) }
   | LPAREN pred RPAREN			{ $2 }
