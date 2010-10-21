@@ -70,6 +70,11 @@ let is_simple_refatom = function
   | _           -> false
 
 (* API *)
+let fresh_kvar = 
+  let tick, _  = Misc.mk_int_factory () in
+  tick <+> string_of_int <+> (^) "k_" <+> Sy.of_string
+
+(* API *)
 let kvars_of_reft (_, _, rs) =
   Misc.map_partial begin function 
     | Kvar (subs, k) -> Some (subs,k) 
@@ -122,6 +127,8 @@ let kvars_of_t ({rhs = rhs} as c) =
 (******************** Solution Management ********************)
 (*************************************************************)
 
+exception UnmappedKvar of Sy.t
+
 (* API *)
 let sol_cleanup s = 
   SM.map Misc.sort_and_compact s
@@ -133,8 +140,9 @@ let sol_query s k =
 (* API *)
 let sol_read s k = 
   try SM.find k s with Not_found -> begin
-    asserti false "ERROR: sol_read : unknown kvar %s \n" (Sy.to_string k);
-    failure "ERROR: sol_read : unknown kvar %s \n" (Sy.to_string k)
+    Printf.printf "ERROR: sol_read : unknown kvar %s \n" (Sy.to_string k); raise (UnmappedKvar k)
+    (* asserti false "ERROR: sol_read : unknown kvar %s \n" (Sy.to_string k) 
+     failure "ERROR: sol_read : unknown kvar %s \n" (Sy.to_string k) *) 
   end
 
 (* INV: qs' \subseteq qs *)
@@ -195,7 +203,7 @@ let preds_of_reft s (_,_,ras) =
   Misc.flap (preds_of_refa s) ras
 
 (* API *)
-let apply_solution s (v,t,ras) = 
+let apply_solution s (v, t, ras) = 
   let ras' = Misc.map (fun ra -> Conc (A.pAnd (preds_of_refa s ra))) ras in
   (v, t, ras')
 

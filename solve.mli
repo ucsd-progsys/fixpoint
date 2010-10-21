@@ -40,7 +40,7 @@ val solve     :  t                                (* Solver Instance   *)
               -> FixConstraint.soln               (* Starting Solution *)
               -> (FixConstraint.soln * (FixConstraint.t list))    (* Fixpoint Solution, 
                                                                      Unsat Constraints *)
-        
+(*    
 val force     :  t                                (* Solver Instance   *)
               -> FixConstraint.soln               (* Starting Solution *)  
               -> Ast.Qualifier.t list             (* Candidate Quals   *)
@@ -51,6 +51,7 @@ val force_binds: t                                (* Solver Instance   *)
               -> Ast.Qualifier.t list             (* Candidate Quals   *)       
               -> ('a * (FixConstraint.envt * FixConstraint.reft)) list 
               -> ('a * Ast.pred) list             (* Map from all names to conj of quals *)
+*)
 
 val save      : string -> t -> FixConstraint.soln -> unit 
 

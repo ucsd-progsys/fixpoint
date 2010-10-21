@@ -96,14 +96,20 @@ let validate_binding s env msg x r =
 
 let phase5 s cs =
   Misc.filter begin fun c ->
-    let msg  = C.to_string c in
-    let env  = C.env_of_t c in
-    let lhs  = C.lhs_of_t c in
-    let rhs  = C.rhs_of_t c in
-    BS.time "valid binds" (SM.iter (validate_binding s env (lazy (msg^"\n BAD ENV")))) env;
-    BS.time "valid lhs" (validate_reft s env (lazy (msg^"\n BAD LHS"))) lhs;
-    BS.time "valid rhs" (validate_reft s env (lazy (msg^"\n BAD RHS"))) rhs;
-    true
+    try
+      let msg  = C.to_string c in
+      let env  = C.env_of_t c in
+      let lhs  = C.lhs_of_t c in
+      let rhs  = C.rhs_of_t c in
+      BS.time "valid binds" (SM.iter (validate_binding s env (lazy (msg^"\n BAD ENV")))) env;
+      BS.time "valid lhs" (validate_reft s env (lazy (msg^"\n BAD LHS"))) lhs;
+      BS.time "valid rhs" (validate_reft s env (lazy (msg^"\n BAD RHS"))) rhs;
+      true
+    with ex -> begin 
+      Format.printf "Phase5: exn = %s on constraint: %a \n" 
+        (Printexc.to_string ex) (C.print_t None) c; 
+      raise ex
+    end
   end cs
 
 

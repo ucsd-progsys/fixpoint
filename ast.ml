@@ -34,6 +34,8 @@ module F = Format
 
 open Misc.Ops
 
+let mydebug = false
+
 module Sort = 
   struct
     type loc = 
@@ -295,6 +297,7 @@ and pred_int =
   | Or   of pred list
   | Not  of pred
   | Imp  of pred * pred
+  | Iff  of pred * pred
   | Bexp of expr
   | Atom of expr * brel * expr 
   | Forall of ((Symbol.t * Sort.t) list) * pred
@@ -381,6 +384,8 @@ module PredHashconsStruct = struct
           p1 == p2
       | Imp (p1, p1'), Imp (p2, p2') -> 
           p1 == p2 && p1' == p2'
+      | Iff (p1,p1'), Iff (p2,p2') ->
+          p1 == p2 && p1' == p2'
       | Bexp e1, Bexp e2 -> 
           e1 == e2
       | Atom (e1, r1, e1'), Atom (e2, r2, e2') ->
@@ -403,6 +408,8 @@ module PredHashconsStruct = struct
        8 + id 
    | Imp ((_,id1), (_,id2)) ->
        20 + (2 * id1) + id2
+   | Iff ((_,id1), (_,id2)) ->
+       28 + (2 * id1) + id2
    | Bexp (_, id) ->
        32 + id
    | Atom ((_,id1), r, (_,id2)) ->
@@ -445,7 +452,7 @@ let pOr    = fun ps -> pwr (Or ps)
 let pNot   = fun p  -> pwr (Not p)
 let pBexp  = fun e  -> pwr (Bexp e)
 let pImp   = fun (p1,p2) -> pwr (Imp (p1,p2))
-let pIff   = fun (p1,p2) -> pAnd [pImp (p1,p2); pImp (p2,p1)]
+let pIff   = fun (p1,p2) -> pwr (Iff (p1,p2))
 let pForall= fun (qs, p) -> pwr (Forall (qs, p))
 let pEqual = fun (e1,e2) -> pAtom (e1, Eq, e2)
 
@@ -515,6 +522,8 @@ and pred_to_string p =
         Printf.sprintf "(~ (%s))" (pred_to_string p) 
     | Imp (p1, p2) -> 
         Printf.sprintf "(%s -> %s)" (pred_to_string p1) (pred_to_string p2)
+    | Iff (p1, p2) ->
+        Printf.sprintf "(%s <-> %s)" (pred_to_string p1) (pred_to_string p2)
     | And ps -> 
         Printf.sprintf "&& [%s]" (List.map pred_to_string ps |> String.concat " ; ")
     | Or ps -> 
@@ -540,7 +549,9 @@ let rec pred_map hp he fp fe p =
         | Not p -> 
             Not (pm p) 
         | Imp (p1, p2) -> 
-            Imp (pm p1, pm p2) 
+            Imp (pm p1, pm p2)
+        | Iff (p1, p2) ->
+            Iff (pm p1, pm p2)
         | Bexp e ->
             Bexp (expr_map hp he fp fe e) 
         | Atom (e1, r, e2) ->
@@ -580,6 +591,7 @@ let rec pred_iter fp fe pw =
     | Bexp e -> expr_iter fp fe e
     | Not p -> pred_iter fp fe p
     | Imp (p1, p2) -> pred_iter fp fe p1; pred_iter fp fe p2
+    | Iff (p1, p2) -> pred_iter fp fe p1; pred_iter fp fe p2
     | And ps | Or ps -> List.iter (pred_iter fp fe) ps
     | Atom (e1, _, e2) -> expr_iter fp fe e1; expr_iter fp fe e2
     | Forall (_, p) -> pred_iter fp fe p (* pmr: looks wrong, but so does pred_map *)
@@ -763,6 +775,8 @@ let rec pred_isdiv = function
       pred_isdiv p
   | Imp (p1, p2), _ ->
       pred_isdiv p1 || pred_isdiv p2
+  | Iff (p1, p2), _ ->
+      pred_isdiv p1 || pred_isdiv p2
   | Bexp e, _ ->
       expr_isdiv e
   | Atom (e1, _, e2), _ -> 
@@ -783,6 +797,8 @@ let rec fixdiv = function
       pOr (List.map fixdiv ps)
   | Imp (p1, p2), _ ->
       pImp (fixdiv p1, fixdiv p2)
+  | Iff (p1, p2), _ ->
+      pIff (fixdiv p1, fixdiv p2)
   | Not p, _ -> 
       pNot (fixdiv p) 
   | p -> p
@@ -822,6 +838,7 @@ let rec sortcheck_expr f e =
 
   | _ -> assertf "Ast.sortcheck_expr: unhandled expr = %s" (Expression.to_string e)
 
+(* TODO: OMG! 5 levels of matching!!!!! *)
 and sortcheck_app f so_expected uf es =
   uf |> Misc.do_catchf ("ERROR: unknown uf = "^uf) f
      |> Sort.func_of_t 
@@ -876,7 +893,7 @@ and sortcheck_pred f p =
         sortcheck_expr f e = Some Sort.Bool 
     | Not p -> 
         sortcheck_pred f p
-    | Imp (p1, p2) -> 
+    | Imp (p1, p2) | Iff (p1, p2) -> 
         List.for_all (sortcheck_pred f) [p1; p2]
     | And ps  
     | Or ps ->
@@ -941,6 +958,9 @@ let rec push_neg ?(neg=false) ((p, _) as pred) =
     | Imp (p, q) -> 
 	if neg then pAnd [push_neg p; push_neg ~neg:true q]
 	else pImp (push_neg p, push_neg q)
+    | Iff (p, q) ->
+        if neg then pIff (p, push_neg ~neg:true q)
+        else pIff (push_neg p, push_neg q)
     | Forall (qs, p) -> 
 	let pred' = pForall (qs, push_neg ~neg:false p) in
 	if neg then pNot pred' else pred'
@@ -972,6 +992,11 @@ let rec simplify_pred ((p, _) as pred) =
                              | ps when List.exists Predicate.is_tauto ps -> pTrue
                              | ps  -> pOr ps)
     | _ -> pred
+
+let rec conjuncts = function
+  | And ps, _ -> Misc.flap conjuncts ps
+  | True, _   -> []
+  | p         -> [p]
 
 (**************************************************************************)
 (*************************** Substitutions ********************************)
@@ -1081,11 +1106,13 @@ let substs_pred   = fun p su -> su |> Subst.to_list |> Predicate.substs p |> sim
 
 exception DoesNotUnify 
 
-let rec pUnify = function
+let rec pUnify (p1, p2) = 
+  let res = 
+    match p1, p2 with
   | (Atom (e1, r1, e1'), _), (Atom (e2, r2, e2'), _) when r1 = r2 ->
       let s1       = eUnify (e1, e2) in
       let e1', e2' = Misc.map_pair ((Misc.flip Expression.substs) s1) (e1', e2') in
-      let s2       = eUnify (e2', e2') in
+      let s2       = eUnify (e1', e2') in
       s1 ++ s2
   | (Bexp e1, _), (Bexp e2, _) ->
       eUnify (e1, e2)
@@ -1099,6 +1126,11 @@ let rec pUnify = function
     when List.length p1s = List.length p2s ->
       psUnify (p1s, p2s)
   | _, _ -> raise DoesNotUnify
+  in
+  let _ = if mydebug then 
+          (Format.printf "pUnify: p1 is %a, p2 is %a, subst = %a \n" 
+          Predicate.print p1 Predicate.print p2 Subst.print (Subst.of_list res)) in
+  res
 
 and psUnify (p1s, p2s) =
   let _ = asserts (List.length p1s = List.length p2s) "psUnify" in
@@ -1118,7 +1150,7 @@ and eUnify = function
       esUnify ([e1; e1'], [e2; e2'])
   | (Ite (p1, e1, e1'),_), (Ite (p2, e2, e2'), _) ->
       let s = pUnify (p1, p2) in
-      let [e1; e1'; e2; e2'] = List.map ((Misc.flip Expression.substs) s) [e1; e1; e2; e2'] in
+      let [e1; e1'; e2; e2'] = List.map ((Misc.flip Expression.substs) s) [e1; e1'; e2; e2'] in
       esUnify ([e1; e1'], [e2; e2'])
   | (Cst (e1, t1),_), (Cst (e2, t2),_) when t1 = t2 ->
       eUnify (e1, e2)

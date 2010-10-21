@@ -84,6 +84,7 @@ rule token = parse
   | "<"		        { LT }
   | ">="		{ GE }
   | ">"		        { GT }
+  | "<->"               { IFF }
   | "->"                { IMPL }
   | "obj"               { OBJ }
   | "int"               { INT }

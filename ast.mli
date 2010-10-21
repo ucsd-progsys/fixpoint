@@ -117,6 +117,7 @@ and pred_int =
   | Or   of pred list
   | Not  of pred
   | Imp  of pred * pred
+  | Iff  of pred * pred
   | Bexp of expr
   | Atom of expr * brel * expr 
   | Forall of ((Symbol.t * Sort.t) list) * pred
@@ -220,6 +221,7 @@ val bot            : expr
 val unify_pred     : pred -> pred -> Subst.t option
 val substs_pred    : pred -> Subst.t -> pred 
 val simplify_pred  : pred -> pred
+val conjuncts      : pred -> pred list
 val sortcheck_expr : (Symbol.t -> Sort.t) -> expr -> Sort.t option
 val sortcheck_pred : (Symbol.t -> Sort.t) -> pred -> bool
 
