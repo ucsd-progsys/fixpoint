@@ -24,6 +24,7 @@ let parse_error msg =
 %token EQ NE GT GE LT LE
 %token AND OR NOT IMPL IFF FORALL SEMI COMMA COLON MID
 %token EOF
+%token MOD 
 %token PLUS
 %token MINUS
 %token TIMES 
@@ -147,6 +148,7 @@ expr:
     Id				        { A.eVar (Sy.of_string $1) }
   | Num 				{ A.eCon (A.Constant.Int $1) }
   | MINUS Num 				{ A.eCon (A.Constant.Int (-1 * $2)) }
+  | LPAREN expr MOD Num RPAREN          { A.eMod ($2, $4) }
   | expr bop expr                       { A.eBin ($1, $2, $3) }
   | Id LPAREN  exprs RPAREN             { A.eApp ((Sy.of_string $1), $3) }
   | pred QM expr COLON expr             { A.eIte ($1,$3,$5) }

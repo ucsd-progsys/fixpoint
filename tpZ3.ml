@@ -268,6 +268,8 @@ and z3Exp me env = function
       z3App me env (mk_select f) [z3Exp me env e] (** REQUIRES: disjoint field names *)
   | A.Cst (e, _), _ -> 
       z3Exp me env e
+  | A.Mod (e, i), _ ->
+      Z3.mk_mod me.c (z3Exp me env e) (Z3.mk_int me.c i me.tint)
   | A.Bot, _ -> 
       assertf "z3Exp: Cannot Convert Bot!" 
 

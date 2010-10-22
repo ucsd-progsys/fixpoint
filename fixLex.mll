@@ -86,6 +86,7 @@ rule token = parse
   | ">"		        { GT }
   | "<->"               { IFF }
   | "->"                { IMPL }
+  | "mod"               { MOD }
   | "obj"               { OBJ }
   | "int"               { INT }
   | "ptr"               { PTR }

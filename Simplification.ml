@@ -50,6 +50,7 @@ let rec expr_apply_defs edefs pdefs ((e, _) as expr) =
 	      with Not_found -> v
 	    in
 	      Ast.eFld (v', expr_apply_defs edefs pdefs e)
+        | _ -> assertf "Simplification.expr_apply_defs TODO" 
     in
       if !some_def_applied then
 	let expr''' = expr_apply_defs edefs pdefs expr'' in

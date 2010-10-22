@@ -102,6 +102,10 @@ let rec expr_apply_defs em pm expr =
   | Cst (e, t), _ ->
       let e', b'   = ef e in
       eCst (e', t), b'
+  | Mod (e, i), _ ->
+      let e', b' = ef e in
+      eMod (e', i), b'
+
 
 and pred_apply_defs em pm pred =
   let ef = expr_apply_defs em pm in
