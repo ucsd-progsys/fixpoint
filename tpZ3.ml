@@ -262,14 +262,14 @@ and z3Exp me env = function
       Z3.mk_mul me.c (Array.map (z3Exp me env) [|e1; e2|])
   | A.Bin (e1, A.Div, e2), _ -> 
       z3App me env div_n (List.map (z3Exp me env) [e1;e2])  
+  | A.Bin (e, A.Mod, (A.Con (A.Constant.Int i), _)), _ ->
+      Z3.mk_mod me.c (z3Exp me env e) (Z3.mk_int me.c i me.tint)
   | A.Ite (e1, e2, e3), _ -> 
       Z3.mk_ite me.c (z3Pred me env e1) (z3Exp me env e2) (z3Exp me env e3)
   | A.Fld (f, e), _ -> 
       z3App me env (mk_select f) [z3Exp me env e] (** REQUIRES: disjoint field names *)
   | A.Cst (e, _), _ -> 
       z3Exp me env e
-  | A.Mod (e, i), _ ->
-      Z3.mk_mod me.c (z3Exp me env e) (Z3.mk_int me.c i me.tint)
   | A.Bot, _ -> 
       assertf "z3Exp: Cannot Convert Bot!" 
 

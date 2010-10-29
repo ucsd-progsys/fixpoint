@@ -274,8 +274,8 @@ type tag = int
 
 type brel = Eq | Ne | Gt | Ge | Lt | Le 
 
-type bop  = Plus | Minus | Times | Div
-    
+type bop  = Plus | Minus | Times | Div | Mod    (* NOTE: For "Mod" 2nd expr should be a constant or a var *)
+
 type expr = expr_int * tag 
     
 and expr_int =
@@ -286,7 +286,6 @@ and expr_int =
   | Ite of pred * expr * expr
   | Fld of Symbol.t * expr             (* NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
   | Cst of expr * Sort.t 
-  | Mod of expr * int 
   | Bot
 
 and pred = pred_int * tag
@@ -367,8 +366,6 @@ module ExprHashconsStruct = struct
         id + Hashtbl.hash (Sort.to_string t)
     | Bot ->
         0
-    | Mod ((_,id), k) ->
-        id + (100 * k)
 end
   
 module ExprHashcons = Hashcons(ExprHashconsStruct)
@@ -433,8 +430,8 @@ let eCon = fun c -> ewr  (Con c)
 let eInt = fun i -> eCon (Constant.Int i)
 let zero = eInt 0
 let one  = eInt 1
-let bot  = ewr (Bot)
-let eMod = fun (e, m) -> ewr (Mod (e, m))
+let bot  = ewr Bot
+let eMod = fun (e, m) -> ewr (Bin (e, Mod, eInt m))
 let eVar = fun s -> ewr (Var s)
 let eApp = fun (s, es) -> ewr (App (s, es))
 let eBin = fun (e1, op, e2) -> ewr (Bin (e1, op, e2)) 
@@ -480,6 +477,7 @@ let bop_to_string = function
   | Minus -> "-"
   | Times -> "*"
   | Div   -> "/"
+  | Mod   -> "mod" 
 
 let brel_to_string = function 
   | Eq -> "="
@@ -512,8 +510,6 @@ let rec expr_to_string e =
       Printf.sprintf "%s.%s" (expr_to_string e) s 
   | Cst(e,t) ->
       Printf.sprintf "(%s : %s)" (expr_to_string e) (Sort.to_string t)
-  | Mod(e,i) ->
-      Printf.sprintf "(%s mod %d)" (expr_to_string e) i 
   | Bot ->
       Printf.sprintf "_|_" 
 
@@ -588,8 +584,6 @@ and expr_map hp he fp fe e =
             Fld (s, em e1) 
         | Cst (e1, t) -> 
             Cst (em e1, t) 
-        | Mod (e1, m) ->
-            Mod (em e1, m) 
       in
       let rv = fe (ewr e') in
       let _  = ExprHash.add he e rv in
@@ -619,7 +613,7 @@ and expr_iter fp fe ew =
         expr_iter fp fe e1; expr_iter fp fe e2
     | Ite (ip, te, ee) -> 
         pred_iter fp fe ip; expr_iter fp fe te; expr_iter fp fe ee
-    | Fld (_, e1) | Cst (e1, _) | Mod (e1, _) -> 
+    | Fld (_, e1) | Cst (e1, _) -> 
         expr_iter fp fe e1
   end;
   fe ew
@@ -826,7 +820,7 @@ let rec sortcheck_expr f e =
   match euw e with
   | Bot   -> 
       None
-  | Con c -> 
+  | Con _ -> 
       Some Sort.Int 
   | Var s -> 
       (try Some (f s) with _ -> None)
@@ -850,7 +844,7 @@ let rec sortcheck_expr f e =
 
   | App (uf, es) ->
       sortcheck_app f None uf es
-
+    
   | _ -> assertf "Ast.sortcheck_expr: unhandled expr = %s" (Expression.to_string e)
 
 (* TODO: OMG! 5 levels of matching!!!!! *)
@@ -1168,8 +1162,6 @@ and eUnify = function
       let [e1; e1'; e2; e2'] = List.map ((Misc.flip Expression.substs) s) [e1; e1'; e2; e2'] in
       esUnify ([e1; e1'], [e2; e2'])
   | (Cst (e1, t1),_), (Cst (e2, t2),_) when t1 = t2 ->
-      eUnify (e1, e2)
-  | (Mod (e1, i1),_), (Mod (e2, i2),_) when i1 = i2 ->
       eUnify (e1, e2)
   | (App (uf1, e1s), _), (App (uf2, e2s),_) when uf1 = uf2 ->
       esUnify (e1s, e2s)

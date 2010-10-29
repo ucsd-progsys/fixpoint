@@ -94,10 +94,10 @@ type tag  (* externally opaque *)
 
 type brel = Eq | Ne | Gt | Ge | Lt | Le 
 
-type bop  = Plus | Minus | Times | Div
-    
+type bop  = Plus | Minus | Times | Div | Mod    (* NOTE: For "Mod" 2nd expr should be a constant or a var *)
+
 type expr = expr_int * tag 
-    
+
 and expr_int =
   | Con of Constant.t
   | Var of Symbol.t
@@ -105,8 +105,7 @@ and expr_int =
   | Bin of expr * bop * expr  
   | Ite of pred * expr * expr
   | Fld of Symbol.t * expr             (* NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
-  | Cst of expr * Sort.t   
-  | Mod of expr * int 
+  | Cst of expr * Sort.t 
   | Bot
 
 and pred = pred_int * tag
