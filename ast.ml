@@ -1180,7 +1180,7 @@ and esUnify (e1s, e2s) =
 
 (* API *)
 let unify_pred p1 p2 = try pUnify (p1, p2) |> Subst.of_list |> some with DoesNotUnify -> None 
-
+let into_of_expr = function Con (Constant.Int i), _  -> Some i | _ -> None
 
 
 (* {{{

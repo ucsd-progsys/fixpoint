@@ -226,4 +226,4 @@ val simplify_pred  : pred -> pred
 val conjuncts      : pred -> pred list
 val sortcheck_expr : (Symbol.t -> Sort.t) -> expr -> Sort.t option
 val sortcheck_pred : (Symbol.t -> Sort.t) -> pred -> bool
-
+val into_of_expr   : expr -> int option
