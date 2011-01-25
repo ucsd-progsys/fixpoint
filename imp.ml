@@ -195,9 +195,9 @@ and print_expr_as_c ppf expr =
         print_expr_as_c e2
   | A.Fld (s, e) ->
       print_expr_as_c ppf (A.eApp (Sy.of_string ("field" ^ Sy.to_string s), [e]))
-  | A.Mod (e1, i) ->
+(*  | A.Mod (e1, i) ->
       F.fprintf ppf "(%a mod %d)" print_expr_as_c e1 i 
-
+*)
 
 let print_var_as_c ppf = function
   | PVar v -> F.fprintf ppf "%a" Sy.print v
