@@ -90,10 +90,7 @@ let rhs_cands s = function
 
 let check_tp me env vv t lps =  function [] -> [] | rcs ->
   let env = SM.map snd3 env |> SM.add vv t in
-  
-  let _   = Printf.printf "CALLING set_filter \n" ; flush stdout in
   let rv  = TP.set_filter me.tpc env vv lps rcs in
-  let _   = Printf.printf "FINISHED set_filter \n" ; flush stdout in
   let _   = ignore(me.stat_tp_refines    += 1);
             ignore(me.stat_imp_queries   += (List.length rcs));
             ignore(me.stat_valid_queries += (List.length rv)) in

@@ -309,7 +309,9 @@ let z3Pred me env p = BS.time "z3Pred" (z3Pred me env) p
 (***************************************************************************)
 
 let unsat me =
+  let _ = Printf.printf "UNSAT 1 \n"; flush stdout in
   let rv = (BS.time "Z3.check" Z3.check me.c) = Z3.L_FALSE in
+  let _ = Printf.printf "UNSAT 2 \n"; flush stdout in
   let _  = if rv then ignore (nb_unsat += 1) in 
   rv
 
@@ -362,11 +364,11 @@ let set me env vv ps =
   (* unsat me *) false
 
 let filter me env ps =
-  let rv = ps
-           |> List.rev_map (fun qp -> (qp, z3Pred me env (snd qp))) 
-           |> List.filter  (fun qp -> valid me (snd qp))  
-           |> List.split |> fst in
-  pop me; clean_decls me; rv 
+  ps |> List.rev_map (fun qp -> (qp, z3Pred me env (snd qp))) 
+     |> List.filter  (fun qp -> valid me (snd qp))  
+     |> List.split 
+     |> fst 
+     >> (fun _ -> pop me; clean_decls me)
 
 (************************************************************************)
 (********************************* API **********************************)
@@ -397,6 +399,7 @@ let set_filter (me: t) (env: So.t SM.t) (vv: Sy.t) ps qs =
     | true  -> 
         let _ = nb_unsatLHS += 1 in
         pop me; qs
+
     | false ->
         let qs, qs' = qs 
                       |> List.rev_map   (fun (x,q) -> (x, A.fixdiv q)) 
