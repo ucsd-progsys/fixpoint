@@ -309,9 +309,9 @@ let z3Pred me env p = BS.time "z3Pred" (z3Pred me env) p
 (***************************************************************************)
 
 let unsat me =
-  let _ = Printf.printf "UNSAT 1 \n"; flush stdout in
+  let _ = if mydebug then (Printf.printf "UNSAT 1 \n"; flush stdout) in
   let rv = (BS.time "Z3.check" Z3.check me.c) = Z3.L_FALSE in
-  let _ = Printf.printf "UNSAT 2 \n"; flush stdout in
+  let _ = if mydebug then (Printf.printf "UNSAT 2 \n"; flush stdout) in
   let _  = if rv then ignore (nb_unsat += 1) in 
   rv
 
