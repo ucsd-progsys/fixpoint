@@ -442,6 +442,10 @@ let eCst = fun (e,t) -> ewr (Cst (e, t))
 let eTim = function 
   | (Con (Constant.Int n1), _), (Con (Constant.Int n2), _) -> 
       ewr (Con (Constant.Int (n1 * n2)))
+  | (Con (Constant.Int 1), _), e2 -> 
+      e2 
+  | (Con (Constant.Int (-1)), _), e2 -> 
+      eBin (zero, Minus, e2) 
   | (e1, e2) -> eBin (e1, Times, e2)
 
 
