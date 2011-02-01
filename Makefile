@@ -18,13 +18,14 @@ LFLAGS=-lflags -cc,g++ \
 
 CFLAGS=-cflags -dtypes \
        -cflags -I,$(Z3HOME)/ocaml \
-       -cflags -I,$(OCAMLGRAPHHOME)
+       -cflags -I,$(OCAMLGRAPHHOME) \
+			 -cflags -thread
 
 OFLAGS=$(DIRS) $(IFLAGS) $(LFLAGS) $(CFLAGS)
 
 all:
 	ln -sf ../misc
-	ocamlbuild -r $(LIBS) $(OFLAGS) main.native
+	ocamlbuild -r $(LIBS) $(OFLAGS) -tags thread main.native
 	ocamlbuild -r $(OFLAGS) fix.cmxa
 	cp _build/main.native .
 

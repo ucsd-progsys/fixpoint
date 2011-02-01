@@ -345,7 +345,10 @@ let pop me =
 
 let valid me p =
   let _ = push me [(Z3.mk_not me.c p)] in
-  let rv = unsat me in
+  let rv = Timeout.do_timeout !Constants.z3_timeout unsat me in
+  let rv = match rv with Some x -> x
+                       | None -> failwith
+                       "UNRECOVERABLE FIXPOINT ERROR: Z3 TIMED OUT" in
   let _ = pop me in
   rv
 
