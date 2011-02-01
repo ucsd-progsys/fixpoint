@@ -5,11 +5,9 @@ module T = Thread
 
 let get_time () = int_of_float (Unix.time ())
 
-let mk_task f x =
-  let task x lk (ret, rd) =
-    let rv = f x in
-    M.lock lk; ret := Some rv; rd := true; M.unlock lk in
-  task x
+let mk_task =
+  fun f x lk (ret, rd) -> let rv = f x in
+    M.lock lk; ret := Some rv; rd := true; M.unlock lk
 
 let not_done lk (ret, rd) = 
   M.lock lk; let trd = !rd in (M.unlock lk; not(trd))
