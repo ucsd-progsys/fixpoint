@@ -63,8 +63,9 @@ val env_of_bindings  : (Ast.Symbol.t * reft) list -> envt
 val bindings_of_env  : envt -> (Ast.Symbol.t * reft) list
 val is_simple        : t -> bool
 
-val sol_of_qbindings : (Ast.Symbol.t * (Ast.pred * Ast.Qualifier.t)) list -> soln
-val sol_of_bindings  : (Ast.Symbol.t * Ast.pred) list -> soln
+val sol_of_qbindings : (Ast.Symbol.t * (Ast.pred * Ast.Qualifier.t) list ) list -> soln
+val sol_of_bindings  : (Ast.Symbol.t * Ast.pred list) list -> soln
+
 val sol_cleanup      : soln -> soln
 val sol_read         : soln -> Ast.Symbol.t -> Ast.pred list
 val sol_update       : soln -> Ast.Symbol.t -> Ast.pred list -> (bool * soln)

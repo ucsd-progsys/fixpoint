@@ -56,5 +56,6 @@ val force_binds: t                                (* Solver Instance   *)
 val save      : string -> t -> FixConstraint.soln -> unit 
 
 val save_soln : string -> FixConstraint.soln -> unit
-
+(*
 val load_soln : string -> FixConstraint.soln
+*)

@@ -244,6 +244,8 @@ let inst_ext qs wf =
 let inst ws qs =
   Misc.flap (inst_ext qs) ws 
   >> (fun _ -> Co.bprintf mydebug "varmatch_ctr = %d \n" !varmatch_ctr)
+  |> Misc.kgroupby fst 
+  |> Misc.map (Misc.app_snd (List.map snd)) 
   |> C.sol_of_bindings
 
 (***************************************************************)
@@ -296,7 +298,7 @@ let solve me (s : C.soln) =
 (* API *)
 let create ts sm ps a ds cs ws qs =
   let tpc = TP.create ts sm ps in
-  let s   = BS.time "Qual Inst" (Misc.flap inst ws) qs in 
+  let s   = BS.time "Qual Inst" (inst ws) qs in 
   let ws  = PP.validate_wfs ws in
   let sri = cs >> F.printf "Pre-Simplify Stats\n%a" print_constr_stats 
                |> BS.time  "Simplify" FixSimplify.simplify_ts
@@ -343,6 +345,7 @@ let save_soln fname s =
   F.fprintf ppf "@[%a@] \n" C.print_soln s;
   close_out oc
 
+(*
 (* API *)
 let load_soln f =
   let _    = Errorline.startFile f in
@@ -351,7 +354,6 @@ let load_soln f =
   let _    = close_in ic in
   List.fold_left (fun sol (k, ps) -> SM.add k ps sol) SM.empty sols
 
-(*
 (***********************************************************************)
 (************** FUTURE WORK:  A Parallel Solver ************************)
 (***********************************************************************)

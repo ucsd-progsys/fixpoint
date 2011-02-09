@@ -46,6 +46,8 @@ let get_arity = function
 let solve ac  = 
   let _       = print_now "Fixpoint: Creating  CI\n" in
   let a       = get_arity ac.T.cs in
+(*let s0      = ac.T.s |> Misc.flap (fun (x,ys) -> List.map (fun y -> (x,y)) ys) 
+                       |> C.sol_of_bindings in *)
   let s0      = C.sol_of_bindings ac.T.s in
   let ctx,s1  = BS.time "create" (S.create ac.T.ts SM.empty ac.T.ps a ac.T.ds ac.T.cs ac.T.ws) ac.T.qs in
   let _       = print_now "Fixpoint: Solving \n" in
