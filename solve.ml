@@ -123,24 +123,6 @@ let refine me s c =
      else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps) x2))
     |> C.group_sol_update s k2s 
 
-(*  
-let normalize_qual = fun t q -> Q.create (Q.vv_of_t q) t (Q.pred_of_t q)
-
-let force_one me s qs (env, ((v, t, _) as r)) : Ast.pred = failwith "TODO"
-let k  = C.fresh kvar () in
-  let t  = C.sort_of_reft r in
-  let s = qs |>: (fun q -> Q.create (Q.vv_of_t q) t (Q.pred_of_t q))
-             |>: (fun q -> k, q)
-             |> C.group_sol_add s in
-  let c = env |- reft <: k
-  let s = refine me s' c |> snd in
-  s[k]
-
-(* API *)
-let force_binds me s qs = force_one me s qs |> Misc.app_snd |> List.map
-let force _             = failwith "TBD: solve.force"
-
-*)
 (***************************************************************)
 (************************* Satisfaction ************************)
 (***************************************************************)
@@ -164,30 +146,6 @@ let unsat_constraints me s =
 (************************ Debugging/Stats **********************)
 (***************************************************************)
 
-let key_of_quals qs = 
-  qs |> List.map P.to_string 
-     |> List.sort compare
-     |> String.concat ","
-
-let dump_solution_cluster s = 
-   s |> Sy.sm_to_list 
-     |> List.map snd 
-     |> Misc.groupby key_of_quals
-     |> List.map begin function [] -> assertf "impossible" | (ps::_ as pss) -> 
-          Co.cprintf Co.ol_solve "SolnCluster: preds %d = size %d \n"
-            (List.length ps) (List.length pss)
-        end
-
-let print_solution_stats ppf s = 
-  let (sum, max, min, bot) =   
-    (SM.fold (fun _ qs x -> (+) x (List.length qs)) s 0,
-     SM.fold (fun _ qs x -> max x (List.length qs)) s min_int,
-     SM.fold (fun _ qs x -> min x (List.length qs)) s max_int,
-     SM.fold (fun _ qs x -> x + (if List.exists P.is_contra qs then 1 else 0)) s 0) in
-  let avg = (float_of_int sum) /. (float_of_int (Sy.sm_length s)) in
-  F.fprintf ppf "# Vars: (Total=%d, False=%d) Quals: (Total=%d, Avg=%f, Max=%d, Min=%d)\n" 
-                (Sy.sm_length s) bot sum avg max min
-
 let print_constr_stats ppf cs = 
   let cn   = List.length cs in
   let scn  = List.length (List.filter C.is_simple cs) in
@@ -209,8 +167,8 @@ let print_solver_stats ppf me =
 
 let dump me s = 
   Co.cprintf Co.ol_solve_stats "%a \n" print_solver_stats me;
-  Co.cprintf Co.ol_solve_stats "%a \n" print_solution_stats s;
-  dump_solution_cluster s
+  Co.cprintf Co.ol_solve_stats "%a \n" C.print_soln_stats s;
+  C.dump_soln_cluster s
 
 (***************************************************************)
 (******************** Qualifier Instantiation ******************)
@@ -265,10 +223,9 @@ let inst_qual ys t' (q : Q.t) : Q.t list =
   end
 (*  >> F.printf "inst_qual q = %a: \n%a" Q.print q (Misc.pprint_many true "" Q.print) *)
 
-let inst_ext (qs : Q.t list) s wf = 
+let inst_ext qs wf = 
   let r    = C.reft_of_wf wf in
   let ks   = C.kvars_of_reft r |> List.map snd in
-  let s    = List.fold_left (fun s k -> C.sol_add s k [] |> snd) s ks in
   let env  = C.env_of_wf wf in
   let ys   = SM.fold (fun y _ ys -> y::ys) env [] in
   let env' = SM.add (fst3 r) r env in
@@ -278,13 +235,16 @@ let inst_ext (qs : Q.t list) s wf =
      |> Misc.filter (wellformed env')
      |> Misc.filter (C.filter_of_wf wf)
      |> Misc.map Q.pred_of_t 
-     |> Misc.cross_product ks 
+     |> Misc.cross_product ks
+(*
      |> C.group_sol_add s ks
      |> snd
+*)
 
-let inst wfs qs s =
-  wfs |> List.fold_left (inst_ext qs) s
-      >> (fun _ -> Co.bprintf mydebug "varmatch_ctr = %d \n" !varmatch_ctr)
+let inst ws qs =
+  Misc.flap (inst_ext qs) ws 
+  >> (fun _ -> Co.bprintf mydebug "varmatch_ctr = %d \n" !varmatch_ctr)
+  |> C.sol_of_bindings
 
 (***************************************************************)
 (******************** Iterative Refinement *********************)
@@ -296,7 +256,7 @@ let log_iter_stats me s =
      let msg = Printf.sprintf "num refines=%d" !(me.stat_refines) in 
      let _   = Timer.log_event me.tt (Some msg) in
      let _   = F.printf "%s" msg in 
-     let _   = F.printf "%a \n" print_solution_stats s in
+     let _   = F.printf "%a \n" C.print_soln_stats s in
      ());
   ()
 
@@ -324,7 +284,7 @@ let solve me (s : C.soln) =
   let _  = Co.cprintf Co.ol_insane "%a%a" Ci.print me.sri C.print_soln s; dump me s in
   let _  = F.printf "Fixpoint: Initialize Worklist \n" in
   let w  = BS.time "init wkl" Ci.winit me.sri in 
-  let s  = BS.time "cleanup"  SM.map (Misc.sort_and_compact) s in
+  let s  = C.sol_cleanup s in
   let _  = F.printf "Fixpoint: Refinement Loop \n" in
   let s  = BS.time "solving"  (acsolve me w) s in
   let _  = dump me s in
@@ -336,7 +296,7 @@ let solve me (s : C.soln) =
 (* API *)
 let create ts sm ps a ds cs ws qs =
   let tpc = TP.create ts sm ps in
-  let s   = BS.time "Qual Inst" (inst ws qs) SM.empty in
+  let s   = BS.time "Qual Inst" (Misc.flap inst ws) qs in 
   let ws  = PP.validate_wfs ws in
   let sri = cs >> F.printf "Pre-Simplify Stats\n%a" print_constr_stats 
                |> BS.time  "Simplify" FixSimplify.simplify_ts

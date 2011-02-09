@@ -62,14 +62,19 @@ defs:
   | def defs                            { $1 :: $2 }
   ;
 
+qual:
+  Id LPAREN Id COLON sort RPAREN COLON pred  
+                                        { A.Qualifier.create (Sy.of_string $3) $5 $8 }
+  ;
+
+
 def:
     SRT COLON sort                      { C.Srt $3 }
   | AXM COLON pred                      { C.Axm $3 }
   | CST COLON cstr                      { C.Cst $3 }
   | WF  COLON wf                        { C.Wfc $3 }
-  | sol                                 { let sym, preds = $1 in C.Sol (sym, preds) }
-  | QUL Id LPAREN Id COLON sort RPAREN COLON pred  
-                                        { C.Qul (A.Qualifier.create (Sy.of_string $4) $6 $9) }
+  | sol                                 { let sym, ps = $1 in C.Sol (sym, ps) }
+  | QUL qual                            { C.Qul $2 }
   | dep                                 { C.Dep $1 }
   ;
 

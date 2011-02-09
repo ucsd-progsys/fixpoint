@@ -9,17 +9,24 @@ open Misc.Ops
 (********************* Command line options **********************)
 (*****************************************************************)
 
+type t = { ts : Ast.Sort.t list
+         ; ps : Ast.pred list
+         ; cs : C.t list
+         ; ws : C.wf list
+         ; ds : C.dep list
+         ; qs : Ast.Qualifier.t list
+         ; s  : (Ast.Symbol.t * Ast.pred list) list}
+
 let sift xs = 
-  List.fold_left begin fun (ts, ps, cs, ws, ds, qs, s) -> 
-      function 
-      | C.Srt t        -> (t::ts, ps, cs, ws, ds, qs, s) 
-      | C.Axm p        -> (ts, p::ps, cs, ws, ds, qs, s) 
-      | C.Cst c        -> (ts, ps, c::cs, ws, ds, qs, s)
-      | C.Wfc w        -> (ts, ps, cs, w::ws, ds, qs, s)
-      | C.Dep d        -> (ts, ps, cs, ws, d::ds, qs, s)
-      | C.Qul q        -> (ts, ps, cs, ws, ds, q::qs, s)
-      | C.Sol (k, kps) -> (ts, ps, cs, ws, ds, qs, SM.add k kps s)
-  end ([], [], [], [], [], [], SM.empty) xs
+  List.fold_left begin fun a -> function 
+    | C.Srt t      -> {a with ts = t  :: a.ts }   
+    | C.Axm p      -> {a with ps = p  :: a.ps } 
+    | C.Cst c      -> {a with cs = c  :: a.cs }
+    | C.Wfc w      -> {a with ws = w  :: a.ws } 
+    | C.Dep d      -> {a with ds = d  :: a.ds }
+    | C.Qul q      -> {a with qs = q  :: a.qs }
+    | C.Sol (k,ps) -> {a with s  = (k,ps) :: a.s  }
+  end {ts = []; ps = []; cs = []; ws = []; ds = []; qs = []; s = [] } xs
 
 let parse f = 
   let _  = Errorline.startFile f in
@@ -40,5 +47,3 @@ let read_inputs usage =
   let _  = Arg.parse Co.arg_spec (fun s -> fs := s::!fs) usage in
   let fq = BS.time "parse" (Misc.flap parse) !fs |> sift in 
   (!fs, fq)
-
-

@@ -43,10 +43,11 @@ let get_arity = function
 (********************* Hooking into Solver ***********************)
 (*****************************************************************)
 
-let solve (ts, ps, cs, ws, ds, qs, s0) = 
+let solve ac  = 
   let _       = print_now "Fixpoint: Creating  CI\n" in
-  let a       = get_arity cs in
-  let ctx,s1  = BS.time "create" (S.create ts SM.empty ps a ds cs ws) qs in
+  let a       = get_arity ac.T.cs in
+  let s0      = C.sol_of_bindings ac.T.s in
+  let ctx,s1  = BS.time "create" (S.create ac.T.ts SM.empty ac.T.ps a ac.T.ds ac.T.cs ac.T.ws) ac.T.qs in
   let _       = print_now "Fixpoint: Solving \n" in
   let s', cs' = BS.time "solve" (S.solve ctx) (C.sol_merge s0 s1) in
   let _       = print_now "Fixpoint: Saving Result \n" in
@@ -67,8 +68,8 @@ let dump_solve cs =
 (********************* Generate Imp Program **********************)
 (*****************************************************************)
 
-let dump_imp (_,_,a,b,_,_,_) = 
-  (List.map (fun c -> C.Cst c) a ++ List.map (fun c -> C.Wfc c) b)
+let dump_imp a = 
+  (List.map (fun c -> C.Cst c) a.T.cs ++ List.map (fun c -> C.Wfc c) a.T.ws)
   |> ToImp.mk_program
   |> F.fprintf F.std_formatter "%a" Imp.print_program_as_c 
   |> fun _ -> exit 1 
@@ -77,16 +78,18 @@ let dump_imp (_,_,a,b,_,_,_) =
 (***************** Generate Simplified Constraints ***************)
 (*****************************************************************)
 
-let simplify_ts x = if !Co.dump_simp = "andrey" 
-                    then (x |> List.map Simplification.simplify_t 
-                            |> List.filter (not <.> Simplification.is_tauto_t)
-                            |> Simplification.simplify_ts)
-                    else FixSimplify.simplify_ts x
+let simplify_ts x = 
+  if !Co.dump_simp = "andrey" 
+  then (x |> List.map Simplification.simplify_t 
+          |> List.filter (not <.> Simplification.is_tauto_t)
+          |> Simplification.simplify_ts)
+  else FixSimplify.simplify_ts x
 
-let dump_simp (ts, ps, cs, ws, ds, qs, s0) = 
-  let a     = get_arity cs in
-  let cs    = simplify_ts cs in
-  let ctx,_ = BS.time "create" (S.create ts SM.empty ps a ds cs ws) [] in
+let dump_simp ac = 
+  let a     = get_arity ac.T.cs in
+  let cs    = simplify_ts ac.T.cs in
+  let s0    = C.sol_of_bindings ac.T.s in
+  let ctx,_ = BS.time "create" (S.create ac.T.ts SM.empty ac.T.ps a ac.T.ds cs ac.T.ws) [] in
   let _     = BS.time "save" (S.save !Co.save_file ctx) s0 in
   exit 1
 
@@ -97,7 +100,7 @@ let dump_simp (ts, ps, cs, ws, ds, qs, s0) =
 let usage = "Usage: fixpoint.native <options> [source-files]\noptions are:"
 
 let main () =
-  let cs  = usage |> Toplevel.read_inputs |> snd in
+  let cs  = usage |> Toplevel.read_inputs |> snd in 
   if !Co.dump_imp then 
     dump_imp cs 
   else if !Co.dump_simp <> "" then 

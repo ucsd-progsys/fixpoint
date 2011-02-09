@@ -130,6 +130,11 @@ let kvars_of_t ({rhs = rhs} as c) =
 exception UnmappedKvar of Sy.t
 
 (* API *)
+
+let sol_of_bindings = assertf "TBD: sol_of_bindings"
+let sol_of_qbindings = assertf "TBD: sol_of_bindings"
+
+(* API *)
 let sol_cleanup s = 
   SM.map Misc.sort_and_compact s
 
@@ -166,12 +171,11 @@ let sol_merge s1 s2 =
 let group_sol_change addf s0 ks kqs = 
   let t  = H.create 17 in
   let _  = List.iter (fun (k, q) -> H.add t k q) kqs in
-  List.fold_left 
-    (fun (b, s) k -> 
+  List.fold_left begin fun (b, s) k -> 
       let qs       = H.find_all t k in 
       let (b', s') = if addf then sol_add s k qs else sol_update s k qs in
-      (b || b', s'))
-    (false, s0) ks
+      (b || b', s')
+  end (false, s0) ks
 
 (* API *)
 let group_sol_update = group_sol_change false
@@ -282,6 +286,9 @@ let print_env so ppf env =
   bindings_of_env env 
   |> F.fprintf ppf "@[%a@]" (Misc.pprint_many_box ";" (print_binding so))
 
+
+
+
 let pprint_id ppf = function
   | Some id     -> F.fprintf ppf "id %d" id
   | None        -> F.fprintf ppf ""
@@ -334,6 +341,34 @@ let print_soln ppf sm =
     Sy.print k (Misc.pprint_many false ";" P.print) ps
   end sm
 
+(* API *)
+let print_soln_stats ppf s = 
+  let (sum, max, min, bot) =   
+    (SM.fold (fun _ qs x -> (+) x (List.length qs)) s 0,
+     SM.fold (fun _ qs x -> max x (List.length qs)) s min_int,
+     SM.fold (fun _ qs x -> min x (List.length qs)) s max_int,
+     SM.fold (fun _ qs x -> x + (if List.exists P.is_contra qs then 1 else 0)) s 0) in
+  let avg = (float_of_int sum) /. (float_of_int (Sy.sm_length s)) in
+  F.fprintf ppf "# Vars: (Total=%d, False=%d) Quals: (Total=%d, Avg=%f, Max=%d, Min=%d)\n" 
+                (Sy.sm_length s) bot sum avg max min
+
+let key_of_quals qs = 
+  qs |> List.map P.to_string 
+     |> List.sort compare
+     |> String.concat ","
+
+let dump_soln_cluster s = 
+   s |> Sy.sm_to_list 
+     |> List.map snd 
+     |> Misc.groupby key_of_quals
+     |> List.map begin function [] -> assertf "impossible" | (ps::_ as pss) -> 
+          Constants.cprintf Constants.ol_solve "SolnCluster: preds %d = size %d \n"
+            (List.length ps) (List.length pss)
+        end
+     |> ignore
+
+
+ 
 (***************************************************************)
 (*********************** Getter/Setter *************************)
 (***************************************************************)

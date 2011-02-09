@@ -26,6 +26,8 @@
 type t                  (* NEVER EVER expose! *) 
 type wf                 (* NEVER EVER expose! *)
 
+type soln               (* = Ast.pred list Ast.Symbol.SMap.t *)
+
 type tag  = int list    (* for ordering: must have same dim, lexico-ordered *)
 type id   = int         (* for identifying: must be unique *) 
 type dep                (* dependencies between constraints *)
@@ -35,8 +37,6 @@ type reft = Ast.Symbol.t * Ast.Sort.t * refa list   (* { VV: t | [ra] } *)
 type envt = reft Ast.Symbol.SMap.t
 
 exception UnmappedKvar of Ast.Symbol.t
-
-type soln = Ast.pred list Ast.Symbol.SMap.t
 
 type deft = Srt of Ast.Sort.t 
           | Axm of Ast.pred 
@@ -63,8 +63,11 @@ val env_of_bindings  : (Ast.Symbol.t * reft) list -> envt
 val bindings_of_env  : envt -> (Ast.Symbol.t * reft) list
 val is_simple        : t -> bool
 
+val sol_of_qbindings : (Ast.Symbol.t * (Ast.pred * Ast.Qualifier.t)) list -> soln
+val sol_of_bindings  : (Ast.Symbol.t * Ast.pred) list -> soln
 val sol_cleanup      : soln -> soln
 val sol_read         : soln -> Ast.Symbol.t -> Ast.pred list
+val sol_update       : soln -> Ast.Symbol.t -> Ast.pred list -> (bool * soln)
 val sol_add          : soln -> Ast.Symbol.t -> Ast.pred list -> (bool * soln)
 val sol_merge        : soln -> soln -> soln
 val group_sol_add    : soln -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) list -> (bool * soln)
@@ -86,6 +89,7 @@ val group_sol_update : soln -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) li
    Format.printf "%a" (Misc.pprint_many true "\n" (C.print_t None)) cs
    *)
 
+val print_soln_stats : Format.formatter -> soln -> unit
 val print_env        : soln option -> Format.formatter -> envt -> unit
 val print_wf         : soln option -> Format.formatter -> wf -> unit
 val print_t          : soln option -> Format.formatter -> t -> unit
@@ -94,6 +98,7 @@ val print_binding    : soln option -> Format.formatter -> (Ast.Symbol.t * reft) 
 val print_soln       : Format.formatter -> soln -> unit
 val print_tag        : Format.formatter -> tag -> unit
 val print_dep        : Format.formatter -> dep -> unit
+val dump_soln_cluster: soln -> unit
 
 val to_string        : t -> string 
 val refa_to_string   : refa -> string
