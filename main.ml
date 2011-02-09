@@ -29,9 +29,9 @@ module SM = Ast.Symbol.SMap
 module Co = Constants 
 module C  = FixConstraint
 module S  = Solve
-module Sn = FixConstraint.Solution
 module F  = Format
 module T  = Toplevel
+module Sn = FixSolution
 
 open Misc.Ops
 

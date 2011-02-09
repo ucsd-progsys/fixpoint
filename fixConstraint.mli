@@ -35,7 +35,6 @@ type refa = Conc of Ast.pred | Kvar of Ast.Subst.t * Ast.Symbol.t
 type reft = Ast.Symbol.t * Ast.Sort.t * refa list   (* { VV: t | [ra] } *)
 type envt = reft Ast.Symbol.SMap.t
 
-exception UnmappedKvar of Ast.Symbol.t
 
 type deft = Srt of Ast.Sort.t 
           | Axm of Ast.pred 
@@ -45,23 +44,6 @@ type deft = Srt of Ast.Sort.t
           | Qul of Ast.Qualifier.t
           | Dep of dep 
 
-module Solution : sig
-  type t
-  val of_qbindings : (Ast.Symbol.t * (Ast.pred * Ast.Qualifier.t) list ) list -> t
-  val of_bindings  : (Ast.Symbol.t * Ast.pred list) list -> t
-  val empty        : t 
-  val cleanup      : t -> t
-  val read         : t -> Ast.Symbol.t -> Ast.pred list
-  val update       : t -> Ast.Symbol.t -> Ast.pred list -> (bool * t)
-  val add          : t -> Ast.Symbol.t -> Ast.pred list -> (bool * t)
-  val merge        : t -> t -> t
-  val group_add    : t -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) list -> (bool * t)
-  val group_update : t -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) list -> (bool * t)
-  val print        : Format.formatter -> t -> unit
-  val print_stats  : Format.formatter -> t -> unit
-  val save         : string -> t -> unit
-  val dump_cluster : t -> unit
-end
 
 val fresh_kvar       : unit -> Ast.Symbol.t
 val kvars_of_reft    : reft -> (Ast.Subst.t * Ast.Symbol.t) list
@@ -69,11 +51,11 @@ val kvars_of_t       : t -> (Ast.Subst.t * Ast.Symbol.t) list
 
 val is_conc_refa     : refa -> bool
 
-val apply_solution   : Solution.t -> reft -> reft
-val preds_of_refa    : Solution.t -> refa -> Ast.pred list
-val preds_of_reft    : Solution.t -> reft -> Ast.pred list
-val preds_of_lhs     : Solution.t -> t -> Ast.pred list
-val vars_of_t        : Solution.t -> t -> Ast.Symbol.t list
+val apply_solution   : FixSolution.t -> reft -> reft
+val preds_of_refa    : FixSolution.t -> refa -> Ast.pred list
+val preds_of_reft    : FixSolution.t -> reft -> Ast.pred list
+val preds_of_lhs     : FixSolution.t -> t -> Ast.pred list
+val vars_of_t        : FixSolution.t -> t -> Ast.Symbol.t list
 
 val preds_kvars_of_reft : reft -> (Ast.pred list * (Ast.Subst.t * Ast.Symbol.t) list)
 val env_of_bindings  : (Ast.Symbol.t * reft) list -> envt
@@ -98,11 +80,11 @@ val is_simple        : t -> bool
    Format.printf "%a" (Misc.pprint_many true "\n" (C.print_t None)) cs
    *)
 
-val print_env        : Solution.t option -> Format.formatter -> envt -> unit
-val print_wf         : Solution.t option -> Format.formatter -> wf -> unit
-val print_t          : Solution.t option -> Format.formatter -> t -> unit
-val print_reft       : Solution.t option -> Format.formatter -> reft -> unit
-val print_binding    : Solution.t option -> Format.formatter -> (Ast.Symbol.t * reft) -> unit
+val print_env        : FixSolution.t option -> Format.formatter -> envt -> unit
+val print_wf         : FixSolution.t option -> Format.formatter -> wf -> unit
+val print_t          : FixSolution.t option -> Format.formatter -> t -> unit
+val print_reft       : FixSolution.t option -> Format.formatter -> reft -> unit
+val print_binding    : FixSolution.t option -> Format.formatter -> (Ast.Symbol.t * reft) -> unit
 val print_tag        : Format.formatter -> tag -> unit
 val print_dep        : Format.formatter -> dep -> unit
 

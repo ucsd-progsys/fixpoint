@@ -158,7 +158,7 @@ let unconstrained_kvars cs =
 let true_unconstrained s sri =
   sri |> Cindex.to_list 
       |> unconstrained_kvars 
-      |> List.fold_left (fun (_, s) kv -> C.Solution.update s kv []) (true, s)
+      |> List.fold_left (fun (_, s) kv -> FixSolution.update s kv []) (true, s)
       |> snd
 
 (* API *)

@@ -84,7 +84,7 @@ let hashtbl_print_frequency t =
 
 let rhs_cands s = function
   | C.Kvar (su, k) -> 
-      k |> C.Solution.read s 
+      k |> FixSolution.read s 
         |> List.map (fun q -> ((k,q), A.substs_pred q su))
   | _ -> []
 
@@ -121,7 +121,7 @@ let refine me s c =
     (if C.is_simple c 
      then (ignore(me.stat_simple_refines += 1); kqs1) 
      else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps) x2))
-    |> C.Solution.group_update s k2s 
+    |> FixSolution.group_update s k2s 
 
 (***************************************************************)
 (************************* Satisfaction ************************)
@@ -167,8 +167,8 @@ let print_solver_stats ppf me =
 
 let dump me s = 
   Co.cprintf Co.ol_solve_stats "%a \n" print_solver_stats me;
-  Co.cprintf Co.ol_solve_stats "%a \n" C.Solution.print_stats s;
-  C.Solution.dump_cluster s
+  Co.cprintf Co.ol_solve_stats "%a \n" FixSolution.print_stats s;
+  FixSolution.dump_cluster s
 
 (***************************************************************)
 (******************** Qualifier Instantiation ******************)
@@ -246,19 +246,19 @@ let inst ws qs =
   >> (fun _ -> Co.bprintf mydebug "varmatch_ctr = %d \n" !varmatch_ctr)
   |> Misc.kgroupby fst 
   |> Misc.map (Misc.app_snd (List.map snd)) 
-  |> C.Solution.of_bindings
+  |> FixSolution.of_bindings
 
 (***************************************************************)
 (******************** Iterative Refinement *********************)
 (***************************************************************)
 
 let log_iter_stats me s = 
-  (if Co.ck_olev Co.ol_insane then F.printf "%a" C.Solution.print s);
+  (if Co.ck_olev Co.ol_insane then F.printf "%a" FixSolution.print s);
   (if !(me.stat_refines) mod 100 = 0 then 
      let msg = Printf.sprintf "num refines=%d" !(me.stat_refines) in 
      let _   = Timer.log_event me.tt (Some msg) in
      let _   = F.printf "%s" msg in 
-     let _   = F.printf "%a \n" C.Solution.print_stats s in
+     let _   = F.printf "%a \n" FixSolution.print_stats s in
      ());
   ()
 
@@ -283,10 +283,10 @@ let solve me s =
   let _  = F.printf "Fixpoint: Validating Initial Solution \n" in
   let _  = BS.time "profile" PP.profile me.sri in
   let s  = PP.true_unconstrained s me.sri in
-  let _  = Co.cprintf Co.ol_insane "%a%a" Ci.print me.sri C.Solution.print s; dump me s in
+  let _  = Co.cprintf Co.ol_insane "%a%a" Ci.print me.sri FixSolution.print s; dump me s in
   let _  = F.printf "Fixpoint: Initialize Worklist \n" in
   let w  = BS.time "init wkl" Ci.winit me.sri in 
-  let s  = C.Solution.cleanup s in
+  let s  = FixSolution.cleanup s in
   let _  = F.printf "Fixpoint: Refinement Loop \n" in
   let s  = BS.time "solving"  (acsolve me w) s in
   let _  = dump me s in
@@ -335,7 +335,7 @@ let save fname me s =
   let ppf = F.formatter_of_out_channel oc in
   F.fprintf ppf "@[%a@] \n" Ci.print me.sri;
   F.fprintf ppf "@[%a@] \n" (Misc.pprint_many true "\n" (C.print_wf None)) me.ws;
-  F.fprintf ppf "@[%a@] \n" C.Solution.print s;
+  F.fprintf ppf "@[%a@] \n" FixSolution.print s;
   close_out oc
 
 (*
