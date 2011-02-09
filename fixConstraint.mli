@@ -25,16 +25,14 @@
 
 type t                  (* NEVER EVER expose! *) 
 type wf                 (* NEVER EVER expose! *)
-
+type dep                (* NEVER EVER expose! dependencies between constraints *)
 
 type tag  = int list    (* for ordering: must have same dim, lexico-ordered *)
 type id   = int         (* for identifying: must be unique *) 
-type dep                (* dependencies between constraints *)
 
 type refa = Conc of Ast.pred | Kvar of Ast.Subst.t * Ast.Symbol.t
 type reft = Ast.Symbol.t * Ast.Sort.t * refa list   (* { VV: t | [ra] } *)
 type envt = reft Ast.Symbol.SMap.t
-
 
 type deft = Srt of Ast.Sort.t 
           | Axm of Ast.pred 

@@ -41,7 +41,6 @@ let mydebug = false
 
 exception UnmappedKvar of Sy.t
 
-
 type t = A.pred list SM.t
   
 (* API *)
@@ -116,7 +115,6 @@ let print_stats ppf s =
   F.fprintf ppf "# Vars: (Total=%d, False=%d) Quals: (Total=%d, Avg=%f, Max=%d, Min=%d)\n" 
                 (Sy.sm_length s) bot sum avg max min
 
-
 (* API *)
 let save fname s =
   let oc  = open_out fname in
@@ -139,5 +137,3 @@ let dump_cluster s =
             (List.length ps) (List.length pss)
         end
      |> ignore
-
-
