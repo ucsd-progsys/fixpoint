@@ -130,9 +130,11 @@ let kvars_of_t ({rhs = rhs} as c) =
 exception UnmappedKvar of Sy.t
 
 (* API *)
-
 let sol_of_bindings = assertf "TBD: sol_of_bindings"
 let sol_of_qbindings = assertf "TBD: sol_of_bindings"
+
+(* API *)
+let sol_empty = sol_of_bindings []
 
 (* API *)
 let sol_cleanup s = 

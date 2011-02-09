@@ -65,7 +65,7 @@ val is_simple        : t -> bool
 
 val sol_of_qbindings : (Ast.Symbol.t * (Ast.pred * Ast.Qualifier.t) list ) list -> soln
 val sol_of_bindings  : (Ast.Symbol.t * Ast.pred list) list -> soln
-
+val sol_empty        : soln 
 val sol_cleanup      : soln -> soln
 val sol_read         : soln -> Ast.Symbol.t -> Ast.pred list
 val sol_update       : soln -> Ast.Symbol.t -> Ast.pred list -> (bool * soln)
@@ -73,6 +73,7 @@ val sol_add          : soln -> Ast.Symbol.t -> Ast.pred list -> (bool * soln)
 val sol_merge        : soln -> soln -> soln
 val group_sol_add    : soln -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) list -> (bool * soln)
 val group_sol_update : soln -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) list -> (bool * soln)
+
 
 (* to print a constraint "c" do:
    Format.printf "%a" (print_t None) c
