@@ -61,9 +61,8 @@ let query s k =
 (* API *)
 let read s k = 
   try SM.find k s with Not_found -> begin
-    Printf.printf "ERROR: Solution.read : unknown kvar %s \n" (Sy.to_string k); raise (UnmappedKvar k)
-    (* asserti false "ERROR: Solution.read : unknown kvar %s \n" (Sy.to_string k) 
-     failure "ERROR: Solution.read : unknown kvar %s \n" (Sy.to_string k) *) 
+    Printf.printf "ERROR: Solution.read : unknown kvar %s \n" (Sy.to_string k);
+    raise (UnmappedKvar k)
   end
 
 (* INV: qs' \subseteq qs *)

@@ -21,8 +21,11 @@ val of_bindings  : (Ast.Symbol.t * Ast.pred list) list -> t
 val empty        : t 
 val cleanup      : t -> t
 val read         : t -> Ast.Symbol.t -> Ast.pred list
-val update       : t -> Ast.Symbol.t -> Ast.pred list -> (bool * t)
+(*
+val update       : t -> Ast.Symbol.t -> (Ast.pred -> bool) -> (bool * t)
+val update       : t -> Ast.Symbol.t -> Ast.pred list -> (bool * t) 
 val add          : t -> Ast.Symbol.t -> Ast.pred list -> (bool * t)
+*)
 val merge        : t -> t -> t
 val group_add    : t -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) list -> (bool * t)
 val group_update : t -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) list -> (bool * t)
