@@ -42,7 +42,8 @@ let mydebug = false
 exception UnmappedKvar of Sy.t
 
 type t = A.pred list SM.t
-  
+type p = Ast.Symbol.t * Ast.pred 
+
 (* API *)
 let of_bindings = List.fold_left (fun s (k, ps) -> SM.add k ps s) SM.empty
 let of_qbindings = assertf "TBD: of_qbindings"
@@ -82,19 +83,6 @@ let add s k qs' =
 
 let merge s1 s2 =
   SM.fold (fun k qs s -> add s k qs |> snd) s1 s2 
-
-let group_change addf s0 ks kqs = 
-  let t  = H.create 17 in
-  let _  = List.iter (fun (k, q) -> H.add t k q) kqs in
-  List.fold_left begin fun (b, s) k -> 
-      let qs       = H.find_all t k in 
-      let (b', s') = if addf then add s k qs else update s k qs in
-      (b || b', s')
-  end (false, s0) ks
-
-(* API *)
-let group_update = group_change false
-let group_add    = group_change true
 
 (* API *)
 let print ppf sm =
@@ -136,3 +124,18 @@ let dump_cluster s =
             (List.length ps) (List.length pss)
         end
      |> ignore
+
+(* API *)
+let p_update s0 ks kqs = 
+  let t  = H.create 17 in
+  let _  = List.iter (fun (k, q) -> H.add t k q) kqs in
+  List.fold_left begin fun (b, s) k -> 
+      let qs       = H.find_all t k in 
+      let (b', s') = update s k qs in
+      (b || b', s')
+  end (false, s0) ks
+
+(* API *)
+let p_read s k =
+  read s k 
+  |> List.map (fun p -> ((k, p), p))

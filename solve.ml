@@ -84,8 +84,9 @@ let hashtbl_print_frequency t =
 
 let rhs_cands s = function
   | C.Kvar (su, k) -> 
-      k |> FixSolution.read s 
-        |> List.map (fun q -> ((k,q), A.substs_pred q su))
+      k |> FixSolution.p_read s 
+        |> List.map (fun (x, q) -> (x, A.substs_pred q su))
+        (* |> List.map (fun q -> ((k,q), A.substs_pred q su)) *)
   | _ -> []
 
 let check_tp me env vv t lps =  function [] -> [] | rcs ->
@@ -109,7 +110,7 @@ let refine me s c =
     (false, s)
   else if BS.time "lhs_contra" (List.exists P.is_contra) lps then 
     let _ = me.stat_unsatLHS += 1 in
-    let _ = me.stat_umatches += (List.length rcs) in
+    let _ = me.stat_umatches += List.length rcs in
     (false, s)
   else
     let rcs     = List.filter (fun (_,p) -> not (P.is_contra p)) rcs in
@@ -121,7 +122,7 @@ let refine me s c =
     (if C.is_simple c 
      then (ignore(me.stat_simple_refines += 1); kqs1) 
      else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps) x2))
-    |> FixSolution.group_update s k2s 
+    |> FixSolution.p_update s k2s 
 
 (***************************************************************)
 (************************* Satisfaction ************************)
@@ -175,9 +176,6 @@ let dump me s =
 (***************************************************************)
 
 let wellformed env q = 
-  (* let t    = Q.sort_of_t q in
-     let v    = Sy.value_variable t in
-     let env' = SM.add v (v,t,[]) env in *)
   A.sortcheck_pred (fun x -> snd3 (SM.find x env)) (Q.pred_of_t q) 
 
 let dupfree_binding xys : bool = 
@@ -236,10 +234,6 @@ let inst_ext qs wf =
      |> Misc.filter (C.filter_of_wf wf)
      |> Misc.map Q.pred_of_t 
      |> Misc.cross_product ks
-(*
-     |> C.group_add s ks
-     |> snd
-*)
 
 let inst ws qs =
   Misc.flap (inst_ext qs) ws 

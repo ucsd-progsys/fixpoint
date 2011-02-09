@@ -158,7 +158,7 @@ let unconstrained_kvars cs =
 let true_unconstrained s sri =
   sri |> Cindex.to_list 
       |> unconstrained_kvars
-      |> Misc.flip (FixSolution.group_update s) []
+      |> Misc.flip (FixSolution.p_update s) []
       |> snd
 
 (* API *)
