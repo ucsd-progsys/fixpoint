@@ -33,29 +33,11 @@ val create    :  Ast.Sort.t list                  (* New sorts, now = []*)
               -> FixConstraint.t list             (* Subtyping Constraints *)
               -> FixConstraint.wf list            (* WF Constraints *)
               -> Ast.Qualifier.t list             (* Qualifiers *)
-              -> (t * FixConstraint.soln)         (* Solver Instance, 
+              -> (t * FixConstraint.Solution.t)         (* Solver Instance, 
                                                      Post-WF solution *) 
 
 val solve     :  t                                (* Solver Instance   *)
-              -> FixConstraint.soln               (* Starting Solution *)
-              -> (FixConstraint.soln * (FixConstraint.t list))    (* Fixpoint Solution, 
+              -> FixConstraint.Solution.t (* Starting Solution *)
+              -> (FixConstraint.Solution.t * (FixConstraint.t list))    (* Fixpoint Solution, 
                                                                      Unsat Constraints *)
-(*    
-val force     :  t                                (* Solver Instance   *)
-              -> FixConstraint.soln               (* Starting Solution *)  
-              -> Ast.Qualifier.t list             (* Candidate Quals   *)
-              -> Ast.pred Ast.Symbol.SMap.t       (* Map from all names to conj of quals *)
-
-val force_binds: t                                (* Solver Instance   *)
-              -> FixConstraint.soln               (* Starting Solution *)
-              -> Ast.Qualifier.t list             (* Candidate Quals   *)       
-              -> ('a * (FixConstraint.envt * FixConstraint.reft)) list 
-              -> ('a * Ast.pred) list             (* Map from all names to conj of quals *)
-*)
-
-val save      : string -> t -> FixConstraint.soln -> unit 
-
-val save_soln : string -> FixConstraint.soln -> unit
-(*
-val load_soln : string -> FixConstraint.soln
-*)
+val save      : string -> t -> FixConstraint.Solution.t -> unit 

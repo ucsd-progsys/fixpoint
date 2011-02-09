@@ -26,7 +26,6 @@
 type t                  (* NEVER EVER expose! *) 
 type wf                 (* NEVER EVER expose! *)
 
-type soln               (* = Ast.pred list Ast.Symbol.SMap.t *)
 
 type tag  = int list    (* for ordering: must have same dim, lexico-ordered *)
 type id   = int         (* for identifying: must be unique *) 
@@ -46,33 +45,41 @@ type deft = Srt of Ast.Sort.t
           | Qul of Ast.Qualifier.t
           | Dep of dep 
 
+module Solution : sig
+  type t
+  val of_qbindings : (Ast.Symbol.t * (Ast.pred * Ast.Qualifier.t) list ) list -> t
+  val of_bindings  : (Ast.Symbol.t * Ast.pred list) list -> t
+  val empty        : t 
+  val cleanup      : t -> t
+  val read         : t -> Ast.Symbol.t -> Ast.pred list
+  val update       : t -> Ast.Symbol.t -> Ast.pred list -> (bool * t)
+  val add          : t -> Ast.Symbol.t -> Ast.pred list -> (bool * t)
+  val merge        : t -> t -> t
+  val group_add    : t -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) list -> (bool * t)
+  val group_update : t -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) list -> (bool * t)
+  val print        : Format.formatter -> t -> unit
+  val print_stats  : Format.formatter -> t -> unit
+  val save         : string -> t -> unit
+  val dump_cluster : t -> unit
+end
+
 val fresh_kvar       : unit -> Ast.Symbol.t
 val kvars_of_reft    : reft -> (Ast.Subst.t * Ast.Symbol.t) list
 val kvars_of_t       : t -> (Ast.Subst.t * Ast.Symbol.t) list
-val apply_solution   : soln -> reft -> reft
 
 val is_conc_refa     : refa -> bool
-val preds_of_refa    : soln -> refa -> Ast.pred list
-val preds_of_reft    : soln -> reft -> Ast.pred list
+
+val apply_solution   : Solution.t -> reft -> reft
+val preds_of_refa    : Solution.t -> refa -> Ast.pred list
+val preds_of_reft    : Solution.t -> reft -> Ast.pred list
+val preds_of_lhs     : Solution.t -> t -> Ast.pred list
+val vars_of_t        : Solution.t -> t -> Ast.Symbol.t list
+
 val preds_kvars_of_reft : reft -> (Ast.pred list * (Ast.Subst.t * Ast.Symbol.t) list)
-
-val preds_of_lhs     : soln -> t -> Ast.pred list
-val vars_of_t        : soln -> t -> Ast.Symbol.t list
-
 val env_of_bindings  : (Ast.Symbol.t * reft) list -> envt
 val bindings_of_env  : envt -> (Ast.Symbol.t * reft) list
 val is_simple        : t -> bool
 
-val sol_of_qbindings : (Ast.Symbol.t * (Ast.pred * Ast.Qualifier.t) list ) list -> soln
-val sol_of_bindings  : (Ast.Symbol.t * Ast.pred list) list -> soln
-val sol_empty        : soln 
-val sol_cleanup      : soln -> soln
-val sol_read         : soln -> Ast.Symbol.t -> Ast.pred list
-val sol_update       : soln -> Ast.Symbol.t -> Ast.pred list -> (bool * soln)
-val sol_add          : soln -> Ast.Symbol.t -> Ast.pred list -> (bool * soln)
-val sol_merge        : soln -> soln -> soln
-val group_sol_add    : soln -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) list -> (bool * soln)
-val group_sol_update : soln -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) list -> (bool * soln)
 
 
 (* to print a constraint "c" do:
@@ -91,16 +98,13 @@ val group_sol_update : soln -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) li
    Format.printf "%a" (Misc.pprint_many true "\n" (C.print_t None)) cs
    *)
 
-val print_soln_stats : Format.formatter -> soln -> unit
-val print_env        : soln option -> Format.formatter -> envt -> unit
-val print_wf         : soln option -> Format.formatter -> wf -> unit
-val print_t          : soln option -> Format.formatter -> t -> unit
-val print_reft       : soln option -> Format.formatter -> reft -> unit
-val print_binding    : soln option -> Format.formatter -> (Ast.Symbol.t * reft) -> unit
-val print_soln       : Format.formatter -> soln -> unit
+val print_env        : Solution.t option -> Format.formatter -> envt -> unit
+val print_wf         : Solution.t option -> Format.formatter -> wf -> unit
+val print_t          : Solution.t option -> Format.formatter -> t -> unit
+val print_reft       : Solution.t option -> Format.formatter -> reft -> unit
+val print_binding    : Solution.t option -> Format.formatter -> (Ast.Symbol.t * reft) -> unit
 val print_tag        : Format.formatter -> tag -> unit
 val print_dep        : Format.formatter -> dep -> unit
-val dump_soln_cluster: soln -> unit
 
 val to_string        : t -> string 
 val refa_to_string   : refa -> string

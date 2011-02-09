@@ -37,6 +37,7 @@ module Sy = A.Symbol
 module SM = Sy.SMap
 module IM = Misc.IntMap 
 module C  = FixConstraint
+
 open Misc.Ops
 
 let mydebug = false 
@@ -157,7 +158,7 @@ let unconstrained_kvars cs =
 let true_unconstrained s sri =
   sri |> Cindex.to_list 
       |> unconstrained_kvars 
-      |> List.fold_left (fun (_, s) kv -> C.sol_update s kv []) (true, s)
+      |> List.fold_left (fun (_, s) kv -> C.Solution.update s kv []) (true, s)
       |> snd
 
 (* API *)
