@@ -88,7 +88,7 @@ let simplify_ts x =
 let dump_simp ac = 
   let a     = get_arity ac.C.cs in
   let cs    = simplify_ts ac.C.cs in
-  let s0    = Sn.of_bindings ac.C.s in
+  let s0    = Sn.of_bindings ac.C.ts SM.empty ac.C.ps ac.C.s in
   let ctx,_ = BS.time "create" (S.create ac.C.ts SM.empty ac.C.ps a ac.C.ds cs ac.C.ws []) [] in
   let _     = BS.time "save" (S.save !Co.save_file ctx) s0 in
   exit 1

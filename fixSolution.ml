@@ -36,6 +36,7 @@ module Sy = A.Symbol
 module Su = A.Subst
 module SM = Sy.SMap
 module BS = BNstats
+module TP = TpNull.Prover
 
 open Misc.Ops
 
@@ -61,18 +62,18 @@ let map_of_bindings =
   <+> List.fold_left (fun s (k, ps) -> SM.add k ps s) SM.empty 
 
 let quals_of_bindings = 
-  Misc.map_partial (snd <+> maybe_map fst) 
+  Misc.map_partial (snd <+> Misc.maybe_map fst) 
   <+> Misc.sort_and_compact
 
 let check_tp tp sm q qs = 
   let vv  = Q.vv_of_t q in
   let lps = [Q.pred_of_t q] in
-  qs |> List.map (Misc.pad_fst tag_of_qual)   
+  qs |> List.map (tag_of_qual <**> Q.pred_of_t)
      |> TP.set_filter tp sm vv lps (fun _ _ -> false) 
 
 let cluster_quals = Misc.groupby Q.sort_of_t 
 
-let update_impt_for_quals tp sm impt qs = 
+let update_impt_for_quals tp sm impt (qs : Q.t list) = 
   List.iter begin fun q ->
     let tag   = tag_of_qual q in 
     qs |> check_tp tp sm q 
