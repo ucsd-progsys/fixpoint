@@ -234,7 +234,7 @@ let inst_ext qs wf =
      |> Misc.flap (inst_qual ys (snd3 r))
      |> Misc.filter (wellformed env')
      |> Misc.filter (C.filter_of_wf wf)
-     |> Misc.map Q.pred_of_t 
+     |> Misc.map (Q.pred_of_t <*> some)
      |> Misc.cross_product ks
 
 let inst ws qs =

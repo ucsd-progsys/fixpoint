@@ -39,7 +39,7 @@ let parse_error msg =
 
 %type <FixConstraint.deft list>              defs
 %type <FixConstraint.deft>                   def
-%type <(Ast.Symbol.t * Ast.pred list) list>  sols
+%type <(Ast.Symbol.t * FixSolution.def list) list>  sols
 %type <So.t list>                            sorts, sortsne 
 %type <So.t>                                 sort
 %type <(Sy.t * So.t) list>                   binds, bindsne 
@@ -246,7 +246,7 @@ subs:
   ;
 
 sol:
-    SOL COLON Id ASGN preds             { ((Sy.of_string $3), $5) }
+    SOL COLON Id ASGN preds             { ((Sy.of_string $3), List.map (fun p -> (p, None)) $5) }
 
 sols:
              { [] }

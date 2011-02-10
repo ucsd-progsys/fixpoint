@@ -44,7 +44,7 @@ let mydebug = false
 
 exception UnmappedKvar of Sy.t
 
-type def = A.pred * (Q.t * Su.t) option
+type def = Ast.pred * Ast.Qualifier.t option
 type p   = Sy.t * def
 type t   = { m   : A.pred list SM.t
            ; qs  : Q.t list
@@ -57,18 +57,19 @@ type t   = { m   : A.pred list SM.t
 
 let tag_of_qual = snd <.> Q.pred_of_t
 
-let map_of_bindings = 
-  List.map (Misc.app_snd fst) 
-  <+> List.fold_left (fun s (k, ps) -> SM.add k ps s) SM.empty 
+let map_of_bindings (bs : (Sy.t * def list) list) =
+  bs |> List.map (fun (k, defs) -> (k, List.map fst defs))
+     |> List.fold_left (fun s (k, ps) -> SM.add k ps s) SM.empty 
 
-let quals_of_bindings = 
-  Misc.map_partial (snd <+> Misc.maybe_map fst) 
-  <+> Misc.sort_and_compact
+let quals_of_bindings bs =
+  bs |> Misc.flap snd
+     |> Misc.map_partial snd 
+     |> Misc.sort_and_compact
 
 let check_tp tp sm q qs = 
   let vv  = Q.vv_of_t q in
   let lps = [Q.pred_of_t q] in
-  qs |> List.map (tag_of_qual <**> Q.pred_of_t)
+  qs |> List.map (tag_of_qual <*> Q.pred_of_t)
      |> TP.set_filter tp sm vv lps (fun _ _ -> false) 
 
 let cluster_quals = Misc.groupby Q.sort_of_t 
@@ -81,7 +82,7 @@ let update_impt_for_quals tp sm impt (qs : Q.t list) =
        |> List.iter (Misc.flip (Hashtbl.replace impt) true)
   end qs
 
-let impt_of_quals qs =
+let impt_of_quals ts sm ps qs =
   let tp   = TP.create ts sm ps in
   let impt = Hashtbl.create 17  in
   qs |> cluster_quals 
@@ -89,12 +90,14 @@ let impt_of_quals qs =
      |> (fun _ -> impt)
 
 (* API *)
-let of_bindings ts sm ps bs =
+let of_bindings ts sm ps (bs : (Sy.t * def list) list) =
   let m   = map_of_bindings bs in
   let qs  = quals_of_bindings bs in
   let imp = impt_of_quals ts sm ps qs in
   {m = m; qs = qs; imp = imp}
 
+(* API *)
+let empty = of_bindings [] SM.empty [] [] 
 
 (* API *)
 let query s k =
@@ -102,7 +105,7 @@ let query s k =
 
 (* API *)
 let read s k = 
-  try SM.find k s with Not_found -> begin
+  try SM.find k s.m with Not_found -> begin
     Printf.printf "ERROR: Solution.read : unknown kvar %s \n" (Sy.to_string k);
     raise (UnmappedKvar k)
   end
@@ -112,10 +115,9 @@ let update s k qs' =
   let qs  = read s k in
   (if mydebug then 
     qs |> List.filter (fun q -> not (List.mem q qs')) 
-       (* |> List.length *) 
        |> F.printf "Dropping %a: (%d) %a \n" Sy.print k (List.length qs) (Misc.pprint_many false "," P.print)
   );
-  (not (Misc.same_length qs qs'), SM.add k qs' s)
+  (not (Misc.same_length qs qs'), {s with m = SM.add k qs' s.m})
 
 let add s k qs' = 
   let qs   = query s k in
@@ -126,22 +128,23 @@ let merge s1 s2 =
   SM.fold (fun k qs s -> add s k qs |> snd) s1 s2 
 
 (* API *)
-let print ppf sm =
+let print ppf s =
   SM.iter begin fun k ps -> 
     F.fprintf ppf "solution: %a := [%a] \n"  
     Sy.print k (Misc.pprint_many false ";" P.print) ps
-  end sm
+  end s.m
 
 (* API *)
-let print_stats ppf s = 
+let print_stats ppf s =
   let (sum, max, min, bot) =   
-    (SM.fold (fun _ qs x -> (+) x (List.length qs)) s 0,
-     SM.fold (fun _ qs x -> max x (List.length qs)) s min_int,
-     SM.fold (fun _ qs x -> min x (List.length qs)) s max_int,
-     SM.fold (fun _ qs x -> x + (if List.exists P.is_contra qs then 1 else 0)) s 0) in
-  let avg = (float_of_int sum) /. (float_of_int (Sy.sm_length s)) in
+    (SM.fold (fun _ qs x -> (+) x (List.length qs)) s.m 0,
+     SM.fold (fun _ qs x -> max x (List.length qs)) s.m min_int,
+     SM.fold (fun _ qs x -> min x (List.length qs)) s.m max_int,
+     SM.fold (fun _ qs x -> x + (if List.exists P.is_contra qs then 1 else 0)) s.m 0) in
+  let n   = Sy.sm_length s.m in
+  let avg = (float_of_int sum) /. (float_of_int n) in
   F.fprintf ppf "# Vars: (Total=%d, False=%d) Quals: (Total=%d, Avg=%f, Max=%d, Min=%d)\n" 
-                (Sy.sm_length s) bot sum avg max min
+    n bot sum avg max min
 
 (* API *)
 let save fname s =
@@ -157,17 +160,17 @@ let key_of_quals qs =
 
 (* API *)
 let dump_cluster s = 
-   s |> Sy.sm_to_list 
-     |> List.map snd 
-     |> Misc.groupby key_of_quals
-     |> List.map begin function [] -> assertf "impossible" | (ps::_ as pss) -> 
-          Constants.cprintf Constants.ol_solve "SolnCluster: preds %d = size %d \n"
+   s.m |> Sy.sm_to_list 
+       |> List.map snd 
+       |> Misc.groupby key_of_quals
+       |> List.map begin function [] -> assertf "impossible" | (ps::_ as pss) -> 
+            Constants.cprintf Constants.ol_solve "SolnCluster: preds %d = size %d \n"
             (List.length ps) (List.length pss)
-        end
-     |> ignore
+          end
+       |> ignore
 
 (* API *)
-let p_update s0 ks kqs = 
+let p_update s0 ks kqs = failwith "TBD: p_update" (* 
   let t  = H.create 17 in
   let _  = List.iter (fun (k, q) -> H.add t k q) kqs in
   List.fold_left begin fun (b, s) k -> 
@@ -175,11 +178,13 @@ let p_update s0 ks kqs =
       let (b', s') = update s k qs in
       (b || b', s')
   end (false, s0) ks
+*)
 
 (* API *)
-let p_read s k =
-  read s k 
-  |> List.map (fun p -> ((k, p), p))
+let p_read s k = failwith "TBD: p_read"
+  (* read s k 
+     |> List.map (fun p -> ((k, (p, None)), p))
+   *)
 
 (* API *)
 let p_imp _ _ = failwith "TBD: fixSolution.p_imp"

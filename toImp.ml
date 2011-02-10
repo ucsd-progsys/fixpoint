@@ -74,9 +74,6 @@ let rec get_kdecl kvar decls =
 let sub_to_assume (var, expr) =
   Assm [A.pAtom (A.eVar var, A.Eq, expr)]
 
-let preds_of_reft reft =
-  C.preds_of_reft (FixSolution.of_bindings []) reft
-
 (* [[{t | p}]]_get *)
 
 let get_instrs vv decls (subs, kvar) =
@@ -91,7 +88,7 @@ let set_instr decls (subs, kvar) =
 let reft_to_get_instrs decls reft =
   let vv = C.vv_of_reft reft in
   let kvars = C.kvars_of_reft reft in
-  let preds = preds_of_reft reft in
+  let preds = C.preds_of_reft FixSolution.empty reft in
   match (kvars, preds) with
   | ([], preds) -> Havc (PVar vv) :: Assm preds :: []
   | (kvars, []) -> Misc.flap (get_instrs vv decls) kvars
@@ -101,7 +98,7 @@ let reft_to_get_instrs decls reft =
 
 let reft_to_set_instrs decls reft =
   let kvars = C.kvars_of_reft reft in
-  let preds = preds_of_reft reft in
+  let preds = C.preds_of_reft FixSolution.empty reft in
   match (kvars, preds) with
   | ([], preds) -> Asst preds :: []
   | (kvars, []) -> List.map (set_instr decls) kvars
