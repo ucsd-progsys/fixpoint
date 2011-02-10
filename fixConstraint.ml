@@ -34,6 +34,9 @@ module Su = Ast.Subst
 
 open Misc.Ops
 
+
+
+
 type tag  = int list
 type id   = int
 type dep  = Adp of tag * tag | Ddp of tag * tag | Ddp_s of tag | Ddp_t of tag
@@ -54,15 +57,38 @@ type deft = Srt of Ast.Sort.t
           | Axm of Ast.pred 
           | Cst of t
           | Wfc of wf
-          | Sol of Ast.Symbol.t * Ast.pred list
+          | Sol of Ast.Symbol.t * FixSolution.def list
           | Qul of Ast.Qualifier.t
           | Dep of dep
+
+type config = { 
+   ts : Ast.Sort.t list
+ ; ps : Ast.pred list
+ ; cs : t list
+ ; ws : wf list
+ ; ds : dep list
+ ; qs : Ast.Qualifier.t list
+ ; s  : (Ast.Symbol.t * FixSolution.def list) list
+}
 
 let mydebug = false 
 
 (*************************************************************)
 (************************** Misc.  ***************************)
 (*************************************************************)
+
+(* API *)
+let sift = 
+  List.fold_left begin fun a -> function 
+    | Srt t      -> {a with ts = t  :: a.ts }   
+    | Axm p      -> {a with ps = p  :: a.ps } 
+    | Cst c      -> {a with cs = c  :: a.cs }
+    | Wfc w      -> {a with ws = w  :: a.ws } 
+    | Dep d      -> {a with ds = d  :: a.ds }
+    | Qul q      -> {a with qs = q  :: a.qs }
+    | Sol (k,ps) -> {a with s  = (k,ps) :: a.s  }
+  end {ts = []; ps = []; cs = []; ws = []; ds = []; qs = []; s = [] } 
+
 
 let is_simple_refatom = function 
   | Kvar (s, _) -> Ast.Subst.is_empty s 

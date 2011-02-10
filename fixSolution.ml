@@ -43,19 +43,17 @@ let mydebug = false
 
 exception UnmappedKvar of Sy.t
 
-
-type p = Sy.t * A.pred * (Q.t * Su.t) option 
-(*
-HEREHEREHERE
-type t = { m  : A.pred list SM.t
-         ; qs : Q.t list
-         ; 
-*)
+type def = A.pred * (Q.t * Su.t) option
+type p   = Sy.t * def
+type t   = { m   : A.pred list SM.t
+           ; qs  : Q.t list
+           ; imp : (Q.t * Q.t, bool) Hashtbl.t
+           }
 
 (* API *)
-let of_bindings = List.fold_left (fun s (k, ps) -> SM.add k ps s) SM.empty
-let of_qbindings = assertf "TBD: of_qbindings"
-
+let of_bindings = { m = List.fold_left (fun s (k, ps) -> SM.add k (List.map fst ps) s) SM.empty
+                  ; qs = []
+                  ; imp = Hashtbl.create 17 }
 (* API *)
 let empty = of_bindings []
 

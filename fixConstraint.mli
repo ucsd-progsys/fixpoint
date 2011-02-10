@@ -38,10 +38,21 @@ type deft = Srt of Ast.Sort.t
           | Axm of Ast.pred 
           | Cst of t 
           | Wfc of wf 
-          | Sol of Ast.Symbol.t * Ast.pred list
+          | Sol of Ast.Symbol.t * FixSolution.def list
           | Qul of Ast.Qualifier.t
           | Dep of dep 
 
+type config = { 
+   ts : Ast.Sort.t list
+ ; ps : Ast.pred list
+ ; cs : t list
+ ; ws : wf list
+ ; ds : dep list
+ ; qs : Ast.Qualifier.t list
+ ; s  : (Ast.Symbol.t * FixSolution.def list) list
+}
+
+val sift : deft list -> config
 
 val fresh_kvar       : unit -> Ast.Symbol.t
 val kvars_of_reft    : reft -> (Ast.Subst.t * Ast.Symbol.t) list

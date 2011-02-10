@@ -18,9 +18,8 @@ exception UnmappedKvar of Ast.Symbol.t
 
 type t
 type p 
+type def         = Ast.pred * (Ast.Qualifier.t * Ast.Subst.t) option
 
-val of_qbindings : (Ast.Symbol.t * (Ast.pred * Ast.Qualifier.t) list ) list -> t
-val of_bindings  : (Ast.Symbol.t * Ast.pred list) list -> t
 val empty        : t 
 val read         : t -> Ast.Symbol.t -> Ast.pred list
 val print        : Format.formatter -> t -> unit
@@ -30,3 +29,5 @@ val dump_cluster : t -> unit
 val p_read       : t -> Ast.Symbol.t -> (p * Ast.pred) list 
 val p_update     : t -> Ast.Symbol.t list -> p list -> (bool * t)
 val p_imp        : p -> p -> bool
+val of_bindings  : (Ast.Symbol.t * def list) list -> t
+

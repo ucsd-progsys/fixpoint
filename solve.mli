@@ -32,7 +32,7 @@ val create    :  Ast.Sort.t list                  (* New sorts, now = []*)
               -> FixConstraint.dep list           (* Dependencies *)
               -> FixConstraint.t list             (* Subtyping Constraints *)
               -> FixConstraint.wf list            (* WF Constraints *)
-              -> (Ast.Symbol.t * Ast.pred list) list   (* Initial Sol Bindings *)
+              -> (Ast.Symbol.t * FixSolution.def list) list   (* Initial Sol Bindings *)
               -> Ast.Qualifier.t list             (* Qualifiers *)
               -> (t * FixSolution.t)              (* Solver Instance, 
                                                      Post-WF solution *) 
