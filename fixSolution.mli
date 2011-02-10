@@ -20,7 +20,7 @@ type t
 type p 
 type def         = Ast.pred * (Ast.Qualifier.t * Ast.Subst.t) option
 
-val empty        : t 
+(* val empty        : t  *)
 val read         : t -> Ast.Symbol.t -> Ast.pred list
 val print        : Format.formatter -> t -> unit
 val print_stats  : Format.formatter -> t -> unit

@@ -51,11 +51,15 @@ type t   = { m   : A.pred list SM.t
            }
 
 (* API *)
-let of_bindings = { m = List.fold_left (fun s (k, ps) -> SM.add k (List.map fst ps) s) SM.empty
-                  ; qs = []
-                  ; imp = Hashtbl.create 17 }
-(* API *)
+let of_bindings bs = failwith "TBD: of_bindings" 
+(* { m = List.fold_left (fun s (k, ps) -> SM.add k (List.map fst ps) s) SM.empty bs
+  ; qs = failwith "TBD: of_bindings" 
+  ; imp = Hashtbl.create 17 }
+*)
+
+(* API 
 let empty = of_bindings []
+*)
 
 (* API *)
 let query s k =

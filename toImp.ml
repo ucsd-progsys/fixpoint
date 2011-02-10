@@ -75,7 +75,7 @@ let sub_to_assume (var, expr) =
   Assm [A.pAtom (A.eVar var, A.Eq, expr)]
 
 let preds_of_reft reft =
-  C.preds_of_reft FixSolution.empty reft
+  C.preds_of_reft (FixSolution.of_bindings []) reft
 
 (* [[{t | p}]]_get *)
 
