@@ -366,12 +366,11 @@ let set me env vv ps =
   ps |> prep_preds me env |> push me;
   (* unsat me *) false
 
-let filter me env ps =
-  ps |> List.rev_map (fun qp -> (qp, z3Pred me env (snd qp))) 
-     |> List.filter  (fun qp -> valid me (snd qp))  
-     |> List.split 
-     |> fst 
-     >> (fun _ -> pop me; clean_decls me)
+let filter me env p_imp ps =
+  ps 
+  |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
+  |> Misc.cov_filter (fun x y -> p_imp (fst3 x) (fst3 y)) (thd3 <+> valid me)
+  |> List.map fst3 
 
 (************************************************************************)
 (********************************* API **********************************)
@@ -394,29 +393,23 @@ let create ts env ps =
   me
 
 (* API *)
-let set_filter (me: t) (env: So.t SM.t) (vv: Sy.t) ps qs =
+let set_filter (me: t) (env: So.t SM.t) (vv: Sy.t) ps p_imp qs =
   let _   = ignore(nb_set   += 1); ignore(nb_query += List.length qs) in
   let ps  = BS.time "fixdiv" (List.rev_map A.fixdiv) ps in
-  let qs' =
-    match BS.time "TP set" (set me env vv) ps with 
-    | true  -> 
-        let _ = nb_unsatLHS += 1 in
-        pop me; qs
+  match BS.time "TP set" (set me env vv) ps with 
+  | true  -> 
+    let _ = nb_unsatLHS += 1 in
+    let _ = pop me in
+    List.map fst qs
 
-    | false ->
-        let qs, qs' = qs 
-                      |> List.rev_map   (fun (x,q) -> (x, A.fixdiv q)) 
-                      |> List.partition (fun (_,q) -> not (P.is_tauto q)) in
-        (qs' ++ (BS.time "TP filter" (filter me env) qs)) in
-  List.map fst qs'
-
-(*let set_filter me env vv ps qs = 
-  let rv = set_filter me env vv ps qs in
-   Co.bprintf mydebug "set_filter \n ps = %a \n |qs| = %d |qs'| = %d \n" 
-      (Misc.pprint_many false "," P.print) ps
-      (List.length qs)
-      (List.length rv);
-  rv *)
+  | false ->
+     qs 
+     |> List.rev_map   (Misc.app_snd A.fixdiv) 
+     |> List.partition (snd <+> P.is_tauto)
+     |> Misc.app_fst (List.map fst)
+     |> Misc.app_snd (BS.time "TP filter" (filter me env p_imp))
+     >> (fun _ -> pop me; clean_decls me)
+     |> Misc.uncurry (++) 
 
 (* API *)
 let print_stats ppf me =

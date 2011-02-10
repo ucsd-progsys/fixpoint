@@ -89,9 +89,9 @@ let rhs_cands s = function
         (* |> List.map (fun q -> ((k,q), A.substs_pred q su)) *)
   | _ -> []
 
-let check_tp me env vv t lps =  function [] -> [] | rcs ->
+let check_tp me env vv t lps f =  function [] -> [] | rcs ->
   let env = SM.map snd3 env |> SM.add vv t in
-  let rv  = TP.set_filter me.tpc env vv lps rcs in
+  let rv  = TP.set_filter me.tpc env vv lps f rcs in
   let _   = ignore(me.stat_tp_refines    += 1);
             ignore(me.stat_imp_queries   += (List.length rcs));
             ignore(me.stat_valid_queries += (List.length rv)) in
@@ -103,12 +103,13 @@ let refine me s c =
   let (vv1, t1, _) = C.lhs_of_t c in
   let (_,_,ra2s) as r2 = C.rhs_of_t c in
   let k2s = r2 |> C.kvars_of_reft |> List.map snd in
-  let lps = BS.time "preds_of_lhs" (C.preds_of_lhs s) c in
   let rcs = BS.time "rhs_cands" (Misc.flap (rhs_cands s)) ra2s in
   if rcs = [] then
     let _ = me.stat_emptyRHS += 1 in
     (false, s)
-  else if BS.time "lhs_contra" (List.exists P.is_contra) lps then 
+  else 
+    let lps = BS.time "preds_of_lhs" (C.preds_of_lhs s) c in
+    if BS.time "lhs_contra" (List.exists P.is_contra) lps then 
     let _ = me.stat_unsatLHS += 1 in
     let _ = me.stat_umatches += List.length rcs in
     (false, s)
@@ -121,7 +122,7 @@ let refine me s c =
     let kqs1    = List.map fst x1 in
     (if C.is_simple c 
      then (ignore(me.stat_simple_refines += 1); kqs1) 
-     else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps) x2))
+     else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps FixSolution.p_imp) x2))
     |> FixSolution.p_update s k2s 
 
 (***************************************************************)
@@ -133,7 +134,8 @@ let unsat me s c =
   let (vv,t,_) = C.lhs_of_t c in
   let lps      = C.preds_of_lhs s c  in
   let rhsp     = c |> C.rhs_of_t |> C.preds_of_reft s |> A.pAnd in
-  not ((check_tp me env vv t lps [(0, rhsp)]) = [0])
+  let f        = fun _ _ -> false in
+  not ((check_tp me env vv t lps f [(0, rhsp)]) = [0])
 
 let unsat me s c = 
   let msg = Printf.sprintf "unsat_cstr %d" (C.id_of_t c) in

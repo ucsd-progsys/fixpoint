@@ -36,6 +36,7 @@ sig
                     -> Ast.Sort.t Ast.Symbol.SMap.t 
                     -> Ast.Symbol.t 
                     -> Ast.pred list 
+                    -> ('a -> 'a -> bool)
                     -> ('a * Ast.pred) list 
                     -> 'a list
                        
