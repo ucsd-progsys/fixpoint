@@ -293,7 +293,7 @@ let solve me s =
 let create ts sm ps a ds cs ws bs0 qs =
   let tpc = TP.create ts sm ps in
   let bs  = BS.time "Qual Inst" (inst ws) qs in
-  let s   = FixSolution.of_bindings (bs0 ++ bs) in
+  let s   = FixSolution.of_bindings ts sm ps (bs0 ++ bs) in
   let ws  = PP.validate_wfs ws in
   let sri = cs >> F.printf "Pre-Simplify Stats\n%a" print_constr_stats 
                |> BS.time  "Simplify" FixSimplify.simplify_ts

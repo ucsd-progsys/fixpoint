@@ -29,5 +29,9 @@ val dump_cluster : t -> unit
 val p_read       : t -> Ast.Symbol.t -> (p * Ast.pred) list 
 val p_update     : t -> Ast.Symbol.t list -> p list -> (bool * t)
 val p_imp        : p -> p -> bool
-val of_bindings  : (Ast.Symbol.t * def list) list -> t
+val of_bindings  : Ast.Sort.t list 
+                   -> Ast.Sort.t Ast.Symbol.SMap.t 
+                   -> Ast.pred list 
+                   -> (Ast.Symbol.t * def list) list 
+                   -> t
 

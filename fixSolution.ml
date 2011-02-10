@@ -47,19 +47,53 @@ type def = A.pred * (Q.t * Su.t) option
 type p   = Sy.t * def
 type t   = { m   : A.pred list SM.t
            ; qs  : Q.t list
-           ; imp : (Q.t * Q.t, bool) Hashtbl.t
+           ; imp : (A.tag * A.tag, bool) Hashtbl.t;
            }
 
-(* API *)
-let of_bindings bs = failwith "TBD: of_bindings" 
-(* { m = List.fold_left (fun s (k, ps) -> SM.add k (List.map fst ps) s) SM.empty bs
-  ; qs = failwith "TBD: of_bindings" 
-  ; imp = Hashtbl.create 17 }
-*)
+(******************************************************************)
+(************* Constructing Initial Solution **********************)
+(******************************************************************)
 
-(* API 
-let empty = of_bindings []
-*)
+let tag_of_qual = snd <.> Q.pred_of_t
+
+let map_of_bindings = 
+  List.map (Misc.app_snd fst) 
+  <+> List.fold_left (fun s (k, ps) -> SM.add k ps s) SM.empty 
+
+let quals_of_bindings = 
+  Misc.map_partial (snd <+> maybe_map fst) 
+  <+> Misc.sort_and_compact
+
+let check_tp tp sm q qs = 
+  let vv  = Q.vv_of_t q in
+  let lps = [Q.pred_of_t q] in
+  qs |> List.map (Misc.pad_fst tag_of_qual)   
+     |> TP.set_filter tp sm vv lps (fun _ _ -> false) 
+
+let cluster_quals = Misc.groupby Q.sort_of_t 
+
+let update_impt_for_quals tp sm impt qs = 
+  List.iter begin fun q ->
+    let tag   = tag_of_qual q in 
+    qs |> check_tp tp sm q 
+       |> List.map (fun tag' -> (tag, tag')) 
+       |> List.iter (Misc.flip (Hashtbl.replace impt) true)
+  end qs
+
+let impt_of_quals qs =
+  let tp   = TP.create ts sm ps in
+  let impt = Hashtbl.create 17  in
+  qs |> cluster_quals 
+     |> List.iter (update_impt_for_quals tp sm impt)
+     |> (fun _ -> impt)
+
+(* API *)
+let of_bindings ts sm ps bs =
+  let m   = map_of_bindings bs in
+  let qs  = quals_of_bindings bs in
+  let imp = impt_of_quals ts sm ps qs in
+  {m = m; qs = qs; imp = imp}
+
 
 (* API *)
 let query s k =
