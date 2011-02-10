@@ -22,20 +22,11 @@ type p
 val of_qbindings : (Ast.Symbol.t * (Ast.pred * Ast.Qualifier.t) list ) list -> t
 val of_bindings  : (Ast.Symbol.t * Ast.pred list) list -> t
 val empty        : t 
-val cleanup      : t -> t
 val read         : t -> Ast.Symbol.t -> Ast.pred list
-val merge        : t -> t -> t
-
-(*
-val group_add    : t -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) list -> (bool * t)
-val group_update : t -> Ast.Symbol.t list -> (Ast.Symbol.t * Ast.pred) list -> (bool * t)
-*)
-
 val print        : Format.formatter -> t -> unit
 val print_stats  : Format.formatter -> t -> unit
 val save         : string -> t -> unit
 val dump_cluster : t -> unit
-
 val p_read       : t -> Ast.Symbol.t -> (p * Ast.pred) list 
 val p_update     : t -> Ast.Symbol.t list -> p list -> (bool * t)
 val p_imp        : p -> p -> bool

@@ -47,14 +47,14 @@ let get_arity = function
 let solve ac  = 
   let _       = print_now "Fixpoint: Creating  CI\n" in
   let a       = get_arity ac.T.cs in
-  let s0      = Sn.of_bindings ac.T.s in
-  let ctx,s1  = BS.time "create" (S.create ac.T.ts SM.empty ac.T.ps a ac.T.ds ac.T.cs ac.T.ws) ac.T.qs in
+  let ctx,s   = BS.time "create" (S.create ac.T.ts SM.empty ac.T.ps a ac.T.ds
+  ac.T.cs ac.T.ws ac.T.s) ac.T.qs in
   let _       = print_now "Fixpoint: Solving \n" in
-  let s', cs' = BS.time "solve" (S.solve ctx) (Sn.merge s0 s1) in
+  let s, cs'  = BS.time "solve" (S.solve ctx) s in
   let _       = print_now "Fixpoint: Saving Result \n" in
-  let _       = BS.time "save" (S.save !Co.save_file ctx) s' in
+  let _       = BS.time "save" (S.save !Co.save_file ctx) s in
   let _       = F.printf "%a \nUnsat Constraints:\n %a" 
-                  Sn.print s' 
+                  Sn.print s 
                   (Misc.pprint_many true "\n" (C.print_t None)) cs' in
   cs'
 
@@ -90,7 +90,7 @@ let dump_simp ac =
   let a     = get_arity ac.T.cs in
   let cs    = simplify_ts ac.T.cs in
   let s0    = Sn.of_bindings ac.T.s in
-  let ctx,_ = BS.time "create" (S.create ac.T.ts SM.empty ac.T.ps a ac.T.ds cs ac.T.ws) [] in
+  let ctx,_ = BS.time "create" (S.create ac.T.ts SM.empty ac.T.ps a ac.T.ds cs ac.T.ws []) [] in
   let _     = BS.time "save" (S.save !Co.save_file ctx) s0 in
   exit 1
 

@@ -18,7 +18,6 @@
  * AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS 
  * ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION 
  * TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
- *
  *)
 
  
@@ -31,18 +30,27 @@ module H  = Hashtbl
 module A  = Ast
 module E  = A.Expression
 module P  = A.Predicate
+
+module Q  = A.Qualifier
 module Sy = A.Symbol
+module Su = A.Subst
 module SM = Sy.SMap
 module BS = BNstats
-module Su = Ast.Subst
 
 open Misc.Ops
+
 let mydebug = false 
 
 exception UnmappedKvar of Sy.t
 
-type t = A.pred list SM.t
-type p = Ast.Symbol.t * Ast.pred 
+
+type p = Sy.t * A.pred * (Q.t * Su.t) option 
+(*
+HEREHEREHERE
+type t = { m  : A.pred list SM.t
+         ; qs : Q.t list
+         ; 
+*)
 
 (* API *)
 let of_bindings = List.fold_left (fun s (k, ps) -> SM.add k ps s) SM.empty
@@ -50,10 +58,6 @@ let of_qbindings = assertf "TBD: of_qbindings"
 
 (* API *)
 let empty = of_bindings []
-
-(* API *)
-let cleanup s = 
-  SM.map Misc.sort_and_compact s
 
 (* API *)
 let query s k =
@@ -140,5 +144,5 @@ let p_read s k =
   read s k 
   |> List.map (fun p -> ((k, p), p))
 
-
+(* API *)
 let p_imp _ _ = failwith "TBD: fixSolution.p_imp"
