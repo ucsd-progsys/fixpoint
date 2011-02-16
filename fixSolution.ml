@@ -157,7 +157,7 @@ let dump_cluster s =
 (************************************************************)
 
 (* API *)
-let of_bindings ts sm ps (bs : (Sy.t * def list) list) =
+let of_bindings  ts sm ps (bs : (Sy.t * def list) list) =
   let m    = map_of_bindings bs in
   let qs   = quals_of_bindings bs in
   let impm = impm_of_quals ts sm ps qs in
