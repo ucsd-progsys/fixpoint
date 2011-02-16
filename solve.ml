@@ -35,6 +35,7 @@ module PH = A.Predicate.Hash
 module Sy = A.Symbol
 module SM = Sy.SMap
 module C  = FixConstraint
+module Sn = FixSolution
 module Ci = Cindex
 module TP = TpNull.Prover
 module PP = Prepass
@@ -84,7 +85,7 @@ let hashtbl_print_frequency t =
 
 let rhs_cands s = function
   | C.Kvar (su, k) -> 
-      k |> FixSolution.p_read s 
+      k |> Sn.p_read s 
         |> List.map (fun (x, q) -> (x, A.substs_pred q su))
         (* |> List.map (fun q -> ((k,q), A.substs_pred q su)) *)
   | _ -> []
@@ -122,8 +123,8 @@ let refine me s c =
     let kqs1    = List.map fst x1 in
     (if C.is_simple c 
      then (ignore(me.stat_simple_refines += 1); kqs1) 
-     else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps FixSolution.p_imp) x2))
-    |> FixSolution.p_update s k2s 
+     else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps (Sn.p_imp s)) x2))
+    |> Sn.p_update s k2s 
 
 (***************************************************************)
 (************************* Satisfaction ************************)
@@ -170,15 +171,15 @@ let print_solver_stats ppf me =
 
 let dump me s = 
   Co.cprintf Co.ol_solve_stats "%a \n" print_solver_stats me;
-  Co.cprintf Co.ol_solve_stats "%a \n" FixSolution.print_stats s;
-  FixSolution.dump_cluster s
+  Co.cprintf Co.ol_solve_stats "%a \n" Sn.print_stats s;
+  Sn.dump_cluster s
 
 (***************************************************************)
 (******************** Qualifier Instantiation ******************)
 (***************************************************************)
 
 let wellformed env q = 
-  A.sortcheck_pred (fun x -> snd3 (SM.find x env)) (Q.pred_of_t q) 
+  A.sortcheck_pred (fun x -> snd3 (SM.find x env)) (Q.pred_of_t q)
 
 let dupfree_binding xys : bool = 
   let ys  = List.map snd xys in
@@ -202,15 +203,16 @@ let valid_bindings ys x =
   ys |> List.map (fun y -> (x, y))
      |> List.filter varmatch 
 
-let inst_qual ys t' (q : Q.t) : Q.t list =
+let inst_qual ys t' (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
   let v  = Q.vv_of_t   q in
   let p  = Q.pred_of_t q in
+  let q' = Q.create "" v t' p in
   let v' = Sy.value_variable t' in
-  let p' = P.subst p v (A.eVar v') in
+  let su = Su.of_list [(v, A.eVar v')] in 
   begin
-  match P.support p' |> List.filter Sy.is_wild with
+  match q' |> Q.pred_of_t |> P.support |> List.filter Sy.is_wild with
   | [] -> 
-      [Q.create v' t' p']
+      [q', (q, su)]
   | xs -> 
       xs
       |> Misc.sort_and_compact
@@ -218,9 +220,12 @@ let inst_qual ys t' (q : Q.t) : Q.t list =
       |> Misc.product                                   (* generate combinations *) 
       |> List.filter valid_binding                      (* remove bogus bindings *)
       |> List.map (List.map (Misc.app_snd A.eVar))      (* instantiations        *)
+      |> List.rev_map Su.of_list                        (* convert to substs     *)
+      |> List.rev_map (fun su' -> (Q.subst su' q', (q, Su.concat su su'))) (* quals *)
+(*
       |> List.rev_map (Su.of_list <+> A.substs_pred p') (* substituted preds     *)
       |> List.map (Q.create v' t' )                     (* qualifiers            *)
-  end
+*)  end
 (*  >> F.printf "inst_qual q = %a: \n%a" Q.print q (Misc.pprint_many true "" Q.print) *)
 
 let inst_ext qs wf = 
@@ -228,16 +233,17 @@ let inst_ext qs wf =
   let ks   = C.kvars_of_reft r |> List.map snd in
   let env  = C.env_of_wf wf in
   let ys   = SM.fold (fun y _ ys -> y::ys) env [] in
-  let env' = SM.add (fst3 r) r env in
+  let vv   = fst3 r in
   let t    = snd3 r in
+  let env' = SM.add vv r env in
   qs |> List.filter (fun q -> not (So.unify [t] [Q.sort_of_t q] = None))
-     |> Misc.flap (inst_qual ys (snd3 r))
-     |> Misc.filter (wellformed env')
-     |> Misc.filter (C.filter_of_wf wf)
-     |> Misc.map (Q.pred_of_t <*> some)
+     |> Misc.flap (inst_qual ys t)
+     |> Misc.filter (fst <+> wellformed env')
+     |> Misc.filter (fst <+> C.filter_of_wf wf)
+     |> Misc.map (Misc.app_fst Q.pred_of_t)
      |> Misc.cross_product ks
 
-let inst ws qs =
+let inst ws qs = 
   Misc.flap (inst_ext qs) ws 
   >> (fun _ -> Co.bprintf mydebug "varmatch_ctr = %d \n" !varmatch_ctr)
   |> Misc.kgroupby fst 
@@ -248,12 +254,12 @@ let inst ws qs =
 (***************************************************************)
 
 let log_iter_stats me s = 
-  (if Co.ck_olev Co.ol_insane then F.printf "%a" FixSolution.print s);
+  (if Co.ck_olev Co.ol_insane then F.printf "%a" Sn.print s);
   (if !(me.stat_refines) mod 100 = 0 then 
      let msg = Printf.sprintf "num refines=%d" !(me.stat_refines) in 
      let _   = Timer.log_event me.tt (Some msg) in
      let _   = F.printf "%s" msg in 
-     let _   = F.printf "%a \n" FixSolution.print_stats s in
+     let _   = F.printf "%a \n" Sn.print_stats s in
      ());
   ()
 
@@ -278,7 +284,7 @@ let solve me s =
   let _  = F.printf "Fixpoint: Validating Initial Solution \n" in
   let _  = BS.time "profile" PP.profile me.sri in
   let s  = PP.true_unconstrained s me.sri in
-  let _  = Co.cprintf Co.ol_insane "%a%a" Ci.print me.sri FixSolution.print s; dump me s in
+  let _  = Co.cprintf Co.ol_insane "%a%a" Ci.print me.sri Sn.print s; dump me s in
   let _  = F.printf "Fixpoint: Initialize Worklist \n" in
   let w  = BS.time "init wkl" Ci.winit me.sri in 
   let _  = F.printf "Fixpoint: Refinement Loop \n" in
@@ -293,7 +299,7 @@ let solve me s =
 let create ts sm ps a ds cs ws bs0 qs =
   let tpc = TP.create ts sm ps in
   let bs  = BS.time "Qual Inst" (inst ws) qs in
-  let s   = FixSolution.of_bindings ts sm ps (bs0 ++ bs) in
+  let s   = Sn.of_bindings ts sm ps (bs0 ++ bs) in
   let ws  = PP.validate_wfs ws in
   let sri = cs >> F.printf "Pre-Simplify Stats\n%a" print_constr_stats 
                |> BS.time  "Simplify" FixSimplify.simplify_ts
@@ -330,7 +336,7 @@ let save fname me s =
   let ppf = F.formatter_of_out_channel oc in
   F.fprintf ppf "@[%a@] \n" Ci.print me.sri;
   F.fprintf ppf "@[%a@] \n" (Misc.pprint_many true "\n" (C.print_wf None)) me.ws;
-  F.fprintf ppf "@[%a@] \n" FixSolution.print s;
+  F.fprintf ppf "@[%a@] \n" Sn.print s;
   close_out oc
 
 (*

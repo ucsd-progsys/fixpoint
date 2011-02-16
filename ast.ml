@@ -32,8 +32,8 @@
 
 (* random touch *)
 
-module F = Format
-
+module F  = Format
+module SM = Misc.StringMap
 open Misc.Ops
 
 let mydebug = false
@@ -210,10 +210,10 @@ module Symbol =
     let mk_wild =
       let t,_ = Misc.mk_int_factory () in
       t <+> string_of_int <+> (^) "~A"
-
-    let is_wild s = 
-      if s = "" then false else 
-        (s.[0] = '~' || s.[0] = '@')
+    
+    let is_wild_any s = s.[0] = '~'
+    let is_wild_pre s = s.[0] = '@'
+    let is_wild s     = is_wild_any s || is_wild_pre s
 
     let is_safe s = 
       (* let re = Str.regexp "[a-zA-Z][a-z A-Z 0-9 _]*" in *)
@@ -1051,35 +1051,62 @@ end
 
 module Qualifier = struct
   
-  type t = Symbol.t * Sort.t * pred
-  
-  let vv_of_t   = fst3 
-  let sort_of_t = snd3
-  let pred_of_t = thd3
- 
-  (*
-  let create vo t p =
-    match vo with 
-    | None -> 
-        (t, p)
-    | Some v ->
-      (t, Predicate.subst p v (eVar (Symbol.value_variable t)))
+  type t = { name  : string
+           ; vvar  : Symbol.t
+           ; vsort : Sort.t 
+           ; pred  : pred }
 
-  let create = fun v t p -> (v, t, p)
-  
-  *)
-  
-  let create v t p = 
-    let v' = Symbol.value_variable t in 
-    v', t, Predicate.subst p v (eVar v')
+  let name_of_t = fun q -> q.name
+  let vv_of_t   = fun q -> q.vvar
+  let sort_of_t = fun q -> q.vsort
+  let pred_of_t = fun q -> q.pred
 
-  let subst  = fun su (v,t,p) -> su |> Subst.to_list |> Predicate.substs p |> create v t
+  let czr () = 
+    let n = ref 0 in
+    let t = Hashtbl.create 7 in
+    function 
+      | (Var x, _) when Hashtbl.mem t x -> 
+          Hashtbl.find t x 
+      | (Var x, _) when Symbol.is_wild_any x -> 
+          "~A" ^ (string_of_int (n =+ 1))
+          |> Symbol.of_string 
+          |> eVar 
+          >> Hashtbl.replace t x
+      | e -> e
 
-  let print ppf (v, t, p) = 
-    Format.fprintf ppf "qualif qq(%a:%a):%a \n" 
-      Symbol.print v
-      Sort.print t
-      Predicate.print p
+  let canon p = Predicate.map id (czr ()) p
+
+  (* remove duplicates, ensure distinct names *)
+  let normalize qs = 
+    qs |> List.map (fun q -> {q with pred = canon q.pred})
+       |> Misc.sort_and_compact 
+       |> Misc.mapfold begin fun m q ->
+            if SM.mem q.name m then
+              let i = SM.find q.name m in
+              (SM.add q.name (i+1) m, {q with name = q.name ^ (string_of_int i)})
+            else
+              (SM.add q.name 0 m, q)
+          end SM.empty 
+       |> snd
+
+  let create n v t p = 
+    let v'  = Symbol.value_variable t in 
+    { name  = n
+    ; vvar  = v'
+    ; vsort = t
+    ; pred  = Predicate.subst p v (eVar v') }
+
+  let subst su q = 
+    su |> Subst.to_list 
+       |> Predicate.substs q.pred
+       |> create q.name q.vvar q.vsort
+
+  let print ppf q = 
+    Format.fprintf ppf "qualif %s(%a:%a):%a \n" 
+      q.name
+      Symbol.print q.vvar
+      Sort.print q.vsort
+      Predicate.print q.pred
 end
 
 (**************************************************************************)

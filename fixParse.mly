@@ -39,7 +39,7 @@ let parse_error msg =
 
 %type <FixConstraint.deft list>              defs
 %type <FixConstraint.deft>                   def
-%type <(Ast.Symbol.t * FixSolution.def list) list>  sols
+%type <(Ast.Symbol.t * (Ast.pred * (string * Ast.Subst.t)) list) list>  sols
 %type <So.t list>                            sorts, sortsne 
 %type <So.t>                                 sort
 %type <(Sy.t * So.t) list>                   binds, bindsne 
@@ -64,7 +64,7 @@ defs:
 
 qual:
   Id LPAREN Id COLON sort RPAREN COLON pred  
-                                        { A.Qualifier.create (Sy.of_string $3) $5 $8 }
+                                        { A.Qualifier.create $1 (Sy.of_string $3) $5 $8 }
   ;
 
 
@@ -245,8 +245,22 @@ subs:
   | LB Id ASGN expr RB subs             { Su.extend $6 ((Sy.of_string $2), $4) } 
   ;
 
+npred: 
+  LPAREN pred COMMA Id subs RPAREN      { ($2, ($4, $5)) }
+  ;
+
+npreds:
+    LB RB                                { [] }
+  | LB npredsne RB                       { $2 }
+  ;
+
+npredsne:
+    npred                                { [$1] }
+  | npred SEMI npredsne                  { $1 :: $3 }
+;
+
 sol:
-    SOL COLON Id ASGN preds             { ((Sy.of_string $3), List.map (fun p -> (p, None)) $5) }
+    SOL COLON Id ASGN npreds            { ((Sy.of_string $3), $5) }
 
 sols:
              { [] }

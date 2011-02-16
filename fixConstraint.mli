@@ -38,7 +38,7 @@ type deft = Srt of Ast.Sort.t
           | Axm of Ast.pred 
           | Cst of t 
           | Wfc of wf 
-          | Sol of Ast.Symbol.t * FixSolution.def list
+          | Sol of Ast.Symbol.t * (Ast.pred * (string * Ast.Subst.t)) list
           | Qul of Ast.Qualifier.t
           | Dep of dep 
 

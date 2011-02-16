@@ -43,21 +43,19 @@ let mydebug = false
 
 exception UnmappedKvar of Sy.t
 
-module TTMap = Map.Make (struct
+module TTM = Map.Make (struct
     type t = A.tag * A.tag 
     let compare = compare 
   end)
 
+type def = Ast.pred * (Ast.Qualifier.t * Ast.Subst.t)
 
-type def = Ast.pred * (Ast.Qualifier.t * Ast.Subst.t) option
 type p   = Sy.t * def
+
 type t   = { m    : def list SM.t
            ; qs   : Q.t list
-           ; impm : bool Misc.IntIntMap.t;
-             (* (t1,t2) \in impm iff 
-                  q1 => q2 /\ 
-                  t1 = tag_of_qual q1 /\ 
-                  t2 = tag_of_qual q2 *)
+           ; impm : bool TTM.t;
+             (* (t1,t2) \in impm iff q1 => q2 /\ t1 = tag_of_qual q1 /\ t2 = tag_of_qual q2 *)
            }
 
 (*************************************************************)
@@ -66,12 +64,18 @@ type t   = { m    : def list SM.t
 
 let tag_of_qual = snd <.> Q.pred_of_t
 
-let map_of_bindings (bs : (Sy.t * def list) list) =
-  List.fold_left (fun s (k, defs) -> SM.add k defs s) SM.empty bs 
+let def_of_pred_qual (p, q) =
+  let qp = Q.pred_of_t q in
+  match A.unify_pred qp p with
+  | Some su -> (p, q, su)
+  | None    -> assertf "ERROR: unify q=%s p=%s" (P.to_string qp) (P.to_string p)
+
+let map_of_bindings bs =
+  List.fold_left (fun s (k, ds) -> SM.add k ds s) SM.empty bs 
 
 let quals_of_bindings bs =
   bs |> Misc.flap snd
-     |> Misc.map_partial snd 
+     |> Misc.map (snd <+> fst) 
      |> Misc.sort_and_compact
 
 
@@ -92,13 +96,13 @@ let update_impm_for_quals tp sm impm qs =
     let tag   = tag_of_qual q in 
     qs |> check_tp tp sm q 
        |> List.map (fun tag' -> (tag, tag')) 
-       |> List.fold_left (fun ttm k -> TTMap.add k true ttm) ttm 
+       |> List.fold_left (fun ttm k -> TTM.add k true ttm) ttm 
   end impm qs
 
 let impm_of_quals ts sm ps qs =
   let tp = TP.create ts sm ps in
   qs |> cluster_quals 
-     |> List.fold_left (update_impm_for_quals tp sm) TTMap.empty
+     |> List.fold_left (update_impm_for_quals tp sm) TTM.empty
 
 (************************************************************)
 (*********************** Profile/Stats **********************)
@@ -157,10 +161,10 @@ let dump_cluster s =
 (************************************************************)
 
 (* API *)
-let of_bindings  ts sm ps (bs : (Sy.t * def list) list) =
+let of_bindings ts sm ps bs =
   let m    = map_of_bindings bs in
   let qs   = quals_of_bindings bs in
-  let impm = impm_of_quals ts sm ps qs in (* HEREHEREHEREHEREHEREHERE *)
+  let impm = impm_of_quals ts sm ps qs in
   {m = m; qs = qs; impm = impm}
 
 
@@ -178,8 +182,8 @@ let read s k = p_read s k |> List.map snd
 
 (* API *)
 let p_imp s p1 p2 = match p1, p2 with
-  | (_, (p1, Some (q1,su1))), (_, (p2, Some (q2, su2))) ->
-      su1 = su2 &&  (Misc.map_pair tag_of_qual (q1, q2) |> TTMap.mem s.impm) 
+  | (_, (p1, (q1, su1))), (_, (p2, (q2, su2))) ->
+      su1 = su2 &&  (Misc.map_pair tag_of_qual (q1, q2) |> Misc.flip TTM.mem s.impm) 
   | _ -> 
       false
 
@@ -189,20 +193,19 @@ let update m k ds' =
   (if mydebug then 
     ds |> List.filter (fun d -> not (List.mem d ds'))
        |> List.map fst
-       |> F.printf "Dropping %a: (%d) %a \n" Sy.print k (List.length qs) pprint_ps
+       |> F.printf "Dropping %a: (%d) %a \n" Sy.print k (List.length ds) pprint_ps
   );
   (not (Misc.same_length ds ds'), SM.add k ds' m)
 
 
 (* API *)
-let p_update s0 ks kds =  
-  let t  = H.create 17 in
-  let _  = List.iter (fun (k, d) -> H.add t k d) kds in
-  List.fold_left begin fun (b, m) k -> 
-      let ds       = H.find_all t k in 
-      let (b', m') = update m k ds in
-      (b || b', m')
-  end (false, s0) ks
+let p_update s0 ks kds = 
+  Misc.kgroupby fst kds 
+  |> List.fold_left begin fun (b, m) (k, ds) -> 
+      ds |> List.map snd 
+         |> update m k 
+         |> Misc.app_fst ((||) b)
+     end (false, s0.m) 
   |> Misc.app_snd (fun m -> { s0 with m = m })  
 
 (* {{{ DEPRECATED 

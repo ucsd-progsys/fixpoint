@@ -31,7 +31,7 @@ module Sy = A.Symbol
 module SM = Sy.SMap
 module BS = BNstats
 module Su = Ast.Subst
-
+module MSM = Misc.StringMap
 open Misc.Ops
 
 
@@ -57,7 +57,7 @@ type deft = Srt of Ast.Sort.t
           | Axm of Ast.pred 
           | Cst of t
           | Wfc of wf
-          | Sol of Ast.Symbol.t * FixSolution.def list
+          | Sol of Ast.Symbol.t * (Ast.pred * (string * Ast.Subst.t)) list
           | Qul of Ast.Qualifier.t
           | Dep of dep
 
@@ -77,8 +77,17 @@ let mydebug = false
 (************************** Misc.  ***************************)
 (*************************************************************)
 
+let sift_quals ds = 
+  ds |> Misc.map_partial (function Qul q -> Some (Ast.Qualifier.name_of_t q, q) | _ -> None)
+     >> (List.map fst <+> (fun ns -> asserts (Misc.distinct ns) "ERROR: duplicate quals!"))
+     |> Misc.sm_of_list
+
+
 (* API *)
-let sift = 
+let sift ds =
+  let qm  = sift_quals ds in
+  let n2q = fun n -> Misc.do_catchf "name2qual" (MSM.find n) qm in
+  let s2d = List.map (fun (p, (n,s)) -> (p, (n2q n, s))) in
   List.fold_left begin fun a -> function 
     | Srt t      -> {a with ts = t  :: a.ts }   
     | Axm p      -> {a with ps = p  :: a.ps } 
@@ -86,8 +95,10 @@ let sift =
     | Wfc w      -> {a with ws = w  :: a.ws } 
     | Dep d      -> {a with ds = d  :: a.ds }
     | Qul q      -> {a with qs = q  :: a.qs }
-    | Sol (k,ps) -> {a with s  = (k,ps) :: a.s  }
-  end {ts = []; ps = []; cs = []; ws = []; ds = []; qs = []; s = [] } 
+    | Sol (k,ps) -> {a with s  = (k, s2d ps) :: a.s  }
+  end {ts = []; ps = []; cs = []; ws = []; ds = []; qs = []; s = [] } ds 
+
+
 
 
 let is_simple_refatom = function 
