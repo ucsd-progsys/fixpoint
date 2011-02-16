@@ -18,20 +18,22 @@ exception UnmappedKvar of Ast.Symbol.t
 
 type t
 type p 
-type def         = Ast.pred * Ast.Qualifier.t option
+type def = Ast.pred * (Ast.Qualifier.t * Ast.Subst.t) option
 
 val empty        : t
 val read         : t -> Ast.Symbol.t -> Ast.pred list
-val print        : Format.formatter -> t -> unit
-val print_stats  : Format.formatter -> t -> unit
-val save         : string -> t -> unit
-val dump_cluster : t -> unit
 val p_read       : t -> Ast.Symbol.t -> (p * Ast.pred) list 
 val p_update     : t -> Ast.Symbol.t list -> p list -> (bool * t)
-val p_imp        : p -> p -> bool
+val p_imp        : t -> p -> p -> bool
 val of_bindings  : Ast.Sort.t list 
                    -> Ast.Sort.t Ast.Symbol.SMap.t 
                    -> Ast.pred list 
                    -> (Ast.Symbol.t * def list) list 
                    -> t
+
+val print        : Format.formatter -> t -> unit
+val print_stats  : Format.formatter -> t -> unit
+val save         : string -> t -> unit
+val dump_cluster : t -> unit
+
 

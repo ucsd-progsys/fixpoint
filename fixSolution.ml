@@ -25,46 +25,54 @@
 (******************** Solution Management ********************)
 (*************************************************************)
 
-module F  = Format
-module H  = Hashtbl
-module A  = Ast
-module E  = A.Expression
-module P  = A.Predicate
+module F   = Format
+module A   = Ast
+module E   = A.Expression
+module P   = A.Predicate
 
-module Q  = A.Qualifier
-module Sy = A.Symbol
-module Su = A.Subst
-module SM = Sy.SMap
-module BS = BNstats
-module TP = TpNull.Prover
-
+module Q   = A.Qualifier
+module Sy  = A.Symbol
+module Su  = A.Subst
+module SM  = Sy.SMap
+module BS  = BNstats
+module TP  = TpNull.Prover
+module Co  = Constants
+module IIM = Misc.IntIntMap
 open Misc.Ops
 
 let mydebug = false 
 
 exception UnmappedKvar of Sy.t
 
-type def = Ast.pred * Ast.Qualifier.t option
+type def = Ast.pred * (Ast.Qualifier.t * Ast.Subst.t) option
 type p   = Sy.t * def
-type t   = { m   : A.pred list SM.t
-           ; qs  : Q.t list
-           ; imp : (A.tag * A.tag, bool) Hashtbl.t;
+type t   = { m    : def list SM.t
+           ; qs   : Q.t list
+           ; impm : bool Misc.IntIntMap.t;
+             (* (t1,t2) \in impm iff 
+                  q1 => q2 /\ 
+                  t1 = tag_of_qual q1 /\ 
+                  t2 = tag_of_qual q2 *)
            }
 
-(******************************************************************)
-(************* Constructing Initial Solution **********************)
-(******************************************************************)
+(*************************************************************)
+(************* Constructing Initial Solution *****************)
+(*************************************************************)
 
 let tag_of_qual = snd <.> Q.pred_of_t
 
 let map_of_bindings (bs : (Sy.t * def list) list) =
-  bs |> List.map (fun (k, defs) -> (k, List.map fst defs))
-     |> List.fold_left (fun s (k, ps) -> SM.add k ps s) SM.empty 
+  List.fold_left (fun s (k, defs) -> SM.add k defs s) SM.empty bs 
 
 let quals_of_bindings bs =
   bs |> Misc.flap snd
      |> Misc.map_partial snd 
      |> Misc.sort_and_compact
+
+
+(************************************************************)
+(***************** Build Implication Graph ******************)
+(************************************************************)
 
 let check_tp tp sm q qs = 
   let vv  = Q.vv_of_t q in
@@ -74,58 +82,22 @@ let check_tp tp sm q qs =
 
 let cluster_quals = Misc.groupby Q.sort_of_t 
 
-let update_impt_for_quals tp sm impt (qs : Q.t list) = 
-  List.iter begin fun q ->
+let update_impm_for_quals tp sm impm (qs : Q.t list) = 
+  List.fold_left begin fun impm q ->
     let tag   = tag_of_qual q in 
     qs |> check_tp tp sm q 
        |> List.map (fun tag' -> (tag, tag')) 
-       |> List.iter (Misc.flip (Hashtbl.replace impt) true)
+       |> List.fold_left (fun impm k -> IIM.add k true impm) impm 
   end qs
 
-let impt_of_quals ts sm ps qs =
-  let tp   = TP.create ts sm ps in
-  let impt = Hashtbl.create 17  in
+let impm_of_quals ts sm ps qs =
+  let tp = TP.create ts sm ps in
   qs |> cluster_quals 
-     |> List.iter (update_impt_for_quals tp sm impt)
-     |> (fun _ -> impt)
+     |> List.fold_left (update_impm_for_quals tp sm) IIM.empty
 
-(* API *)
-let of_bindings ts sm ps (bs : (Sy.t * def list) list) =
-  let m   = map_of_bindings bs in
-  let qs  = quals_of_bindings bs in
-  let imp = impt_of_quals ts sm ps qs in
-  {m = m; qs = qs; imp = imp}
-
-(* API *)
-let empty = of_bindings [] SM.empty [] [] 
-
-(* API *)
-let query s k =
-  try SM.find k s with Not_found -> []
-
-(* API *)
-let read s k = 
-  try SM.find k s.m with Not_found -> begin
-    Printf.printf "ERROR: Solution.read : unknown kvar %s \n" (Sy.to_string k);
-    raise (UnmappedKvar k)
-  end
-
-(* INV: qs' \subseteq qs *)
-let update s k qs' =
-  let qs  = read s k in
-  (if mydebug then 
-    qs |> List.filter (fun q -> not (List.mem q qs')) 
-       |> F.printf "Dropping %a: (%d) %a \n" Sy.print k (List.length qs) (Misc.pprint_many false "," P.print)
-  );
-  (not (Misc.same_length qs qs'), {s with m = SM.add k qs' s.m})
-
-let add s k qs' = 
-  let qs   = query s k in
-  let qs'' = qs' ++ qs in
-  (not (Misc.same_length qs qs''), SM.add k qs'' s)
-
-let merge s1 s2 =
-  SM.fold (fun k qs s -> add s k qs |> snd) s1 s2 
+(************************************************************)
+(*********************** Profile/Stats **********************)
+(************************************************************)
 
 (* API *)
 let print ppf s =
@@ -160,31 +132,93 @@ let key_of_quals qs =
 
 (* API *)
 let dump_cluster s = 
-   s.m |> Sy.sm_to_list 
-       |> List.map snd 
-       |> Misc.groupby key_of_quals
-       |> List.map begin function [] -> assertf "impossible" | (ps::_ as pss) -> 
-            Constants.cprintf Constants.ol_solve "SolnCluster: preds %d = size %d \n"
-            (List.length ps) (List.length pss)
-          end
-       |> ignore
+  s.m 
+  |> Sy.sm_to_list 
+  |> List.map snd 
+  |> Misc.groupby key_of_quals
+  |> List.map begin function 
+     | [] -> assertf "impossible" 
+     | (ps::_ as pss) -> Co.cprintf Co.ol_solve 
+                         "SolnCluster: preds %d = size %d \n"
+                         (List.length ps) (List.length pss)
+     end
+  |> ignore
+
+(************************************************************)
+(*************************** API ****************************)
+(************************************************************)
 
 (* API *)
-let p_update s0 ks kqs = failwith "TBD: p_update" (* 
+let of_bindings ts sm ps (bs : (Sy.t * def list) list) =
+  let m    = map_of_bindings bs in
+  let qs   = quals_of_bindings bs in
+  let impm = impm_of_quals ts sm ps qs in
+  {m = m; qs = qs; impm = impm}
+
+(* API *)
+let empty = of_bindings [] SM.empty [] [] 
+
+(* API *)
+let p_read s k =
+  let _ = asserts (SM.mem k s.m) "ERROR: p_read : unknown kvar %s\n" (Sy.to_string k) in
+  s.m |> SM.find k |> List.map (fun d -> ((k,d), fst d)) 
+
+(* API *)
+let read s k = p_read s k |> List.map snd
+
+(* API *)
+let p_imp s p1 p2 = match p1, p2 with
+  | (_, (p1, Some (q1,su1), (_, (p2, Some (q2, su2))) ->
+      su1 = su2 &&  (Misc.map_pair tag_of_qual (q1, q2) |> IIM.mem s.impm) 
+  | _ -> 
+      false
+
+(* INV: qs' \subseteq qs *)
+let update m k ds' =
+  let ds  = SM.find k m in
+  (if mydebug then 
+    ds |> List.filter (fun d -> not (List.mem d ds'))
+       |> List.map fst
+       |> F.printf "Dropping %a: (%d) %a \n" Sy.print k (List.length qs)
+            (Misc.pprint_many false "," P.print)
+  );
+  (not (Misc.same_length ds ds'), SM.add k ds' m)
+
+
+(* API *)
+let p_update s0 ks kds =  
   let t  = H.create 17 in
-  let _  = List.iter (fun (k, q) -> H.add t k q) kqs in
-  List.fold_left begin fun (b, s) k -> 
-      let qs       = H.find_all t k in 
-      let (b', s') = update s k qs in
-      (b || b', s')
+  let _  = List.iter (fun (k, d) -> H.add t k d) kds in
+  List.fold_left begin fun (b, m) k -> 
+      let ds       = H.find_all t k in 
+      let (b', m') = update m k ds in
+      (b || b', m')
   end (false, s0) ks
-*)
+  |> Misc.app_snd (fun m -> { s0 with m = m })  
 
-(* API *)
-let p_read s k = failwith "TBD: p_read"
-  (* read s k 
-     |> List.map (fun p -> ((k, (p, None)), p))
-   *)
+(* {{{ DEPRECATED 
 
-(* API *)
-let p_imp _ _ = failwith "TBD: fixSolution.p_imp"
+let read s k = 
+  try SM.find k s.m with Not_found -> begin
+    Printf.printf "ERROR: Solution.read : unknown kvar %s \n" 
+    (Sy.to_string k);
+    raise (UnmappedKvar k)
+  end
+
+
+let query s k =
+  try SM.find k s with Not_found -> []
+
+let add s k qs' = 
+  let qs   = query s k in
+  let qs'' = qs' ++ qs in
+  (not (Misc.same_length qs qs''), SM.add k qs'' s)
+
+let merge s1 s2 =
+  SM.fold (fun k qs s -> add s k qs |> snd) s1 s2 
+
+let map_of_bindings (bs : (Sy.t * def list) list) =
+  bs |> List.map (fun (k, defs) -> (k, List.map fst defs)) 
+     |> List.fold_left (fun s (k, ps) -> SM.add k ps s) SM.empty 
+  
+  }}} *)
