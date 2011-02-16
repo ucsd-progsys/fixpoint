@@ -37,12 +37,17 @@ module SM  = Sy.SMap
 module BS  = BNstats
 module TP  = TpNull.Prover
 module Co  = Constants
-module IIM = Misc.IntIntMap
 open Misc.Ops
 
 let mydebug = false 
 
 exception UnmappedKvar of Sy.t
+
+module TTMap = Map.Make (struct
+    type t = A.tag * A.tag 
+    let compare = compare 
+  end)
+
 
 type def = Ast.pred * (Ast.Qualifier.t * Ast.Subst.t) option
 type p   = Sy.t * def
@@ -82,28 +87,31 @@ let check_tp tp sm q qs =
 
 let cluster_quals = Misc.groupby Q.sort_of_t 
 
-let update_impm_for_quals tp sm impm (qs : Q.t list) = 
-  List.fold_left begin fun impm q ->
+let update_impm_for_quals tp sm impm qs = 
+  List.fold_left begin fun ttm q ->
     let tag   = tag_of_qual q in 
     qs |> check_tp tp sm q 
        |> List.map (fun tag' -> (tag, tag')) 
-       |> List.fold_left (fun impm k -> IIM.add k true impm) impm 
-  end qs
+       |> List.fold_left (fun ttm k -> TTMap.add k true ttm) ttm 
+  end impm qs
 
 let impm_of_quals ts sm ps qs =
   let tp = TP.create ts sm ps in
   qs |> cluster_quals 
-     |> List.fold_left (update_impm_for_quals tp sm) IIM.empty
+     |> List.fold_left (update_impm_for_quals tp sm) TTMap.empty
 
 (************************************************************)
 (*********************** Profile/Stats **********************)
 (************************************************************)
 
+let pprint_ps = Misc.pprint_many false ";" P.print 
+
 (* API *)
 let print ppf s =
   SM.iter begin fun k ps -> 
-    F.fprintf ppf "solution: %a := [%a] \n"  
-    Sy.print k (Misc.pprint_many false ";" P.print) ps
+    ps 
+    |> List.map fst 
+    |> F.fprintf ppf "solution: %a := [%a] \n"  Sy.print k pprint_ps
   end s.m
 
 (* API *)
@@ -112,7 +120,7 @@ let print_stats ppf s =
     (SM.fold (fun _ qs x -> (+) x (List.length qs)) s.m 0,
      SM.fold (fun _ qs x -> max x (List.length qs)) s.m min_int,
      SM.fold (fun _ qs x -> min x (List.length qs)) s.m max_int,
-     SM.fold (fun _ qs x -> x + (if List.exists P.is_contra qs then 1 else 0)) s.m 0) in
+     SM.fold (fun _ qs x -> x + (if List.exists (fst <+> P.is_contra) qs then 1 else 0)) s.m 0) in
   let n   = Sy.sm_length s.m in
   let avg = (float_of_int sum) /. (float_of_int n) in
   F.fprintf ppf "# Vars: (Total=%d, False=%d) Quals: (Total=%d, Avg=%f, Max=%d, Min=%d)\n" 
@@ -134,7 +142,7 @@ let key_of_quals qs =
 let dump_cluster s = 
   s.m 
   |> Sy.sm_to_list 
-  |> List.map snd 
+  |> List.map (snd <+> List.map fst)
   |> Misc.groupby key_of_quals
   |> List.map begin function 
      | [] -> assertf "impossible" 
@@ -168,8 +176,8 @@ let read s k = p_read s k |> List.map snd
 
 (* API *)
 let p_imp s p1 p2 = match p1, p2 with
-  | (_, (p1, Some (q1,su1), (_, (p2, Some (q2, su2))) ->
-      su1 = su2 &&  (Misc.map_pair tag_of_qual (q1, q2) |> IIM.mem s.impm) 
+  | (_, (p1, Some (q1,su1))), (_, (p2, Some (q2, su2))) ->
+      su1 = su2 &&  (Misc.map_pair tag_of_qual (q1, q2) |> TTMap.mem s.impm) 
   | _ -> 
       false
 
@@ -179,8 +187,7 @@ let update m k ds' =
   (if mydebug then 
     ds |> List.filter (fun d -> not (List.mem d ds'))
        |> List.map fst
-       |> F.printf "Dropping %a: (%d) %a \n" Sy.print k (List.length qs)
-            (Misc.pprint_many false "," P.print)
+       |> F.printf "Dropping %a: (%d) %a \n" Sy.print k (List.length qs) pprint_ps
   );
   (not (Misc.same_length ds ds'), SM.add k ds' m)
 
