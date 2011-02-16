@@ -163,6 +163,8 @@ let of_bindings ts sm ps (bs : (Sy.t * def list) list) =
   let impm = impm_of_quals ts sm ps qs in
   {m = m; qs = qs; impm = impm}
 
+
+
 (* API *)
 let empty = of_bindings [] SM.empty [] [] 
 
