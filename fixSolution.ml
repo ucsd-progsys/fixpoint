@@ -99,7 +99,15 @@ let update_impm_for_quals tp sm impm qs =
        |> List.fold_left (fun ttm k -> TTM.add k true ttm) ttm 
   end impm qs
 
+let close_env =
+  List.fold_left begin fun sm x -> 
+    if SM.mem x sm 
+    then sm 
+    else SM.add x Ast.Sort.t_int sm
+  end
+
 let impm_of_quals ts sm ps qs =
+  let sm = qs |> Misc.flap (Q.pred_of_t <+> P.support) |> close_env sm in
   let tp = TP.create ts sm ps in
   qs |> cluster_quals 
      |> List.fold_left (update_impm_for_quals tp sm) TTM.empty
