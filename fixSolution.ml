@@ -34,12 +34,31 @@ module Q   = A.Qualifier
 module Sy  = A.Symbol
 module Su  = A.Subst
 module SM  = Sy.SMap
+module SSM = Misc.StringMap
 module BS  = BNstats
 module TP  = TpNull.Prover
 module Co  = Constants
 open Misc.Ops
 
 let mydebug = false 
+
+let tag_of_qual = snd <.> Q.pred_of_t
+
+module V : Graph.Sig.COMPARABLE with type t = Q.t = struct
+  type t = Q.t
+  let hash    = tag_of_qual <+> Hashtbl.hash
+  let compare = fun q1 q2 -> compare (tag_of_qual q1) (tag_of_qual q2)
+  let equal   = fun q1 q2 -> tag_of_qual q1 = tag_of_qual q2
+end
+
+module Id : Graph.Sig.ORDERED_TYPE_DFT with type t = unit = struct
+  type t = unit 
+  let default = ()
+  let compare = compare 
+end
+
+module G   = Graph.Persistent.Digraph.ConcreteLabeled(V)(Id)
+module SCC = Graph.Components.Make(G)
 
 exception UnmappedKvar of Sy.t
 
@@ -53,16 +72,15 @@ type def = Ast.pred * (Ast.Qualifier.t * Ast.Subst.t)
 type p   = Sy.t * def
 
 type t   = { m    : def list SM.t
-           ; qs   : Q.t list
-           ; impm : bool TTM.t;
-             (* (t1,t2) \in impm iff q1 => q2 /\ t1 = tag_of_qual q1 /\ t2 = tag_of_qual q2 *)
+           ; qm   : (Q.t * int) SSM.t (* name :-> (qualif, rank) *)
+           ; impm : bool TTM.t       (* (t1,t2) \in impm iff q1 => q2 /\ t1 = tag_of_qual q1 /\ t2 = tag_of_qual q2 *)
+           ; impg : G.t              (* same as impm but in graph format *) 
            }
 
 (*************************************************************)
 (************* Constructing Initial Solution *****************)
 (*************************************************************)
 
-let tag_of_qual = snd <.> Q.pred_of_t
 
 let def_of_pred_qual (p, q) =
   let qp = Q.pred_of_t q in
@@ -79,6 +97,33 @@ let quals_of_bindings bs =
      |> Misc.sort_and_compact
 
 
+(************************************************************************)
+(*************************** Dumping to Dot *****************************) 
+(************************************************************************)
+
+
+module DotGraph = struct
+  type t = G.t
+  module V = G.V
+  module E = G.E
+  let iter_vertex               = G.iter_vertex
+  let iter_edges_e              = G.iter_edges_e
+  let graph_attributes          = fun _ -> [`Size (11.0, 8.5); `Ratio (`Fill (* Float 1.29*))]
+  let default_vertex_attributes = fun _ -> [`Shape `Box]
+  let vertex_name               = Q.name_of_t 
+  let vertex_attributes         = fun q -> [`Label ((Misc.fsprintf Q.print q))] 
+  let default_edge_attributes   = fun _ -> []
+  let edge_attributes           = fun (_,(),_) -> [] 
+  let get_subgraph              = fun _ -> None
+end
+
+module Dot = Graph.Graphviz.Dot(DotGraph) 
+
+let dump_graph s g = 
+  s |> open_out 
+    >> (fun oc -> Dot.output_graph oc g)
+    |> close_out 
+
 (************************************************************)
 (***************** Build Implication Graph ******************)
 (************************************************************)
@@ -86,18 +131,20 @@ let quals_of_bindings bs =
 let check_tp tp sm q qs = 
   let vv  = Q.vv_of_t q in
   let lps = [Q.pred_of_t q] in
-  qs |> List.map (tag_of_qual <*> Q.pred_of_t)
+  qs |> List.map (fun q -> ((q, tag_of_qual q), Q.pred_of_t q))
      |> TP.set_filter tp sm vv lps (fun _ _ -> false) 
 
 let cluster_quals = Misc.groupby Q.sort_of_t 
 
-let update_impm_for_quals tp sm impm qs = 
-  List.fold_left begin fun ttm q ->
+let update_impm_for_quals tp sm impmg qs = 
+  List.fold_left begin fun impmg q ->
     let tag   = tag_of_qual q in 
     qs |> check_tp tp sm q 
-       |> List.map (fun tag' -> (tag, tag')) 
-       |> List.fold_left (fun ttm k -> TTM.add k true ttm) ttm 
-  end impm qs
+       |> List.fold_left begin fun (ttm, g) (q', tag') -> 
+           ( TTM.add (tag, tag') true ttm
+           , G.add_edge_e g (q, (), q'))
+          end impmg
+  end impmg qs
 
 let close_env =
   List.fold_left begin fun sm x -> 
@@ -110,7 +157,21 @@ let impm_of_quals ts sm ps qs =
   let sm = qs |> Misc.flap (Q.pred_of_t <+> P.support) |> close_env sm in
   let tp = TP.create ts sm ps in
   qs |> cluster_quals 
-     |> List.fold_left (update_impm_for_quals tp sm) TTM.empty
+     |> List.fold_left (update_impm_for_quals tp sm) (TTM.empty, G.empty)
+
+let qual_ranks_of_impg impg = 
+  let a = SCC.scc_array impg in
+  Misc.array_fold_lefti begin fun i qm qs ->
+    List.fold_left begin fun qm q ->
+      SSM.add (Q.name_of_t q) (q, i) qm
+    end qm qs
+  end SSM.empty a 
+
+let rank_of_qual s = 
+  Q.name_of_t
+  <+> Misc.do_catchf "rank_of_qual" (Misc.flip SSM.find s.qm)
+  <+> snd
+
 
 (************************************************************)
 (*********************** Profile/Stats **********************)
@@ -120,12 +181,16 @@ let pprint_ps = Misc.pprint_many false ";" P.print
 
 (* API *)
 let print ppf s =
-  SM.iter begin fun k ps -> 
-    ps 
-    |> List.map fst 
-    |> F.fprintf ppf "solution: %a := [%a] \n"  Sy.print k pprint_ps
-  end s.m
-
+  SM.to_list s.m 
+  |> List.map fst 
+  >> List.iter begin fun k ->
+       F.fprintf ppf "//solution: %a := [%a] \n"  Sy.print k pprint_ps (read s k)
+     end 
+  >> List.iter begin fun k ->
+       F.fprintf ppf "solution: %a := [%a] \n"  Sy.print k pprint_ds (p_read s k)
+     end
+  |> ignore
+       
 (* API *)
 let print_stats ppf s =
   let (sum, max, min, bot) =   
@@ -170,12 +235,12 @@ let dump_cluster s =
 
 (* API *)
 let of_bindings ts sm ps bs =
-  let m    = map_of_bindings bs in
-  let qs   = quals_of_bindings bs in
-  let impm = impm_of_quals ts sm ps qs in
-  {m = m; qs = qs; impm = impm}
-
-
+  let m      = map_of_bindings bs in
+  let qs     = quals_of_bindings bs in
+  let im, ig = impm_of_quals ts sm ps qs in
+  let _      = dump_graph (!Constants.save_file^".impg.dot") ig in
+  let qm     = qual_ranks_of_impg ig in 
+  {m = m; qm = qm; impm = im; impg = ig}
 
 (* API *)
 let empty = of_bindings [] SM.empty [] [] 
@@ -183,17 +248,24 @@ let empty = of_bindings [] SM.empty [] []
 (* API *)
 let p_read s k =
   let _ = asserts (SM.mem k s.m) "ERROR: p_read : unknown kvar %s\n" (Sy.to_string k) in
-  s.m |> SM.find k |> List.map (fun d -> ((k,d), fst d)) 
+  SM.find k s.m 
+  |> List.map (fun d -> ((k,d), fst d))
+  |> Misc.fsort (fun ((_,(_,(q,_))),_) -> rank_of_qual s q)
+  |> List.rev
 
 (* API *)
-let read s k = p_read s k |> List.map snd
+let p_imp s (_, (p1, (q1, su1)))  (_, (p2, (q2, su2))) =
+  su1 = su2 &&  (Misc.map_pair tag_of_qual (q1, q2) |> Misc.flip TTM.mem s.impm) 
+
+
+let minimize s = Misc.cov_filter (fun x y -> p_imp s (fst x) (fst y)) (fun _ -> true)
 
 (* API *)
-let p_imp s p1 p2 = match p1, p2 with
-  | (_, (p1, (q1, su1))), (_, (p2, (q2, su2))) ->
-      su1 = su2 &&  (Misc.map_pair tag_of_qual (q1, q2) |> Misc.flip TTM.mem s.impm) 
-  | _ -> 
-      false
+let read s k = 
+  p_read s k 
+  |> (!Constants.minquals <?> minimize s) 
+  |> List.map snd
+
 
 (* INV: qs' \subseteq qs *)
 let update m k ds' =

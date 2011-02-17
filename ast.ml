@@ -1102,7 +1102,7 @@ module Qualifier = struct
        |> create q.name q.vvar q.vsort
 
   let print ppf q = 
-    Format.fprintf ppf "qualif %s(%a:%a):%a \n" 
+    Format.fprintf ppf "qualif %s(%a:%a):%a" 
       q.name
       Symbol.print q.vvar
       Sort.print q.vsort
