@@ -194,11 +194,14 @@ let rank_of_qual s q =
 (* API *)
 let of_bindings ts sm ps bs =
   let m      = map_of_bindings bs in
-  let qs     = quals_of_bindings bs in
-  let im, ig = impm_of_quals ts sm ps qs in
-  let _      = dump_graph (!Constants.save_file^".impg.dot") ig in
-  let qm     = qual_ranks_of_impg ig in 
-  {m = m; qm = qm; impm = im; impg = ig}
+  if !Constants.minquals then
+    let qs     = quals_of_bindings bs in
+    let im, ig = impm_of_quals ts sm ps qs in
+    let _      = dump_graph (!Constants.save_file^".impg.dot") ig in
+    let qm     = qual_ranks_of_impg ig in 
+    {m = m; qm = qm; impm = im; impg = ig}
+  else
+    {m =m; qm = SSM.empty; impm = TTM.empty; impg = G.empty}
 
 (* API *)
 let empty = of_bindings [] SM.empty [] [] 
@@ -208,20 +211,21 @@ let p_read s k =
   let _ = asserts (SM.mem k s.m) "ERROR: p_read : unknown kvar %s\n" (Sy.to_string k) in
   SM.find k s.m 
   |> List.map (fun d -> ((k,d), fst d))
-  |> Misc.fsort (fun ((_,(_,(q,_))),_) -> rank_of_qual s q)
+  |> (!Constants.minquals <?> Misc.fsort (fun ((_,(_,(q,_))),_) -> rank_of_qual s q))
   |> List.rev
 
 (* API *)
 let p_imp s (_, (p1, (q1, su1)))  (_, (p2, (q2, su2))) =
-  su1 = su2 &&  (Misc.map_pair tag_of_qual (q1, q2) |> Misc.flip TTM.mem s.impm) 
+    su1 = su2 &&  (Misc.map_pair tag_of_qual (q1, q2) |> Misc.flip TTM.mem s.impm) 
 
 
-let minimize s = Misc.cov_filter (fun x y -> p_imp s (fst x) (fst y)) (fun _ -> true)
+let minimize s = 
+  !Constants.minquals <?> Misc.cov_filter (fun x y -> p_imp s (fst x) (fst y)) (fun _ -> true)
 
 (* API *)
 let read s k = 
   p_read s k 
-  |> (!Constants.minquals <?> minimize s) 
+  |> minimize s 
   |> List.map snd
 
 
