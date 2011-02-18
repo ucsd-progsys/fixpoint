@@ -221,6 +221,14 @@ let p_imp s (_, (p1, (q1, su1)))  (_, (p2, (q2, su2))) =
 let minimize s = 
   !Constants.minquals <?> Misc.cov_filter (fun x y -> p_imp s (fst x) (fst y)) (fun _ -> true)
 
+let pprint_qs ppf = 
+  List.map (fst <+> snd <+> snd <+> fst) 
+  <+> F.fprintf ppf "[%a]" (Misc.pprint_many false ";" Q.print)
+
+let minimize s qs = 
+  minimize s qs
+  >> F.printf "MINIMIZE: qs = [%a] qs' = [%a] \n\n" pprint_qs qs pprint_qs  
+
 (* API *)
 let read s k = 
   p_read s k 
@@ -264,10 +272,10 @@ let print ppf s =
   Sy.sm_to_list s.m 
   |> List.map fst 
   >> List.iter begin fun k ->
-       F.fprintf ppf "//solution: %a := [%a] \n"  Sy.print k pprint_ps (read s k)
+       F.fprintf ppf "//solution: %a := [%a] \n\n"  Sy.print k pprint_ps (read s k)
      end 
   >> List.iter begin fun k ->
-       F.fprintf ppf "solution: %a := [%a] \n"  
+       F.fprintf ppf "solution: %a := [%a] \n\n"  
          Sy.print k 
          (Misc.pprint_many false ";" print_dep) (p_read s k)
      end
