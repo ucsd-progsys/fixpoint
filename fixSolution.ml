@@ -149,8 +149,8 @@ let check_tp tp sm q qs =
   let lps = [Q.pred_of_t q] in
   qs |> List.map (fun q -> ((q, tag_of_qual q), Q.pred_of_t q))
      |> TP.set_filter tp sm vv lps (fun _ _ -> false) 
-     >> (List.map fst <+> F.printf "CHECK_TP: %a IMPLIES %a \n" Q.print q (Misc.pprint_many false ", " Q.print))
-
+(*     >> (List.map fst <+> F.printf "CHECK_TP: %a IMPLIES %a \n" Q.print q (Misc.pprint_many false ", " Q.print))
+ *)
 
 let cluster_quals = Misc.groupby Q.sort_of_t 
 
@@ -195,8 +195,7 @@ let rank_of_qual s =
 
 let rank_of_qual s q =
   let n = Q.name_of_t q in
-  let _ = asserti (SSM.mem n s.qm) 
-          "rank_of_qual crashes on: %s" (Misc.fsprintf Q.print q) in 
+  let _ = asserti (SSM.mem n s.qm) "rank_of_qual crashes on: %s" (Misc.fsprintf Q.print q) in 
   snd (SSM.find n s.qm)
 
 
@@ -238,17 +237,20 @@ let p_imp_qual s q1 q2 =
 
 (* API *)
 let p_imp s (_, (p1, (q1, su1)))  (_, (p2, (q2, su2))) =
-  Misc.do_memo s.imp_memo_t (fun ((q1,su1), (q2,su2)) ->
+  Misc.do_memo s.imp_memo_t begin fun ((q1,su1), (q2,su2)) ->
     p_imp_subst su1 su2 && p_imp_qual s q1 q2
-  ) ((q1, su1), (q2, su2)) (snd p1, snd p2)
-  >>  F.printf "P_IMP: [p1 = %a] [p2 = %a] [res = %b]\n" P.print p1 P.print p2
+  end ((q1, su1), (q2, su2)) (snd p1, snd p2)
+(*  >>  F.printf "P_IMP: [p1 = %a] [p2 = %a] [res = %b]\n" P.print p1 P.print p2
+*)
 
 let minimize s = 
   !Constants.minquals <?> Misc.cov_filter (fun x y -> p_imp s (fst x) (fst y)) (fun _ -> true)
 
+(*
 let minimize s qs = 
   minimize s qs
   >> F.printf "MINIMIZE: qs = [%a] qs' = [%a] \n\n" pprint_qs qs pprint_qs  
+*)
 
 (* API *)
 let read s k = 
@@ -282,8 +284,6 @@ let p_update s0 ks kds =
 (************************************************************)
 (*********************** Profile/Stats **********************)
 (************************************************************)
-
-
 
 (* API *)
 let print ppf s =

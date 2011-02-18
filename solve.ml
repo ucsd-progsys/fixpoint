@@ -61,7 +61,7 @@ type t = {
  ; stat_cfreqt         : (int, int) Hashtbl.t 
 }
 
-let mydebug = true 
+let mydebug = false 
 
 (*************************************************************)
 (********************* Stats *********************************)
@@ -300,7 +300,7 @@ let create ts sm ps a ds cs ws bs0 qs =
   let tpc = TP.create ts sm ps in
   let qs  = Q.normalize qs >> F.printf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) in
   let bs  = BS.time "Qual Inst" (inst ws) qs in
-  let s   = Sn.of_bindings ts sm ps (bs0 ++ bs) in
+  let s   = BS.time "Create Solution" (Sn.of_bindings ts sm ps) (bs0 ++ bs) in
   let ws  = PP.validate_wfs ws in
   let sri = cs >> F.printf "Pre-Simplify Stats\n%a" print_constr_stats 
                |> BS.time  "Simplify" FixSimplify.simplify_ts
