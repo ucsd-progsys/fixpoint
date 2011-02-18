@@ -366,11 +366,24 @@ let set me env vv ps =
   ps |> prep_preds me env |> push me;
   (* unsat me *) false
 
-let filter me env p_imp ps =
+let min_filter me env p_imp ps =
   ps 
   |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
   |> Misc.cov_filter (fun x y -> p_imp (fst3 x) (fst3 y)) (thd3 <+> valid me)
   |> List.map fst3 
+
+let full_filter me env _ ps =
+  ps 
+  |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
+  |> Misc.filter (thd3 <+> valid me)
+  |> List.map fst3 
+
+let filter me = 
+  if !Constants.minquals 
+  then min_filter me 
+  else full_filter me
+
+
 
 (************************************************************************)
 (********************************* API **********************************)

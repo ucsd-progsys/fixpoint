@@ -218,7 +218,6 @@ let p_read s k =
 let p_imp s (_, (p1, (q1, su1)))  (_, (p2, (q2, su2))) =
     su1 = su2 &&  (Misc.map_pair tag_of_qual (q1, q2) |> Misc.flip TTM.mem s.impm) 
 
-
 let minimize s = 
   !Constants.minquals <?> Misc.cov_filter (fun x y -> p_imp s (fst x) (fst y)) (fun _ -> true)
 
@@ -242,12 +241,13 @@ let update m k ds' =
 
 (* API *)
 let p_update s0 ks kds = 
-  Misc.kgroupby fst kds 
-  |> List.fold_left begin fun (b, m) (k, ds) -> 
-      ds |> List.map snd 
-         |> update m k 
-         |> Misc.app_fst ((||) b)
-     end (false, s0.m) 
+  let kdsm = Misc.kgroupby fst kds |> Sy.sm_of_list in
+  List.fold_left begin fun (b, m) k ->
+    (try SM.find k kdsm with Not_found -> [])
+    |> List.map snd 
+    |> update m k 
+    |> Misc.app_fst ((||) b)
+  end (false, s0.m) ks
   |> Misc.app_snd (fun m -> { s0 with m = m })  
 
 (************************************************************)
