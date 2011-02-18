@@ -244,7 +244,11 @@ let p_imp s (_, (p1, (q1, su1)))  (_, (p2, (q2, su2))) =
 *)
 
 let minimize s = 
-  !Constants.minquals <?> Misc.cov_filter (fun x y -> p_imp s (fst x) (fst y)) (fun _ -> true)
+  Misc.cov_filter (fun x y -> p_imp s (fst x) (fst y)) (fun _ -> true)
+  <+> List.map fst
+     
+
+let minimize s = !Constants.minquals <?> minimize s
 
 (*
 let minimize s qs = 

@@ -366,23 +366,33 @@ let set me env vv ps =
   ps |> prep_preds me env |> push me;
   (* unsat me *) false
 
-let min_filter me env p_imp ps =
-  ps 
-  |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
-  |> Misc.cov_filter (fun x y -> BS.time "p_imp" (p_imp (fst3 x)) (fst3 y)) (thd3 <+> valid me)
-  |> List.map fst3 
-
 let full_filter me env _ ps =
   ps 
   |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
   |> Misc.filter (thd3 <+> valid me)
-  |> List.map fst3 
+  |> List.map fst3
+
+let min_filter me env p_imp ps =
+  ps 
+  |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
+  |> Misc.cov_filter (fun x y -> BS.time "p_imp" (p_imp (fst3 x)) (fst3 y)) (thd3 <+> valid me)
+  |> Misc.flap (fun (x,xs) -> x::xs)
+  |> List.map fst3
+
+(* DEBUG
+let ps_to_string xps = List.map snd xps |> Misc.fsprintf (Misc.pprint_many false "," P.print)
+
+let min_filter me env f ps = 
+  let ps'  = min_filter me env f ps in
+  let ps'' = full_filter me env f ps in
+  let _    = asserti (List.length ps' = List.length ps'') 
+             "difference in filters:\n[ps' = %s]\n[ps'' = %s]\n\n" 
+             (ps_to_string ps') (ps_to_string ps'') in
+  ps'
+*)
 
 let filter me = 
-  if !Constants.minquals 
-  then min_filter me 
-  else full_filter me
-
+  if !Constants.minquals then min_filter me else full_filter me
 
 
 (************************************************************************)
