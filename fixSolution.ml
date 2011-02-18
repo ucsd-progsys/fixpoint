@@ -38,6 +38,8 @@ module SSM = Misc.StringMap
 module BS  = BNstats
 module TP  = TpNull.Prover
 module Co  = Constants
+module H   = Hashtbl
+
 open Misc.Ops
 
 let mydebug = false 
@@ -46,7 +48,7 @@ let tag_of_qual = snd <.> Q.pred_of_t
 
 module V : Graph.Sig.COMPARABLE with type t = Q.t = struct
   type t = Q.t
-  let hash    = tag_of_qual <+> Hashtbl.hash
+  let hash    = tag_of_qual <+> H.hash
   let compare = fun q1 q2 -> compare (tag_of_qual q1) (tag_of_qual q2)
   let equal   = fun q1 q2 -> tag_of_qual q1 = tag_of_qual q2
 end
@@ -75,10 +77,21 @@ type t   = { m    : def list SM.t
            ; qm   : (Q.t * int) SSM.t (* name :-> (qualif, rank) *)
            ; impm : bool TTM.t       (* (t1,t2) \in impm iff q1 => q2 /\ t1 = tag_of_qual q1 /\ t2 = tag_of_qual q2 *)
            ; impg : G.t              (* same as impm but in graph format *) 
+           ; imp_memo_t: ((A.tag * A.tag), bool) H.t
            }
 
-let pprint_ps = Misc.pprint_many false ";" P.print 
+let pprint_ps =
+  Misc.pprint_many false ";" P.print 
 
+let print_dep ppf ((_, (p, (q, su))),_) = 
+  F.fprintf ppf "(%a, %s%a)" P.print p (Q.name_of_t q) Su.print su
+
+let pprint_ds = 
+  Misc.pprint_many false ";" print_dep
+
+let pprint_qs ppf = 
+  List.map (fst <+> snd <+> snd <+> fst) 
+  <+> F.fprintf ppf "[%a]" (Misc.pprint_many false ";" Q.print)
 
 (*************************************************************)
 (************* Constructing Initial Solution *****************)
@@ -193,15 +206,16 @@ let rank_of_qual s q =
 
 (* API *)
 let of_bindings ts sm ps bs =
-  let m      = map_of_bindings bs in
-  if !Constants.minquals then
-    let qs     = quals_of_bindings bs in
-    let im, ig = impm_of_quals ts sm ps qs in
-    let _      = dump_graph (!Constants.save_file^".impg.dot") ig in
-    let qm     = qual_ranks_of_impg ig in 
-    {m = m; qm = qm; impm = im; impg = ig}
-  else
-    {m =m; qm = SSM.empty; impm = TTM.empty; impg = G.empty}
+  let m          = map_of_bindings bs in
+  let im, ig, qm =
+    if !Constants.minquals then
+      quals_of_bindings bs 
+      |> impm_of_quals ts sm ps
+      >> (snd <+> dump_graph (!Constants.save_file^".impg.dot")) 
+      |> (fun (im, ig) -> (im, ig, qual_ranks_of_impg ig)) 
+    else
+      (TTM.empty, G.empty, SSM.empty) 
+  in {m = m; qm = qm; impm = im; impg = ig; imp_memo_t = H.create 37}
 
 (* API *)
 let empty = of_bindings [] SM.empty [] [] 
@@ -214,16 +228,23 @@ let p_read s k =
   |> (!Constants.minquals <?> Misc.fsort (fun ((_,(_,(q,_))),_) -> rank_of_qual s q))
   |> List.rev
 
+
+let p_imp_subst su1 su2 = 
+  Misc.join fst (Su.to_list su1) (Su.to_list su2)
+  |> List.for_all (fun ((_,e1), (_, e2)) -> e1 = e2)
+
+let p_imp_qual s q1 q2 = 
+  TTM.mem (Misc.map_pair tag_of_qual (q1, q2)) s.impm 
+
 (* API *)
 let p_imp s (_, (p1, (q1, su1)))  (_, (p2, (q2, su2))) =
-    su1 = su2 &&  (Misc.map_pair tag_of_qual (q1, q2) |> Misc.flip TTM.mem s.impm) 
+  Misc.do_memo s.imp_memo_t (fun ((q1,su1), (q2,su2)) ->
+    p_imp_subst su1 su2 && p_imp_qual s q1 q2
+  ) ((q1, su1), (q2, su2)) (snd p1, snd p2)
+  >>  F.printf "P_IMP: [p1 = %a] [p2 = %a] [res = %b]\n" P.print p1 P.print p2
 
 let minimize s = 
   !Constants.minquals <?> Misc.cov_filter (fun x y -> p_imp s (fst x) (fst y)) (fun _ -> true)
-
-let pprint_qs ppf = 
-  List.map (fst <+> snd <+> snd <+> fst) 
-  <+> F.fprintf ppf "[%a]" (Misc.pprint_many false ";" Q.print)
 
 let minimize s qs = 
   minimize s qs
@@ -262,10 +283,7 @@ let p_update s0 ks kds =
 (*********************** Profile/Stats **********************)
 (************************************************************)
 
-let print_dep ppf ((_, (p, (q, su))),_) = 
-  F.fprintf ppf "(%a, %s%a)" P.print p (Q.name_of_t q) Su.print su
 
-let pprint_ds = Misc.pprint_many false ";" print_dep
 
 (* API *)
 let print ppf s =
