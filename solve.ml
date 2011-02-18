@@ -298,6 +298,7 @@ let solve me s =
 (* API *)
 let create ts sm ps a ds cs ws bs0 qs =
   let tpc = TP.create ts sm ps in
+  let qs  = Q.normalize qs >> F.printf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) in
   let bs  = BS.time "Qual Inst" (inst ws) qs in
   let s   = Sn.of_bindings ts sm ps (bs0 ++ bs) in
   let ws  = PP.validate_wfs ws in

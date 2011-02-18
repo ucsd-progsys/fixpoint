@@ -136,13 +136,16 @@ let check_tp tp sm q qs =
   let lps = [Q.pred_of_t q] in
   qs |> List.map (fun q -> ((q, tag_of_qual q), Q.pred_of_t q))
      |> TP.set_filter tp sm vv lps (fun _ _ -> false) 
+     >> (List.map fst <+> F.printf "CHECK_TP: %a IMPLIES %a \n" Q.print q (Misc.pprint_many false ", " Q.print))
+
 
 let cluster_quals = Misc.groupby Q.sort_of_t 
 
 let update_impm_for_quals tp sm impmg qs = 
   List.fold_left begin fun impmg q ->
-    let tag   = tag_of_qual q in 
+    let tag = tag_of_qual q in 
     qs |> check_tp tp sm q 
+       |> (fun xs -> (q, tag) :: xs)
        |> List.fold_left begin fun (ttm, g) (q', tag') -> 
            ( TTM.add (tag, tag') true ttm
            , G.add_edge_e g (q, (), q'))
@@ -170,10 +173,18 @@ let qual_ranks_of_impg impg =
     end qm qs
   end SSM.empty a 
 
+(*
 let rank_of_qual s = 
   Q.name_of_t
   <+> Misc.do_catchf "rank_of_qual" (Misc.flip SSM.find s.qm)
   <+> snd
+*)
+
+let rank_of_qual s q =
+  let n = Q.name_of_t q in
+  let _ = asserti (SSM.mem n s.qm) 
+          "rank_of_qual crashes on: %s" (Misc.fsprintf Q.print q) in 
+  snd (SSM.find n s.qm)
 
 
 (************************************************************)

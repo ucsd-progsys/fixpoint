@@ -1079,7 +1079,8 @@ module Qualifier = struct
   (* remove duplicates, ensure distinct names *)
   let normalize qs = 
     qs |> List.map (fun q -> {q with pred = canon q.pred})
-       |> Misc.sort_and_compact 
+       |> Misc.kgroupby (fun q -> pred_to_string q.pred)
+       |> List.map (fun (_,x::_) -> x)
        |> Misc.mapfold begin fun m q ->
             if SM.mem q.name m then
               let i = SM.find q.name m in
