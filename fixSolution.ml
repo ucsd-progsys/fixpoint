@@ -184,7 +184,7 @@ let impm_of_quals ts sm ps qs =
   let tp = TP.create ts sm ps in
   qs |> cluster_quals 
      |> List.fold_left (update_impm_for_quals tp sm) (TTM.empty, G.empty)
-     >> (fun _ -> ignore <| Errormsg.log "DONE: Building IMP Graph \n")  
+     >> (fun _ -> ignore <| Printf.printf "DONE: Building IMP Graph \n")  
 
 let qual_ranks_of_impg impg = 
   let a = SCC.scc_array impg in

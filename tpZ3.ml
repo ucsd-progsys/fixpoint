@@ -346,7 +346,7 @@ let pop me =
   BS.time "Z3.pop" (Z3.pop me.c) 1 
 
 let valid me p =
-  let _ = push me [(Z3.mk_not me.c p)] in
+  let _ = BS.time "valid" (push me) [(Z3.mk_not me.c p)] in
   let rv = Timeout.do_timeout !Constants.z3_timeout unsat me in
   let rv = match rv with Some x -> x
                        | None -> failwith
