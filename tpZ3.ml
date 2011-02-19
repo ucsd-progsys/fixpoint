@@ -34,7 +34,7 @@ open Misc.Ops
 
 module Prover : ProverArch.PROVER = struct
 
-let mydebug = false 
+let mydebug = true 
 
 (********************************************************************************)
 (********************************** Type Definitions ****************************)
@@ -308,8 +308,10 @@ let z3Pred me env p = BS.time "z3Pred" (z3Pred me env) p
 (***************** Low Level Query Interface *******************************)
 (***************************************************************************)
 
+let us_ref = ref 0
+
 let unsat me =
-  let _ = if mydebug then (Printf.printf "UNSAT 1 \n"; flush stdout) in
+  let _ = if mydebug then (Printf.printf "[%d] UNSAT 1 " (us_ref += 1); flush stdout) in
   let rv = (BS.time "Z3.check" Z3.check me.c) = Z3.L_FALSE in
   let _ = if mydebug then (Printf.printf "UNSAT 2 \n"; flush stdout) in
   let _  = if rv then ignore (nb_unsat += 1) in 
@@ -370,13 +372,14 @@ let full_filter me env _ ps =
   ps 
   |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
   |> Misc.filter (thd3 <+> valid me)
-  |> List.map (fst3 <+> Misc.single)
+  |> List.map fst3
 
 let min_filter me env p_imp ps =
   ps 
   |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
   |> Misc.cov_filter (fun x y -> BS.time "p_imp" (p_imp (fst3 x)) (fst3 y)) (thd3 <+> valid me)
-  |> List.map (fun (x, xs) -> List.map fst3 (x::xs))
+  |> Misc.flap (fun (x, xs) -> (x::xs))
+  |> List.map fst3
 
 (* DEBUG
 let ps_to_string xps = List.map snd xps |> Misc.fsprintf (Misc.pprint_many false "," P.print)
@@ -422,14 +425,14 @@ let set_filter (me: t) (env: So.t SM.t) (vv: Sy.t) ps p_imp qs =
   | true  -> 
     let _ = nb_unsatLHS += 1 in
     let _ = pop me in
-    List.map (fst <+> Misc.single) qs 
+    List.map fst qs 
 
   | false ->
      qs 
      |> List.rev_map   (Misc.app_snd A.fixdiv) 
      |> List.partition (snd <+> P.is_tauto)
-     |> Misc.app_fst (List.map (fst <+> Misc.single))
-     |> Misc.app_snd (BS.time "TP filter" (filter me env p_imp))
+     |> Misc.app_fst   (List.map fst)
+     |> Misc.app_snd   (BS.time "TP filter" (filter me env p_imp))
      >> (fun _ -> pop me; clean_decls me)
      |> Misc.uncurry (++) 
 

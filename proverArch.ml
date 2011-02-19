@@ -38,7 +38,7 @@ sig
                     -> Ast.pred list 
                     -> ('a -> 'a -> bool)
                     -> ('a * Ast.pred) list 
-                    -> 'a list list
+                    -> 'a list
                        
   val print_stats : Format.formatter -> t -> unit
 
