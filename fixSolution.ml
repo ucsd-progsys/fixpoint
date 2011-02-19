@@ -155,7 +155,7 @@ let check_tp tp sm q qs =
   let vv  = Q.vv_of_t q in
   let lps = [Q.pred_of_t q] in
   qs |> List.map (fun q -> ((q, tag_of_qual q), Q.pred_of_t q))
-     >> (List.map fst <+> F.printf "CHECK_TP: %a IN %a \n" Q.print q pprint_qs)
+     >> (List.map (fst <+> fst) <+> F.printf "CHECK_TP: %a IN %a \n" Q.print q pprint_qs)
      |> TP.set_filter tp sm vv lps (fun _ _ -> false) 
      >> (List.map fst <+> F.printf "CHECK_TP: %a OUT %a \n" Q.print q pprint_qs)
 
