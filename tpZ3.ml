@@ -370,14 +370,13 @@ let full_filter me env _ ps =
   ps 
   |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
   |> Misc.filter (thd3 <+> valid me)
-  |> List.map fst3
+  |> List.map (fst3 <+> Misc.single)
 
 let min_filter me env p_imp ps =
   ps 
   |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
   |> Misc.cov_filter (fun x y -> BS.time "p_imp" (p_imp (fst3 x)) (fst3 y)) (thd3 <+> valid me)
-  |> Misc.flap (fun (x,xs) -> x::xs)
-  |> List.map fst3
+  |> List.map (fun (x, xs) -> List.map fst3 (x::xs))
 
 (* DEBUG
 let ps_to_string xps = List.map snd xps |> Misc.fsprintf (Misc.pprint_many false "," P.print)
@@ -423,13 +422,13 @@ let set_filter (me: t) (env: So.t SM.t) (vv: Sy.t) ps p_imp qs =
   | true  -> 
     let _ = nb_unsatLHS += 1 in
     let _ = pop me in
-    List.map fst qs
+    List.map (fst <+> Misc.single) qs 
 
   | false ->
      qs 
      |> List.rev_map   (Misc.app_snd A.fixdiv) 
      |> List.partition (snd <+> P.is_tauto)
-     |> Misc.app_fst (List.map fst)
+     |> Misc.app_fst (List.map (fst <+> Misc.single))
      |> Misc.app_snd (BS.time "TP filter" (filter me env p_imp))
      >> (fun _ -> pop me; clean_decls me)
      |> Misc.uncurry (++) 

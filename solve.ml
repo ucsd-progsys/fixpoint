@@ -120,7 +120,7 @@ let refine me s c =
     let _       = List.iter (fun p -> PH.add lt p ()) lps in
     let (x1,x2) = List.partition (fun (_,p) -> PH.mem lt p) rcs in
     let _       = me.stat_matches += (List.length x1) in
-    let kqs1    = List.map fst x1 in
+    let kqs1    = List.map fst x1 |> List.map Misc.single in
     (if C.is_simple c 
      then (ignore(me.stat_simple_refines += 1); kqs1) 
      else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps (Sn.p_imp s)) x2))
@@ -136,7 +136,7 @@ let unsat me s c =
   let lps      = C.preds_of_lhs s c  in
   let rhsp     = c |> C.rhs_of_t |> C.preds_of_reft s |> A.pAnd in
   let f        = fun _ _ -> false in
-  not ((check_tp me env vv t lps f [(0, rhsp)]) = [0])
+  not ((check_tp me env vv t lps f [(0, rhsp)]) = [[0]])
 
 let unsat me s c = 
   let msg = Printf.sprintf "unsat_cstr %d" (C.id_of_t c) in
@@ -276,8 +276,6 @@ let rec acsolve me w s =
               !(me.stat_refines) (C.id_of_t c) ch C.print_tag (C.tag_of_t c) in
       let w'' = if ch then Ci.deps me.sri c |> Ci.wpush me.sri w' else w' in 
       acsolve me w'' s' 
-
-
 
 (* API *)
 let solve me s = 

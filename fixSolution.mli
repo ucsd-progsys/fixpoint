@@ -24,7 +24,7 @@ type def = Ast.pred * (Ast.Qualifier.t * Ast.Subst.t)
 val empty        : t
 val read         : t -> Ast.Symbol.t -> Ast.pred list
 val p_read       : t -> Ast.Symbol.t -> (p * Ast.pred) list 
-val p_update     : t -> Ast.Symbol.t list -> p list -> (bool * t)
+val p_update     : t -> Ast.Symbol.t list -> p list list -> (bool * t)
 val p_imp        : t -> p -> p -> bool
 val of_bindings  : Ast.Sort.t list 
                    -> Ast.Sort.t Ast.Symbol.SMap.t 
