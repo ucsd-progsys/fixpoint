@@ -259,7 +259,7 @@ let minimize s qs =
 (* API *)
 let read s k = 
   p_read s k 
-  (* |> minimize s *)
+  |> minimize s 
   |> List.map snd
 
 
