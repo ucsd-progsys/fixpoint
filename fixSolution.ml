@@ -73,7 +73,7 @@ type def = Ast.pred * (Ast.Qualifier.t * Ast.Subst.t)
 
 type p   = Sy.t * def
 
-type t   = { m    : def list SM.t
+type t   = { m    : def list list SM.t
            ; qm   : (Q.t * int) SSM.t (* name :-> (qualif, rank) *)
            ; impm : bool TTM.t       (* (t1,t2) \in impm iff q1 => q2 /\ t1 = tag_of_qual q1 /\ t2 = tag_of_qual q2 *)
            ; impg : G.t              (* same as impm but in graph format *) 
@@ -112,7 +112,10 @@ let map_of_bindings bs =
 *)
 
 let map_of_bindings bs =
-  List.fold_left (fun s (k, ds) -> SM.add k ds s) SM.empty bs 
+  List.fold_left begin fun s (k, ds) -> 
+    ds |> List.map Misc.single 
+       |> Misc.flip (SM.add k) s
+  end SM.empty bs 
 
 let quals_of_bindings bs =
   bs |> Misc.flap snd
@@ -157,7 +160,7 @@ let check_tp tp sm q qs =
   qs |> List.map (fun q -> ((q, tag_of_qual q), Q.pred_of_t q))
      >> (List.map (fst <+> fst) <+> F.printf "CHECK_TP: %a IN %a \n" Q.print q pprint_qs)
      |> TP.set_filter tp sm vv lps (fun _ _ -> false) 
-     >> (List.map fst <+> F.printf "CHECK_TP: %a OUT %a \n" Q.print q pprint_qs)
+     >> (List.flatten <+> List.map fst <+> F.printf "CHECK_TP: %a OUT %a \n" Q.print q pprint_qs)
 
 let cluster_quals = Misc.groupby Q.sort_of_t 
 
@@ -165,6 +168,7 @@ let update_impm_for_quals tp sm impmg qs =
   List.fold_left begin fun impmg q ->
     let tag = tag_of_qual q in 
     qs |> check_tp tp sm q
+       |> List.flatten
        |> (fun xs -> (q, tag) :: xs)
        |> List.fold_left begin fun (ttm, g) (q', tag') -> 
            ( TTM.add (tag, tag') true ttm
@@ -227,10 +231,10 @@ let empty = of_bindings [] SM.empty [] []
 let p_read s k =
   let _ = asserts (SM.mem k s.m) "ERROR: p_read : unknown kvar %s\n" (Sy.to_string k) in
   SM.find k s.m 
+  |> List.flatten
   |> List.map (fun d -> ((k,d), fst d))
   |> (!Constants.minquals <?> Misc.fsort (fun ((_,(_,(q,_))),_) -> rank_of_qual s q))
   |> List.rev
-
 
 let p_imp_subst su1 su2 = 
   Misc.join fst (Su.to_list su1) (Su.to_list su2)
@@ -247,6 +251,7 @@ let p_imp s (_, (p1, (q1, su1)))  (_, (p2, (q2, su2))) =
 (*  >>  F.printf "P_IMP: [p1 = %a] [p2 = %a] [res = %b]\n" P.print p1 P.print p2
 *)
 
+(* {{{ CODE for NON-HEIRARCHICAL SOLUTION MAP 
 let minimize s = 
   Misc.cov_filter (fun x y -> p_imp s (fst x) (fst y)) (fun _ -> true)
   <+> List.map fst
@@ -260,16 +265,43 @@ let minimize s qs =
 (* API *)
 let read s k = 
   p_read s k 
-(*  |> minimize s *) 
+  |> minimize s  
   |> List.map snd
 
-(* {{{ CODE for HEIRARCHICAL SOLUTION MAP
+  (* INV: qs' \subseteq qs *)
+let update m k ds' =
+  let ds  = SM.find k m in
+  (if mydebug then 
+     ds |> List.filter (fun d -> not (List.mem d ds'))
+        |> List.map fst
+        |> F.printf "Dropping %a: (%d) %a \n" Sy.print k
+        (List.length ds) pprint_ps
+  );
+  (not (Misc.same_length ds ds'), SM.add k ds' m)
+
+                              
+(* API *)
+let p_update s0 ks kds = 
+  let kdsm = Misc.kgroupby fst kds |> Sy.sm_of_list in
+  List.fold_left begin fun (b, m) k ->
+    (try SM.find k kdsm with Not_found -> [])
+    |> List.map snd 
+    |> update m k 
+    |> Misc.app_fst ((||) b)
+  end (false, s0.m) ks
+  |> Misc.app_snd (fun m -> { s0 with m = m })  
+
+}}} *)
+
+
+(*  CODE for HEIRARCHICAL SOLUTION MAP *)
 
 (* API *)
 let read s k =
   let _ = asserts (SM.mem k s.m) "ERROR: read : unknown kvar %s\n" (Sy.to_string k) in
   SM.find k s.m 
-  |> List.map  fst
+  |> List.map List.hd
+  |> List.map fst
 
 (* INV: qs' \subseteq qs *)
 let update m k dss' =
@@ -290,30 +322,6 @@ let p_update s0 ks kdss =
   List.fold_left begin fun (b, m) k ->
     (try SM.find k kdsm with Not_found -> [])
     |> List.map (List.map snd) 
-    |> update m k 
-    |> Misc.app_fst ((||) b)
-  end (false, s0.m) ks
-  |> Misc.app_snd (fun m -> { s0 with m = m })  
-}}} *)
-
-(* INV: qs' \subseteq qs *)
-let update m k ds' =
-  let ds  = SM.find k m in
-  (if mydebug then 
-     ds |> List.filter (fun d -> not (List.mem d ds'))
-        |> List.map fst
-        |> F.printf "Dropping %a: (%d) %a \n" Sy.print k
-        (List.length ds) pprint_ps
-  );
-  (not (Misc.same_length ds ds'), SM.add k ds' m)
-
-                              
-(* API *)
-let p_update s0 ks kds = 
-  let kdsm = Misc.kgroupby fst kds |> Sy.sm_of_list in
-  List.fold_left begin fun (b, m) k ->
-    (try SM.find k kdsm with Not_found -> [])
-    |> List.map snd 
     |> update m k 
     |> Misc.app_fst ((||) b)
   end (false, s0.m) ks
@@ -343,7 +351,8 @@ let print_stats ppf s =
     (SM.fold (fun _ qs x -> (+) x (List.length qs)) s.m 0,
      SM.fold (fun _ qs x -> max x (List.length qs)) s.m min_int,
      SM.fold (fun _ qs x -> min x (List.length qs)) s.m max_int,
-     SM.fold (fun _ qs x -> x + (if List.exists (fst <+> P.is_contra) qs then 1 else 0)) s.m 0) in
+     SM.fold (fun _ qs x -> x + (if List.exists (fst <+> P.is_contra)
+     (List.flatten qs) then 1 else 0)) s.m 0) in
   let n   = Sy.sm_length s.m in
   let avg = (float_of_int sum) /. (float_of_int n) in
   F.fprintf ppf "# Vars: (Total=%d, False=%d) Quals: (Total=%d, Avg=%f, Max=%d, Min=%d)\n" 
@@ -365,7 +374,7 @@ let key_of_quals qs =
 let dump_cluster s = 
   s.m 
   |> Sy.sm_to_list 
-  |> List.map (snd <+> List.map fst)
+  |> List.map (snd <+> List.flatten <+> List.map fst)
   |> Misc.groupby key_of_quals
   |> List.map begin function 
      | [] -> assertf "impossible" 
