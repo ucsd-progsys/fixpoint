@@ -259,7 +259,7 @@ let minimize s qs =
 (* API *)
 let read s k = 
   p_read s k 
-  |> minimize s 
+  (* |> minimize s *)
   |> List.map snd
 
 
@@ -294,12 +294,13 @@ let print ppf s =
   Sy.sm_to_list s.m 
   |> List.map fst 
   >> List.iter begin fun k ->
-       F.fprintf ppf "//solution: %a := [%a] \n\n"  Sy.print k pprint_ps (read s k)
+       p_read s k 
+       |> (minimize s <+> List.map snd)
+       |> F.fprintf ppf "//solution: %a := [%a] \n\n"  Sy.print k pprint_ps
      end 
   >> List.iter begin fun k ->
-       F.fprintf ppf "solution: %a := [%a] \n\n"  
-         Sy.print k 
-         (Misc.pprint_many false ";" print_dep) (p_read s k)
+       p_read s k
+       |> F.fprintf ppf "solution: %a := [%a] \n\n"  Sy.print k pprint_ds
      end
   |> ignore
        

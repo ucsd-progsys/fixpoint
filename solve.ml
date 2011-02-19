@@ -58,7 +58,7 @@ type t = {
  ; stat_umatches       : int ref 
  ; stat_unsatLHS       : int ref 
  ; stat_emptyRHS       : int ref 
- ; stat_cfreqt         : (int, int) Hashtbl.t 
+ ; stat_cfreqt         : (int * bool, int) Hashtbl.t 
 }
 
 let mydebug = false 
@@ -73,10 +73,10 @@ let hashtbl_incr_frequency t k =
 
 let hashtbl_print_frequency t = 
   Misc.hashtbl_to_list t 
-  |> Misc.groupby snd
-  |> List.map (function ((_,n)::_) as xs -> (n, List.length xs) | _ -> assertf "impossible") 
+  |> Misc.kgroupby (fun ((k,b),n) -> (n,b))
+  |> List.map (fun ((n, b), xs) -> (n, b, List.length xs)) 
   |> List.sort compare
-  |> List.iter (fun (n,m) -> Format.printf "ITERFREQ: %d times %d constraints \n" n m)
+  |> List.iter (fun (n, b, m) -> Format.printf "ITERFREQ: %d times (change = %b) %d constraints \n" n b m)
 
 
 (***************************************************************)
@@ -271,7 +271,7 @@ let rec acsolve me w s =
       s 
   | (Some c, w') ->
       let (ch, s')  = BS.time "refine" (refine me s) c in
-      let _ = hashtbl_incr_frequency me.stat_cfreqt (C.id_of_t c) in  
+      let _ = hashtbl_incr_frequency me.stat_cfreqt (C.id_of_t c, ch) in  
       let _ = Co.bprintf mydebug "iter=%d id=%d ch=%b %a \n" 
               !(me.stat_refines) (C.id_of_t c) ch C.print_tag (C.tag_of_t c) in
       let w'' = if ch then Ci.deps me.sri c |> Ci.wpush me.sri w' else w' in 
