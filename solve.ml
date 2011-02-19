@@ -61,7 +61,7 @@ type t = {
  ; stat_cfreqt         : (int * bool, int) Hashtbl.t 
 }
 
-let mydebug = false 
+let mydebug = true 
 
 (*************************************************************)
 (********************* Stats *********************************)
