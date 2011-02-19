@@ -345,14 +345,24 @@ let pop me =
   let _ = me.count <- me.count - 1 in
   BS.time "Z3.pop" (Z3.pop me.c) 1 
 
+(* COMMENTING OUT FOR PROFILING 
 let valid me p =
-  let _ = BS.time "valid" (push me) [(Z3.mk_not me.c p)] in
+  let _ = BS.time "push" (push me) [(Z3.mk_not me.c p)] in
   let rv = Timeout.do_timeout !Constants.z3_timeout unsat me in
   let rv = match rv with Some x -> x
-                       | None -> failwith
-                       "UNRECOVERABLE FIXPOINT ERROR: Z3 TIMED OUT" in
+                       | None -> failwith "UNRECOVERABLE FIXPOINT ERROR: Z3 TIMED OUT" in
   let _ = pop me in
   rv
+
+*)
+
+let valid me p =
+  let _ = BS.time "push" (push me) [(Z3.mk_not me.c p)] in
+  BS.time "unsat" unsat me 
+  >> (fun _ -> pop me)
+
+
+let valid me p = BS.time "valid" (valid me) p
 
 let clean_decls me =
   let cs, vars' = vpop ([],me.vars) in
