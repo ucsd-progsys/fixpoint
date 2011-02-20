@@ -37,7 +37,7 @@ open Misc.Ops
 
 
 
-type tag  = int list
+type tag  = int list * string
 type id   = int
 type dep  = Adp of tag * tag | Ddp of tag * tag | Ddp_s of tag | Ddp_t of tag
 
@@ -262,16 +262,15 @@ let string_of_intlist = (String.concat ";") <.> (List.map string_of_int)
 
 (* API *)
 let print_tag ppf = function
-  | []          -> F.fprintf ppf ""
-  | is          -> is |> string_of_intlist 
-                      |> F.fprintf ppf "tag [%s]" 
+  | [],_ -> F.fprintf ppf ""
+  | is,s -> F.fprintf ppf "tag [%s] //%s" (string_of_intlist is) s 
 
 (* API *)
 let print_dep ppf = function
-  | Adp (t, t') -> F.fprintf ppf "add_dep: [%s] -> [%s]" (string_of_intlist t) (string_of_intlist t')
-  | Ddp (t, t') -> F.fprintf ppf "del_dep: [%s] -> [%s]" (string_of_intlist t) (string_of_intlist t')
-  | Ddp_s t     -> F.fprintf ppf "del_dep: [%s] -> *" (string_of_intlist t) 
-  | Ddp_t t'    -> F.fprintf ppf "del_dep: * -> [%s]" (string_of_intlist t')
+  | Adp ((t,_), (t',_)) -> F.fprintf ppf "add_dep: [%s] -> [%s]" (string_of_intlist t) (string_of_intlist t')
+  | Ddp ((t,_), (t',_)) -> F.fprintf ppf "del_dep: [%s] -> [%s]" (string_of_intlist t) (string_of_intlist t')
+  | Ddp_s (t,_)     -> F.fprintf ppf "del_dep: [%s] -> *" (string_of_intlist t) 
+  | Ddp_t (t',_)    -> F.fprintf ppf "del_dep: * -> [%s]" (string_of_intlist t')
 
 (* API *)
 let print_wf so ppf (env, r, io, _) =

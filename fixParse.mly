@@ -188,21 +188,25 @@ tagsne:
   | Num SEMI tagsne                               { $1 :: $3 }
   ;
 
+tag: 
+  | LB tagsne RB                                  { ($2, "") }
+  ;
+
 dep:
-  | ADP COLON LB tagsne RB IMPL LB tagsne RB            {C.make_dep true (Some $4) (Some $8) }
-  | DDP COLON LB tagsne RB IMPL LB tagsne RB            {C.make_dep false (Some $4) (Some $8) }
-  | DDP COLON TIMES IMPL LB tagsne RB                   {C.make_dep false None (Some $6) }
-  | DDP COLON LB tagsne RB IMPL TIMES                   {C.make_dep false (Some $4) None }
+  | ADP COLON tag IMPL tag                     {C.make_dep true (Some $3) (Some $5) }
+  | DDP COLON tag IMPL tag                     {C.make_dep false (Some $3) (Some $5) }
+  | DDP COLON TIMES IMPL tag                   {C.make_dep false None (Some $5) }
+  | DDP COLON tag IMPL TIMES                   {C.make_dep false (Some $3) None }
   ;
 
 info:
-  ID Num                                          { ((Some $2), []) }
-  | TAG LB tagsne RB                              { (None, $3)} 
-  | ID Num TAG LB tagsne RB                       { ((Some $2), $5) }
+  ID Num                                        { ((Some $2), ([],"")) }
+  | TAG tag                                     { (None     , $2)} 
+  | ID Num TAG tag                              { ((Some $2), $4) }
   ;
 
 cstr:
-    ENV env GRD pred LHS reft RHS reft          { C.make_t $2 $4 $6 $8 None [] }
+    ENV env GRD pred LHS reft RHS reft          { C.make_t $2 $4 $6 $8 None ([],"") }
   | ENV env GRD pred LHS reft RHS reft info     { C.make_t $2 $4 $6 $8 (fst $9) (snd $9)}
   ;
 

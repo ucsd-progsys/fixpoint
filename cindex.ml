@@ -51,8 +51,8 @@ let string_of_tag t =
   Printf.sprintf "[%s]" (Misc.map_to_string string_of_int t)
 
 let pprint_rank ppf r = 
-  Format.fprintf ppf "id=%d, scc=%d, tag=%s" 
-    r.id r.scc (string_of_tag r.tag)
+  Format.fprintf ppf "id=%d, scc=%d, tag=%a" 
+    r.id r.scc C.print_tag r.tag
 
 module WH = 
   Heaps.Functional(struct 
@@ -138,9 +138,9 @@ let adjust_deps cm ds =
 let string_of_cid cm id = 
   try 
     IM.find id cm 
-    |> C.tag_of_t 
-    |> string_of_tag 
-    |> Printf.sprintf "%d: %s" id
+    |> C.tag_of_t
+    |> Misc.fsprintf C.print_tag
+    |> Printf.sprintf "%d: %s" id 
   with _ -> assertf "string_of_cid: impossible" 
 
 let make_rankm cm ranks = 
