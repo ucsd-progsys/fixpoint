@@ -129,7 +129,7 @@ let add_deps cm ads ijs =
 
 let adjust_deps cm ds = 
   let ads, dds = List.partition C.pol_of_dep ds in
-  add_deps cm ads <.> delete_deps cm dds 
+  !Constants.adjdeps <?> (add_deps cm ads <.> delete_deps cm dds)
 
 (***********************************************************************)
 (**************************** Dependency SCCs **************************)

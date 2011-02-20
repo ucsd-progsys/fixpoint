@@ -74,10 +74,12 @@ let hashtbl_incr_frequency t k =
 let hashtbl_print_frequency t = 
   Misc.hashtbl_to_list t 
   |> Misc.kgroupby (fun ((k,b),n) -> (n,b))
-  |> List.map (fun ((n, b), xs) -> (n, b, List.length xs)) 
+  |> List.map (fun ((n,b), xs) -> (n, b, List.map (fst <+> fst) xs))
   |> List.sort compare
-  |> List.iter (fun (n, b, m) -> Format.printf "ITERFREQ: %d times (change = %b) %d constraints \n" n b m)
-
+  |> List.iter begin fun (n, b, xs) -> 
+       Format.printf "ITERFREQ: %d times (ch = %b) %d constraints %s \n"
+                     n b (List.length xs) (Misc.map_to_string string_of_int xs) 
+     end
 
 (***************************************************************)
 (************************** Refinement *************************)
