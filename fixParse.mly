@@ -132,12 +132,15 @@ pred:
   | AND preds   			{ A.pAnd ($2) }
   | OR  preds 	        		{ A.pOr  ($2) }
   | NOT pred				{ A.pNot ($2) }
-  | pred IMPL pred			{ A.pImp ($1, $3) }
-  | pred IFF pred                       { A.pIff ($1, $3) }
   | expr brel expr                      { A.pAtom ($1, $2, $3) }
   | FORALL binds DOT pred               { A.pForall ($2, $4) }
-  | LPAREN pred RPAREN			{ $2 }
+  | LPAREN pred2 RPAREN			{ $2 }
   ;
+
+pred2:
+  | pred IMPL pred                      { A.pImp ($1, $3) }
+  | pred IFF pred                       { A.pIff ($1, $3) }
+  | pred                                { $1 }
 
 exprs:
     LB RB                               { [] }
@@ -150,16 +153,16 @@ exprsne:
   ;
 
 expr:
-    Id				        { A.eVar (Sy.of_string $1) }
-  | Num 				{ A.eCon (A.Constant.Int $1) }
-  | MINUS Num 				{ A.eCon (A.Constant.Int (-1 * $2)) }
-  | LPAREN expr MOD Num RPAREN          { A.eMod ($2, $4) }
-  | expr bop expr                       { A.eBin ($1, $2, $3) }
-  | Id LPAREN  exprs RPAREN             { A.eApp ((Sy.of_string $1), $3) }
-  | pred QM expr COLON expr             { A.eIte ($1,$3,$5) }
-  | expr DOT Id                         { A.eFld ((Sy.of_string $3), $1) }
-  | LPAREN expr COLON sort RPAREN       { A.eCst ($2, $4) }
-  | LPAREN expr RPAREN                  { $2 }
+    Id                                    { A.eVar (Sy.of_string $1) }
+  | Num                                   { A.eCon (A.Constant.Int $1) }
+  | MINUS Num                             { A.eCon (A.Constant.Int (-1 * $2)) }
+  | LPAREN expr MOD Num RPAREN            { A.eMod ($2, $4) }
+  | expr bop expr                         { A.eBin ($1, $2, $3) }
+  | Id LPAREN  exprs RPAREN               { A.eApp ((Sy.of_string $1), $3) }
+  | LPAREN pred QM expr COLON expr RPAREN { A.eIte ($1,$3,$5) }
+  | expr DOT Id                           { A.eFld ((Sy.of_string $3), $1) }
+  | LPAREN expr COLON sort RPAREN         { A.eCst ($2, $4) }
+  | LPAREN expr RPAREN                    { $2 }
   ;
 
 brel:
