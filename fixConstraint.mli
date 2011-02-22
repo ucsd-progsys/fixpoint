@@ -27,7 +27,7 @@ type t                  (* NEVER EVER expose! *)
 type wf                 (* NEVER EVER expose! *)
 type dep                (* NEVER EVER expose! dependencies between constraints *)
 
-type tag  = int list    (* for ordering: must have same dim, lexico-ordered *)
+type tag  = int list * string (* for ordering: must have same dim, lexico-ordered *)
 type id   = int         (* for identifying: must be unique *) 
 
 type refa = Conc of Ast.pred | Kvar of Ast.Subst.t * Ast.Symbol.t
@@ -38,7 +38,7 @@ type deft = Srt of Ast.Sort.t
           | Axm of Ast.pred 
           | Cst of t 
           | Wfc of wf 
-          | Sol of Ast.Symbol.t * FixSolution.def list
+          | Sol of Ast.Symbol.t * (Ast.pred * (string * Ast.Subst.t)) list
           | Qul of Ast.Qualifier.t
           | Dep of dep 
 

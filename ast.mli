@@ -70,7 +70,6 @@ module Symbol :
     module SMap         : Map.S with type key = t
     module SSet         : Set.S with type elt = t
     val mk_wild         : unit -> t  
-    val is_wild         : t -> bool
     val of_string       : string -> t
     val to_string       : t -> string 
     val is_wild         : t -> bool
@@ -196,11 +195,13 @@ module Subst :
 module Qualifier : 
   sig
     type t 
-    val create    : Symbol.t -> Sort.t -> pred -> t 
+    val create    : string -> Symbol.t -> Sort.t -> pred -> t 
+    val name_of_t : t -> string 
     val vv_of_t   : t -> Symbol.t
     val pred_of_t : t -> pred
     val sort_of_t : t -> Sort.t
     val vv_of_t   : t -> Symbol.t
+    val normalize : t list -> t list
     val subst     : Subst.t -> t -> t
     val print     : Format.formatter -> t -> unit
   end

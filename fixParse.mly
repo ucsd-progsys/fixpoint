@@ -39,7 +39,7 @@ let parse_error msg =
 
 %type <FixConstraint.deft list>              defs
 %type <FixConstraint.deft>                   def
-%type <(Ast.Symbol.t * FixSolution.def list) list>  sols
+%type <(Ast.Symbol.t * (Ast.pred * (string * Ast.Subst.t)) list) list>  sols
 %type <So.t list>                            sorts, sortsne 
 %type <So.t>                                 sort
 %type <(Sy.t * So.t) list>                   binds, bindsne 
@@ -64,7 +64,7 @@ defs:
 
 qual:
   Id LPAREN Id COLON sort RPAREN COLON pred  
-                                        { A.Qualifier.create (Sy.of_string $3) $5 $8 }
+                                        { A.Qualifier.create $1 (Sy.of_string $3) $5 $8 }
   ;
 
 
@@ -191,21 +191,25 @@ tagsne:
   | Num SEMI tagsne                               { $1 :: $3 }
   ;
 
+tag: 
+  | LB tagsne RB                                  { ($2, "") }
+  ;
+
 dep:
-  | ADP COLON LB tagsne RB IMPL LB tagsne RB            {C.make_dep true (Some $4) (Some $8) }
-  | DDP COLON LB tagsne RB IMPL LB tagsne RB            {C.make_dep false (Some $4) (Some $8) }
-  | DDP COLON TIMES IMPL LB tagsne RB                   {C.make_dep false None (Some $6) }
-  | DDP COLON LB tagsne RB IMPL TIMES                   {C.make_dep false (Some $4) None }
+  | ADP COLON tag IMPL tag                     {C.make_dep true (Some $3) (Some $5) }
+  | DDP COLON tag IMPL tag                     {C.make_dep false (Some $3) (Some $5) }
+  | DDP COLON TIMES IMPL tag                   {C.make_dep false None (Some $5) }
+  | DDP COLON tag IMPL TIMES                   {C.make_dep false (Some $3) None }
   ;
 
 info:
-  ID Num                                          { ((Some $2), []) }
-  | TAG LB tagsne RB                              { (None, $3)} 
-  | ID Num TAG LB tagsne RB                       { ((Some $2), $5) }
+  ID Num                                        { ((Some $2), ([],"")) }
+  | TAG tag                                     { (None     , $2)} 
+  | ID Num TAG tag                              { ((Some $2), $4) }
   ;
 
 cstr:
-    ENV env GRD pred LHS reft RHS reft          { C.make_t $2 $4 $6 $8 None [] }
+    ENV env GRD pred LHS reft RHS reft          { C.make_t $2 $4 $6 $8 None ([],"") }
   | ENV env GRD pred LHS reft RHS reft info     { C.make_t $2 $4 $6 $8 (fst $9) (snd $9)}
   ;
 
@@ -248,8 +252,22 @@ subs:
   | LB Id ASGN expr RB subs             { Su.extend $6 ((Sy.of_string $2), $4) } 
   ;
 
+npred: 
+  LPAREN pred COMMA Id subs RPAREN      { ($2, ($4, $5)) }
+  ;
+
+npreds:
+    LB RB                                { [] }
+  | LB npredsne RB                       { $2 }
+  ;
+
+npredsne:
+    npred                                { [$1] }
+  | npred SEMI npredsne                  { $1 :: $3 }
+;
+
 sol:
-    SOL COLON Id ASGN preds             { ((Sy.of_string $3), List.map (fun p -> (p, None)) $5) }
+    SOL COLON Id ASGN npreds            { ((Sy.of_string $3), $5) }
 
 sols:
              { [] }
