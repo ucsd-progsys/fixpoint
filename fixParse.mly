@@ -34,11 +34,14 @@ let parse_error msg =
 %token SRT AXM CST WF SOL QUL ADP DDP
 %token ENV GRD LHS RHS REF
 
+%right IFF
+%right IMPL
 %left PLUS
 %left MINUS
 %left DIV
 %left TIMES
 %left DOT
+%right NOT
 
 %start defs 
 %start sols
@@ -143,13 +146,10 @@ pred:
   | expr LT expr                        { A.pAtom ($1, A.Lt, $3) }
   | expr LE expr                        { A.pAtom ($1, A.Le, $3) }
   | FORALL binds DOT pred               { A.pForall ($2, $4) }
-  | LPAREN pred2 RPAREN			{ $2 }
-  ;
-
-pred2:
   | pred IMPL pred                      { A.pImp ($1, $3) }
   | pred IFF pred                       { A.pIff ($1, $3) }
-  | pred                                { $1 }
+  | LPAREN pred RPAREN			{ $2 }
+  ;
 
 exprs:
     LB RB                               { [] }
