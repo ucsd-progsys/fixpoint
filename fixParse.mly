@@ -34,6 +34,12 @@ let parse_error msg =
 %token SRT AXM CST WF SOL QUL ADP DDP
 %token ENV GRD LHS RHS REF
 
+%left PLUS
+%left MINUS
+%left DIV
+%left TIMES
+%left DOT
+
 %start defs 
 %start sols
 
@@ -47,8 +53,6 @@ let parse_error msg =
 %type <A.pred>                               pred
 %type <A.expr list>                          exprs, exprsne
 %type <A.expr>                               expr
-%type <A.brel>                               brel 
-%type <A.bop>                                bop 
 %type <C.t>                                  cstr
 %type <C.envt>                               env
 %type <C.reft>                               reft
@@ -132,7 +136,12 @@ pred:
   | AND preds   			{ A.pAnd ($2) }
   | OR  preds 	        		{ A.pOr  ($2) }
   | NOT pred				{ A.pNot ($2) }
-  | expr brel expr                      { A.pAtom ($1, $2, $3) }
+  | expr EQ expr                        { A.pAtom ($1, A.Eq, $3) }
+  | expr NE expr                        { A.pAtom ($1, A.Ne, $3) }
+  | expr GT expr                        { A.pAtom ($1, A.Gt, $3) }
+  | expr GE expr                        { A.pAtom ($1, A.Ge, $3) }
+  | expr LT expr                        { A.pAtom ($1, A.Lt, $3) }
+  | expr LE expr                        { A.pAtom ($1, A.Le, $3) }
   | FORALL binds DOT pred               { A.pForall ($2, $4) }
   | LPAREN pred2 RPAREN			{ $2 }
   ;
@@ -157,28 +166,15 @@ expr:
   | Num                                   { A.eCon (A.Constant.Int $1) }
   | MINUS Num                             { A.eCon (A.Constant.Int (-1 * $2)) }
   | LPAREN expr MOD Num RPAREN            { A.eMod ($2, $4) }
-  | expr bop expr                         { A.eBin ($1, $2, $3) }
+  | expr PLUS expr                        { A.eBin ($1, A.Plus, $3) }
+  | expr MINUS expr                       { A.eBin ($1, A.Minus, $3) }
+  | expr TIMES expr                       { A.eBin ($1, A.Times, $3) }
+  | expr DIV expr                         { A.eBin ($1, A.Div, $3) }
   | Id LPAREN  exprs RPAREN               { A.eApp ((Sy.of_string $1), $3) }
   | LPAREN pred QM expr COLON expr RPAREN { A.eIte ($2,$4,$6) }
   | expr DOT Id                           { A.eFld ((Sy.of_string $3), $1) }
   | LPAREN expr COLON sort RPAREN         { A.eCst ($2, $4) }
   | LPAREN expr RPAREN                    { $2 }
-  ;
-
-brel:
-    EQ                                  { A.Eq }
-  | NE                                  { A.Ne }
-  | GT                                  { A.Gt }
-  | GE                                  { A.Ge }
-  | LT                                  { A.Lt }
-  | LE                                  { A.Le }
-  ;
-
-bop:
-    PLUS                                { A.Plus }
-  | MINUS                               { A.Minus }
-  | TIMES                               { A.Times }
-  | DIV                                 { A.Div }
   ;
   
 wf:
