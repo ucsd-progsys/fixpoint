@@ -159,7 +159,7 @@ expr:
   | LPAREN expr MOD Num RPAREN            { A.eMod ($2, $4) }
   | expr bop expr                         { A.eBin ($1, $2, $3) }
   | Id LPAREN  exprs RPAREN               { A.eApp ((Sy.of_string $1), $3) }
-  | LPAREN pred QM expr COLON expr RPAREN { A.eIte ($1,$3,$5) }
+  | LPAREN pred QM expr COLON expr RPAREN { A.eIte ($2,$4,$6) }
   | expr DOT Id                           { A.eFld ((Sy.of_string $3), $1) }
   | LPAREN expr COLON sort RPAREN         { A.eCst ($2, $4) }
   | LPAREN expr RPAREN                    { $2 }
