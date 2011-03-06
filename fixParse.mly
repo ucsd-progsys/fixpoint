@@ -99,6 +99,7 @@ sort:
   | INT                                 { So.t_int }
   | BOOL                                { So.t_bool }
   | PTR                                 { So.t_ptr (So.Lvar 0) }
+  | PTR LPAREN Num RPAREN               { So.t_ptr (So.Lvar $3) }
   | PTR LPAREN Id RPAREN                { So.t_ptr (So.Loc $3) }
   | OBJ                                 { So.t_obj } 
   | TVAR LPAREN Num RPAREN              { So.t_generic $3 }

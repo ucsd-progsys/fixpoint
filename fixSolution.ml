@@ -186,6 +186,7 @@ let impm_of_quals ts sm ps qs =
      |> List.fold_left (update_impm_for_quals tp sm) (TTM.empty, G.empty)
      >> (fun _ -> ignore <| Printf.printf "DONE: Building IMP Graph \n")  
 
+
 let qual_ranks_of_impg impg = 
   let a = SCC.scc_array impg in
   Misc.array_fold_lefti begin fun i qm qs ->
@@ -214,14 +215,14 @@ let rank_of_qual s q =
 (* API *)
 let of_bindings ts sm ps bs =
   let m          = map_of_bindings bs in
+  let qs         = quals_of_bindings bs in
   let im, ig, qm =
     if !Constants.minquals then
-      quals_of_bindings bs 
-      |> impm_of_quals ts sm ps
+      impm_of_quals ts sm ps qs
       >> (snd <+> dump_graph (!Constants.save_file^".impg.dot")) 
       |> (fun (im, ig) -> (im, ig, qual_ranks_of_impg ig)) 
     else
-      (TTM.empty, G.empty, SSM.empty) 
+      (TTM.empty, G.empty, List.map (fun q -> (Q.name_of_t q, (q, 0))) qs |> Misc.sm_of_list) 
   in {m = m; qm = qm; impm = im; impg = ig; imp_memo_t = H.create 37}
 
 (* API *)
@@ -347,7 +348,8 @@ let print_m ppf s =
 let print_qm ppf s = 
   Misc.sm_to_list s.qm
   |> List.map (snd <+> fst)
-  |> F.fprintf ppf "%a" (Misc.pprint_many true "\n" Q.print)
+  >> (fun _ -> F.fprintf ppf "//QUALIFIERS \n\n")
+  |> List.iter (F.fprintf ppf "%a@ \n" Q.print) 
   |> ignore
 
 (* API *)

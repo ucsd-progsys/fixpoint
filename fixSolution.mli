@@ -21,7 +21,7 @@ type p
 
 type def = Ast.pred * (Ast.Qualifier.t * Ast.Subst.t)
 
-val empty        : t
+val empty        : t 
 val read         : t -> Ast.Symbol.t -> Ast.pred list
 val p_read       : t -> Ast.Symbol.t -> (p * Ast.pred) list 
 val p_update     : t -> Ast.Symbol.t list -> p list list -> (bool * t)
