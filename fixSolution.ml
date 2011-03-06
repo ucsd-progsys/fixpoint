@@ -75,8 +75,8 @@ type p   = Sy.t * def
 
 type t   = { m    : def list list SM.t
            ; qm   : (Q.t * int) SSM.t (* name :-> (qualif, rank) *)
-           ; impm : bool TTM.t       (* (t1,t2) \in impm iff q1 => q2 /\ t1 = tag_of_qual q1 /\ t2 = tag_of_qual q2 *)
-           ; impg : G.t              (* same as impm but in graph format *) 
+           ; impm : bool TTM.t        (* (t1,t2) \in impm iff q1 => q2 /\ t1 = tag_of_qual q1 /\ t2 = tag_of_qual q2 *)
+           ; impg : G.t               (* same as impm but in graph format *) 
            ; imp_memo_t: ((A.tag * A.tag), bool) H.t
            }
 
@@ -331,8 +331,7 @@ let p_update s0 ks kdss =
 (*********************** Profile/Stats **********************)
 (************************************************************)
 
-(* API *)
-let print ppf s =
+let print_m ppf s = 
   Sy.sm_to_list s.m 
   |> List.map fst 
   >> List.iter begin fun k ->
@@ -344,7 +343,17 @@ let print ppf s =
        |> F.fprintf ppf "solution: %a := [%a] \n\n"  Sy.print k pprint_ds
      end
   |> ignore
-       
+ 
+let print_qm ppf s = 
+  Misc.sm_to_list s.qm
+  |> List.map (snd <+> fst)
+  |> F.fprintf ppf "%a" (Misc.pprint_many true "\n" Q.print)
+  |> ignore
+
+(* API *)
+let print ppf s = s >> print_m ppf >> print_qm ppf |> ignore
+
+      
 (* API *)
 let print_stats ppf s =
   let (sum, max, min, bot) =   

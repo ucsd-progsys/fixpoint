@@ -82,11 +82,10 @@ let sift_quals ds =
      >> (List.map fst <+> (fun ns -> asserts (Misc.distinct ns) "ERROR: duplicate quals!"))
      |> Misc.sm_of_list
 
-
 (* API *)
 let sift ds =
   let qm  = sift_quals ds in
-  let n2q = fun n -> Misc.do_catchf "name2qual" (MSM.find n) qm in
+  let n2q = fun n -> Misc.do_catchf ("name2qual: "^n) (MSM.find n) qm in
   let s2d = List.map (fun (p, (n,s)) -> (p, (n2q n, s))) in
   List.fold_left begin fun a -> function 
     | Srt t      -> {a with ts = t  :: a.ts }   
