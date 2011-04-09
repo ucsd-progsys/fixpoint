@@ -1,0 +1,14 @@
+constraint:
+ env  []
+ grd true 
+ lhs {VV_int : int | [(VV_int = 0)]} 
+ rhs {VV_int : int | [k_0]} 
+ id 2 tag [2;0;-1000;1] //bar 
+
+wf:
+ env []
+ reft {VV_int : int | [k_1]} 
+
+solution: k_0 := [((1 = 0), FALSE);((VV_int = 0), EQZ);((0 <= VV_int), GEZ);((0 < VV_int), GTZ)] 
+
+ 

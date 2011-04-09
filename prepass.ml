@@ -71,11 +71,11 @@ let phase3 cs =
   cs
 
 (* 4. check that each tag has the same arity [a] *)
-let phase4 a cs =
-  List.iter begin fun c -> 
-    asserts (a = List.length (C.tag_of_t c)) "Invalid Constraints 4"
-  end cs;
-  cs
+let phase4 a cs = 
+  cs 
+  >> List.iter begin fun c -> 
+       asserts (a = List.length (fst (C.tag_of_t c))) "Invalid Constraints 4"
+     end
 
 (* 5. check that all refinements are well-formed *)
 let validate_vars env msg vs = 

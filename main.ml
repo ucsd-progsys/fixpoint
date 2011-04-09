@@ -38,7 +38,7 @@ open Misc.Ops
 
 let get_arity = function
   | []   -> assertf "Fixpoint: NO CONSTRAINTS!"
-  | c::_ -> c |> C.tag_of_t |> List.length
+  | c::_ -> c |> C.tag_of_t |> fst |> List.length
 
 (*****************************************************************)
 (********************* Hooking into Solver ***********************)

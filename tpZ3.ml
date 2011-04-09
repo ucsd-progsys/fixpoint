@@ -308,8 +308,10 @@ let z3Pred me env p = BS.time "z3Pred" (z3Pred me env) p
 (***************** Low Level Query Interface *******************************)
 (***************************************************************************)
 
+let us_ref = ref 0
+
 let unsat me =
-  let _ = if mydebug then (Printf.printf "UNSAT 1 \n"; flush stdout) in
+  let _ = if mydebug then (Printf.printf "[%d] UNSAT 1 " (us_ref += 1); flush stdout) in
   let rv = (BS.time "Z3.check" Z3.check me.c) = Z3.L_FALSE in
   let _ = if mydebug then (Printf.printf "UNSAT 2 \n"; flush stdout) in
   let _  = if rv then ignore (nb_unsat += 1) in 
@@ -343,14 +345,24 @@ let pop me =
   let _ = me.count <- me.count - 1 in
   BS.time "Z3.pop" (Z3.pop me.c) 1 
 
+(* COMMENTING OUT FOR PROFILING 
 let valid me p =
-  let _ = push me [(Z3.mk_not me.c p)] in
+  let _ = BS.time "push" (push me) [(Z3.mk_not me.c p)] in
   let rv = Timeout.do_timeout !Constants.z3_timeout unsat me in
   let rv = match rv with Some x -> x
-                       | None -> failwith
-                       "UNRECOVERABLE FIXPOINT ERROR: Z3 TIMED OUT" in
+                       | None -> failwith "UNRECOVERABLE FIXPOINT ERROR: Z3 TIMED OUT" in
   let _ = pop me in
   rv
+
+*)
+
+let valid me p =
+  let _ = BS.time "push" (push me) [(Z3.mk_not me.c p)] in
+  BS.time "unsat" unsat me 
+  >> (fun _ -> pop me)
+
+
+let valid me p = BS.time "valid" (valid me) p
 
 let clean_decls me =
   let cs, vars' = vpop ([],me.vars) in
@@ -366,11 +378,33 @@ let set me env vv ps =
   ps |> prep_preds me env |> push me;
   (* unsat me *) false
 
-let filter me env p_imp ps =
+let full_filter me env _ ps =
   ps 
   |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
-  |> Misc.cov_filter (fun x y -> p_imp (fst3 x) (fst3 y)) (thd3 <+> valid me)
-  |> List.map fst3 
+  |> Misc.filter (thd3 <+> valid me)
+  |> List.map (fst3 <+> Misc.single)
+
+let min_filter me env p_imp ps =
+  ps 
+  |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
+  |> Misc.cov_filter (fun x y -> BS.time "p_imp" (p_imp (fst3 x)) (fst3 y)) (thd3 <+> valid me)
+  |> List.map (fun (x, xs) -> List.map fst3 (x::xs))
+
+(* DEBUG
+let ps_to_string xps = List.map snd xps |> Misc.fsprintf (Misc.pprint_many false "," P.print)
+
+let min_filter me env f ps = 
+  let ps'  = min_filter me env f ps in
+  let ps'' = full_filter me env f ps in
+  let _    = asserti (List.length ps' = List.length ps'') 
+             "difference in filters:\n[ps' = %s]\n[ps'' = %s]\n\n" 
+             (ps_to_string ps') (ps_to_string ps'') in
+  ps'
+*)
+
+let filter me = 
+  if !Constants.minquals then min_filter me else full_filter me
+
 
 (************************************************************************)
 (********************************* API **********************************)
@@ -400,14 +434,14 @@ let set_filter (me: t) (env: So.t SM.t) (vv: Sy.t) ps p_imp qs =
   | true  -> 
     let _ = nb_unsatLHS += 1 in
     let _ = pop me in
-    List.map fst qs
+    List.map (fst <+> Misc.single) qs 
 
   | false ->
      qs 
      |> List.rev_map   (Misc.app_snd A.fixdiv) 
      |> List.partition (snd <+> P.is_tauto)
-     |> Misc.app_fst (List.map fst)
-     |> Misc.app_snd (BS.time "TP filter" (filter me env p_imp))
+     |> Misc.app_fst   (List.map (fst <+> Misc.single))
+     |> Misc.app_snd   (BS.time "TP filter" (filter me env p_imp))
      >> (fun _ -> pop me; clean_decls me)
      |> Misc.uncurry (++) 
 
