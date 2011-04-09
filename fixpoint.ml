@@ -51,7 +51,7 @@ let solve ac  =
   let _       = print_now "Fixpoint: Solving \n" in
   let s, cs'  = BS.time "solve" (S.solve ctx) s in
   let _       = print_now "Fixpoint: Saving Result \n" in
-  let _       = BS.time "save" (S.save !Co.save_file ctx) s in
+  let _       = BS.time "save" (Sn.save_raw !Co.out_file) s in
   let _       = F.printf "%a \nUnsat Constraints:\n %a" 
                   Sn.print s 
                   (Misc.pprint_many true "\n" (C.print_t None)) cs' in
