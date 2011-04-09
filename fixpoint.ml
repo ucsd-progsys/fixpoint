@@ -54,8 +54,6 @@ let save_raw fname cs s =
   F.fprintf ppf "%a \n" print_raw_cs cs; 
   F.fprintf ppf "%a \n" Sn.print_raw s;
   close_out oc
- 
-
 
 let solve ac  = 
   let _       = print_now "Fixpoint: Creating  CI\n" in
