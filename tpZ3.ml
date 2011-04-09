@@ -291,8 +291,10 @@ and z3Pred me env = function
   | A.Atom (e1, r, e2), _ ->
       z3Rel me env (e1, r, e2)
   | A.Bexp e, _ -> 
-      let a = z3Exp me env e in
-      let _ = asserts (is_z3_bool me a) "Bexp is not bool!" in
+      let a  = z3Exp me env e in
+      let s1 = Z3.ast_to_string me.c a in
+      let s2 = E.to_string e in
+      let _  = asserti (is_z3_bool me a) "Bexp is not bool! z3=%s, fix=%s" s1 s2 in 
       a
  | A.Forall (xts, p), _ -> 
       let (xs, ts) = List.split xts in
