@@ -542,8 +542,8 @@ and pred_to_string p =
         Printf.sprintf "(%s %s %s)" 
         (expr_to_string e1) (brel_to_string r) (expr_to_string e2)
     | Forall (qs,p) -> 
-        Printf.sprintf "forall %s: %s" 
-        (List.map bind_to_string qs |> String.concat ",") (pred_to_string p)
+        Printf.sprintf "forall [%s] . %s" 
+        (List.map bind_to_string qs |> String.concat "; ") (pred_to_string p)
 
 let rec pred_map hp he fp fe p =
   let rec pm p =
@@ -1076,10 +1076,24 @@ module Qualifier = struct
 
   let canon p = Predicate.map id (czr ()) p
 
+  let print ppf q = 
+    Format.fprintf ppf "qualif %s(%a:%a):%a" 
+      q.name
+      Symbol.print q.vvar
+      Sort.print q.vsort
+      Predicate.print q.pred
+
+  let print_short ppf q = 
+    Format.fprintf ppf "%a:%a" 
+      Sort.print q.vsort
+      Predicate.print q.pred
+
+
+
   (* remove duplicates, ensure distinct names *)
   let normalize qs = 
     qs |> List.map (fun q -> {q with pred = canon q.pred})
-       |> Misc.kgroupby (fun q -> pred_to_string q.pred)
+       |> Misc.kgroupby (Misc.fsprintf print_short)
        |> List.map (fun (_,x::_) -> x)
        |> Misc.mapfold begin fun m q ->
             if SM.mem q.name m then

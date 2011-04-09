@@ -225,8 +225,10 @@ let inst_qual ys t' (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
 (*
       |> List.rev_map (Su.of_list <+> A.substs_pred p') (* substituted preds     *)
       |> List.map (Q.create v' t' )                     (* qualifiers            *)
-*)  end
-(*  >> F.printf "inst_qual q = %a: \n%a" Q.print q (Misc.pprint_many true "" Q.print) *)
+*)end
+  >> ((List.map fst) <+> F.printf "\n\ninst_qual q = %a: %a" Q.print q (Misc.pprint_many true "" Q.print))
+
+
 
 let inst_ext qs wf = 
   let r    = C.reft_of_wf wf in
@@ -245,7 +247,7 @@ let inst_ext qs wf =
 
 let inst ws qs = 
   Misc.flap (inst_ext qs) ws 
-  >> (fun _ -> Co.bprintf mydebug "varmatch_ctr = %d \n" !varmatch_ctr)
+  >> (fun _ -> Co.bprintf mydebug "\n\nvarmatch_ctr = %d \n\n" !varmatch_ctr)
   |> Misc.kgroupby fst 
   |> Misc.map (Misc.app_snd (List.map snd)) 
 
@@ -299,7 +301,11 @@ let solve me s =
 let create ts sm ps a ds cs ws bs0 qs =
   let tpc = TP.create ts sm ps in
   let qs  = Q.normalize qs >> F.printf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) in
-  let bs  = BS.time "Qual Inst" (inst ws) qs in
+  let bs  = BS.time "Qual Inst" (inst ws) qs 
+            >> List.iter (fun (k, ps) -> F.printf "%a := %a \n" Sy.print k
+                                         (Misc.pprint_many false ", " Q.print)
+                                         (List.map (snd <+> fst) ps))
+  in 
   let s   = Sn.of_bindings ts sm ps (bs0 ++ bs) in
   let ws  = PP.validate_wfs ws in
   let sri = cs >> F.printf "Pre-Simplify Stats\n%a" print_constr_stats 
