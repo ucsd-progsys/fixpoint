@@ -25,9 +25,9 @@ OFLAGS=$(DIRS) $(IFLAGS) $(LFLAGS) $(CFLAGS)
 
 all:
 	ln -sf ../misc
-	ocamlbuild -r $(LIBS) $(OFLAGS) -tags thread main.native
+	ocamlbuild -r $(LIBS) $(OFLAGS) -tags thread fixpoint.native
 	ocamlbuild -r $(OFLAGS) fix.cmxa
-	cp _build/main.native .
+	cp _build/fixpoint.native .
 
 clean:
 	rm -rf *.byte *.native _build _log
