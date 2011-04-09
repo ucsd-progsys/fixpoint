@@ -44,6 +44,19 @@ let get_arity = function
 (********************* Hooking into Solver ***********************)
 (*****************************************************************)
 
+let print_raw_cs ppf = function
+  | [] -> F.fprintf ppf "SAT \n \n \n"
+  | cs -> F.fprintf ppf "UNSAT [%s] \n \n \n" (Misc.map_to_string (C.id_of_t <+> string_of_int) cs)
+
+let save_raw fname cs s = 
+  let oc  = open_out fname in
+  let ppf = F.formatter_of_out_channel oc in
+  F.fprintf ppf "%a \n" print_raw_cs cs; 
+  F.fprintf ppf "%a \n" Sn.print_raw s;
+  close_out oc
+ 
+
+
 let solve ac  = 
   let _       = print_now "Fixpoint: Creating  CI\n" in
   let a       = get_arity ac.C.cs in
@@ -51,7 +64,7 @@ let solve ac  =
   let _       = print_now "Fixpoint: Solving \n" in
   let s, cs'  = BS.time "solve" (S.solve ctx) s in
   let _       = print_now "Fixpoint: Saving Result \n" in
-  let _       = BS.time "save" (Sn.save_raw !Co.out_file) s in
+  let _       = BS.time "save" (save_raw !Co.out_file cs') s in
   let _       = F.printf "%a \nUnsat Constraints:\n %a" 
                   Sn.print s 
                   (Misc.pprint_many true "\n" (C.print_t None)) cs' in
@@ -63,6 +76,7 @@ let dump_solve cs =
   match cs' with 
   | [] -> (F.printf "\nSAT\n" ; exit 0)
   | _  -> (F.printf "\nUNSAT\n" ; exit 1)
+
 
 (*****************************************************************)
 (********************* Generate Imp Program **********************)

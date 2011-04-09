@@ -34,7 +34,7 @@ val of_bindings  : Ast.Sort.t list
 
 val print        : Format.formatter -> t -> unit
 val print_stats  : Format.formatter -> t -> unit
+val print_raw    : Format.formatter -> t -> unit
 
-val save_raw     : string -> t -> unit
 val save         : string -> t -> unit
 val dump_cluster : t -> unit

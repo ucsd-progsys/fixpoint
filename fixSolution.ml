@@ -370,14 +370,6 @@ let print_stats ppf s =
     n bot sum avg max min
 
 (* API *)
-let save fname s =
-  let oc  = open_out fname in
-  let ppf = F.formatter_of_out_channel oc in
-  F.fprintf ppf "@[%a@] \n" print s;
-  close_out oc
-
-
-
 let print_raw ppf s = 
   Sy.sm_to_list s.m 
   |> List.map fst 
@@ -388,12 +380,12 @@ let print_raw ppf s =
   |> ignore 
 
 (* API *)
-let save_raw fname s = 
+let save fname s =
   let oc  = open_out fname in
   let ppf = F.formatter_of_out_channel oc in
-  F.fprintf ppf "@[%a@] \n" print_raw s;
+  F.fprintf ppf "@[%a@] \n" print s;
   close_out oc
- 
+
 
 let key_of_quals qs = 
   qs |> List.map P.to_string 
