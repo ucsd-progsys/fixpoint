@@ -1,208 +1,211 @@
-
+constant True         : obj
+constant False        : obj
 
 qualif GEZ(v:int)     : 0 <= v
 qualif BOTI(v:int)    : 0 = 1 
 qualif BOTB(v:bool)   : 0 = 1 
-qualif TRUEB(v:bool)  : (Bexp v)
-qualif FALSEB(v:bool) : ~ (Bexp v)
+
+qualif TRUEB(v:bool)  : (tag([v]) = True)
+qualif FALSEB(v:bool) : (tag([v]) != True)
+
 
 constraint: 
-  env  [wild:{VV_bool : bool | [((Bexp VV_bool) <=> (x > y)) ; (Bexp VV_bool)]} ; x:{VV_int : int | [k_11]} ; y:{VV_int : int | [k_12]}]  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; wild_sDP:{VV_bool : bool | [((tag([VV_bool]) = True) <=> (x > y)) ; (tag([VV_obj]) = True)]} ; x:{VV_int : int | [k_11]} ; y:{VV_int : int | [k_12]}]  
   grd true  
   lhs {VV_int : int | [k_11 ; (VV_int = x)]} 
   rhs {VV_int : int | [k_13]} 
-    
+  id 1  
 constraint: 
-  env  [wild:{VV_bool : bool | [((Bexp VV_bool) <=> (x > y)) ; (~ ((Bexp VV_bool)))]} ; x:{VV_int : int | [k_11]} ; y:{VV_int : int | [k_12]}]  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; wild_sDP:{VV_bool : bool | [((tag([VV_bool]) = True) <=> (x > y)) ; (tag([VV_obj]) = False)]} ; x:{VV_int : int | [k_11]} ; y:{VV_int : int | [k_12]}]  
   grd true  
   lhs {VV_int : int | [k_12 ; (VV_int = y)]} 
   rhs {VV_int : int | [k_13]} 
-    
+  id 2  
 constraint: 
-  env  [x:{VV_int : int | [k_11]} ; y:{VV_int : int | [k_12]}]  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; x:{VV_int : int | [k_11]} ; y:{VV_int : int | [k_12]}]  
   grd true  
   lhs {VV_int : int | [k_12 ; (VV_int = y)]} 
   rhs {VV_int : int | []} 
-    
+  id 3  
 constraint: 
-  env  [x:{VV_int : int | [k_11]} ; y:{VV_int : int | [k_12]}]  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; x:{VV_int : int | [k_11]} ; y:{VV_int : int | [k_12]}]  
   grd true  
   lhs {VV_int : int | [k_11 ; (VV_int = x)]} 
   rhs {VV_int : int | []} 
-    
+  id 4  
 constraint: 
-  env  [n:{VV_int : int | [k_6]} ; sat_sDr:{VV_bool : bool | [k_8]}]  
+  env  [n:{VV_int : int | [k_6]} ; sat_sDL:{VV_bool : bool | [k_8]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   grd true  
-  lhs {VV_bool : bool | [(VV_bool = sat_sDr)]} 
+  lhs {VV_bool : bool | [(VV_bool = sat_sDL)]} 
   rhs {VV_bool : bool | [k_9]} 
-    
+  id 5  
 constraint: 
-  env  [n:{VV_int : int | [k_6]} ; sat_sDr:{VV_bool : bool | [k_8]}]  
+  env  [n:{VV_int : int | [k_6]} ; sat_sDL:{VV_bool : bool | [k_8]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   grd true  
-  lhs {VV_bool : bool | [k_8 ; (VV_bool = sat_sDr)]} 
-  rhs {VV_bool : bool | [(Bexp VV_bool)]} 
-    
+  lhs {VV_bool : bool | [k_8 ; (VV_bool = sat_sDL)]} 
+  rhs {VV_bool : bool | [(tag([VV_bool]) = True)]} 
+  id 6  
 constraint: 
-  env  [n:{VV_int : int | [k_6]} ; sat_sDs:{VV_int : int | [(VV_int = 0)]}]  
+  env  [n:{VV_int : int | [k_6]} ; sat_sDM:{VV_int : int | [(VV_int = 0)]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   grd true  
   lhs {VV_bool : bool | [k_7]} 
   rhs {VV_bool : bool | [k_8]} 
-    
+  id 7  
 constraint: 
-  env  [n:{VV_int : int | [k_6]} ; sat_sDs:{VV_int : int | [(VV_int = 0)]} ; sat_sDt:{VV_int : int | [k_5[x:=n]]}]  
+  env  [n:{VV_int : int | [k_6]} ; sat_sDM:{VV_int : int | [(VV_int = 0)]} ; sat_sDN:{VV_int : int | [k_5[x:=n]]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   grd true  
-  lhs {VV_bool : bool | [((Bexp VV_bool) <=> (sat_sDt >= sat_sDs))]} 
+  lhs {VV_bool : bool | [((tag([VV_bool]) = True) <=> (sat_sDN >= sat_sDM))]} 
   rhs {VV_bool : bool | [k_7]} 
-    
+  id 8  
 constraint: 
-  env  [n:{VV_int : int | [k_6]} ; sat_sDs:{VV_int : int | [(VV_int = 0)]} ; sat_sDt:{VV_int : int | [k_5[x:=n]]}]  
+  env  [n:{VV_int : int | [k_6]} ; sat_sDM:{VV_int : int | [(VV_int = 0)]} ; sat_sDN:{VV_int : int | [k_5[x:=n]]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   grd true  
-  lhs {VV_int : int | [(VV_int = 0) ; (VV_int = sat_sDs)]} 
+  lhs {VV_int : int | [(VV_int = 0) ; (VV_int = sat_sDM)]} 
   rhs {VV_int : int | []} 
-    
+  id 9  
 constraint: 
-  env  [n:{VV_int : int | [k_6]} ; sat_sDs:{VV_int : int | [(VV_int = 0)]} ; sat_sDt:{VV_int : int | [k_5[x:=n]]}]  
+  env  [n:{VV_int : int | [k_6]} ; sat_sDM:{VV_int : int | [(VV_int = 0)]} ; sat_sDN:{VV_int : int | [k_5[x:=n]]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   grd true  
-  lhs {VV_int : int | [k_5[x:=n] ; (VV_int = sat_sDt)]} 
+  lhs {VV_int : int | [k_5[x:=n] ; (VV_int = sat_sDN)]} 
   rhs {VV_int : int | []} 
-    
+  id 10  
 constraint: 
-  env  [n:{VV_int : int | [k_6]} ; sat_sDs:{VV_int : int | [(VV_int = 0)]}]  
+  env  [n:{VV_int : int | [k_6]} ; sat_sDM:{VV_int : int | [(VV_int = 0)]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   grd true  
   lhs {VV_int : int | [k_6 ; (VV_int = n)]} 
   rhs {VV_int : int | [k_2]} 
-    
+  id 11  
 constraint: 
-  env  [n:{VV_int : int | [k_6]}]  
+  env  [n:{VV_int : int | [k_6]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   grd true  
-  lhs {VV_obj : obj | [(VV_obj = 0)]} 
-  rhs {VV_obj : obj | []} 
-    
+  lhs {VV_int : int | [(VV_int = 0)]} 
+  rhs {VV_int : int | []} 
+  id 12  
 constraint: 
-  env  [sat_sDp:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_2]}]  
+  env  [sat_sDJ:{VV_int : int | [(VV_int = 0)]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; x:{VV_int : int | [k_2]}]  
   grd true  
   lhs {VV_int : int | [k_3]} 
   rhs {VV_int : int | [k_5]} 
-    
+  id 13  
 constraint: 
-  env  [sat_sDp:{VV_int : int | [(VV_int = 0)]} ; wild:{VV_bool : bool | [((Bexp VV_bool) <=> (x > sat_sDp)) ; (Bexp VV_bool)]} ; x:{VV_int : int | [k_2]}]  
+  env  [sat_sDJ:{VV_int : int | [(VV_int = 0)]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; wild_sDO:{VV_bool : bool | [((tag([VV_bool]) = True) <=> (x > sat_sDJ)) ; (tag([VV_obj]) = True)]} ; x:{VV_int : int | [k_2]}]  
   grd true  
   lhs {VV_int : int | [k_2 ; (VV_int = x)]} 
   rhs {VV_int : int | [k_3]} 
-    
+  id 14  
 constraint: 
-  env  [sat_sDp:{VV_int : int | [(VV_int = 0)]} ; wild:{VV_bool : bool | [((Bexp VV_bool) <=> (x > sat_sDp)) ; (~ ((Bexp VV_bool)))]} ; x:{VV_int : int | [k_2]}]  
+  env  [sat_sDJ:{VV_int : int | [(VV_int = 0)]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; wild_sDO:{VV_bool : bool | [((tag([VV_bool]) = True) <=> (x > sat_sDJ)) ; (tag([VV_obj]) = False)]} ; x:{VV_int : int | [k_2]}]  
   grd true  
   lhs {VV_int : int | [k_4]} 
   rhs {VV_int : int | [k_3]} 
-    
+  id 15  
 constraint: 
-  env  [sat_sDp:{VV_int : int | [(VV_int = 0)]} ; sat_sDq:{VV_int : int | [(VV_int = 0)]} ; wild:{VV_bool : bool | [((Bexp VV_bool) <=> (x > sat_sDp)) ; (~ ((Bexp VV_bool)))]} ; x:{VV_int : int | [k_2]}]  
+  env  [sat_sDJ:{VV_int : int | [(VV_int = 0)]} ; sat_sDK:{VV_int : int | [(VV_int = 0)]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; wild_sDO:{VV_bool : bool | [((tag([VV_bool]) = True) <=> (x > sat_sDJ)) ; (tag([VV_obj]) = False)]} ; x:{VV_int : int | [k_2]}]  
   grd true  
-  lhs {VV_int : int | [(VV_int = (sat_sDq - x))]} 
+  lhs {VV_int : int | [(VV_int = (sat_sDK - x))]} 
   rhs {VV_int : int | [k_4]} 
-    
+  id 16  
 constraint: 
-  env  [sat_sDp:{VV_int : int | [(VV_int = 0)]} ; sat_sDq:{VV_int : int | [(VV_int = 0)]} ; wild:{VV_bool : bool | [((Bexp VV_bool) <=> (x > sat_sDp)) ; (~ ((Bexp VV_bool)))]} ; x:{VV_int : int | [k_2]}]  
+  env  [sat_sDJ:{VV_int : int | [(VV_int = 0)]} ; sat_sDK:{VV_int : int | [(VV_int = 0)]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; wild_sDO:{VV_bool : bool | [((tag([VV_bool]) = True) <=> (x > sat_sDJ)) ; (tag([VV_obj]) = False)]} ; x:{VV_int : int | [k_2]}]  
   grd true  
   lhs {VV_int : int | [k_2 ; (VV_int = x)]} 
   rhs {VV_int : int | [true]} 
-    
+  id 17  
 constraint: 
-  env  [sat_sDp:{VV_int : int | [(VV_int = 0)]} ; sat_sDq:{VV_int : int | [(VV_int = 0)]} ; wild:{VV_bool : bool | [((Bexp VV_bool) <=> (x > sat_sDp)) ; (~ ((Bexp VV_bool)))]} ; x:{VV_int : int | [k_2]}]  
+  env  [sat_sDJ:{VV_int : int | [(VV_int = 0)]} ; sat_sDK:{VV_int : int | [(VV_int = 0)]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; wild_sDO:{VV_bool : bool | [((tag([VV_bool]) = True) <=> (x > sat_sDJ)) ; (tag([VV_obj]) = False)]} ; x:{VV_int : int | [k_2]}]  
   grd true  
-  lhs {VV_int : int | [(VV_int = 0) ; (VV_int = sat_sDq)]} 
+  lhs {VV_int : int | [(VV_int = 0) ; (VV_int = sat_sDK)]} 
   rhs {VV_int : int | [true]} 
-    
+  id 18  
 constraint: 
-  env  [sat_sDp:{VV_int : int | [(VV_int = 0)]} ; wild:{VV_bool : bool | [((Bexp VV_bool) <=> (x > sat_sDp)) ; (~ ((Bexp VV_bool)))]} ; x:{VV_int : int | [k_2]}]  
+  env  [sat_sDJ:{VV_int : int | [(VV_int = 0)]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; wild_sDO:{VV_bool : bool | [((tag([VV_bool]) = True) <=> (x > sat_sDJ)) ; (tag([VV_obj]) = False)]} ; x:{VV_int : int | [k_2]}]  
   grd true  
-  lhs {VV_obj : obj | [(VV_obj = 0)]} 
-  rhs {VV_obj : obj | []} 
-    
-constraint: 
-  env  [sat_sDp:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_2]}]  
-  grd true  
-  lhs {VV_int : int | [(VV_int = 0) ; (VV_int = sat_sDp)]} 
+  lhs {VV_int : int | [(VV_int = 0)]} 
   rhs {VV_int : int | []} 
-    
+  id 19  
 constraint: 
-  env  [sat_sDp:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_2]}]  
+  env  [sat_sDJ:{VV_int : int | [(VV_int = 0)]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; x:{VV_int : int | [k_2]}]  
+  grd true  
+  lhs {VV_int : int | [(VV_int = 0) ; (VV_int = sat_sDJ)]} 
+  rhs {VV_int : int | []} 
+  id 20  
+constraint: 
+  env  [sat_sDJ:{VV_int : int | [(VV_int = 0)]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; x:{VV_int : int | [k_2]}]  
   grd true  
   lhs {VV_int : int | [k_2 ; (VV_int = x)]} 
   rhs {VV_int : int | []} 
-    
+  id 21  
 constraint: 
-  env  [x:{VV_int : int | [k_2]}]  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; x:{VV_int : int | [k_2]}]  
   grd true  
-  lhs {VV_obj : obj | [(VV_obj = 0)]} 
-  rhs {VV_obj : obj | []} 
-    
+  lhs {VV_int : int | [(VV_int = 0)]} 
+  rhs {VV_int : int | []} 
+  id 22  
 constraint: 
-  env  [x:{VV_int : int | [k_0]} ; y:{VV_int : int | [k_1]}]  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; x:{VV_int : int | [k_0]} ; y:{VV_int : int | [k_1]}]  
   grd true  
   lhs {VV_int : int | [k_1 ; (VV_int = y)]} 
   rhs {VV_int : int | [true]} 
-    
+  id 23  
 constraint: 
-  env  [x:{VV_int : int | [k_0]} ; y:{VV_int : int | [k_1]}]  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; x:{VV_int : int | [k_0]} ; y:{VV_int : int | [k_1]}]  
   grd true  
   lhs {VV_int : int | [k_0 ; (VV_int = x)]} 
   rhs {VV_int : int | [true]} 
-    
+  id 24  
 wf: 
-  env  []  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   reft {VV_int : int | [k_11]} 
    
 wf: 
-  env  [x:{VV_int : int | [k_11]}]  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; x:{VV_int : int | [k_11]}]  
   reft {VV_int : int | [k_12]} 
    
 wf: 
-  env  [x:{VV_int : int | [k_11]} ; y:{VV_int : int | [k_12]}]  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; x:{VV_int : int | [k_11]} ; y:{VV_int : int | [k_12]}]  
   reft {VV_int : int | [k_13]} 
    
 wf: 
-  env  []  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   reft {VV_int : int | [k_10]} 
    
 wf: 
-  env  []  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   reft {VV_int : int | [k_6]} 
    
 wf: 
-  env  [n:{VV_int : int | [k_6]}]  
+  env  [n:{VV_int : int | [k_6]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   reft {VV_bool : bool | [k_9]} 
    
 wf: 
-  env  [n:{VV_int : int | [k_6]}]  
+  env  [n:{VV_int : int | [k_6]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   reft {VV_bool : bool | [k_8]} 
    
 wf: 
-  env  [n:{VV_int : int | [k_6]} ; sat_sDs:{VV_int : int | [(VV_int = 0)]}]  
+  env  [n:{VV_int : int | [k_6]} ; sat_sDM:{VV_int : int | [(VV_int = 0)]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   reft {VV_bool : bool | [k_7]} 
    
 wf: 
-  env  []  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   reft {VV_int : int | [k_2]} 
    
 wf: 
-  env  [x:{VV_int : int | [k_2]}]  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; x:{VV_int : int | [k_2]}]  
   reft {VV_int : int | [k_5]} 
    
 wf: 
-  env  [sat_sDp:{VV_int : int | [(VV_int = 0)]} ; wild:{VV_bool : bool | [((Bexp VV_bool) <=> (x > sat_sDp)) ; (~ ((Bexp VV_bool)))]} ; x:{VV_int : int | [k_2]}]  
+  env  [sat_sDJ:{VV_int : int | [(VV_int = 0)]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; wild_sDO:{VV_bool : bool | [((tag([VV_bool]) = True) <=> (x > sat_sDJ)) ; (tag([VV_obj]) = False)]} ; x:{VV_int : int | [k_2]}]  
   reft {VV_int : int | [k_4]} 
    
 wf: 
-  env  [sat_sDp:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_2]}]  
+  env  [sat_sDJ:{VV_int : int | [(VV_int = 0)]} ; tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; x:{VV_int : int | [k_2]}]  
   reft {VV_int : int | [k_3]} 
    
 wf: 
-  env  []  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []}]  
   reft {VV_int : int | [k_0]} 
    
 wf: 
-  env  [x:{VV_int : int | [k_0]}]  
+  env  [tag:{VV_func(1, [[@(0) ; obj]]) : func(1, [[@(0) ; obj]]) | []} ; x:{VV_int : int | [k_0]}]  
   reft {VV_int : int | [k_1]} 
    
