@@ -426,7 +426,7 @@ let create ts env ps consts =
             funt  = Hashtbl.create 37; 
             vars  = []; count = 0; bnd = 0} in
   let _  = List.iter (z3Pred me env <+> assert_axiom me) (axioms ++ ps) in
-  let _  = consts |> z3Distinct me env |> assert_axiom me in 
+  let _  = match consts with [] -> () | _ -> z3Distinct me env consts |> assert_axiom me in 
   me
 
 (* API *)
