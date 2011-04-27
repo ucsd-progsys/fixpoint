@@ -531,9 +531,9 @@ and pred_to_string p =
     | Not p -> 
         Printf.sprintf "(~ (%s))" (pred_to_string p) 
     | Imp (p1, p2) -> 
-        Printf.sprintf "(%s -> %s)" (pred_to_string p1) (pred_to_string p2)
+        Printf.sprintf "(%s => %s)" (pred_to_string p1) (pred_to_string p2)
     | Iff (p1, p2) ->
-        Printf.sprintf "(%s <-> %s)" (pred_to_string p1) (pred_to_string p2)
+        Printf.sprintf "(%s <=> %s)" (pred_to_string p1) (pred_to_string p2)
     | And ps -> 
         Printf.sprintf "&& [%s]" (List.map pred_to_string ps |> String.concat " ; ")
     | Or ps -> 
@@ -1087,8 +1087,6 @@ module Qualifier = struct
     Format.fprintf ppf "%a:%a" 
       Sort.print q.vsort
       Predicate.print q.pred
-
-
 
   (* remove duplicates, ensure distinct names *)
   let normalize qs = 

@@ -182,6 +182,8 @@ let dump me s =
 
 let wellformed env q = 
   A.sortcheck_pred (fun x -> snd3 (SM.find x env)) (Q.pred_of_t q)
+  >> (F.printf "\nwellformed: q = @[%a@] in env = @[%a@] result %b\n"  
+        Q.print q (C.print_env None) env)
 
 let dupfree_binding xys : bool = 
   let ys  = List.map snd xys in
