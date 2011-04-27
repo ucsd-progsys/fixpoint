@@ -78,14 +78,14 @@ rule token = parse
   | ":="                { ASGN }
   | "&&"                { AND }
   | "||"                { OR  }
+  | "<=>"               { IFF }
+  | "=>"                { IMPL }
   | "!="		{ NE }
   | "="		        { EQ }
   | "<="		{ LE }
   | "<"		        { LT }
   | ">="		{ GE }
   | ">"		        { GT }
-  | "<=>"               { IFF }
-  | "=>"                { IMPL }
   | "mod"               { MOD }
   | "obj"               { OBJ }
   | "int"               { INT }
