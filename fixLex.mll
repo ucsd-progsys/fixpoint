@@ -80,12 +80,12 @@ rule token = parse
   | "||"                { OR  }
   | "<=>"               { IFF }
   | "=>"                { IMPL }
-  | "!="		{ NE }
-  | "="		        { EQ }
-  | "<="		{ LE }
-  | "<"		        { LT }
-  | ">="		{ GE }
-  | ">"		        { GT }
+  | "!="		        { NE }
+  | "="		            { EQ }
+  | "<="		        { LE }
+  | "<"		            { LT }
+  | ">="		        { GE }
+  | ">"		            { GT }
   | "mod"               { MOD }
   | "obj"               { OBJ }
   | "int"               { INT }
@@ -95,6 +95,7 @@ rule token = parse
   | "func"              { FUNC }
   | "sort"              { SRT }
   | "axiom"             { AXM }
+  | "constant"          { CON }
   | "constraint"        { CST }
   | "wf"                { WF }
   | "solution"          { SOL }

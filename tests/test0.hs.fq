@@ -1,12 +1,10 @@
 constant True         : obj
 constant False        : obj
-
 qualif GEZ(v:int)     : 0 <= v
 qualif BOTI(v:int)    : 0 = 1 
 qualif BOTB(v:bool)   : 0 = 1 
-
-qualif TRUEB(v:bool)  : (tag([v]) = True)
-qualif FALSEB(v:bool) : (tag([v]) != True)
+qualif XB(v:bool)  : (TAG([v]) = True)
+qualif FALSEB(v:bool) : (TAG([v]) != True)
 
 
 constraint: 

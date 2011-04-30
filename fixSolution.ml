@@ -181,7 +181,7 @@ let close_env =
 
 let impm_of_quals ts sm ps qs =
   let sm = qs |> Misc.flap (Q.pred_of_t <+> P.support) |> close_env sm in
-  let tp = TP.create ts sm ps in
+  let tp = TP.create ts sm ps [] in
   qs |> cluster_quals 
      |> List.fold_left (update_impm_for_quals tp sm) (TTM.empty, G.empty)
      >> (fun _ -> ignore <| Printf.printf "DONE: Building IMP Graph \n")  

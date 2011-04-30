@@ -27,9 +27,10 @@ module type PROVER =
 sig
   type t 
  
-  val create      : Ast.Sort.t list 
-                    -> Ast.Sort.t Ast.Symbol.SMap.t 
-                    -> Ast.pred list 
+  val create      : Ast.Sort.t list                         (* sorts        *) 
+                    -> Ast.Sort.t Ast.Symbol.SMap.t         (* environment  *)
+                    -> Ast.pred list                        (* axioms       *) 
+                    -> Ast.Symbol.t list                    (* distinct constants, sorts in env *)
                     -> t
  
   val set_filter  : t 

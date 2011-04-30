@@ -300,8 +300,9 @@ let solve me s =
   (s, u)
 
 (* API *)
-let create ts sm ps a ds cs ws bs0 qs =
-  let tpc = TP.create ts sm ps in
+let create ts sm ps a ds consts cs ws bs0 qs =
+  let sm  = List.fold_left (fun sm (x,so) -> SM.add x so sm) sm consts in 
+  let tpc = TP.create ts sm ps (List.map fst consts) in
   let qs  = Q.normalize qs >> F.printf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) in
   let bs  = BS.time "Qual Inst" (inst ws) qs 
             >> List.iter (fun (k, ps) -> F.printf "%a := %a \n" Sy.print k

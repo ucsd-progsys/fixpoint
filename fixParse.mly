@@ -31,7 +31,7 @@ let parse_error msg =
 %token DIV 
 %token QM DOT ASGN
 %token OBJ INT PTR BOOL UNINT FUNC
-%token SRT AXM CST WF SOL QUL ADP DDP
+%token SRT AXM CON CST WF SOL QUL ADP DDP
 %token ENV GRD LHS RHS REF
 
 %right IFF
@@ -79,6 +79,7 @@ def:
     SRT COLON sort                      { C.Srt $3 }
   | AXM COLON pred                      { C.Axm $3 }
   | CST COLON cstr                      { C.Cst $3 }
+  | CON Id COLON sort                   { C.Con (Sy.of_string $2, $4) }
   | WF  COLON wf                        { C.Wfc $3 }
   | sol                                 { let sym, ps = $1 in C.Sol (sym, ps) }
   | QUL qual                            { C.Qul $2 }

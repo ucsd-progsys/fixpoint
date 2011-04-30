@@ -57,6 +57,7 @@ type deft = Srt of Ast.Sort.t
           | Axm of Ast.pred 
           | Cst of t
           | Wfc of wf
+          | Con of Ast.Symbol.t * Ast.Sort.t
           | Sol of Ast.Symbol.t * (Ast.pred * (string * Ast.Subst.t)) list
           | Qul of Ast.Qualifier.t
           | Dep of dep
@@ -69,6 +70,7 @@ type config = {
  ; ds : dep list
  ; qs : Ast.Qualifier.t list
  ; s  : (Ast.Symbol.t * FixSolution.def list) list
+ ; cons : (Ast.Symbol.t * Ast.Sort.t) list
 }
 
 let mydebug = false 
@@ -88,14 +90,15 @@ let sift ds =
   let n2q = fun n -> Misc.do_catchf ("name2qual: "^n) (MSM.find n) qm in
   let s2d = List.map (fun (p, (n,s)) -> (p, (n2q n, s))) in
   List.fold_left begin fun a -> function 
-    | Srt t      -> {a with ts = t  :: a.ts }   
-    | Axm p      -> {a with ps = p  :: a.ps } 
-    | Cst c      -> {a with cs = c  :: a.cs }
-    | Wfc w      -> {a with ws = w  :: a.ws } 
-    | Dep d      -> {a with ds = d  :: a.ds }
-    | Qul q      -> {a with qs = q  :: a.qs }
-    | Sol (k,ps) -> {a with s  = (k, s2d ps) :: a.s  }
-  end {ts = []; ps = []; cs = []; ws = []; ds = []; qs = []; s = [] } ds 
+    | Srt t      -> {a with ts   = t     :: a.ts   }   
+    | Axm p      -> {a with ps   = p     :: a.ps   } 
+    | Cst c      -> {a with cs   = c     :: a.cs   }
+    | Wfc w      -> {a with ws   = w     :: a.ws   } 
+    | Con (s,t)  -> {a with cons = (s,t) :: a.cons } 
+    | Dep d      -> {a with ds   = d     :: a.ds   }
+    | Qul q      -> {a with qs   = q     :: a.qs   }
+    | Sol (k,ps) -> {a with s    = (k, s2d ps) :: a.s  }
+  end {ts = []; ps = []; cs = []; ws = []; ds = []; qs = []; s = []; cons = [] } ds 
 
 
 

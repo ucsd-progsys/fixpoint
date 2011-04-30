@@ -306,6 +306,8 @@ and z3Pred me env = function
 
 let z3Pred me env p = BS.time "z3Pred" (z3Pred me env) p
 
+let z3Distinct me env = List.map (z3Var me env) <+> Array.of_list <+> Z3.mk_distinct me.c
+
 (***************************************************************************)
 (***************** Low Level Query Interface *******************************)
 (***************************************************************************)
@@ -413,11 +415,9 @@ let filter me =
 (************************************************************************)
 
 (* API *)
-let create ts env ps =
-  (* let _  = Co.bprintf mydebug "TP.create ps = %a \n" (Misc.pprint_many false "," P.print) ps in  *)
+let create ts env ps consts =
   let _  = asserts (ts = []) "ERROR: TPZ3.create non-empty sorts!" in
-  let c  = Z3.mk_context_x [|("MODEL", "false"); 
-                             ("MODEL_PARTIAL", "true")|] in
+  let c  = Z3.mk_context_x [|("MODEL", "false"); ("MODEL_PARTIAL", "true")|] in
   let me = {c     = c; 
             tint  = Z3.mk_int_sort c; 
             tbool = Z3.mk_bool_sort c; 
@@ -426,6 +426,7 @@ let create ts env ps =
             funt  = Hashtbl.create 37; 
             vars  = []; count = 0; bnd = 0} in
   let _  = List.iter (z3Pred me env <+> assert_axiom me) (axioms ++ ps) in
+  let _  = consts |> z3Distinct me env |> assert_axiom me in 
   me
 
 (* API *)
