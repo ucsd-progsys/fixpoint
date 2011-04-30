@@ -334,6 +334,20 @@ let make_t      = fun env p r1 r2 io is ->
                       ido     = io;
                       tag     = is }
 
+
+let reft_of_sort so = make_reft (Sy.value_variable so) so []
+
+let add_consts_env consts env = 
+  consts 
+  |> List.map (Misc.app_snd reft_of_sort) 
+  |> List.fold_left (fun env (x,r) -> SM.add x r env) env
+
+(* API *)
+let add_consts_wf consts (env,x,y,z) = (add_consts_env consts env, x, y, z)
+
+(* API *)
+let add_consts_t consts t = {t with full = add_consts_env consts t.full}
+
 (* API *)
 let make_wf          = fun env r io -> (env, r, io, fun _ -> true)
 let make_filtered_wf = fun env r io fltr -> (env, r, io, fltr)

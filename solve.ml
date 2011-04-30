@@ -182,8 +182,9 @@ let dump me s =
 
 let wellformed env q = 
   A.sortcheck_pred (fun x -> snd3 (SM.find x env)) (Q.pred_of_t q)
-  >> (F.printf "\nwellformed: q = @[%a@] in env = @[%a@] result %b\n"  
+(*  >> (F.printf "\nwellformed: q = @[%a@] in env = @[%a@] result %b\n"  
         Q.print q (C.print_env None) env)
+ *)
 
 let dupfree_binding xys : bool = 
   let ys  = List.map snd xys in
@@ -230,8 +231,8 @@ let inst_qual ys t' (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
       |> List.rev_map (Su.of_list <+> A.substs_pred p') (* substituted preds     *)
       |> List.map (Q.create v' t' )                     (* qualifiers            *)
 *)end
-  >> ((List.map fst) <+> F.printf "\n\ninst_qual q = %a: %a" Q.print q (Misc.pprint_many true "" Q.print))
-
+(*  >> ((List.map fst) <+> F.printf "\n\ninst_qual q = %a: %a" Q.print q (Misc.pprint_many true "" Q.print))
+ *)
 
 
 let inst_ext qs wf = 
@@ -299,19 +300,18 @@ let solve me s =
   let _  = if u != [] then F.printf "Unsatisfied Constraints:\n %a" (Misc.pprint_many true "\n" (C.print_t None)) u in
   (s, u)
 
+
 (* API *)
 let create ts sm ps a ds consts cs ws bs0 qs =
-  let sm  = List.fold_left (fun sm (x,so) -> SM.add x so sm) sm consts in 
+  let sm  = List.fold_left (fun sm (x,so) -> SM.add x so sm) sm consts in
   let tpc = TP.create ts sm ps (List.map fst consts) in
   let qs  = Q.normalize qs >> F.printf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) in
-  let bs  = BS.time "Qual Inst" (inst ws) qs 
-            >> List.iter (fun (k, ps) -> F.printf "%a := %a \n" Sy.print k
-                                         (Misc.pprint_many false ", " Q.print)
-                                         (List.map (snd <+> fst) ps))
-  in 
+  let ws  = ws |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf consts)) 
+               |> PP.validate_wfs in
+  let bs  = BS.time "Qual Inst" (inst ws) qs in 
   let s   = Sn.of_bindings ts sm ps (bs0 ++ bs) in
-  let ws  = PP.validate_wfs ws in
   let sri = cs >> F.printf "Pre-Simplify Stats\n%a" print_constr_stats 
+               |> BS.time  "Constant Env" (List.map (C.add_consts_t consts))
                |> BS.time  "Simplify" FixSimplify.simplify_ts
                >> F.printf "Post-Simplify Stats\n%a" print_constr_stats
                |> BS.time  "PP.Validation" (PP.validate a s)

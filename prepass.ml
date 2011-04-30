@@ -123,23 +123,21 @@ let validate a s cs =
 (******************* Validating Well-Formedness Constraints *******************)
 (******************************************************************************)
 
-(* API *)
-let validate_wfs ws =
-     ws
-  |> List.fold_left begin fun (ws, wfvars) wf ->
-        wf
-     |> C.reft_of_wf
-     |> C.kvars_of_reft
-     |> List.fold_left begin fun wfvars (_, k) ->
+let validate_wf wfvs = 
+  C.reft_of_wf 
+  <+> C.kvars_of_reft 
+  <+> List.fold_left (fun wfvars (_, k) -> Sy.SSet.add k wfvars) wfvs
          (* if Sy.SSet.mem k wfvars then
            let _ = F.printf "ERROR: variable %a is checked for WF twice\n" Sy.print k in
              assert false
          else *)
-           Sy.SSet.add k wfvars
-        end wfvars
-     |> fun wfvars -> (wf :: ws, wfvars)
-     end ([], Sy.SSet.empty)
-  |> fst
+
+(* API *)
+let validate_wfs ws =
+  ws |> List.fold_left begin fun (ws, wfvars) wf -> 
+          (wf :: ws, validate_wf wfvars wf)
+        end ([], Sy.SSet.empty) 
+     |> fst
 
 (***************************************************************)
 (****************** Pruning Unconstrained Vars *****************)
