@@ -68,7 +68,7 @@ module Sort =
     let t_obj       = Obj
     let t_bool      = Bool
     let t_int       = Int
-    let t_generic   = fun i -> let _ = asserts (0 <= i) "t_generic" in Var i
+    let t_generic   = fun i -> let _ = asserts (0 <= i) "t_generic: %d" i in Var i
     let t_ptr       = fun l -> Ptr l
     let t_func      = fun i ts -> Func (i, ts)
 

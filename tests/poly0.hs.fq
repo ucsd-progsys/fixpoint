@@ -1,0 +1,318 @@
+constant True         : obj
+constant False        : obj
+
+qualif GEZ(v:int)     : 0 <= v
+qualif BOTI(v:int)    : 0 = 1 
+
+qualif BOTO(v:obj)   : 0 = 1 
+qualif TRUEO(v:obj)  : (TAG([v]) = True)
+qualif FALSEO(v:obj) : (TAG([v]) != True)
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8l:{VV_obj : obj | [k_15]} ; x:{VV_int : int | [k_11]}]  
+  grd true  
+  lhs {VV_obj : obj | [(VV_obj = sat_s8l)]} 
+  rhs {VV_obj : obj | [k_16]} 
+  id 1  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8l:{VV_obj : obj | [k_15]} ; x:{VV_int : int | [k_11]}]  
+  grd true  
+  lhs {VV_obj : obj | [k_15 ; (VV_obj = sat_s8l)]} 
+  rhs {VV_obj : obj | [(TAG([VV_obj]) = True)]} 
+  id 2  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8m:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_11]}]  
+  grd true  
+  lhs {VV_obj : obj | [k_14]} 
+  rhs {VV_obj : obj | [k_15]} 
+  id 3  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8m:{VV_int : int | [(VV_int = 0)]} ; sat_s8n:{VV_int : int | [k_13]} ; x:{VV_int : int | [k_11]}]  
+  grd true  
+  lhs {VV_obj : obj | [((TAG([VV_obj]) = True) <=> (sat_s8n >= sat_s8m))]} 
+  rhs {VV_obj : obj | [k_14]} 
+  id 4  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8m:{VV_int : int | [(VV_int = 0)]} ; sat_s8n:{VV_int : int | [k_13]} ; x:{VV_int : int | [k_11]}]  
+  grd true  
+  lhs {VV_int : int | [(VV_int = 0) ; (VV_int = sat_s8m)]} 
+  rhs {VV_int : int | []} 
+  id 5  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8m:{VV_int : int | [(VV_int = 0)]} ; sat_s8n:{VV_int : int | [k_13]} ; x:{VV_int : int | [k_11]}]  
+  grd true  
+  lhs {VV_int : int | [k_13 ; (VV_int = sat_s8n)]} 
+  rhs {VV_int : int | []} 
+  id 6  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8m:{VV_int : int | [(VV_int = 0)]} ; sat_s8o:{VV_int : int | [k_4[x:=x]]} ; x:{VV_int : int | [k_11]}]  
+  grd true  
+  lhs {VV_int : int | [k_12[x:=sat_s8o]]} 
+  rhs {VV_int : int | [k_13]} 
+  id 7  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8m:{VV_int : int | [(VV_int = 0)]} ; sat_s8o:{VV_int : int | [k_4[x:=x]]} ; x:{VV_int : int | [k_11]}]  
+  grd true  
+  lhs {VV_int : int | [k_4[x:=x] ; (VV_int = sat_s8o)]} 
+  rhs {VV_int : int | [k_12]} 
+  id 8  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8m:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_11]}]  
+  grd true  
+  lhs {VV_int : int | [k_11 ; (VV_int = x)]} 
+  rhs {VV_int : int | [k_1]} 
+  id 9  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; x:{VV_int : int | [k_11]}]  
+  grd true  
+  lhs {VV_int : int | [(VV_int = 0)]} 
+  rhs {VV_int : int | []} 
+  id 10  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8h:{VV_obj : obj | [k_9]} ; x:{VV_int : int | [k_5]}]  
+  grd true  
+  lhs {VV_obj : obj | [(VV_obj = sat_s8h)]} 
+  rhs {VV_obj : obj | [k_10]} 
+  id 11  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8h:{VV_obj : obj | [k_9]} ; x:{VV_int : int | [k_5]}]  
+  grd true  
+  lhs {VV_obj : obj | [k_9 ; (VV_obj = sat_s8h)]} 
+  rhs {VV_obj : obj | [(TAG([VV_obj]) = True)]} 
+  id 12  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8i:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_5]}]  
+  grd true  
+  lhs {VV_obj : obj | [k_8]} 
+  rhs {VV_obj : obj | [k_9]} 
+  id 13  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8i:{VV_int : int | [(VV_int = 0)]} ; sat_s8j:{VV_int : int | [k_7]} ; x:{VV_int : int | [k_5]}]  
+  grd true  
+  lhs {VV_obj : obj | [((TAG([VV_obj]) = True) <=> (sat_s8j >= sat_s8i))]} 
+  rhs {VV_obj : obj | [k_8]} 
+  id 14  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8i:{VV_int : int | [(VV_int = 0)]} ; sat_s8j:{VV_int : int | [k_7]} ; x:{VV_int : int | [k_5]}]  
+  grd true  
+  lhs {VV_int : int | [(VV_int = 0) ; (VV_int = sat_s8i)]} 
+  rhs {VV_int : int | []} 
+  id 15  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8i:{VV_int : int | [(VV_int = 0)]} ; sat_s8j:{VV_int : int | [k_7]} ; x:{VV_int : int | [k_5]}]  
+  grd true  
+  lhs {VV_int : int | [k_7 ; (VV_int = sat_s8j)]} 
+  rhs {VV_int : int | []} 
+  id 16  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8i:{VV_int : int | [(VV_int = 0)]} ; sat_s8k:{VV_int : int | [k_4[x:=x]]} ; x:{VV_int : int | [k_5]}]  
+  grd true  
+  lhs {VV_int : int | [k_6[x:=sat_s8k]]} 
+  rhs {VV_int : int | [k_7]} 
+  id 17  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8i:{VV_int : int | [(VV_int = 0)]} ; sat_s8k:{VV_int : int | [k_4[x:=x]]} ; x:{VV_int : int | [k_5]}]  
+  grd true  
+  lhs {VV_int : int | [k_4[x:=x] ; (VV_int = sat_s8k)]} 
+  rhs {VV_int : int | [k_6]} 
+  id 18  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8i:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_5]}]  
+  grd true  
+  lhs {VV_int : int | [k_5 ; (VV_int = x)]} 
+  rhs {VV_int : int | [k_1]} 
+  id 19  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; x:{VV_int : int | [k_5]}]  
+  grd true  
+  lhs {VV_int : int | [(VV_int = 0)]} 
+  rhs {VV_int : int | []} 
+  id 20  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8d:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_1]}]  
+  grd true  
+  lhs {VV_int : int | [k_2]} 
+  rhs {VV_int : int | [k_4]} 
+  id 21  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8d:{VV_int : int | [(VV_int = 0)]} ; wild_s8p:{VV_obj : obj | [((TAG([VV_obj]) = True) <=> (x > sat_s8d)) ; (TAG([VV_obj]) = True)]} ; x:{VV_int : int | [k_1]}]  
+  grd true  
+  lhs {VV_int : int | [k_1 ; (VV_int = x)]} 
+  rhs {VV_int : int | [k_2]} 
+  id 22  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8d:{VV_int : int | [(VV_int = 0)]} ; wild_s8p:{VV_obj : obj | [((TAG([VV_obj]) = True) <=> (x > sat_s8d)) ; (TAG([VV_obj]) = False)]} ; x:{VV_int : int | [k_1]}]  
+  grd true  
+  lhs {VV_int : int | [k_3]} 
+  rhs {VV_int : int | [k_2]} 
+  id 23  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8d:{VV_int : int | [(VV_int = 0)]} ; sat_s8g:{VV_int : int | [(VV_int = 0)]} ; wild_s8p:{VV_obj : obj | [((TAG([VV_obj]) = True) <=> (x > sat_s8d)) ; (TAG([VV_obj]) = False)]} ; x:{VV_int : int | [k_1]}]  
+  grd true  
+  lhs {VV_int : int | [(VV_int = (sat_s8g - x))]} 
+  rhs {VV_int : int | [k_3]} 
+  id 24  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8d:{VV_int : int | [(VV_int = 0)]} ; sat_s8g:{VV_int : int | [(VV_int = 0)]} ; wild_s8p:{VV_obj : obj | [((TAG([VV_obj]) = True) <=> (x > sat_s8d)) ; (TAG([VV_obj]) = False)]} ; x:{VV_int : int | [k_1]}]  
+  grd true  
+  lhs {VV_int : int | [k_1 ; (VV_int = x)]} 
+  rhs {VV_int : int | [true]} 
+  id 25  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8d:{VV_int : int | [(VV_int = 0)]} ; sat_s8g:{VV_int : int | [(VV_int = 0)]} ; wild_s8p:{VV_obj : obj | [((TAG([VV_obj]) = True) <=> (x > sat_s8d)) ; (TAG([VV_obj]) = False)]} ; x:{VV_int : int | [k_1]}]  
+  grd true  
+  lhs {VV_int : int | [(VV_int = 0) ; (VV_int = sat_s8g)]} 
+  rhs {VV_int : int | [true]} 
+  id 26  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8d:{VV_int : int | [(VV_int = 0)]} ; wild_s8p:{VV_obj : obj | [((TAG([VV_obj]) = True) <=> (x > sat_s8d)) ; (TAG([VV_obj]) = False)]} ; x:{VV_int : int | [k_1]}]  
+  grd true  
+  lhs {VV_int : int | [(VV_int = 0)]} 
+  rhs {VV_int : int | []} 
+  id 27  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8d:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_1]}]  
+  grd true  
+  lhs {VV_int : int | [(VV_int = 0) ; (VV_int = sat_s8d)]} 
+  rhs {VV_int : int | []} 
+  id 28  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8d:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_1]}]  
+  grd true  
+  lhs {VV_int : int | [k_1 ; (VV_int = x)]} 
+  rhs {VV_int : int | []} 
+  id 29  
+
+
+constraint: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; x:{VV_int : int | [k_1]}]  
+  grd true  
+  lhs {VV_int : int | [(VV_int = 0)]} 
+  rhs {VV_int : int | []} 
+  id 30  
+
+
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []}]  
+  reft {VV_int : int | [k_11]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; x:{VV_int : int | [k_11]}]  
+  reft {VV_obj : obj | [k_16]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; x:{VV_int : int | [k_11]}]  
+  reft {VV_obj : obj | [k_15]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8m:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_11]}]  
+  reft {VV_obj : obj | [k_14]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8m:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_11]}]  
+  reft {VV_int : int | [k_13]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8m:{VV_int : int | [(VV_int = 0)]} ; sat_s8o:{VV_int : int | [k_4[x:=x]]} ; x:{VV_int : int | [k_11]}]  
+  reft {VV_int : int | [k_12]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []}]  
+  reft {VV_int : int | [k_5]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; x:{VV_int : int | [k_5]}]  
+  reft {VV_obj : obj | [k_10]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; x:{VV_int : int | [k_5]}]  
+  reft {VV_obj : obj | [k_9]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8i:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_5]}]  
+  reft {VV_obj : obj | [k_8]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8i:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_5]}]  
+  reft {VV_int : int | [k_7]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8i:{VV_int : int | [(VV_int = 0)]} ; sat_s8k:{VV_int : int | [k_4[x:=x]]} ; x:{VV_int : int | [k_5]}]  
+  reft {VV_int : int | [k_6]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []}]  
+  reft {VV_int : int | [k_1]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; x:{VV_int : int | [k_1]}]  
+  reft {VV_int : int | [k_4]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8d:{VV_int : int | [(VV_int = 0)]} ; wild_s8p:{VV_obj : obj | [((TAG([VV_obj]) = True) <=> (x > sat_s8d)) ; (TAG([VV_obj]) = False)]} ; x:{VV_int : int | [k_1]}]  
+  reft {VV_int : int | [k_3]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []} ; sat_s8d:{VV_int : int | [(VV_int = 0)]} ; x:{VV_int : int | [k_1]}]  
+  reft {VV_int : int | [k_2]} 
+   
+wf: 
+  env  [TAG:{VV_func : func(1, [@(0) ; obj]) | []}]  
+  reft {VV_obj : @(1627390417) | [k_0]} 
+   
