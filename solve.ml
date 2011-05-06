@@ -61,7 +61,7 @@ type t = {
  ; stat_cfreqt         : (int * bool, int) Hashtbl.t 
 }
 
-let mydebug = true 
+let mydebug = false 
 
 (*************************************************************)
 (********************* Stats *********************************)
@@ -300,6 +300,10 @@ let solve me s =
   let _  = if u != [] then F.printf "Unsatisfied Constraints:\n %a" (Misc.pprint_many true "\n" (C.print_t None)) u in
   (s, u)
 
+let ppBinding (k, zs) = 
+  F.printf "%a := %a \n" 
+    Sy.print k 
+    (Misc.pprint_many false "," P.print) (List.map fst zs)
 
 (* API *)
 let create ts sm ps a ds consts cs ws bs0 qs =
@@ -308,7 +312,8 @@ let create ts sm ps a ds consts cs ws bs0 qs =
   let qs  = Q.normalize qs >> F.printf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) in
   let ws  = ws |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf consts)) 
                |> PP.validate_wfs in
-  let bs  = BS.time "Qual Inst" (inst ws) qs in 
+  let bs  = BS.time "Qual Inst" (inst ws) qs 
+               >> List.iter ppBinding in 
   let s   = Sn.of_bindings ts sm ps (bs0 ++ bs) in
   let sri = cs >> F.printf "Pre-Simplify Stats\n%a" print_constr_stats 
                |> BS.time  "Constant Env" (List.map (C.add_consts_t consts))
