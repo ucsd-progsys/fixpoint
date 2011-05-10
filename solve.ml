@@ -301,7 +301,7 @@ let solve me s =
   (s, u)
 
 let ppBinding (k, zs) = 
-  F.printf "%a := %a \n" 
+  F.printf "ppBind %a := %a \n" 
     Sy.print k 
     (Misc.pprint_many false "," P.print) (List.map fst zs)
 
