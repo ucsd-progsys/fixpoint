@@ -859,7 +859,8 @@ and sortcheck_app f so_expected uf es =
      |> function 
           | None -> None 
           | Some (i_ts, o_t) -> 
-              let _    = assert (List.length es = List.length i_ts) in
+              let _  = asserts (List.length es = List.length i_ts) 
+                         "uf arg-arity error: uf=%s" uf in
               let e_ts = es |> List.map (sortcheck_expr f) |> Misc.map_partial id in
                 if List.length e_ts <> List.length i_ts then 
                   None 
@@ -874,6 +875,11 @@ and sortcheck_app f so_expected uf es =
                                 match Sort.unify [t] [t'] with
                                   | None   -> None
                                   | Some s -> Some (Sort.apply s t)
+
+
+
+
+
 
 and sortcheck_op f (e1, op, e2) = 
   match Misc.map_pair (sortcheck_expr f) (e1, e2) with
