@@ -860,7 +860,7 @@ and sortcheck_app f so_expected uf es =
           | None -> None 
           | Some (i_ts, o_t) -> 
               let _  = asserts (List.length es = List.length i_ts) 
-                         "uf arg-arity error: uf=%s" uf in
+                         "ERROR: uf arg-arity error: uf=%s" uf in
               let e_ts = es |> List.map (sortcheck_expr f) |> Misc.map_partial id in
                 if List.length e_ts <> List.length i_ts then 
                   None 
