@@ -222,8 +222,7 @@ let str__cil_tmp = "__cil_tmp"
 
 type kv_scope = {
   kvs : string list;
-  kv_scope : string list StrMap.t;
-  sol : Ast.pred list Sy.SMap.t;
+  kv_scope : string list StrMap.t
 }
 
 type horn_clause = {
@@ -336,7 +335,7 @@ and pred_to_armc ((p, _) as pred) =
 	    (pred_to_armc p)
 
 
-let mk_kv_scope out ts wfs sol =
+let mk_kv_scope out ts wfs =
   (*  let kvs = List.map C.kvars_of_t ts |> List.flatten |> List.map snd |> 
       List.map symbol_to_armc |> (* (fun s -> Printf.sprintf "k%s" (symbol_to_armc s)) |> *)
       Misc.sort_and_compact in
@@ -400,7 +399,7 @@ let mk_kv_scope out ts wfs sol =
   StrMap.iter (fun kv scope ->
     Printf.fprintf out "%% %s -> %s\n" kv (String.concat ", " scope)) kv_scope;
   *)
-  {kvs = kvs; kv_scope = kv_scope; sol = sol}
+  {kvs = kvs; kv_scope = kv_scope}
 
 let mk_data ?(suffix = "") ?(skip_kvs = []) s = 
   Printf.sprintf "[%s]"
@@ -458,7 +457,8 @@ let reft_to_armc ?(noquery = false) ?(suffix = "") state reft =
 	(function
 	   | C.Conc pred -> pred_to_armc pred
 	   | C.Kvar (subs, sym) -> 
-	       if Sy.SMap.mem sym state.sol && Sy.SMap.find sym state.sol = [] then 
+	     failwith "AR: toQARMC.ml reft_to_armc";
+	     if true (* Sy.SMap.mem sym state.sol && Sy.SMap.find sym state.sol = [] *)then 
 		 armc_true  (* skip true *)
 	       else
 		 let subs_map = subs_to_map subs in
@@ -587,27 +587,6 @@ let t_to_armc state t =
 	 ) kvs)
 
 
-let old_to_qarmc out ts wfs sol =
-  print_endline "Translating to QARMC.";
-  let state = mk_kv_scope out ts wfs sol in
-    Printf.fprintf out
-      ":- multifile hc/3, var2names/2, preds/2, error/1.
-
-error(%s).
-%s
-"
-      error_pc
-      (mk_var2names state);
-    List.iter (fun t -> t_to_armc state t |> List.iter (output_string out)) ts
-(*
-    print_endline "sol map";
-    Sy.SMap.iter (fun k v -> Printf.printf "%s -> %s\n" 
-			    (Sy.to_string k)
-			    (List.map P.to_string v |> String.concat ", "))
-      sol
-*)
-
-
 (*
   make -f Makefile.fixtop && ./f -latex /tmp/main.tex -armc /tmp/a.pl tests/pldi08-max.fq && cat /tmp/a.pl
 
@@ -722,14 +701,14 @@ let horn_clause_to_tc state hc =
   in
   Printf.sprintf "%s :- %s.\n" head_str (body_strs |> List.rev |> String.concat ", ")
 
-let to_qarmc out ts wfs sol =
+let to_qarmc out ts wfs =
   print_endline "Translating to QARMC.";
   
   print_endline "=========================";
   List.iter (Format.printf "%a" (C.print_t None)) ts;
   print_endline "=========================";
 
-  let state = mk_kv_scope out ts wfs sol in
+  let state = mk_kv_scope out ts wfs in
 (*  let hcs = List.map (fun t -> t_to_horn_clause t |> simplify_horn_clause) ts in *)
   let hcs = List.map t_to_horn_clause ts in
   output_string out (mk_query_naming state);

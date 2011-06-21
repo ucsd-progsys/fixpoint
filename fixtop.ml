@@ -42,7 +42,10 @@ let dump cs ws =
 let usage = "Usage: fixtop <options> [source-files]\noptions are:"
 
 let main () =
-  let fs, (_,_,cs,ws,_,_,sol) = Toplevel.read_inputs usage in
+  let fs, config = Toplevel.read_inputs usage in
+  let cs = config.C.cs in
+  let ws = config.C.ws in
+(*  let fs, (_,_,cs,ws,_,_,sol) = Toplevel.read_inputs usage in *)
   let cs = 
     if !Co.simplify_t then
       Misc.map_partial begin fun t -> 
@@ -58,6 +61,7 @@ let main () =
 	      close_out out
 	| None -> ()
     end;
+  (*
     begin
       match !Co.armc_file with
 	| Some f -> 
@@ -67,6 +71,8 @@ let main () =
 	      close_out out
 	| None -> ()
     end;
+  *)
+    (*
     begin
       match !Co.horn_file with
 	| Some f -> 
@@ -76,15 +82,17 @@ let main () =
 	      close_out out
 	| None -> ()
     end;
+    *)
     begin
       match !Co.q_armc_file with
 	| Some f -> 
 	    let out = open_out f in
 	      Printf.fprintf out "%% %s\n" (String.concat ", " fs);
-	      ToQARMC.to_qarmc out cs ws sol;
+	      ToQARMC.to_qarmc out cs ws;
 	      close_out out
 	| None -> ()
     end;
+(*
     begin
       match !Co.raw_horn_file with
 	| Some f -> 
@@ -94,6 +102,7 @@ let main () =
 	      close_out out
 	| None -> ()
     end;
+*)
     begin
       match !Co.dot_file with
 	| Some f -> 
