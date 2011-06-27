@@ -48,17 +48,59 @@ let mydebug = false
 
 exception Out_of_scope of Ast.Symbol.t 
 
-(* 3. check that sorts are consistent across constraints *)
-let phase3 cs =
+(* 3a. check that lhs/rhs have same sort *)
+let phase3a = 
+  List.iter begin fun c ->
+    let (vv1,t1,_) = C.lhs_of_t c in
+    let (vv2,t2,_) = C.rhs_of_t c in
+    if not (vv1 = vv2 && t1 = t2) then 
+      let _ = Format.printf "Invalid Constraints 3a in \n %a " (C.print_t None) c in
+      let _ = 0/0 in 
+      () 
+  end
+
+(* 3b. check that sorts are consistent across constraints. 
+ * DEPRECATED, due to the following counterexample.
+ * Suppose you have a function:
+
+	concatMap :: forall a, t. (a -> [t]) -> [a] -> [t]
+	concatMap f [] 	   = []
+	concatMap f (y:ys) = (f y) ++ (concatMap f ys)
+
+ * Now, "f" gets a template
+	
+	(y:a) -> [t]
+
+ * And inside the body of concatMap, the recursive call 
+ * creates a function subtyping on "f" 
+
+	... |- (y:a) -> [t] <: (y:a) -> t
+
+ * which after splitting gives a constraint
+
+	...,(y:a) |- t <: t			(1)
+
+ * Now, suppose you have a call to concatMap
+
+	baz = concatMap (\x -> [x])
+
+ * Here, concatMap is actually "instantiated" with a 
+ * different type variable, so at this instance,
+
+	concatMap :: ((y:b) -> [b]) -> [b] -> [b]
+
+ * That is, a, t are instantiated with b, b. Now, the 
+ * application creates another function subtyping, and 
+ * this time you end up with 
+
+	...,(y:b) |- b <: b			(2)
+
+*) 
+let phase3b cs =
   let memo = Hashtbl.create 17 in
   List.iter begin fun c ->
     let env = C.env_of_t c in
     let id  = C.id_of_t c in
-    let (vv1,t1,_) = C.lhs_of_t c in
-    let (vv2,t2,_) = C.rhs_of_t c in
-    let _ = if not (vv1 = vv2 && t1 = t2) then 
-      let _ = Format.printf "Invalid Constraints 3a in \n %a " (C.print_t None) c in
-      let _ = 0/0 in () in
     SM.iter begin fun x (_,t,_) ->
       if Hashtbl.mem memo x then 
         let xt = Hashtbl.find memo x in
@@ -67,14 +109,13 @@ let phase3 cs =
       else 
         Hashtbl.replace memo x t
     end env
-  end cs;
-  cs
+  end cs
 
 (* 4. check that each tag has the same arity [a] *)
-let phase4 a cs = 
-  cs >> List.iter begin fun c -> 
-          asserts (a = List.length (fst (C.tag_of_t c))) "Invalid Constraints 4"
-        end
+let phase4 a = 
+  List.iter begin fun c -> 
+    asserts (a = List.length (fst (C.tag_of_t c))) "Invalid Constraints 4"
+  end
 
 (* 5. check that all refinements are well-formed *)
 let validate_vars env msg vs = 
@@ -115,8 +156,11 @@ let phase5 s cs =
 
 (* API *)
 let validate a s cs =
-  cs |> phase3 |> phase4 a |> phase5 s
-  >> (fun cs' -> asserts (List.length cs = List.length cs') "Validation")
+  cs >> phase3a 
+  (* >> phase3b : RJ: this invariant need not hold! *) 
+     >> phase4 a 
+     |> phase5 s
+     >> (fun cs' -> asserts (List.length cs = List.length cs') "Validation")
 
 (******************************************************************************)
 (******************* Validating Well-Formedness Constraints *******************)
