@@ -1115,9 +1115,9 @@ module Qualifier = struct
     ; pred  = Predicate.subst p v (eVar v') }
 
   let subst su q = 
-    su |> Subst.to_list 
-       |> Predicate.substs q.pred
-       |> create q.name q.vvar q.vsort
+    Subst.to_list su 
+    |> Predicate.substs q.pred
+    |> create q.name q.vvar q.vsort
 
   let print ppf q = 
     Format.fprintf ppf "qualif %s(%a:%a):%a" 

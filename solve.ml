@@ -208,11 +208,11 @@ let valid_bindings ys x =
   ys |> List.map (fun y -> (x, y))
      |> List.filter varmatch 
 
-let inst_qual ys t' (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
+let inst_qual ys t (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
   let v  = Q.vv_of_t   q in
   let p  = Q.pred_of_t q in
-  let q' = Q.create "" v t' p in
-  let v' = Sy.value_variable t' in
+  let q' = Q.create "" v t p in
+  let v' = Sy.value_variable t in
   let su = Su.of_list [(v, A.eVar v')] in 
   begin
   match q' |> Q.pred_of_t |> P.support |> List.filter Sy.is_wild with
@@ -227,10 +227,7 @@ let inst_qual ys t' (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
       |> List.map (List.map (Misc.app_snd A.eVar))      (* instantiations        *)
       |> List.rev_map Su.of_list                        (* convert to substs     *)
       |> List.rev_map (fun su' -> (Q.subst su' q', (q, Su.concat su su'))) (* quals *)
-(*
-      |> List.rev_map (Su.of_list <+> A.substs_pred p') (* substituted preds     *)
-      |> List.map (Q.create v' t' )                     (* qualifiers            *)
-*)end
+  end
 (*  >> ((List.map fst) <+> F.printf "\n\ninst_qual q = %a: %a" Q.print q (Misc.pprint_many true "" Q.print))
  *)
 
