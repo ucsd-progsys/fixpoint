@@ -1107,17 +1107,20 @@ module Qualifier = struct
           end SM.empty 
        |> snd
 
+  let subst_vv v' q =
+    { q with vvar = v'; pred = Predicate.subst q.pred q.vvar (eVar v')} 
+
   let create n v t p = 
-    let v'  = Symbol.value_variable t in 
-    { name  = n
-    ; vvar  = v'
-    ; vsort = t
-    ; pred  = Predicate.subst p v (eVar v') }
+    { name  = n; vvar  = v; vsort = t; pred  = p }
+
+  let create n v t p = 
+    create n v t p
+    |> subst_vv (Symbol.value_variable t) 
 
   let subst su q = 
-    Subst.to_list su 
-    |> Predicate.substs q.pred
-    |> create q.name q.vvar q.vsort
+    su |> Subst.to_list 
+       |> Predicate.substs q.pred
+       |> create q.name q.vvar q.vsort
 
   let print ppf q = 
     Format.fprintf ppf "qualif %s(%a:%a):%a" 

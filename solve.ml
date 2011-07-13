@@ -208,11 +208,11 @@ let valid_bindings ys x =
   ys |> List.map (fun y -> (x, y))
      |> List.filter varmatch 
 
-let inst_qual ys t (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
+let inst_qual ys t' (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
   let v  = Q.vv_of_t   q in
   let p  = Q.pred_of_t q in
-  let q' = Q.create "" v t p in
-  let v' = Sy.value_variable t in
+  let q' = Q.create "" v t' p in
+  let v' = Sy.value_variable t' in
   let su = Su.of_list [(v, A.eVar v')] in 
   begin
   match q' |> Q.pred_of_t |> P.support |> List.filter Sy.is_wild with
@@ -228,10 +228,8 @@ let inst_qual ys t (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
       |> List.rev_map Su.of_list                        (* convert to substs     *)
       |> List.rev_map (fun su' -> (Q.subst su' q', (q, Su.concat su su'))) (* quals *)
   end
-
-  (*  >> ((List.map fst) <+> F.printf "\n\ninst_qual q = %a: %a" Q.print q (Misc.pprint_many true "" Q.print))
+(*  >> ((List.map fst) <+> F.printf "\n\ninst_qual q = %a: %a" Q.print q (Misc.pprint_many true "" Q.print))
  *)
-
 
 let inst_ext qs wf = 
   let r    = C.reft_of_wf wf in
@@ -243,6 +241,7 @@ let inst_ext qs wf =
   let env' = SM.add vv r env in
   qs |> List.filter (fun q -> not (So.unify [t] [Q.sort_of_t q] = None))
      |> Misc.flap (inst_qual ys t)
+     |> Misc.map  (Misc.app_fst (Q.subst_vv vv))
      |> Misc.filter (fst <+> wellformed env')
      |> Misc.filter (fst <+> C.filter_of_wf wf)
      |> Misc.map (Misc.app_fst Q.pred_of_t)

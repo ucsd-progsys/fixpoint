@@ -195,6 +195,7 @@ module Subst :
 module Qualifier : 
   sig
     type t 
+    
     val create    : string -> Symbol.t -> Sort.t -> pred -> t 
     val name_of_t : t -> string 
     val vv_of_t   : t -> Symbol.t
@@ -202,6 +203,7 @@ module Qualifier :
     val sort_of_t : t -> Sort.t
     val vv_of_t   : t -> Symbol.t
     val normalize : t list -> t list
+    val subst_vv  : Symbol.t -> t -> t 
     val subst     : Subst.t -> t -> t
     val print     : Format.formatter -> t -> unit
   end
