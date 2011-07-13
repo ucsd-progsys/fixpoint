@@ -228,7 +228,8 @@ let inst_qual ys t (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
       |> List.rev_map Su.of_list                        (* convert to substs     *)
       |> List.rev_map (fun su' -> (Q.subst su' q', (q, Su.concat su su'))) (* quals *)
   end
-(*  >> ((List.map fst) <+> F.printf "\n\ninst_qual q = %a: %a" Q.print q (Misc.pprint_many true "" Q.print))
+
+  (*  >> ((List.map fst) <+> F.printf "\n\ninst_qual q = %a: %a" Q.print q (Misc.pprint_many true "" Q.print))
  *)
 
 
