@@ -137,6 +137,7 @@ predsne:
 pred:
     TRUE				{ A.pTrue }
   | FALSE				{ A.pFalse }
+  | expr                                { A.pBexp $1 }
   | BEXP expr                           { A.pBexp $2 }
   | AND preds   			{ A.pAnd ($2) }
   | OR  preds 	        		{ A.pOr  ($2) }
