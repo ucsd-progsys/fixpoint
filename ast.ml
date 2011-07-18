@@ -158,15 +158,16 @@ module Sort =
     let lookup_loc = fun s j -> try Some (List.assoc j s.locs) with Not_found -> None
     
     let unifyt s = function 
-      | (Var i), ct -> 
+      | (Var i), ct 
+        when ct != Bool -> 
           begin match lookup_var s i with 
           | Some ct' when ct = ct' -> Some s
           | Some _                 -> None
           | None                   -> Some {s with vars = (i,ct) :: s.vars}
           end
     
-     | Ptr (Loc cl), Ptr (Lvar j)
-     | Ptr (Lvar j), Ptr (Loc cl) ->
+      | Ptr (Loc cl), Ptr (Lvar j)
+      | Ptr (Lvar j), Ptr (Loc cl) ->
           begin match lookup_loc s j with 
           | Some cl' when cl' = cl -> Some s
           | Some _                 -> None
