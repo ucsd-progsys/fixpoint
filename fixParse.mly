@@ -137,7 +137,6 @@ predsne:
 pred:
     TRUE				{ A.pTrue }
   | FALSE				{ A.pFalse }
-  | expr                                { A.pBexp $1 }
   | BEXP expr                           { A.pBexp $2 }
   | AND preds   			{ A.pAnd ($2) }
   | OR  preds 	        		{ A.pOr  ($2) }
@@ -152,6 +151,7 @@ pred:
   | pred IMPL pred                      { A.pImp ($1, $3) }
   | pred IFF pred                       { A.pIff ($1, $3) }
   | LPAREN pred RPAREN			{ $2 }
+  | LPAREN expr RPAREN                  { A.pBexp $2 }
   ;
 
 exprs:
@@ -242,8 +242,8 @@ refasne:
   ;
   
 refa:
-    pred                                { C.Conc $1 }
-  | Id subs                             { C.Kvar ($2, (Sy.of_string $1)) }
+    Id subs                             { C.Kvar ($2, (Sy.of_string $1)) }
+  | pred                                { C.Conc $1 }
   ;
 
 subs:

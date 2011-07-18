@@ -80,12 +80,12 @@ rule token = parse
   | "||"                { OR  }
   | "<=>"               { IFF }
   | "=>"                { IMPL }
-  | "!="		        { NE }
-  | "="		            { EQ }
-  | "<="		        { LE }
-  | "<"		            { LT }
-  | ">="		        { GE }
-  | ">"		            { GT }
+  | "!="		{ NE }
+  | "="		        { EQ }
+  | "<="		{ LE }
+  | "<"		        { LT }
+  | ">="		{ GE }
+  | ">"		        { GT }
   | "mod"               { MOD }
   | "obj"               { OBJ }
   | "int"               { INT }

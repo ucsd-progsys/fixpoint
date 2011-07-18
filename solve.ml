@@ -240,11 +240,11 @@ let inst_ext qs wf =
   let t    = snd3 r in
   let env' = SM.add vv r env in
   qs |> List.filter (fun q -> not (So.unify [t] [Q.sort_of_t q] = None))
-     |> Misc.flap (inst_qual ys t)
-     |> Misc.map  (Misc.app_fst (Q.subst_vv vv))
+     |> Misc.flap   (inst_qual ys t)
+     |> Misc.map    (Misc.app_fst (Q.subst_vv vv))
      |> Misc.filter (fst <+> wellformed env')
      |> Misc.filter (fst <+> C.filter_of_wf wf)
-     |> Misc.map (Misc.app_fst Q.pred_of_t)
+     |> Misc.map    (Misc.app_fst Q.pred_of_t)
      |> Misc.cross_product ks
 
 let inst ws qs = 
