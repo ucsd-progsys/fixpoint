@@ -40,7 +40,7 @@ let mydebug = false
 (********************************** Type Definitions ****************************)
 (********************************************************************************)
 
-type decl = Vbl of Sy.t | Fun of Sy.t * int | Barrier
+type decl = Vbl of (Sy.t * So.t) | Fun of Sy.t * int | Barrier
 
 type var_ast = Const of Z3.ast | Bound of int * So.t
 
@@ -61,7 +61,7 @@ type t = {
 (*************************************************************************)
 
 let pprint_decl ppf = function
-  | Vbl x 	-> Format.fprintf ppf "%a" Sy.print x 
+  | Vbl (x, t) 	-> Format.fprintf ppf "%a:%a" Sy.print x So.print t 
   | Barrier 	-> Format.fprintf ppf "----@." 
   | Fun (s, i) 	-> Format.fprintf ppf "%a[%i]" Sy.print s i
 
@@ -153,25 +153,29 @@ let z3VarType me t =
 (********************** Identifiers ************************************)
 (***********************************************************************)
 
+let z3Vbl env x = Vbl (x, varSort env x)
+
 let z3Var_memo me env x =
+  let vx  = z3Vbl env x in
   Misc.do_memo me.vart
     (fun () -> 
-      let t   = varSort env x |> z3VarType me in
+      let t   = x |> varSort env |> z3VarType me in
       let sym = fresh "z3v" |> Z3.mk_string_symbol me.c in
       let rv  = Const (Z3.mk_const me.c sym t) in
-      let _   = me.vars <- (Vbl x) :: me.vars in 
+      let _   = me.vars <- vx :: me.vars in 
       rv) 
-    () (Vbl x)
+    () vx
 
 let z3Var me env x =
   match BS.time "z3Var memo" (z3Var_memo me env) x with
   | Const v     -> v
   | Bound (b,t) -> Z3.mk_bound me.c (me.bnd - b) (z3VarType me t)
 
-let z3Bind me x t =
+let z3Bind me env x t =
+  let vx = Vbl (x, varSort env x) in
   me.bnd <- me.bnd + 1; 
-  Hashtbl.replace me.vart (Vbl x) (Bound (me.bnd, t)); 
-  me.vars <- (Vbl x) :: me.vars;
+  Hashtbl.replace me.vart vx (Bound (me.bnd, t)); 
+  me.vars <- vx :: me.vars;
   Z3.mk_string_symbol me.c (fresh "z3b")
 
 let z3Fun me env p t k = 
@@ -296,11 +300,14 @@ and z3Pred me env = function
       let a  = z3Exp me env e in
       let s1 = Z3.ast_to_string me.c a in
       let s2 = E.to_string e in
-      let _  = asserti (is_z3_bool me a) "Bexp is not bool! z3=%s, fix=%s" s1 s2 in 
+      let Some so = A.sortcheck_expr (varSort env) e in
+      let sos = So.to_string so in
+      let _  = asserti (is_z3_bool me a) "Bexp is not bool! z3=%s, fix=%s, sort=%s" 
+                                         s1 s2 sos in 
       a
  | A.Forall (xts, p), _ -> 
       let (xs, ts) = List.split xts in
-      let zargs    = Array.of_list (List.map2 (z3Bind me) xs ts) in
+      let zargs    = Array.of_list (List.map2 (z3Bind me env) xs ts) in
       let zts      = Array.of_list (List.map  (z3VarType me) ts) in 
       let rv       = Z3.mk_forall me.c 0 [||] zts zargs (z3Pred me env p) in
       let _        = me.bnd <- me.bnd - (List.length xs) in
@@ -380,7 +387,7 @@ let clean_decls me =
   end cs
 
 let set me env vv ps =
-  Hashtbl.remove me.vart (Vbl vv); 
+  Hashtbl.remove me.vart (z3Vbl env vv); (* RJ: why are we removing this? *) 
   ps |> prep_preds me env |> push me;
   (* unsat me *) false
 
