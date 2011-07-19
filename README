@@ -1,3 +1,27 @@
+Compiling Without Z3
+====================
+
+To build on on platforms WITHOUT Z3, do this:
+
+	% cp tpNull.ml.noz3 tpNull.ml
+
+and then
+
+	% make
+
+
+To build on the mac (no Z3), do 
+
+	% make -f Makefile.mac
+
+To build on platforms WITH Z3, do this:
+
+	% cp tpNull.ml.z3 tpNull.ml
+	% make
+
+
+
+
 Constraint Files
 ================
 
