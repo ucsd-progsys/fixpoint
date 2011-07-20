@@ -94,6 +94,7 @@ val print_env        : FixSolution.t option -> Format.formatter -> envt -> unit
 val print_wf         : FixSolution.t option -> Format.formatter -> wf -> unit
 val print_t          : FixSolution.t option -> Format.formatter -> t -> unit
 val print_reft       : FixSolution.t option -> Format.formatter -> reft -> unit
+val print_reft_pred  : FixSolution.t option -> Format.formatter -> reft -> unit
 val print_binding    : FixSolution.t option -> Format.formatter -> (Ast.Symbol.t * reft) -> unit
 val print_tag        : Format.formatter -> tag -> unit
 val print_dep        : Format.formatter -> dep -> unit
