@@ -22,12 +22,5 @@
 
 (* This file is part of the LiquidC Project *)
 
-open Misc.Ops
-
-(* USE THIS ON NON-Z3 PLATFORMS e.g. Mac *) 
-module Prover : ProverArch.PROVER = struct
-  type t = unit
-  let create _ _ _ _       = () 
-  let set_filter _ _ _ _ _ = failwith "TBD: TpNull.set_filter"
-  let print_stats _ _      = failwith "TBD: TpNull.print_stats"
-end
+(* USE THIS ON Z3-READY PLATFORMS e.g. Ubuntu *)
+module Prover : ProverArch.PROVER = TpZ3.Prover
