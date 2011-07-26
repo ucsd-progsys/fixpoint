@@ -276,7 +276,7 @@ module EliminateK : SIMPLIFIER = struct
       id = me.id; }
  
   let of_ts     = add empty 
-  let to_ts     = fun me -> me.cm |> Misc.intmap_bindings |> List.map snd
+  let to_ts     = fun me -> me.cm |> IM.to_list |> List.map snd
   let cs_of_k   = fun f me k ->  f me.g [k] |> List.map (find_cm me.cm)
 
   (* Assume that k is written in (1) and read once in (2)

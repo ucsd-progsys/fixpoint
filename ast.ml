@@ -202,8 +202,8 @@ module Symbol =
   struct 
     type t = string
     
-    module SMap = Map.Make (struct type t = string 
-                                   let compare i1 i2 = compare i1 i2 end)
+    module SMap = Misc.EMap (struct type t = string 
+                                    let compare i1 i2 = compare i1 i2 end)
 
     module SSet = Set.Make (struct type t = string
                                    let compare i1 i2 = compare i1 i2 end)

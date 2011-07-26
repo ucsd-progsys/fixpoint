@@ -82,7 +82,7 @@ let mydebug = false
 let sift_quals ds = 
   ds |> Misc.map_partial (function Qul q -> Some (Ast.Qualifier.name_of_t q, q) | _ -> None)
      >> (List.map fst <+> (fun ns -> asserts (Misc.distinct ns) "ERROR: duplicate quals!"))
-     |> Misc.sm_of_list
+     |> MSM.of_list
 
 (* API *)
 let sift ds =

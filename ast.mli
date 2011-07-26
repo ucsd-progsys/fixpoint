@@ -67,7 +67,7 @@ module Sort :
 module Symbol : 
   sig 
     type t 
-    module SMap         : Map.S with type key = t
+    module SMap         : Misc.EMapType with type key = t
     module SSet         : Set.S with type elt = t
     val mk_wild         : unit -> t  
     val of_string       : string -> t
@@ -76,10 +76,12 @@ module Symbol :
     val print           : Format.formatter -> t -> unit
     val value_variable  : Sort.t -> t
     val is_value_variable : t -> bool
+(*
     val sm_length       : 'a SMap.t -> int
     val sm_filter       : (t -> 'a -> bool) -> 'a SMap.t -> 'a SMap.t
     val sm_to_list      : 'a SMap.t -> (t * 'a) list
     val sm_of_list      : (t * 'a) list -> 'a SMap.t
+  *)
   end
 
 module Constant :

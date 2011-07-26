@@ -153,7 +153,7 @@ let make_rankm cm ranks =
   end IM.empty ranks 
 
 let make_roots rankm ijs =
-  let sccs = rankm |> Misc.intmap_bindings |> Misc.map (fun (_,r) -> r.scc) in 
+  let sccs = rankm |> IM.to_list |> Misc.map (fun (_,r) -> r.scc) in 
   let sccm = List.fold_left (fun is scc -> IS.add scc is) IS.empty sccs in
   List.fold_left begin fun sccm (i,j) ->
     let ir = (IM.find i rankm).scc in
@@ -192,7 +192,7 @@ let make_lives cm real_deps =
 let make_rank_map ds cm =
   let dm, real_deps = make_deps cm in
   let deps  = adjust_deps cm ds real_deps in
-  let ids   = cm |> Misc.intmap_bindings |> Misc.map fst in
+  let ids   = cm |> IM.to_list |> Misc.map fst in
   let ranks = Fcommon.scc_rank "constraint" (string_of_cid cm) ids deps in
   let rankm = make_rankm cm ranks in
   let roots = make_roots rankm deps in
@@ -217,16 +217,16 @@ let deps me c =
 
 (* API *)
 let to_list me = 
-  me.cnst |> Misc.intmap_bindings |> Misc.map snd
+  me.cnst |> IM.to_list |> Misc.map snd
 
 (* API *)
 let to_live_list me =
-  me.cnst |> Misc.intmap_bindings 
+  me.cnst |> IM.to_list 
           |> Misc.map_partial (fun (i,c) -> if IS.mem i me.livs then Some c else None)
 
 
 let sort_iter_ref_constraints me f = 
-  me.rnkm |> Misc.intmap_bindings
+  me.rnkm |> IM.to_list
           |> List.sort (fun (_,r) (_,r') -> compare r.tag r'.tag) 
           |> List.iter (fun (id,_) -> f (IM.find id me.cnst)) 
 
@@ -267,7 +267,7 @@ let roots me =
       IM.add r.scc (r::rs) sccm
   end me.rnkm IM.empty
   |> IM.map (List.hd <.> List.sort compare)
-  |> Misc.intmap_bindings 
+  |> IM.to_list
   |> Misc.map (fun (_,r) -> get_ref_constraint me r.id) 
 
 (* API *)

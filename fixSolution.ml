@@ -222,7 +222,7 @@ let of_bindings ts sm ps bs =
       >> (snd <+> dump_graph (!Constants.save_file^".impg.dot")) 
       |> (fun (im, ig) -> (im, ig, qual_ranks_of_impg ig)) 
     else
-      (TTM.empty, G.empty, List.map (fun q -> (Q.name_of_t q, (q, 0))) qs |> Misc.sm_of_list) 
+      (TTM.empty, G.empty, List.map (fun q -> (Q.name_of_t q, (q, 0))) qs |> SSM.of_list) 
   in {m = m; qm = qm; impm = im; impg = ig; imp_memo_t = H.create 37}
 
 (* API *)
@@ -319,7 +319,7 @@ let reprs kds = match kds with
 let p_update s0 ks kdss =
   let kdsm = kdss |> Misc.flap reprs 
                   |> Misc.kgroupby (List.hd <+> fst) 
-                  |> Sy.sm_of_list in
+                  |> SM.of_list in
   List.fold_left begin fun (b, m) k ->
     (try SM.find k kdsm with Not_found -> [])
     |> List.map (List.map snd) 
@@ -333,7 +333,7 @@ let p_update s0 ks kdss =
 (************************************************************)
 
 let print_m ppf s = 
-  Sy.sm_to_list s.m 
+  SM.to_list s.m 
   |> List.map fst 
   >> List.iter begin fun k ->
        read s k 
@@ -346,7 +346,7 @@ let print_m ppf s =
   |> ignore
  
 let print_qm ppf s = 
-  Misc.sm_to_list s.qm
+  SSM.to_list s.qm
   |> List.map (snd <+> fst)
   >> (fun _ -> F.fprintf ppf "//QUALIFIERS \n\n")
   |> List.iter (F.fprintf ppf "%a@ \n" Q.print) 
@@ -364,14 +364,14 @@ let print_stats ppf s =
      SM.fold (fun _ qs x -> min x (List.length qs)) s.m max_int,
      SM.fold (fun _ qs x -> x + (if List.exists (fst <+> P.is_contra)
      (List.flatten qs) then 1 else 0)) s.m 0) in
-  let n   = Sy.sm_length s.m in
+  let n   = SM.length s.m in
   let avg = (float_of_int sum) /. (float_of_int n) in
   F.fprintf ppf "# Vars: (Total=%d, False=%d) Quals: (Total=%d, Avg=%f, Max=%d, Min=%d)\n" 
     n bot sum avg max min
 
 (* API *)
 let print_raw ppf s = 
-  Sy.sm_to_list s.m 
+  SM.to_list s.m 
   |> List.map fst 
   >> List.iter begin fun k ->
        read s k 
@@ -395,7 +395,7 @@ let key_of_quals qs =
 (* API *)
 let dump_cluster s = 
   s.m 
-  |> Sy.sm_to_list 
+  |> SM.to_list 
   |> List.map (snd <+> List.flatten <+> List.map fst)
   |> Misc.groupby key_of_quals
   |> List.map begin function 
