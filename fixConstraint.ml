@@ -237,10 +237,9 @@ let print_ras so ppf ras =
                   |> F.fprintf ppf "%a" P.print 
 
 (* API *)
-let print_reft_pred so ppf (v, _, ras) =
-  F.fprintf ppf "@[{%a | @[%a@]}@]"
-    Sy.print v
-    (print_ras so) ras
+let print_reft_pred so ppf = function
+  | (v,_,[])  -> F.fprintf ppf "@[{%a | true }@]" Sy.print v
+  | (v,_,ras) -> F.fprintf ppf "@[{%a | @[%a@]}@]" Sy.print v (print_ras so) ras
 
 (* API *)
 let print_reft so ppf (v, t, ras) =
