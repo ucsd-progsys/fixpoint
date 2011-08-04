@@ -55,8 +55,7 @@ let save_raw fname cs s =
   F.fprintf ppf "%a \n" print_raw_cs cs; 
   F.fprintf ppf "%a \n" Sn.print_raw s;
   F.fprintf ppf "@.";
-  F.printf "%a \n" print_raw_cs cs; 
-  F.printf "%a \n" Sn.print_raw s;
+  (* F.printf "%a \n" print_raw_cs cs; F.printf "%a \n" Sn.print_raw s; *)
   F.print_flush ();
   close_out oc;
   print_now "Fixpoint: save_raw: END \n"
@@ -70,10 +69,10 @@ let solve ac  =
   let _       = print_now "Fixpoint: Saving Result \n" in
   let _       = BS.time "save" (save_raw !Co.out_file cs') s in
   let _       = print_now "Fixpoint: Saving Result DONE \n" in
-  let _       = F.printf "%a \nUnsat Constraints:\n %a" 
+(* let _       = F.printf "%a \nUnsat Constraints:\n %a" 
                   Sn.print s 
                   (Misc.pprint_many true "\n" (C.print_t None)) cs' in
-  cs'
+*)  cs'
 
 let dump_solve cs = 
   let cs' = BS.time "solve" solve cs in

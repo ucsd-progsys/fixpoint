@@ -274,10 +274,14 @@ let print_tag ppf = function
 
 (* API *)
 let print_dep ppf = function
-  | Adp ((t,_), (t',_)) -> F.fprintf ppf "add_dep: [%s] -> [%s]" (string_of_intlist t) (string_of_intlist t')
-  | Ddp ((t,_), (t',_)) -> F.fprintf ppf "del_dep: [%s] -> [%s]" (string_of_intlist t) (string_of_intlist t')
-  | Ddp_s (t,_)     -> F.fprintf ppf "del_dep: [%s] -> *" (string_of_intlist t) 
-  | Ddp_t (t',_)    -> F.fprintf ppf "del_dep: * -> [%s]" (string_of_intlist t')
+  | Adp ((t,_), (t',_)) 
+    -> F.fprintf ppf "add_dep: [%s] => [%s]" (string_of_intlist t) (string_of_intlist t')
+  | Ddp ((t,_), (t',_)) 
+    -> F.fprintf ppf "del_dep: [%s] => [%s]" (string_of_intlist t) (string_of_intlist t')
+  | Ddp_s (t,_)    
+    -> F.fprintf ppf "del_dep: [%s] => *" (string_of_intlist t) 
+  | Ddp_t (t',_)    
+    -> F.fprintf ppf "del_dep: * => [%s]" (string_of_intlist t')
 
 (* API *)
 let print_wf so ppf (env, r, io, _) =

@@ -44,21 +44,22 @@ let pathname = ['a'-'z' 'A'-'Z' '0'-'9' '.' '/' '\\' '-']
 
 rule token = parse
     ['\r''\t'' ']       { token lexbuf}
-  | '\n'		{ begin
-			    E.startNewline (Lexing.lexeme_end lexbuf);
-			    token lexbuf 
-			  end }
+  | '\n'		        { begin
+			                E.startNewline (Lexing.lexeme_end lexbuf);
+			                token lexbuf 
+			              end }
   | "//"[^'\n']*'\n'
                         { begin
-                            E.startNewline (Lexing.lexeme_end lexbuf);
-			    token lexbuf
-                          end }
+                          E.startNewline (Lexing.lexeme_end lexbuf);
+			              token lexbuf
+                          end 
+                        }
   | '['                 { LB }
   | ']'                 { RB }
-  | '('			{ LPAREN }
-  | ')'			{ RPAREN }
-  | '{'			{ LC }
-  | '}'			{ RC }
+  | '('			        { LPAREN }
+  | ')'			        { RPAREN }
+  | '{'			        { LC }
+  | '}'			        { RC }
   | '~'                 { NOT }
   | ';'                 { SEMI }
   | ','                 { COMMA }
@@ -80,12 +81,12 @@ rule token = parse
   | "||"                { OR  }
   | "<=>"               { IFF }
   | "=>"                { IMPL }
-  | "!="		{ NE }
-  | "="		        { EQ }
-  | "<="		{ LE }
-  | "<"		        { LT }
-  | ">="		{ GE }
-  | ">"		        { GT }
+  | "!="		        { NE }
+  | "="		            { EQ }
+  | "<="		        { LE }
+  | "<"		            { LT }
+  | ">="		        { GE }
+  | ">"		            { GT }
   | "mod"               { MOD }
   | "obj"               { OBJ }
   | "int"               { INT }

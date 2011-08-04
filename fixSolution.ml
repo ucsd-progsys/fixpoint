@@ -373,11 +373,10 @@ let print_stats ppf s =
 let print_raw ppf s = 
   SM.to_list s.m 
   |> List.map fst 
-  >> List.iter begin fun k ->
+  |> List.iter begin fun k ->
        read s k 
        |> F.fprintf ppf "solution: %a := [%a] \n\n"  Sy.print k pprint_ps
      end
-  |> ignore 
 
 (* API *)
 let save fname s =
