@@ -77,8 +77,8 @@ let hashtbl_print_frequency t =
   |> List.map (fun ((n,b), xs) -> (n, b, List.map (fst <+> fst) xs))
   |> List.sort compare
   |> List.iter begin fun (n, b, xs) -> 
-       Format.printf "ITERFREQ: %d times (ch = %b) %d constraints %s \n"
-                     n b (List.length xs) (Misc.map_to_string string_of_int xs) 
+       Co.logPrintf "ITERFREQ: %d times (ch = %b) %d constraints %s \n"
+         n b (List.length xs) (Misc.map_to_string string_of_int xs) 
      end
 
 (***************************************************************)
@@ -172,8 +172,8 @@ let print_solver_stats ppf me =
   F.fprintf ppf "finished solver_stats \n"
 
 let dump me s = 
-  Co.cprintf Co.ol_solve_stats "%a \n" print_solver_stats me;
-  Co.cprintf Co.ol_solve_stats "%a \n" Sn.print_stats s;
+  Co.cLogPrintf Co.ol_solve_stats "%a \n" print_solver_stats me;
+  Co.cLogPrintf Co.ol_solve_stats "%a \n" Sn.print_stats s;
   Sn.dump_cluster s
 
 (***************************************************************)
@@ -257,13 +257,13 @@ let inst ws qs =
 (******************** Iterative Refinement *********************)
 (***************************************************************)
 
-let log_iter_stats me s = 
-  (if Co.ck_olev Co.ol_insane then F.printf "%a" Sn.print s);
+let log_iter_stats me s =
+  (if Co.ck_olev Co.ol_insane then Co.logPrintf "%a" Sn.print s);
   (if !(me.stat_refines) mod 100 = 0 then 
      let msg = Printf.sprintf "num refines=%d" !(me.stat_refines) in 
      let _   = Timer.log_event me.tt (Some msg) in
-     let _   = F.printf "%s" msg in 
-     let _   = F.printf "%a \n" Sn.print_stats s in
+     let _   = Co.logPrintf "%s" msg in 
+     let _   = Co.logPrintf "%a \n" Sn.print_stats s in
      ());
   ()
 
@@ -283,16 +283,16 @@ let rec acsolve me w s =
 
 (* API *)
 let solve me s = 
-  let _  = F.printf "Fixpoint: Validating Initial Solution \n" in
+  let _  = Co.logPrintf "Fixpoint: Validating Initial Solution \n" in
   let _  = BS.time "profile" PP.profile me.sri in
   let s  = PP.true_unconstrained s me.sri in
   let _  = Co.cprintf Co.ol_insane "%a%a" Ci.print me.sri Sn.print s; dump me s in
-  let _  = F.printf "Fixpoint: Initialize Worklist \n" in
+  let _  = Co.logPrintf "Fixpoint: Initialize Worklist \n" in
   let w  = BS.time "init wkl" Ci.winit me.sri in 
-  let _  = F.printf "Fixpoint: Refinement Loop \n" in
+  let _  = Co.logPrintf "Fixpoint: Refinement Loop \n" in
   let s  = BS.time "solving"  (acsolve me w) s in
   let _  = dump me s in
-  let _  = F.printf "Fixpoint: Testing Solution \n" in
+  let _  = Co.logPrintf "Fixpoint: Testing Solution \n" in
   let u  = BS.time "testing solution" (unsat_constraints me) s in
   let _  = if u != [] then F.printf "Unsatisfied Constraints:\n %a" (Misc.pprint_many true "\n" (C.print_t None)) u in
   (s, u)
@@ -306,15 +306,15 @@ let ppBinding (k, zs) =
 let create ts sm ps a ds consts cs ws bs0 qs =
   let sm  = List.fold_left (fun sm (x,so) -> SM.add x so sm) sm consts in
   let tpc = TP.create ts sm ps (List.map fst consts) in
-  let qs  = Q.normalize qs >> F.printf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) in
+  let qs  = Q.normalize qs >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) in
   let ws  = ws |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf consts)) 
                |> PP.validate_wfs in
   let bs  = BS.time "Qual Inst" (inst ws) qs (* >> List.iter ppBinding *) in 
   let s   = Sn.of_bindings ts sm ps (bs0 ++ bs) in
-  let sri = cs >> F.printf "Pre-Simplify Stats\n%a" print_constr_stats 
+  let sri = cs >> Co.logPrintf "Pre-Simplify Stats\n%a" print_constr_stats 
                |> BS.time  "Constant Env" (List.map (C.add_consts_t consts))
                |> BS.time  "Simplify" FixSimplify.simplify_ts
-               >> F.printf "Post-Simplify Stats\n%a" print_constr_stats
+               >> Co.logPrintf "Post-Simplify Stats\n%a" print_constr_stats
                |> BS.time  "PP.Validation" (PP.validate a s)
                |> BS.time  "Ref Index" Ci.create ds in
   ({ tpc                 = tpc
