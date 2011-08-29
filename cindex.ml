@@ -196,6 +196,7 @@ let is_addall im is = List.fold_left (IS.add |> Misc.flip) im is
  * (transitively) read. 
  * roots := { c | (rhs_of_t c) has a concrete predicate }
  * lives := PRE*(roots) where Pre* is refl-trans-clos of the depends-on relation *)
+
 let make_lives cm real_deps =
   let dm = List.fold_left (fun im (i, j) -> IM.add j (i :: (im_findall j im)) im) IM.empty real_deps in
   let js = IM.fold (fun i c roots -> if is_rhs_conc c then i::roots else roots) cm [] in
@@ -211,11 +212,15 @@ let make_lives cm real_deps =
      end
   |> fst |> snd 
 
+(* The "adjusted" dependencies are used to create the SCC ranks ONLY.
+ * For soundness, the "real" dependencies must be used to push 
+ * "successors" into the worklist. *)
+
 let make_rank_map ds cm =
   let dm, real_deps = make_deps cm in
   let ddeps = make_direct_deps cm in
-  (* ORIG: let deps  = adjust_deps cm ds real_deps in *)
-  let deps  = adjust_deps cm ds ddeps in
+  let deps  = adjust_deps cm ds real_deps in 
+  (* DIRECTDEPS let deps  = adjust_deps cm ds ddeps in *)
   let ids   = cm |> IM.to_list |> Misc.map fst in
   let ranks = Fcommon.scc_rank "constraint" (string_of_cid cm) ids deps in
   let rankm = make_rankm cm ranks in
