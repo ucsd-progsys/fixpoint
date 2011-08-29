@@ -102,13 +102,24 @@ let make_deps cm =
   let get = fun km k -> try SM.find k km with Not_found -> [] in
   let upd = fun id km k -> SM.add k (id::(get km k)) km in
   let km  = IM.fold (fun id c vm -> List.fold_left (upd id) vm (lhs_ks c)) cm SM.empty in
-  IM.fold begin fun id c (dm, deps) ->
+  IM.fold begin fun id c acc ->
     List.fold_left begin fun (dm, deps) k -> 
       let kds = get km k in
       let deps' = List.map (fun id' -> (id, id')) kds in
       (IM.add id kds dm, (deps' ++ deps)) 
-    end (dm, deps) (rhs_ks c) 
+    end acc (rhs_ks c) 
   end cm (IM.empty,[])
+
+(* k is directly read in C if 
+   (a) C == G |- k[...] <: r
+   or
+   (b) C == G, grd |- {v|p} <: r and G(x) = k[..] for some x in grd \/ p 
+  
+  There is a direct-dependency from C --> C' if:
+    C writes k and k is directly read in C'
+*)
+
+let make_direct_deps cm = failwith "TBD: make_direct_deps"
 
 (***********************************************************************)
 (************* Adjusting Dependencies with Provided Tag-Deps ***********)
@@ -144,6 +155,16 @@ let string_of_cid cm id =
   with _ -> assertf "string_of_cid: impossible" 
 
 let make_rankm cm ranks = 
+  ranks
+    |>: (fun (id, r) -> 
+          let c = IM.find id cm in
+          id, { id    = id
+              ; scc   = r
+              ; simpl = (not !Co.psimple) || (C.is_simple c)
+              ; tag   = C.tag_of_t c})
+    |> IM.of_list
+    
+(*
   List.fold_left begin fun rm (id, r) -> 
     let c = IM.find id cm in
     IM.add id {id    = id; 
@@ -151,6 +172,7 @@ let make_rankm cm ranks =
                simpl = (not !Co.psimple) || (C.is_simple c); 
                tag   = C.tag_of_t c;} rm
   end IM.empty ranks 
+*)
 
 let make_roots rankm ijs =
   let sccs = rankm |> IM.to_list |> Misc.map (fun (_,r) -> r.scc) in 
@@ -191,7 +213,9 @@ let make_lives cm real_deps =
 
 let make_rank_map ds cm =
   let dm, real_deps = make_deps cm in
-  let deps  = adjust_deps cm ds real_deps in
+  let ddeps = make_direct_deps cm in
+  (* ORIG: let deps  = adjust_deps cm ds real_deps in *)
+  let deps  = adjust_deps cm ds ddeps in
   let ids   = cm |> IM.to_list |> Misc.map fst in
   let ranks = Fcommon.scc_rank "constraint" (string_of_cid cm) ids deps in
   let rankm = make_rankm cm ranks in
@@ -206,7 +230,7 @@ let make_rank_map ds cm =
 
 (* API *)
 let create ds cs =
-  let cm              = List.fold_left (fun cm c -> IM.add (C.id_of_t c) c cm) IM.empty cs in
+  let cm              = cs |>: (Misc.pad_fst C.id_of_t) |> IM.of_list in 
   let dm, rm, rts, ls = BS.time "make rank map" (make_rank_map ds) cm in
   {cnst = cm; ds = ds; rnkm = rm; depm = dm; rts = rts; livs = ls; pend = H.create 17}
 

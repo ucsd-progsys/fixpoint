@@ -275,9 +275,9 @@ let rec acsolve me w s =
       s 
   | (Some c, w') ->
       let (ch, s')  = BS.time "refine" (refine me s) c in
-      let _ = hashtbl_incr_frequency me.stat_cfreqt (C.id_of_t c, ch) in  
-      let _ = Co.bprintf mydebug "iter=%d id=%d ch=%b %a \n" 
-              !(me.stat_refines) (C.id_of_t c) ch C.print_tag (C.tag_of_t c) in
+      let _         = hashtbl_incr_frequency me.stat_cfreqt (C.id_of_t c, ch) in  
+      let _         = Co.bprintf mydebug "iter=%d id=%d ch=%b %a \n" 
+                      !(me.stat_refines) (C.id_of_t c) ch C.print_tag (C.tag_of_t c) in
       let w'' = if ch then Ci.deps me.sri c |> Ci.wpush me.sri w' else w' in 
       acsolve me w'' s' 
 
