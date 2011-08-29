@@ -205,10 +205,10 @@ let true_unconstrained s sri =
 (* API *)
 let true_unconstrained s sri = 
   if !Co.true_unconstrained then 
-    let _ = F.printf "Fixpoint: Pruning unconstrained kvars \n" 
+    let _ = Co.logPrintf "Fixpoint: Pruning unconstrained kvars \n" 
     in true_unconstrained s sri
   else 
-    let _ = F.printf "Fixpoint: NOT Pruning unconstrained kvars \n" 
+    let _ = Co.logPrintf "Fixpoint: NOT Pruning unconstrained kvars \n" 
     in s
 
 (***************************************************************)
@@ -229,12 +229,12 @@ let profile_cstr im c =
 let dump_profile im =
   let (tsz, tcsz, tksz, tesz) = 
     IM.fold begin fun i (sz, csz, ksz, esz) (tsz, tcsz, tksz, tesz) -> 
-      Co.cprintf Co.ol_solve
+      Co.cLogPrintf Co.ol_solve
         "ctag %d: binds=%d, cbinds=%d, kbinds=%d, ebinds=%d \n" 
          i sz csz ksz esz;
       (tsz + sz, tcsz + csz, tksz + ksz, tesz + esz)
     end im (0,0,0,0) in
-  Co.cprintf Co.ol_solve_stats 
+  Co.cLogPrintf Co.ol_solve_stats 
     "Total binds=%d, cbinds=%d, kbinds=%d, ebinds=%d \n" 
     tsz tcsz tksz tesz
 
@@ -255,7 +255,7 @@ let profile2 sri =
   sri |> Cindex.to_list
       |> Misc.groupby key_of_cstr 
       |> List.length
-      |> fun n -> Co.cprintf Co.ol_solve_stats "Constraint Clusters = %d \n" n
+      |> fun n -> Co.cLogPrintf Co.ol_solve_stats "Constraint Clusters = %d \n" n
 
 (* API *) 
 let profile sri = sri >> profile1 >> profile2 |> ignore 
