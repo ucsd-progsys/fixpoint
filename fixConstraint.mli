@@ -66,6 +66,7 @@ val preds_of_refa    : FixSolution.t -> refa -> Ast.pred list
 val preds_of_reft    : FixSolution.t -> reft -> Ast.pred list
 val preds_of_lhs     : FixSolution.t -> t -> Ast.pred list
 val vars_of_t        : FixSolution.t -> t -> Ast.Symbol.t list
+val is_tauto         : t -> bool
 
 val preds_kvars_of_reft : reft -> (Ast.pred list * (Ast.Subst.t * Ast.Symbol.t) list)
 val env_of_bindings  : (Ast.Symbol.t * reft) list -> envt

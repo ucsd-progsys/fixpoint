@@ -66,13 +66,19 @@ let solve ac  =
   let ctx,s   = BS.time "create" (S.create ac.C.ts SM.empty ac.C.ps a ac.C.ds ac.C.cons ac.C.cs ac.C.ws ac.C.s) ac.C.qs in
   let _       = print_now "Fixpoint: Solving \n" in
   let s, cs'  = BS.time "solve" (S.solve ctx) s in
+
   let _       = print_now "Fixpoint: Saving Result \n" in
   let _       = BS.time "save" (save_raw !Co.out_file cs') s in
   let _       = print_now "Fixpoint: Saving Result DONE \n" in
-(* let _       = F.printf "%a \nUnsat Constraints:\n %a" 
+  
+  let _       = print_now "Fixpoint: Saving Post-Solved Constraints \n" in
+  let _       = BS.time "save" (S.save !Co.save_file ctx) s in
+  let _       = print_now "Fixpoint: Saving Post-Soved Constraints DONE \n" in
+  
+  (* let _       = F.printf "%a \nUnsat Constraints:\n %a" 
                   Sn.print s 
                   (Misc.pprint_many true "\n" (C.print_t None)) cs' in
-*)  cs'
+  *)  cs'
 
 let dump_solve cs = 
   let cs' = BS.time "solve" solve cs in

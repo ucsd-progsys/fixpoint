@@ -210,35 +210,48 @@ let make_lives cm real_deps =
          end js IS.empty
        in ((js, vm), js != IS.empty)
      end
-  |> fst |> snd 
-
-(* The "adjusted" dependencies are used to create the SCC ranks ONLY.
- * For soundness, the "real" dependencies must be used to push 
- * "successors" into the worklist. *)
-
-let make_rank_map ds cm =
-  let dm, real_deps = make_deps cm in
-  let ddeps = make_direct_deps cm in
-  let deps  = adjust_deps cm ds real_deps in 
-  (* DIRECTDEPS let deps  = adjust_deps cm ds ddeps in *)
-  let ids   = cm |> IM.to_list |> Misc.map fst in
-  let ranks = Fcommon.scc_rank "constraint" (string_of_cid cm) ids deps in
-  let rankm = make_rankm cm ranks in
-  let roots = make_roots rankm deps in
-  let lives = make_lives cm real_deps in
-  (dm, rankm, roots, lives)
+  |> (fst <+> snd) 
+  >> (IS.cardinal <+> Printf.printf "#Live Constraints: %d \n") 
 
 
 (***********************************************************************)
 (**************************** API **************************************)
 (***********************************************************************)
 
+(* The "adjusted" dependencies are used to create the SCC ranks ONLY.
+ * For soundness, the "real" dependencies must be used to push 
+ * "successors" into the worklist. *)
+
 (* API *)
 let create ds cs =
-  let cm              = cs |>: (Misc.pad_fst C.id_of_t) |> IM.of_list in 
-  let dm, rm, rts, ls = BS.time "make rank map" (make_rank_map ds) cm in
-  {cnst = cm; ds = ds; rnkm = rm; depm = dm; rts = rts; livs = ls; pend = H.create 17}
+  let cm            = cs |>: (Misc.pad_fst C.id_of_t) |> IM.of_list in 
+  let dm, real_deps = make_deps cm in
+  let deps          = adjust_deps cm ds real_deps in 
+  (* DIRECTDEPS let ddeps = make_direct_deps cm in  *)
+  (* DIRECTDEPS let deps  = adjust_deps cm ds ddeps in *)
+  
+  let lives   = make_lives cm real_deps in
+  let cm      = IM.filter (fun i _ -> IS.mem i lives) cm in
+  let dm      = dm |> IM.filter (fun i _ -> IS.mem i lives) |> IM.map (List.filter (fun j -> IS.mem j lives)) in
+  let deps    = Misc.filter (fun (i,j) -> IS.mem i lives && IS.mem j lives) deps in
+ 
+  let rnkm    = deps 
+                |> Fcommon.scc_rank "constraint" (string_of_cid cm) (IM.domain cm)
+                |> make_rankm cm in
+  { cnst = cm
+  ; ds   = ds
+  ; rnkm = rnkm 
+  ; depm = dm
+  ; rts  = make_roots rnkm deps
+  ; livs = lives
+  ; pend = H.create 17}
 
+(* 
+(* API *)
+let create ds cs =
+  let cm, dm, rm, rts, ls = BS.time "make rank map" (make_rank_map cs) ds in
+  {cnst = cm; ds = ds; rnkm = rm; depm = dm; rts = rts; livs = ls; pend = H.create 17}
+*)
 (* API *) 
 let deps me c =
   (try IM.find (C.id_of_t c) me.depm with Not_found -> [])

@@ -222,15 +222,10 @@ let simplify_t c =
   
   C.make_t senv sgrd slhs srhs (C.ido_of_t c) (C.tag_of_t c)
 
-let is_tauto_t c =
-  c |> C.rhs_of_t 
-    |> C.ras_of_reft 
-    |> (function [] -> true | [C.Conc p] -> P.is_tauto p | _ -> false)
-
 (* API *)
 let simplify_ts cs = 
   cs |> List.map simplify_t
-     |> List.filter (not <.> is_tauto_t) 
+    (* |> List.filter (not <.> C.is_tauto) *) 
 end
 
 (****************************************************************************)
@@ -349,6 +344,7 @@ end
 (* API *)
 let simplify_ts cs =
   cs 
+  |> Misc.filter (not <.> C.is_tauto)
   |> BS.time "add ids  1" (C.add_ids 0) 
   |> snd
   |> (!Co.simplify_t <?> BS.time "simplify 1" Syntactic.simplify_ts) (* termination bug, tickled by C benchmarks *)

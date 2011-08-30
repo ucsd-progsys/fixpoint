@@ -100,12 +100,13 @@ let sift ds =
     | Sol (k,ps) -> {a with s    = (k, s2d ps) :: a.s  }
   end {ts = []; ps = []; cs = []; ws = []; ds = []; qs = []; s = []; cons = [] } ds 
 
-
-
-
 let is_simple_refatom = function 
   | Kvar (s, _) -> Ast.Subst.is_empty s 
   | _           -> false
+
+let is_tauto_refatom  = function 
+  | Conc p -> P.is_tauto p 
+  |  _ -> false
 
 (* API *)
 let fresh_kvar = 
@@ -326,6 +327,7 @@ let ras_of_reft   = thd3
 let shape_of_reft = fun (v, so, _) -> (v, so, [])
 let theta         = fun subs (v, so, ras) -> (v, so, Misc.map (theta_ra subs) ras)
 
+
 (* API *)
 let env_of_t    = fun t -> t.full 
 let grd_of_t    = fun t -> t.guard 
@@ -334,6 +336,7 @@ let rhs_of_t    = fun t -> t.rhs
 let tag_of_t    = fun t -> t.tag
 let ido_of_t    = fun t -> t.ido
 let id_of_t     = fun t -> match t.ido with Some i -> i | _ -> assertf "C.id_of_t"
+let is_tauto    = rhs_of_t <+> ras_of_reft <+> List.for_all is_tauto_refatom
 let make_t      = fun env p r1 r2 io is -> 
                     { full    = env ; 
                       nontriv = non_trivial env; 
