@@ -217,7 +217,7 @@ let true_unconstrained s sri =
 
 let profile_cstr im c = 
   SM.fold begin fun _ (_,_,rs) ((a, b, c, d) as pfl) -> 
-    match rs with [] -> (a, b, c, d+1)  | _::_ -> begin 
+    match rs with [] -> (a+1, b, c, d+1)  | _::_ -> begin 
       List.fold_left begin fun (sz, csz, ksz, esz) r -> match r with 
         | C.Conc _  -> (sz+1, csz+1, ksz, esz) 
         | _         -> (sz+1, csz, ksz+1, esz)
