@@ -241,6 +241,48 @@ module Cone : SIMPLIFIER = struct
        |> List.map (find_cm cm)
 end
 
+(**************************************************************************)
+(*** Direct-Dependencies: Remove non-data-dependent binders****************)
+(*************************************************************************)
+
+module DataCone: SIMPLIFIER = struct
+ 
+  let weaken_env c e = 
+    C.make_t e 
+      (C.grd_of_t c) (C.lhs_of_t c) (C.rhs_of_t c) 
+      (C.ido_of_t c) (C.tag_of_t c)
+
+  let support_of_refa = function 
+    | C.Conc p -> P.support p
+    | _        -> []
+
+  let support_of_reft = 
+    Misc.flap support_of_refa <.> thd3
+
+  let rec data_cone env m n xs = match xs with 
+    | _::_ -> let m' = List.fold_left (fun m' x -> Sy.SMap.add x n m') m xs in
+              xs |> Misc.map_partial (C.lookup_env env) 
+                 |> Misc.flap support_of_reft
+                 |> Misc.filter (fun x -> not (Sy.SMap.mem x m))
+                 |> data_cone env m' (n+1)
+    | []   -> m
+  
+  let data_cone c = 
+    (P.support (C.grd_of_t c)) 
+    |> (++) (support_of_reft (C.lhs_of_t c))
+    |> data_cone (C.env_of_t c) Sy.SMap.empty 0
+
+  let project_cone m x ((v,t,ras) as r) =
+    if Sy.SMap.mem x m then r else (v, t, List.filter C.is_conc_refa ras)
+
+  let simplify_t c =
+    c |> data_cone |> project_cone |> C.map_env 
+      |> (fun f -> f (C.env_of_t c))
+      |> weaken_env c
+      
+  let simplify_ts = Misc.map simplify_t
+end
+
 (****************************************************************************)
 (***** Merge Write and Read of Kvar: A |- k and B, k |- C  iff A,B |- C  ****)
 (****************************************************************************)
@@ -345,6 +387,7 @@ end
 let simplify_ts cs =
   cs 
   |> Misc.filter (not <.> C.is_tauto)
+  |> ((not !Co.lfp)  <?> BS.time "simplify 0" DataCone.simplify_ts)
   |> BS.time "add ids  1" (C.add_ids 0) 
   |> snd
   |> (!Co.simplify_t <?> BS.time "simplify 1" Syntactic.simplify_ts) (* termination bug, tickled by C benchmarks *)

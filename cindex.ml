@@ -67,13 +67,13 @@ module WH =
 type wkl = WH.t
 
 type t = 
-  { cnst : FixConstraint.t IM.t;   (* id   -> refinement_constraint *) 
-    rnkm : rank IM.t;              (* id   -> dependency rank *)
-    depm : C.id list IM.t;         (* id   -> successor ids *)
-    pend : (C.id, unit) H.t;       (* id   -> is in wkl ? *)
-    livs : IS.t;                   (* {id} members are "live" constraints *)
-    rts  : IS.t;                   (* {rank} members are "root" sccs *)
-    ds   : C.dep list;             (* add/del dep list *)
+  { cnst : FixConstraint.t IM.t     (* id   -> refinement_constraint *) 
+  ; rnkm : rank IM.t                (* id   -> dependency rank *)
+  ;  depm : C.id list IM.t          (* id   -> successor ids *)
+  ;  pend : (C.id, unit) H.t        (* id   -> is in wkl ? *)
+(*; livs : IS.t                     (* {id} members are "live" constraints *) *)
+  ; rts  : IS.t                     (* {rank} members are "root" sccs *)
+  ; ds   : C.dep list               (* add/del dep list *)
   }
 
 let get_ref_rank me c =
@@ -109,17 +109,6 @@ let make_deps cm =
       (IM.add id kds dm, (deps' ++ deps)) 
     end acc (rhs_ks c) 
   end cm (IM.empty,[])
-
-(* k is directly read in C if 
-   (a) C == G |- k[...] <: r
-   or
-   (b) C == G, grd |- {v|p} <: r and G(x) = k[..] for some x in grd \/ p 
-  
-  There is a direct-dependency from C --> C' if:
-    C writes k and k is directly read in C'
-*)
-
-let make_direct_deps cm = failwith "TBD: make_direct_deps"
 
 (***********************************************************************)
 (************* Adjusting Dependencies with Provided Tag-Deps ***********)
@@ -213,6 +202,13 @@ let make_lives cm real_deps =
   |> (fst <+> snd) 
   >> (IS.cardinal <+> Printf.printf "#Live Constraints: %d \n") 
 
+let adjust_lives real_deps (cm, dm, deps) = 
+  let lives   = make_lives cm real_deps in
+  let cm      = IM.filter (fun i _ -> IS.mem i lives) cm in
+  let dm      = dm |> IM.filter (fun i _ -> IS.mem i lives) |> IM.map (List.filter (fun j -> IS.mem j lives)) in
+  let deps    = Misc.filter (fun (i,j) -> IS.mem i lives && IS.mem j lives) deps in
+  (cm, dm, deps)
+
 
 (***********************************************************************)
 (**************************** API **************************************)
@@ -227,45 +223,32 @@ let create ds cs =
   let cm            = cs |>: (Misc.pad_fst C.id_of_t) |> IM.of_list in 
   let dm, real_deps = make_deps cm in
   let deps          = adjust_deps cm ds real_deps in 
-  (* DIRECTDEPS let ddeps = make_direct_deps cm in  *)
-  (* DIRECTDEPS let deps  = adjust_deps cm ds ddeps in *)
-  
-  let lives   = make_lives cm real_deps in
-  let cm      = IM.filter (fun i _ -> IS.mem i lives) cm in
-  let dm      = dm |> IM.filter (fun i _ -> IS.mem i lives) |> IM.map (List.filter (fun j -> IS.mem j lives)) in
-  let deps    = Misc.filter (fun (i,j) -> IS.mem i lives && IS.mem j lives) deps in
- 
-  let rnkm    = deps 
-                |> Fcommon.scc_rank "constraint" (string_of_cid cm) (IM.domain cm)
-                |> make_rankm cm in
+  let (cm,dm,deps)  = (cm,dm,deps) |> (not !Constants.lfp <?> adjust_lives real_deps) in
+  let rnkm          = deps |> Fcommon.scc_rank "constraint" (string_of_cid cm) (IM.domain cm)
+                           |> make_rankm cm in
+
   { cnst = cm
   ; ds   = ds
   ; rnkm = rnkm 
   ; depm = dm
   ; rts  = make_roots rnkm deps
-  ; livs = lives
   ; pend = H.create 17}
 
-(* 
-(* API *)
-let create ds cs =
-  let cm, dm, rm, rts, ls = BS.time "make rank map" (make_rank_map cs) ds in
-  {cnst = cm; ds = ds; rnkm = rm; depm = dm; rts = rts; livs = ls; pend = H.create 17}
-*)
 (* API *) 
 let deps me c =
   (try IM.find (C.id_of_t c) me.depm with Not_found -> [])
   |> List.map (get_ref_constraint me)
 
 (* API *)
-let to_list me = 
-  me.cnst |> IM.to_list |> Misc.map snd
+let to_list me = IM.range me.cnst
 
+(* 
 (* API *)
 let to_live_list me =
   me.cnst |> IM.to_list 
           |> Misc.map_partial (fun (i,c) -> if IS.mem i me.livs then Some c else None)
 
+*)
 
 let sort_iter_ref_constraints me f = 
   me.rnkm |> IM.to_list

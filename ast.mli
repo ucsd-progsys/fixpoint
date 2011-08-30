@@ -68,7 +68,7 @@ module Symbol :
   sig 
     type t 
     module SMap         : Misc.EMapType with type key = t
-    module SSet         : Set.S with type elt = t
+    module SSet         : Misc.ESetType with type elt = t
     val mk_wild         : unit -> t  
     val of_string       : string -> t
     val to_string       : t -> string 

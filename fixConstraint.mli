@@ -72,8 +72,8 @@ val preds_kvars_of_reft : reft -> (Ast.pred list * (Ast.Subst.t * Ast.Symbol.t) 
 val env_of_bindings  : (Ast.Symbol.t * reft) list -> envt
 val bindings_of_env  : envt -> (Ast.Symbol.t * reft) list
 val is_simple        : t -> bool
-
-
+val map_env          : (Ast.Symbol.t -> reft -> reft) -> envt -> envt 
+val lookup_env       : envt -> Ast.Symbol.t -> reft option
 
 (* to print a constraint "c" do:
    Format.printf "%a" (print_t None) c

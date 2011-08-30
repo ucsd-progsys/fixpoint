@@ -315,8 +315,8 @@ let create ts sm ps a ds consts cs ws bs0 qs =
                |> BS.time  "Constant Env" (List.map (C.add_consts_t consts))
                |> BS.time  "Simplify" FixSimplify.simplify_ts
                >> Co.logPrintf "Post-Simplify Stats\n%a" print_constr_stats
-               |> BS.time  "PP.Validation" (PP.validate a s)
-               |> BS.time  "Ref Index" Ci.create ds in
+               |> BS.time  "Ref Index" Ci.create ds
+               >> (Ci.to_list <+> BS.time "Validate" (PP.validate a s)) in
   ({ tpc                 = tpc
    ; sri                 = sri
    ; ws                  = ws

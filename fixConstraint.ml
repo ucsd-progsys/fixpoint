@@ -134,6 +134,9 @@ let env_of_bindings xrs =
 let bindings_of_env env = 
   SM.fold (fun x y bs -> (x,y)::bs) env []
 
+let map_env          = SM.mapi
+let lookup_env env x = try Some (SM.find x env) with Not_found -> None 
+
 (* API *)
 let is_simple {lhs = (_,_,ra1s); rhs = (_,_,ra2s)} = 
   List.for_all is_simple_refatom ra1s 

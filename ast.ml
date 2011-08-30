@@ -205,8 +205,8 @@ module Symbol =
     module SMap = Misc.EMap (struct type t = string 
                                     let compare i1 i2 = compare i1 i2 end)
 
-    module SSet = Set.Make (struct type t = string
-                                   let compare i1 i2 = compare i1 i2 end)
+    module SSet = Misc.ESet (struct type t = string
+                                    let compare i1 i2 = compare i1 i2 end)
 
     let mk_wild =
       let t,_ = Misc.mk_int_factory () in

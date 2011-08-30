@@ -160,7 +160,7 @@ let validate a s cs =
   (* >> phase3b : RJ: this invariant need not hold! *) 
      >> phase4 a 
      |> phase5 s
-     >> (fun cs' -> asserts (List.length cs = List.length cs') "Validation")
+     |> (fun cs' -> asserts (List.length cs = List.length cs') "Validation")
 
 (******************************************************************************)
 (******************* Validating Well-Formedness Constraints *******************)

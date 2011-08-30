@@ -30,7 +30,9 @@ type wkl
 
 (** indexing and dependencies *)
 val to_list      : t -> FixConstraint.t list 
-val to_live_list : t -> FixConstraint.t list
+
+(* val to_live_list : t -> FixConstraint.t list *)
+
 val create       : FixConstraint.dep list -> FixConstraint.t list -> t 
 val deps         : t -> FixConstraint.t -> FixConstraint.t list
 
