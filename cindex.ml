@@ -67,13 +67,13 @@ module WH =
 type wkl = WH.t
 
 type t = 
-  { cnst : FixConstraint.t IM.t     (* id   -> refinement_constraint *) 
-  ; rnkm : rank IM.t                (* id   -> dependency rank *)
-  ;  depm : C.id list IM.t          (* id   -> successor ids *)
-  ;  pend : (C.id, unit) H.t        (* id   -> is in wkl ? *)
-(*; livs : IS.t                     (* {id} members are "live" constraints *) *)
-  ; rts  : IS.t                     (* {rank} members are "root" sccs *)
-  ; ds   : C.dep list               (* add/del dep list *)
+  { cnst  : FixConstraint.t IM.t     (* id   -> refinement_constraint *) 
+  ; rnkm  : rank IM.t                (* id   -> dependency rank *)
+  ; depm  : C.id list IM.t           (* id   -> successor ids *)
+  ; pend  : (C.id, unit) H.t         (* id   -> is in wkl ? *)
+  ; rts   : IS.t                     (* {rank} members are "root" sccs *)
+  ; ds    : C.dep list               (* add/del dep list *)
+  ; rdeps : (int * int) list         (* real dependencies *)  
   }
 
 let get_ref_rank me c =
@@ -202,17 +202,30 @@ let make_lives cm real_deps =
   |> (fst <+> snd) 
   >> (IS.cardinal <+> Printf.printf "#Live Constraints: %d \n") 
 
-let adjust_lives real_deps (cm, dm, deps) = 
-  let lives   = make_lives cm real_deps in
-  let cm      = IM.filter (fun i _ -> IS.mem i lives) cm in
-  let dm      = dm |> IM.filter (fun i _ -> IS.mem i lives) |> IM.map (List.filter (fun j -> IS.mem j lives)) in
-  let deps    = Misc.filter (fun (i,j) -> IS.mem i lives && IS.mem j lives) deps in
-  (cm, dm, deps)
+let create_raw ds cm dm real_deps =
+  let deps = adjust_deps cm ds real_deps in
+  let rnkm = deps |> Fcommon.scc_rank "constraint" (string_of_cid cm) (IM.domain cm)
+                  |> make_rankm cm in
+  { cnst = cm; ds  = ds; rdeps = real_deps; rnkm  = rnkm
+  ; depm = dm; rts = make_roots rnkm deps;  pend = H.create 17}
 
 
 (***********************************************************************)
 (**************************** API **************************************)
 (***********************************************************************)
+
+(* API *) 
+let print ppf me =
+  List.iter (Format.fprintf ppf "@[%a@] \n" C.print_dep) me.ds; 
+  IM.iter (fun _ c -> Format.fprintf ppf "@[%a@] \n" (C.print_t None) c) me.cnst
+ 
+let save fname me = 
+  Misc.with_out_file fname begin fun oc -> 
+    let ppf = F.formatter_of_out_channel oc in 
+    F.fprintf ppf "//Sliced Constraints@.";
+    F.fprintf ppf "@[%a@] \n" print me
+  end
+
 
 (* The "adjusted" dependencies are used to create the SCC ranks ONLY.
  * For soundness, the "real" dependencies must be used to push 
@@ -222,17 +235,21 @@ let adjust_lives real_deps (cm, dm, deps) =
 let create ds cs =
   let cm            = cs |>: (Misc.pad_fst C.id_of_t) |> IM.of_list in 
   let dm, real_deps = make_deps cm in
-  let deps          = adjust_deps cm ds real_deps in 
-  let (cm,dm,deps)  = (cm,dm,deps) |> (not !Constants.lfp <?> adjust_lives real_deps) in
-  let rnkm          = deps |> Fcommon.scc_rank "constraint" (string_of_cid cm) (IM.domain cm)
-                           |> make_rankm cm in
+  create_raw ds cm dm real_deps 
 
-  { cnst = cm
-  ; ds   = ds
-  ; rnkm = rnkm 
-  ; depm = dm
-  ; rts  = make_roots rnkm deps
-  ; pend = H.create 17}
+(* API *)
+let slice me = 
+  let lives = make_lives me.cnst me.rdeps in
+  let cm    = me.cnst  
+              |> IM.filter (fun i _ -> IS.mem i lives) in
+  let dm    = me.depm  
+              |> IM.filter (fun i _ -> IS.mem i lives) 
+              |> IM.map (List.filter (fun j -> IS.mem j lives)) in
+  let rdeps = me.rdeps 
+              |> Misc.filter (fun (i,j) -> IS.mem i lives && IS.mem j lives) in
+  
+  create_raw me.ds cm dm rdeps
+  >> save !Co.save_file
 
 (* API *) 
 let deps me c =
@@ -299,11 +316,7 @@ let roots me =
 let winit me = 
   roots me |> wpush me WH.empty  
 
-(* API *) 
-let print ppf me =
-  List.iter (Format.fprintf ppf "@[%a@] \n" C.print_dep) me.ds; 
-  IM.iter (fun _ c -> Format.fprintf ppf "@[%a@] \n" (C.print_t None) c) me.cnst
-  
+ 
 (* iter (Format.fprintf ppf "@[%a@.@]" (C.print_t None)) me; *)
   (* if !Co.dump_ref_constraints then begin
     Format.fprintf ppf "Refinement Constraints: \n";

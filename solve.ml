@@ -316,6 +316,7 @@ let create ts sm ps a ds consts cs ws bs0 qs =
                |> BS.time  "Simplify" FixSimplify.simplify_ts
                >> Co.logPrintf "Post-Simplify Stats\n%a" print_constr_stats
                |> BS.time  "Ref Index" Ci.create ds
+               |> ((not !Co.lfp) <?> BS.time "Slice" Ci.slice)
                >> (Ci.to_list <+> BS.time "Validate" (PP.validate a s)) in
   ({ tpc                 = tpc
    ; sri                 = sri
