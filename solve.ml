@@ -283,22 +283,13 @@ let create ts sm ps a ds consts cs ws bs0 qs =
                 |> PP.validate_wfs in
  
   let sm  = List.fold_left (fun sm (x, so) -> SM.add x so sm) sm consts in
- (*
-  let s   = qs  |> Q.normalize 
-                >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) 
-                |> BS.time "Qual Inst" (inst ws)
-             (* >> List.iter ppBinding *)
-                |> (++) bs0
-  *) 
   let s   = FixSolution.create ts sm ps consts ws qs bs0 in
   let _   = sri |> Ci.to_list |> BS.time "Validate" (PP.validate a (FixSolution.read s)) in
-  ({     sri  = sri;     ws = ws
-   (* Stats *)
-   ; tt                  = Timer.create "fixpoint iters"
-   ; stat_refines        = ref 0
-
-  
-   ; stat_cfreqt         = Hashtbl.create 37
+  ({ sri          = sri
+   ; ws           = ws
+   ; tt           = Timer.create "fixpoint iters"
+   ; stat_refines = ref 0
+   ; stat_cfreqt  = Hashtbl.create 37
    }, s)
 
 (*

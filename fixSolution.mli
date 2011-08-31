@@ -25,6 +25,8 @@ val top          : t -> Ast.Symbol.t list -> t
 val refine       : t -> FixConstraint.t -> (bool * t)
 val unsat        : t -> FixConstraint.t -> bool
 
+(* TODO: create  : Config.t -> bindings -> t *)
+
 val create       : Ast.Sort.t list 
                    -> Ast.Sort.t Ast.Symbol.SMap.t 
                    -> Ast.pred list 
