@@ -24,15 +24,14 @@
 
 (** read a set of constraints, solve, and dump out the solution *)
 
-module BS = BNstats
-module SM = Ast.Symbol.SMap
-module Co = Constants 
-module C  = FixConstraint
-module F  = Format
-module T  = Toplevel
-module PA = FixSolution.PredAbs
-
-module SPA = Solve.Make (FixSolution.PredAbs)
+module BS  = BNstats
+module SM  = Ast.Symbol.SMap
+module Co  = Constants 
+module C   = FixConstraint
+module F   = Format
+module T   = Toplevel
+module PA  = PredAbs
+module SPA = Solve.Make (PA)
 
 open Misc.Ops
 

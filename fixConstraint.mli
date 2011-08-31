@@ -30,7 +30,12 @@ type dep                (* NEVER EVER expose! dependencies between constraints *
 type tag  = int list * string (* for ordering: must have same dim, lexico-ordered *)
 type id   = int         (* for identifying: must be unique *) 
 
-type soln = Ast.Symbol.t -> Ast.pred list
+
+
+type soln = { read    : Ast.Symbol.t -> Ast.pred list
+            ; dom     : Ast.Symbol.t list }
+
+
 type refa = Conc of Ast.pred | Kvar of Ast.Subst.t * Ast.Symbol.t
 type reft = Ast.Symbol.t * Ast.Sort.t * refa list   (* { VV: t | [ra] } *)
 type envt = reft Ast.Symbol.SMap.t

@@ -85,7 +85,7 @@ let get_instrs vv decls (subs, kvar) =
 let set_instr decls (subs, kvar) =
   Rset (List.map (fun v -> TVar v) (get_kdecl kvar decls), kvar)
 
-let emptySol = FixSolution.PredAbs.read FixSolution.PredAbs.empty
+let emptySol = PredAbs.read PredAbs.empty
 
 let reft_to_get_instrs decls reft =
   let vv = C.vv_of_reft reft in

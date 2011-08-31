@@ -59,6 +59,7 @@ let create ds =
 module type DOMAIN = sig
   type t
   val empty        : t 
+  val meet         : t -> t -> t
   val read         : t -> FixConstraint.soln
   val top          : t -> Ast.Symbol.t list -> t
   val refine       : t -> FixConstraint.t -> (bool * t)
@@ -69,14 +70,5 @@ module type DOMAIN = sig
   val print_stats  : Format.formatter -> t -> unit
   val dump         : t -> unit
 end
-
-module type SOLVER = sig
-  type t
-  type soln
-  val create    : cfg -> (t * soln)
-  val solve     : t -> soln -> (soln * (FixConstraint.t list)) 
-  val save      : string -> t -> soln -> unit 
-end
-
 
 type t = cfg

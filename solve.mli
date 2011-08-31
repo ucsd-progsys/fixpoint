@@ -17,10 +17,10 @@ type t
 
 module type SOLVER = sig
   type soln
-  val create    : Config.t -> (t * soln)
-  val solve     : t -> soln -> (soln * (FixConstraint.t list)) 
-  val save      : string -> t -> soln -> unit 
-  val read      : soln -> FixConstraint.soln
+  val create : Config.t -> (t * soln)
+  val solve  : t -> soln -> (soln * (FixConstraint.t list)) 
+  val save   : string -> t -> soln -> unit 
+  val read   : soln -> FixConstraint.soln
 end
 
 module Make (Dom : Config.DOMAIN) : SOLVER with type soln = Dom.t

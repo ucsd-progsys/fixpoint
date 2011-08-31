@@ -39,7 +39,6 @@ type tag  = int list * string
 type id   = int
 type dep  = Adp of tag * tag | Ddp of tag * tag | Ddp_s of tag | Ddp_t of tag
 
-type soln = Sy.t -> Ast.pred list
 type refa = Conc of A.pred | Kvar of Su.t * Sy.t
 type reft = Sy.t * A.Sort.t * refa list                (* { VV: t | [ra] } *)
 type envt = reft SM.t
@@ -52,6 +51,8 @@ type t    = { full    : envt;
               ido     : id option;
               tag     : tag; }
 
+type soln = { read    : Ast.Symbol.t -> Ast.pred list
+            ; dom     : Ast.Symbol.t list }
 
 let mydebug = false 
 
@@ -126,9 +127,9 @@ let is_conc_refa = function
   | _      -> false
 
 (* API *)
-let preds_of_refa f = function
+let preds_of_refa s = function
   | Conc p      -> [p]
-  | Kvar (su,k) -> f k |> List.map (Misc.flip A.substs_pred su)
+  | Kvar (su,k) -> s.read k |> List.map (Misc.flip A.substs_pred su)
 
 (* API *)
 let preds_of_reft f (_,_,ras) = 
