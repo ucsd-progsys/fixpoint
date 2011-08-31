@@ -182,34 +182,6 @@ let validate_wfs ws =
         end ([], Sy.SSet.empty) 
      |> fst
 
-(***************************************************************)
-(****************** Pruning Unconstrained Vars *****************)
-(***************************************************************)
-
-let rhs_ks cs =
-  cs  |> Misc.flap (Misc.compose C.kvars_of_reft C.rhs_of_t)
-      |> List.fold_left (fun rhss (_, kv) -> Sy.SSet.add kv rhss) Sy.SSet.empty
-
-let unconstrained_kvars cs =
-  let rhss = rhs_ks cs in
-  cs  |> Misc.flap C.kvars_of_t
-      |> List.map snd
-      |> List.filter (fun kv -> not (Sy.SSet.mem kv rhss))
-
-let true_unconstrained s sri =
-  sri |> Cindex.to_list 
-      |> unconstrained_kvars
-      |> Misc.flip (FixSolution.p_update s) []
-      |> snd
-
-(* API *)
-let true_unconstrained s sri = 
-  if !Co.true_unconstrained then 
-    let _ = Co.logPrintf "Fixpoint: Pruning unconstrained kvars \n" 
-    in true_unconstrained s sri
-  else 
-    let _ = Co.logPrintf "Fixpoint: NOT Pruning unconstrained kvars \n" 
-    in s
 
 (***************************************************************)
 (*********************** Constraint Profiling  *****************)

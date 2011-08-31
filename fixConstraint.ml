@@ -35,12 +35,11 @@ module MSM = Misc.StringMap
 open Misc.Ops
 
 
-
-
 type tag  = int list * string
 type id   = int
 type dep  = Adp of tag * tag | Ddp of tag * tag | Ddp_s of tag | Ddp_t of tag
 
+type soln = Sy.t -> Ast.pred list
 type refa = Conc of A.pred | Kvar of Su.t * Sy.t
 type reft = Sy.t * A.Sort.t * refa list                (* { VV: t | [ra] } *)
 type envt = reft SM.t
@@ -127,40 +126,38 @@ let is_conc_refa = function
   | _      -> false
 
 (* API *)
-let preds_of_refa s   = function
+let preds_of_refa f = function
   | Conc p      -> [p]
-  | Kvar (su,k) -> k |> FixSolution.read s 
-                     |> List.map (Misc.flip A.substs_pred su)
+  | Kvar (su,k) -> f k |> List.map (Misc.flip A.substs_pred su)
 
 (* API *)
-let preds_of_reft s (_,_,ras) =
-  Misc.flap (preds_of_refa s) ras
+let preds_of_reft f (_,_,ras) = 
+  Misc.flap (preds_of_refa f) ras
 
-let apply_solution_refa s ra = 
-  let ps = try preds_of_refa s ra with _ -> [] in
-  Conc (A.pAnd ps)
+let apply_solution_refa f ra = 
+  Conc (A.pAnd (preds_of_refa f ra))
 
 (* API *)
-let apply_solution s (v, t, ras) = 
-  (v, t, List.map (apply_solution_refa s) ras)
+let apply_solution f (v, t, ras) = 
+  (v, t, List.map (apply_solution_refa f) ras)
 
-let preds_of_envt s env =
+let preds_of_envt f env =
   SM.fold
     (fun x ((vv, t, ras) as r) ps -> 
-      let vps = preds_of_reft s r in
+      let vps = preds_of_reft f r in
       let xps = List.map (fun p -> P.subst p vv (A.eVar x)) vps in
       xps ++ ps)
     env [] 
 
 (* API *)
-let preds_of_lhs s {nontriv = env; guard = gp; lhs =  r1} = 
-  let envps = preds_of_envt s env in
-  let r1ps  = preds_of_reft s r1 in
+let preds_of_lhs f {nontriv = env; guard = gp; lhs =  r1} = 
+  let envps = preds_of_envt f env in
+  let r1ps  = preds_of_reft f r1 in
   gp :: (envps ++ r1ps) 
 
 (* API *)
-let vars_of_t s ({rhs = r2} as c) =
-  (preds_of_reft s r2) ++ (preds_of_lhs s c)
+let vars_of_t f ({rhs = r2} as c) =
+  (preds_of_reft f r2) ++ (preds_of_lhs f c)
   |> Misc.flap P.support
 
 (*

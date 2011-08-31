@@ -31,25 +31,24 @@ module E  = A.Expression
 module So = A.Sort
 module Su = A.Subst
 module Q  = A.Qualifier
-module PH = A.Predicate.Hash
 module Sy = A.Symbol
 module SM = Sy.SMap
 module C  = FixConstraint
-module Sn = FixSolution
 module Ci = Cindex
-module TP = TpNull.Prover
 module PP = Prepass
 
 open Misc.Ops
 
 type t = {
-   tpc : TP.t
- ; sri : Ci.t
+   sri : Ci.t
  ; ws  : C.wf list
  ; tt  : Timer.t
    
  (* Stats *)
  ; stat_refines        : int ref
+ ; stat_cfreqt         : (int * bool, int) Hashtbl.t 
+ 
+ (*
  ; stat_simple_refines : int ref 
  ; stat_tp_refines     : int ref 
  ; stat_imp_queries    : int ref 
@@ -58,7 +57,8 @@ type t = {
  ; stat_umatches       : int ref 
  ; stat_unsatLHS       : int ref 
  ; stat_emptyRHS       : int ref 
- ; stat_cfreqt         : (int * bool, int) Hashtbl.t 
+ *)
+
 }
 
 let mydebug = false 
@@ -81,13 +81,14 @@ let hashtbl_print_frequency t =
          n b (List.length xs) (Misc.map_to_string string_of_int xs) 
      end
 
+(* 
 (***************************************************************)
 (************************** Refinement *************************)
 (***************************************************************)
 
 let rhs_cands s = function
   | C.Kvar (su, k) -> 
-      k |> Sn.p_read s 
+      k |> FixSolution.p_read s 
         |> List.map (fun (x, q) -> (x, A.substs_pred q su))
         (* |> List.map (fun q -> ((k,q), A.substs_pred q su)) *)
   | _ -> []
@@ -125,27 +126,11 @@ let refine me s c =
     let kqs1    = List.map fst x1 |> List.map Misc.single in
     (if C.is_simple c 
      then (ignore(me.stat_simple_refines += 1); kqs1) 
-     else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps (Sn.p_imp s)) x2))
-    |> Sn.p_update s k2s 
+     else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps (FixSolution.p_imp s)) x2))
+    |> FixSolution.p_update s k2s 
 
-(***************************************************************)
-(************************* Satisfaction ************************)
-(***************************************************************)
+    *)
 
-let unsat me s c = 
-  let env      = C.env_of_t c in
-  let (vv,t,_) = C.lhs_of_t c in
-  let lps      = C.preds_of_lhs s c  in
-  let rhsp     = c |> C.rhs_of_t |> C.preds_of_reft s |> A.pAnd in
-  let f        = fun _ _ -> false in
-  not ((check_tp me env vv t lps f [(0, rhsp)]) = [[0]])
-
-let unsat me s c = 
-  let msg = Printf.sprintf "unsat_cstr %d" (C.id_of_t c) in
-  Misc.do_catch msg (unsat me s) c
-
-let unsat_constraints me s =
-  me.sri |> Ci.to_list |> List.filter (unsat me s)
 
 
 (***************************************************************)
@@ -159,22 +144,15 @@ let print_constr_stats ppf cs =
 
 let print_solver_stats ppf me = 
   print_constr_stats ppf (Ci.to_list me.sri); 
-  F.fprintf ppf "#Iterations = %d (si=%d tp=%d unsatLHS=%d emptyRHS=%d) \n"
-    !(me.stat_refines) !(me.stat_simple_refines) !(me.stat_tp_refines)
-    !(me.stat_unsatLHS) !(me.stat_emptyRHS);
-  F.fprintf ppf "#Queries: umatch=%d, match=%d, ask=%d, valid=%d\n" 
-    !(me.stat_umatches) !(me.stat_matches) !(me.stat_imp_queries)
-    !(me.stat_valid_queries);
-  F.fprintf ppf "%a" TP.print_stats me.tpc;
-  F.fprintf ppf "Iteration Frequency: \n";
-  hashtbl_print_frequency me.stat_cfreqt;
-  F.fprintf ppf "Iteration Periods: @[%a@] \n" Timer.print me.tt;
-  F.fprintf ppf "finished solver_stats \n"
+  F.fprintf ppf "#Iterations = %d\n" !(me.stat_refines);
+  F.fprintf ppf "Iteration Frequency: \n"; 
+    hashtbl_print_frequency me.stat_cfreqt;
+  F.fprintf ppf "Iteration Periods: @[%a@] \n" Timer.print me.tt
 
 let dump me s = 
   Co.cLogPrintf Co.ol_solve_stats "%a \n" print_solver_stats me;
-  Co.cLogPrintf Co.ol_solve_stats "%a \n" Sn.print_stats s;
-  Sn.dump_cluster s
+  Co.cLogPrintf Co.ol_solve_stats "%a \n" FixSolution.print_stats s;
+  FixSolution.dump_cluster s
 
 (***************************************************************)
 (******************** Qualifier Instantiation ******************)
@@ -258,12 +236,12 @@ let inst ws qs =
 (***************************************************************)
 
 let log_iter_stats me s =
-  (if Co.ck_olev Co.ol_insane then Co.logPrintf "%a" Sn.print s);
+  (if Co.ck_olev Co.ol_insane then Co.logPrintf "%a" FixSolution.print s);
   (if !(me.stat_refines) mod 100 = 0 then 
      let msg = Printf.sprintf "num refines=%d" !(me.stat_refines) in 
      let _   = Timer.log_event me.tt (Some msg) in
      let _   = Co.logPrintf "%s" msg in 
-     let _   = Co.logPrintf "%a \n" Sn.print_stats s in
+     let _   = Co.logPrintf "%a \n" FixSolution.print_stats s in
      ());
   ()
 
@@ -274,19 +252,55 @@ let rec acsolve me w s =
       let _ = Timer.log_event me.tt (Some "Finished") in 
       s 
   | (Some c, w') ->
-      let (ch, s')  = BS.time "refine" (refine me s) c in
+      let _         = me.stat_refines += 1             in 
+      let (ch, s')  = BS.time "refine" (FixSolution.refine s) c in
       let _         = hashtbl_incr_frequency me.stat_cfreqt (C.id_of_t c, ch) in  
       let _         = Co.bprintf mydebug "iter=%d id=%d ch=%b %a \n" 
                       !(me.stat_refines) (C.id_of_t c) ch C.print_tag (C.tag_of_t c) in
       let w'' = if ch then Ci.deps me.sri c |> Ci.wpush me.sri w' else w' in 
       acsolve me w'' s' 
 
+let unsat_constraints me s =
+  me.sri |> Ci.to_list |> List.filter (FixSolution.unsat s)
+
+
+
+
+(***************************************************************)
+(****************** Pruning Unconstrained Vars *****************)
+(***************************************************************)
+
+let rhs_ks cs =
+  cs  |> Misc.flap (Misc.compose C.kvars_of_reft C.rhs_of_t)
+      |> List.fold_left (fun rhss (_, kv) -> Sy.SSet.add kv rhss) Sy.SSet.empty
+
+let unconstrained_kvars cs =
+  let rhss = rhs_ks cs in
+  cs  |> Misc.flap C.kvars_of_t
+      |> List.map snd
+      |> List.filter (fun kv -> not (Sy.SSet.mem kv rhss))
+
+let true_unconstrained sri s =
+  sri |> Cindex.to_list 
+      |> unconstrained_kvars
+      |> FixSolution.top s
+
+(* 
+let true_unconstrained sri s = 
+  if !Co.true_unconstrained then 
+    let _ = Co.logPrintf "Fixpoint: Pruning unconstrained kvars \n" 
+    in true_unconstrained sri s
+  else 
+    let _ = Co.logPrintf "Fixpoint: NOT Pruning unconstrained kvars \n" 
+    in s
+*)
+
 (* API *)
 let solve me s = 
   let _  = Co.logPrintf "Fixpoint: Validating Initial Solution \n" in
   let _  = BS.time "Prepass.profile" PP.profile me.sri in
-  let s  = BS.time "Prepass.true_unconstr" (PP.true_unconstrained s) me.sri in
-  (* let _  = Co.cprintf Co.ol_insane "%a%a" Ci.print me.sri Sn.print s; dump me s in *)
+  let s  = s |> (!Co.true_unconstrained <?> BS.time "Prepass.true_unconstr" (true_unconstrained me.sri)) in
+  (* let _  = Co.cprintf Co.ol_insane "%a%a" Ci.print me.sri FixSolution.print s; dump me s in *)
   let _  = Co.logPrintf "Fixpoint: Initialize Worklist \n" in
   let w  = BS.time "Cindex.winit" Ci.winit me.sri in 
   let _  = Co.logPrintf "Fixpoint: Refinement Loop \n" in
@@ -318,7 +332,7 @@ let create ts sm ps a ds consts cs ws bs0 qs =
                 |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf consts)) 
                 |> PP.validate_wfs in
   let bs  = BS.time "Qual Inst" (inst ws) qs (* >> List.iter ppBinding *) in 
-  let s   = Sn.of_bindings ts sm ps (bs0 ++ bs) in
+  let s   = FixSolution.of_bindings ts sm ps (bs0 ++ bs) in
   let _   = sri |> Ci.to_list |> BS.time "Validate" (PP.validate a s) in
   ({ tpc  = tpc;    sri  = sri;     ws = ws
    (* Stats *)
@@ -352,17 +366,15 @@ let create ts sm ps a ds consts cs ws bs0 qs =
                 |> BS.time "Qual Inst" (inst ws)
              (* >> List.iter ppBinding *)
                 |> (++) bs0
-                |> Sn.of_bindings ts sm ps in
-  let _   = sri |> Ci.to_list |> BS.time "Validate" (PP.validate a s) in
-  ({ tpc  = TP.create ts sm ps (List.map fst consts)
-   ;    sri  = sri;     ws = ws
+                |> FixSolution.create ts sm ps consts in
+  let _   = sri |> Ci.to_list |> BS.time "Validate" (PP.validate a (FixSolution.read s)) in
+  ({     sri  = sri;     ws = ws
    (* Stats *)
    ; tt                  = Timer.create "fixpoint iters"
-   ; stat_refines        = ref 0; stat_simple_refines = ref 0
-   ; stat_tp_refines     = ref 0; stat_imp_queries    = ref 0
-   ; stat_valid_queries  = ref 0; stat_matches        = ref 0
-   ; stat_umatches       = ref 0; stat_unsatLHS       = ref 0
-   ; stat_emptyRHS       = ref 0; stat_cfreqt         = Hashtbl.create 37
+   ; stat_refines        = ref 0
+
+  
+   ; stat_cfreqt         = Hashtbl.create 37
    }, s)
 
 (*
@@ -378,7 +390,7 @@ let save fname me s =
   let ppf = F.formatter_of_out_channel oc in
   F.fprintf ppf "@[%a@] \n" Ci.print me.sri;
   F.fprintf ppf "@[%a@] \n" (Misc.pprint_many true "\n" (C.print_wf None)) me.ws;
-  F.fprintf ppf "@[%a@] \n" Sn.print s;
+  F.fprintf ppf "@[%a@] \n" FixSolution.print s;
   close_out oc
 
 (*

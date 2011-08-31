@@ -31,7 +31,6 @@ module C  = FixConstraint
 module S  = Solve
 module F  = Format
 module T  = Toplevel
-module Sn = FixSolution
 
 open Misc.Ops
 
@@ -53,9 +52,8 @@ let save_raw fname cs s =
   let ppf = F.formatter_of_out_channel oc in
   let _   = print_now ("Fixpoint: save_raw into file = " ^ fname ^ " : BEGIN \n") in
   F.fprintf ppf "%a \n" print_raw_cs cs; 
-  F.fprintf ppf "%a \n" Sn.print_raw s;
+  F.fprintf ppf "%a \n" FixSolution.print_raw s;
   F.fprintf ppf "@.";
-  (* F.printf "%a \n" print_raw_cs cs; F.printf "%a \n" Sn.print_raw s; *)
   F.print_flush ();
   close_out oc;
   print_now "Fixpoint: save_raw: END \n"
@@ -104,7 +102,7 @@ let simplify_ts x =
 let dump_simp ac = 
   let a     = get_arity ac.Config.cs in
   let cs    = simplify_ts ac.Config.cs in
-  let s0    = Sn.of_bindings ac.Config.ts SM.empty ac.Config.ps ac.Config.s in
+  let s0    = FixSolution.create ac.Config.ts SM.empty ac.Config.ps ac.Config.cons ac.Config.s in
   let ctx,_ = BS.time "create" (S.create ac.Config.ts SM.empty ac.Config.ps a ac.Config.ds ac.Config.cons cs ac.Config.ws []) [] in
   let _     = BS.time "save" (S.save !Co.save_file ctx) s0 in
   exit 1

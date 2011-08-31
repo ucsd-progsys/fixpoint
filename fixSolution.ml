@@ -34,11 +34,14 @@ module Q   = A.Qualifier
 module Sy  = A.Symbol
 module Su  = A.Subst
 module SM  = Sy.SMap
+module C   = FixConstraint
+
 module SSM = Misc.StringMap
 module BS  = BNstats
 module TP  = TpNull.Prover
 module Co  = Constants
 module H   = Hashtbl
+module PH  = A.Predicate.Hash
 
 open Misc.Ops
 
@@ -73,12 +76,24 @@ type def = Ast.pred * (Ast.Qualifier.t * Ast.Subst.t)
 
 type p   = Sy.t * def
 
-type t   = { m    : def list list SM.t
-           ; qm   : (Q.t * int) SSM.t (* name :-> (qualif, rank) *)
-           ; impm : bool TTM.t        (* (t1,t2) \in impm iff q1 => q2 /\ t1 = tag_of_qual q1 /\ t2 = tag_of_qual q2 *)
-           ; impg : G.t               (* same as impm but in graph format *) 
-           ; imp_memo_t: ((A.tag * A.tag), bool) H.t
-           }
+type t   = 
+  { tpc : TP.t
+  ; m    : def list list SM.t
+  ; qm   : (Q.t * int) SSM.t (* name :-> (qualif, rank) *)
+  ; impm : bool TTM.t        (* (t1,t2) \in impm iff q1 => q2 /\ t1 = tag_of_qual q1 /\ t2 = tag_of_qual q2 *)
+  ; impg : G.t               (* same as impm but in graph format *) 
+  ; imp_memo_t: ((A.tag * A.tag), bool) H.t
+
+  (* stats *)
+  ; stat_simple_refines : int ref 
+  ; stat_tp_refines     : int ref 
+  ; stat_imp_queries    : int ref 
+  ; stat_valid_queries  : int ref 
+  ; stat_matches        : int ref 
+  ; stat_umatches       : int ref 
+  ; stat_unsatLHS       : int ref 
+  ; stat_emptyRHS       : int ref 
+}
 
 let pprint_ps =
   Misc.pprint_many false ";" P.print 
@@ -213,7 +228,7 @@ let rank_of_qual s q =
 (************************************************************)
 
 (* API *)
-let of_bindings ts sm ps bs =
+let create ts sm ps consts bs =
   let m          = map_of_bindings bs in
   let qs         = quals_of_bindings bs in
   let im, ig, qm =
@@ -223,10 +238,17 @@ let of_bindings ts sm ps bs =
       |> (fun (im, ig) -> (im, ig, qual_ranks_of_impg ig)) 
     else
       (TTM.empty, G.empty, List.map (fun q -> (Q.name_of_t q, (q, 0))) qs |> SSM.of_list) 
-  in {m = m; qm = qm; impm = im; impg = ig; imp_memo_t = H.create 37}
+  in { m = m; qm = qm; impm = im; impg = ig; imp_memo_t = H.create 37
+     ; tpc  = TP.create ts sm ps (List.map fst consts)
+     ; stat_simple_refines = ref 0
+     ; stat_tp_refines     = ref 0; stat_imp_queries    = ref 0
+     ; stat_valid_queries  = ref 0; stat_matches        = ref 0
+     ; stat_umatches       = ref 0; stat_unsatLHS       = ref 0
+     ; stat_emptyRHS       = ref 0
+     }
 
 (* API *)
-let empty = of_bindings [] SM.empty [] [] 
+let empty = create [] SM.empty [] [] []
 
 (* API *)
 let p_read s k =
@@ -328,6 +350,9 @@ let p_update s0 ks kdss =
   end (false, s0.m) ks
   |> Misc.app_snd (fun m -> { s0 with m = m })  
 
+(* API *)
+let top s ks = snd <| p_update s ks [] 
+
 (************************************************************)
 (*********************** Profile/Stats **********************)
 (************************************************************)
@@ -357,17 +382,24 @@ let print ppf s = s >> print_m ppf >> print_qm ppf |> ignore
 
       
 (* API *)
-let print_stats ppf s =
+let print_stats ppf me =
   let (sum, max, min, bot) =   
-    (SM.fold (fun _ qs x -> (+) x (List.length qs)) s.m 0,
-     SM.fold (fun _ qs x -> max x (List.length qs)) s.m min_int,
-     SM.fold (fun _ qs x -> min x (List.length qs)) s.m max_int,
+    (SM.fold (fun _ qs x -> (+) x (List.length qs)) me.m 0,
+     SM.fold (fun _ qs x -> max x (List.length qs)) me.m min_int,
+     SM.fold (fun _ qs x -> min x (List.length qs)) me.m max_int,
      SM.fold (fun _ qs x -> x + (if List.exists (fst <+> P.is_contra)
-     (List.flatten qs) then 1 else 0)) s.m 0) in
-  let n   = SM.length s.m in
+     (List.flatten qs) then 1 else 0)) me.m 0) in
+  let n   = SM.length me.m in
   let avg = (float_of_int sum) /. (float_of_int n) in
   F.fprintf ppf "# Vars: (Total=%d, False=%d) Quals: (Total=%d, Avg=%f, Max=%d, Min=%d)\n" 
-    n bot sum avg max min
+    n bot sum avg max min;
+  F.fprintf ppf "#Iteration Profile = (si=%d tp=%d unsatLHS=%d emptyRHS=%d) \n"
+    !(me.stat_simple_refines) !(me.stat_tp_refines)
+    !(me.stat_unsatLHS) !(me.stat_emptyRHS);
+  F.fprintf ppf "#Queries: umatch=%d, match=%d, ask=%d, valid=%d\n" 
+    !(me.stat_umatches) !(me.stat_matches) !(me.stat_imp_queries)
+    !(me.stat_valid_queries);
+  F.fprintf ppf "%a" TP.print_stats me.tpc
 
 (* API *)
 let print_raw ppf s = 
@@ -405,7 +437,71 @@ let dump_cluster s =
      end
   |> ignore
 
+(***************************************************************)
+(************************** Refinement *************************)
+(***************************************************************)
 
+let rhs_cands s = function
+  | C.Kvar (su, k) -> 
+      k |> p_read s 
+        |> List.map (fun (x, q) -> (x, A.substs_pred q su))
+  | _ -> []
+
+let check_tp me env vv t lps f =  function [] -> [] | rcs ->
+  let env = SM.map snd3 env |> SM.add vv t in
+  let rv  = TP.set_filter me.tpc env vv lps f rcs in
+  let _   = ignore(me.stat_tp_refines    += 1);
+            ignore(me.stat_imp_queries   += (List.length rcs));
+            ignore(me.stat_valid_queries += (List.length rv)) in
+  rv
+
+let refine me c =
+  let env = C.env_of_t c in
+  let (vv1, t1, _) = C.lhs_of_t c in
+  let (_,_,ra2s) as r2 = C.rhs_of_t c in
+  let k2s = r2 |> C.kvars_of_reft |> List.map snd in
+  let rcs = BS.time "rhs_cands" (Misc.flap (rhs_cands me)) ra2s in
+  if rcs = [] then
+    let _ = me.stat_emptyRHS += 1 in
+    (false, me)
+  else 
+    let lps = BS.time "preds_of_lhs" (C.preds_of_lhs (read me)) c in
+    if BS.time "lhs_contra" (List.exists P.is_contra) lps then 
+    let _ = me.stat_unsatLHS += 1 in
+    let _ = me.stat_umatches += List.length rcs in
+    (false, me)
+  else
+    let rcs     = List.filter (fun (_,p) -> not (P.is_contra p)) rcs in
+    let lt      = PH.create 17 in
+    let _       = List.iter (fun p -> PH.add lt p ()) lps in
+    let (x1,x2) = List.partition (fun (_,p) -> PH.mem lt p) rcs in
+    let _       = me.stat_matches += (List.length x1) in
+    let kqs1    = List.map fst x1 |> List.map Misc.single in
+    (if C.is_simple c 
+     then (ignore(me.stat_simple_refines += 1); kqs1) 
+     else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps (p_imp me)) x2))
+    |> p_update me k2s 
+
+(***************************************************************)
+(************************* Satisfaction ************************)
+(***************************************************************)
+
+let unsat me c = 
+  let env      = C.env_of_t c in
+  let (vv,t,_) = C.lhs_of_t c in
+  let s        = read me      in
+  let lps      = C.preds_of_lhs s c  in
+  let rhsp     = c |> C.rhs_of_t |> C.preds_of_reft s |> A.pAnd in
+  let f        = fun _ _ -> false in
+  not ((check_tp me env vv t lps f [(0, rhsp)]) = [[0]])
+
+(*
+let unsat me c = 
+  let msg = Printf.sprintf "unsat_cstr %d" (C.id_of_t c) in
+  Misc.do_catch msg (unsat me s) c
+*)
+
+  
 (* {{{ DEPRECATED 
 
 let read s k = 
