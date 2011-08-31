@@ -17,7 +17,6 @@
 exception UnmappedKvar of Ast.Symbol.t
 
 type t
-type p 
 type def = Ast.pred * (Ast.Qualifier.t * Ast.Subst.t)
 
 val empty        : t 
@@ -29,7 +28,9 @@ val unsat        : t -> FixConstraint.t -> bool
 val create       : Ast.Sort.t list 
                    -> Ast.Sort.t Ast.Symbol.SMap.t 
                    -> Ast.pred list 
-                   -> (Ast.Symbol.t * Ast.Sort.t) list (* Distinct Constants *) 
+                   -> (Ast.Symbol.t * Ast.Sort.t) list (* Distinct Constants *)
+                   -> FixConstraint.wf list
+                   -> Ast.Qualifier.t list
                    -> (Ast.Symbol.t * def list) list 
                    -> t
 

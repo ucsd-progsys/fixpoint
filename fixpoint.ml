@@ -102,7 +102,8 @@ let simplify_ts x =
 let dump_simp ac = 
   let a     = get_arity ac.Config.cs in
   let cs    = simplify_ts ac.Config.cs in
-  let s0    = FixSolution.create ac.Config.ts SM.empty ac.Config.ps ac.Config.cons ac.Config.s in
+  let s0    = FixSolution.create ac.Config.ts SM.empty ac.Config.ps
+  ac.Config.cons ac.Config.ws ac.Config.qs  ac.Config.s in
   let ctx,_ = BS.time "create" (S.create ac.Config.ts SM.empty ac.Config.ps a ac.Config.ds ac.Config.cons cs ac.Config.ws []) [] in
   let _     = BS.time "save" (S.save !Co.save_file ctx) s0 in
   exit 1

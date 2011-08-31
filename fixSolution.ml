@@ -223,34 +223,6 @@ let rank_of_qual s q =
   snd (SSM.find n s.qm)
 
 
-(************************************************************)
-(*************************** API ****************************)
-(************************************************************)
-
-(* API *)
-let create ts sm ps consts bs =
-  let m          = map_of_bindings bs in
-  let qs         = quals_of_bindings bs in
-  let im, ig, qm =
-    if !Constants.minquals then
-      impm_of_quals ts sm ps qs
-      >> (snd <+> dump_graph (!Constants.save_file^".impg.dot")) 
-      |> (fun (im, ig) -> (im, ig, qual_ranks_of_impg ig)) 
-    else
-      (TTM.empty, G.empty, List.map (fun q -> (Q.name_of_t q, (q, 0))) qs |> SSM.of_list) 
-  in { m = m; qm = qm; impm = im; impg = ig; imp_memo_t = H.create 37
-     ; tpc  = TP.create ts sm ps (List.map fst consts)
-     ; stat_simple_refines = ref 0
-     ; stat_tp_refines     = ref 0; stat_imp_queries    = ref 0
-     ; stat_valid_queries  = ref 0; stat_matches        = ref 0
-     ; stat_umatches       = ref 0; stat_unsatLHS       = ref 0
-     ; stat_emptyRHS       = ref 0
-     }
-
-(* API *)
-let empty = create [] SM.empty [] [] []
-
-(* API *)
 let p_read s k =
   let _ = asserts (SM.mem k s.m) "ERROR: p_read : unknown kvar %s\n" (Sy.to_string k) in
   SM.find k s.m 
@@ -500,6 +472,120 @@ let unsat me c =
   let msg = Printf.sprintf "unsat_cstr %d" (C.id_of_t c) in
   Misc.do_catch msg (unsat me s) c
 *)
+
+(***************************************************************)
+(******************** Qualifier Instantiation ******************)
+(***************************************************************)
+
+let wellformed env q = 
+  A.sortcheck_pred (fun x -> snd3 (SM.find x env)) (Q.pred_of_t q)
+(*  >> (F.printf "\nwellformed: q = @[%a@] in env = @[%a@] result %b\n"  
+        Q.print q (C.print_env None) env)
+ *)
+
+let dupfree_binding xys : bool = 
+  let ys  = List.map snd xys in
+  let ys' = Misc.sort_and_compact ys in
+  List.length ys = List.length ys'
+
+let varmatch_ctr = ref 0
+
+let varmatch (x, y) = 
+  let _ = varmatch_ctr += 1 in
+  let (x,y) = Misc.map_pair Sy.to_string (x,y) in
+  if x.[0] = '@' then
+    let x' = Misc.suffix_of_string x 1 in
+    Misc.is_prefix x' y
+  else true
+
+let valid_binding xys = 
+  (dupfree_binding xys) && (List.for_all varmatch xys)
+
+let valid_bindings ys x = 
+  ys |> List.map (fun y -> (x, y))
+     |> List.filter varmatch 
+
+let inst_qual ys t' (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
+  let v  = Q.vv_of_t   q in
+  let p  = Q.pred_of_t q in
+  let q' = Q.create "" v t' p in
+  let v' = Sy.value_variable t' in
+  let su = Su.of_list [(v, A.eVar v')] in 
+  begin
+  match q' |> Q.pred_of_t |> P.support |> List.filter Sy.is_wild with
+  | [] -> 
+      [q', (q, su)]
+  | xs -> 
+      xs
+      |> Misc.sort_and_compact
+      |> List.map (valid_bindings ys)                   (* candidate bindings    *)
+      |> Misc.product                                   (* generate combinations *) 
+      |> List.filter valid_binding                      (* remove bogus bindings *)
+      |> List.map (List.map (Misc.app_snd A.eVar))      (* instantiations        *)
+      |> List.rev_map Su.of_list                        (* convert to substs     *)
+      |> List.rev_map (fun su' -> (Q.subst su' q', (q, Su.concat su su'))) (* quals *)
+  end
+(*  >> ((List.map fst) <+> F.printf "\n\ninst_qual q = %a: %a" Q.print q (Misc.pprint_many true "" Q.print))
+ *)
+
+let inst_ext qs wf = 
+  let r    = C.reft_of_wf wf in
+  let ks   = C.kvars_of_reft r |> List.map snd in
+  let env  = C.env_of_wf wf in
+  let ys   = SM.fold (fun y _ ys -> y::ys) env [] in
+  let vv   = fst3 r in
+  let t    = snd3 r in
+  let env' = SM.add vv r env in
+  qs |> List.filter (fun q -> not (A.Sort.unify [t] [Q.sort_of_t q] = None))
+     |> Misc.flap   (inst_qual ys t)
+     |> Misc.map    (Misc.app_fst (Q.subst_vv vv))
+     |> Misc.filter (fst <+> wellformed env')
+     |> Misc.filter (fst <+> C.filter_of_wf wf)
+     |> Misc.map    (Misc.app_fst Q.pred_of_t)
+     |> Misc.cross_product ks
+
+let inst ws qs = 
+  Misc.flap (inst_ext qs) ws 
+  >> (fun _ -> Co.bprintf mydebug "\n\nvarmatch_ctr = %d \n\n" !varmatch_ctr)
+  |> Misc.kgroupby fst 
+  |> Misc.map (Misc.app_snd (List.map snd)) 
+
+(*************************************************************************)
+(*************************** Creation ************************************)
+(*************************************************************************)
+
+(* API *)
+let create ts sm ps consts bs =
+  let m          = map_of_bindings bs in
+  let qs         = quals_of_bindings bs in
+  let im, ig, qm =
+    if !Constants.minquals then
+      impm_of_quals ts sm ps qs
+      >> (snd <+> dump_graph (!Constants.save_file^".impg.dot")) 
+      |> (fun (im, ig) -> (im, ig, qual_ranks_of_impg ig)) 
+    else
+      (TTM.empty, G.empty, List.map (fun q -> (Q.name_of_t q, (q, 0))) qs |> SSM.of_list) 
+  in { m = m; qm = qm; impm = im; impg = ig; imp_memo_t = H.create 37
+     ; tpc  = TP.create ts sm ps (List.map fst consts)
+     ; stat_simple_refines = ref 0
+     ; stat_tp_refines     = ref 0; stat_imp_queries    = ref 0
+     ; stat_valid_queries  = ref 0; stat_matches        = ref 0
+     ; stat_umatches       = ref 0; stat_unsatLHS       = ref 0
+     ; stat_emptyRHS       = ref 0
+     }
+
+(* API *)
+let create ts sm ps consts ws qs bs0 =
+  qs  |> Q.normalize 
+      >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) 
+      |> BS.time "Qual Inst" (inst ws)
+      (* >> List.iter ppBinding *)
+      |> (++) bs0
+      |> create ts sm ps consts
+
+(* API *)
+let empty = create [] SM.empty [] [] [] [] []
+
 
   
 (* {{{ DEPRECATED 
