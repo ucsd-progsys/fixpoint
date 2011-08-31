@@ -245,7 +245,7 @@ end
 (*** Direct-Dependencies: Remove non-data-dependent binders****************)
 (*************************************************************************)
 
-module DataCone: SIMPLIFIER = struct
+module WeakFixpoint : SIMPLIFIER = struct
  
   let weaken_env c e = 
     C.make_t e 
@@ -387,7 +387,7 @@ end
 let simplify_ts cs =
   cs 
   |> Misc.filter (not <.> C.is_tauto)
-  |> ((not !Co.lfp)  <?> BS.time "simplify 0" DataCone.simplify_ts)
+  |> ((not !Co.lfp)  <?> BS.time "simplify 0" WeakFixpoint.simplify_ts)
   |> BS.time "add ids  1" (C.add_ids 0) 
   |> snd
   |> (!Co.simplify_t <?> BS.time "simplify 1" Syntactic.simplify_ts) (* termination bug, tickled by C benchmarks *)

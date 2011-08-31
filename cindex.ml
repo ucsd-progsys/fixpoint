@@ -32,6 +32,7 @@ module C  = FixConstraint
 module IM = Misc.IntMap
 module IS = Misc.IntSet
 module SM = Ast.Symbol.SMap 
+module SS = Ast.Symbol.SSet
 module P  = Ast.Predicate
 
 open Misc.Ops
@@ -250,6 +251,18 @@ let slice me =
   
   create_raw me.ds cm dm rdeps
   >> save !Co.save_file
+
+(* API *) 
+let slice_wf me ws = 
+  let ks = me.cnst 
+           |> IM.range 
+           |> Misc.flap C.kvars_of_t 
+           |> Misc.map snd 
+           |> SS.of_list 
+  in Misc.filter (C.reft_of_wf <+> C.kvars_of_reft <+> List.exists (fun (_,k) ->
+    SS.mem k ks)) ws
+  
+  
 
 (* API *) 
 let deps me c =

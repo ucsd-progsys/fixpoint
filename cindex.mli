@@ -35,6 +35,7 @@ val to_list      : t -> FixConstraint.t list
 val create       : FixConstraint.dep list -> FixConstraint.t list -> t 
 val deps         : t -> FixConstraint.t -> FixConstraint.t list
 val slice        : t -> t 
+val slice_wf     : t -> FixConstraint.wf list -> FixConstraint.wf list
 
 (** worklist manipulation *)
 val wpush        : t -> wkl -> FixConstraint.t list -> wkl 

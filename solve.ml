@@ -284,16 +284,16 @@ let rec acsolve me w s =
 (* API *)
 let solve me s = 
   let _  = Co.logPrintf "Fixpoint: Validating Initial Solution \n" in
-  let _  = BS.time "profile" PP.profile me.sri in
-  let s  = PP.true_unconstrained s me.sri in
-  let _  = Co.cprintf Co.ol_insane "%a%a" Ci.print me.sri Sn.print s; dump me s in
+  let _  = BS.time "Prepass.profile" PP.profile me.sri in
+  let s  = BS.time "Prepass.true_unconstr" (PP.true_unconstrained s) me.sri in
+  (* let _  = Co.cprintf Co.ol_insane "%a%a" Ci.print me.sri Sn.print s; dump me s in *)
   let _  = Co.logPrintf "Fixpoint: Initialize Worklist \n" in
-  let w  = BS.time "init wkl" Ci.winit me.sri in 
+  let w  = BS.time "Cindex.winit" Ci.winit me.sri in 
   let _  = Co.logPrintf "Fixpoint: Refinement Loop \n" in
-  let s  = BS.time "solving"  (acsolve me w) s in
-  let _  = dump me s in
+  let s  = BS.time "Solve.acsolve"  (acsolve me w) s in
+  let _  = BS.time "Solve.dump" (dump me) s in
   let _  = Co.logPrintf "Fixpoint: Testing Solution \n" in
-  let u  = BS.time "testing solution" (unsat_constraints me) s in
+  let u  = BS.time "Solve.unsatcs" (unsat_constraints me) s in
   let _  = if u != [] then F.printf "Unsatisfied Constraints:\n %a" (Misc.pprint_many true "\n" (C.print_t None)) u in
   (s, u)
 
@@ -307,32 +307,26 @@ let create ts sm ps a ds consts cs ws bs0 qs =
   let sm  = List.fold_left (fun sm (x,so) -> SM.add x so sm) sm consts in
   let tpc = TP.create ts sm ps (List.map fst consts) in
   let qs  = Q.normalize qs >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) in
-  let ws  = ws |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf consts)) 
-               |> PP.validate_wfs in
+  let sri = cs  >> Co.logPrintf "Pre-Simplify Stats\n%a" print_constr_stats 
+                |> BS.time  "Constant Env" (List.map (C.add_consts_t consts))
+                |> BS.time  "Simplify" FixSimplify.simplify_ts
+                >> Co.logPrintf "Post-Simplify Stats\n%a" print_constr_stats
+                |> BS.time  "Ref Index" Ci.create ds 
+                |> (!Co.slice <?> BS.time "Slice" Ci.slice) in
+  let ws  = ws  |> (!Co.slice <?> BS.time "slice_wf" (Ci.slice_wf sri))
+                |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf consts)) 
+                |> PP.validate_wfs in
   let bs  = BS.time "Qual Inst" (inst ws) qs (* >> List.iter ppBinding *) in 
   let s   = Sn.of_bindings ts sm ps (bs0 ++ bs) in
-  let sri = cs >> Co.logPrintf "Pre-Simplify Stats\n%a" print_constr_stats 
-               |> BS.time  "Constant Env" (List.map (C.add_consts_t consts))
-               |> BS.time  "Simplify" FixSimplify.simplify_ts
-               >> Co.logPrintf "Post-Simplify Stats\n%a" print_constr_stats
-               |> BS.time  "Ref Index" Ci.create ds
-               |> ((not !Co.lfp) <?> BS.time "Slice" Ci.slice)
-               >> (Ci.to_list <+> BS.time "Validate" (PP.validate a s)) in
-  ({ tpc                 = tpc
-   ; sri                 = sri
-   ; ws                  = ws
+  let _   = sri |> Ci.to_list |> BS.time "Validate" (PP.validate a s) in
+  ({ tpc  = tpc;    sri  = sri;     ws = ws
    (* Stats *)
    ; tt                  = Timer.create "fixpoint iters"
-   ; stat_refines        = ref 0
-   ; stat_simple_refines = ref 0
-   ; stat_tp_refines     = ref 0
-   ; stat_imp_queries    = ref 0
-   ; stat_valid_queries  = ref 0
-   ; stat_matches        = ref 0
-   ; stat_umatches       = ref 0
-   ; stat_unsatLHS       = ref 0
-   ; stat_emptyRHS       = ref 0
-   ; stat_cfreqt         = Hashtbl.create 37
+   ; stat_refines        = ref 0; stat_simple_refines = ref 0
+   ; stat_tp_refines     = ref 0; stat_imp_queries    = ref 0
+   ; stat_valid_queries  = ref 0; stat_matches        = ref 0
+   ; stat_umatches       = ref 0; stat_unsatLHS       = ref 0
+   ; stat_emptyRHS       = ref 0; stat_cfreqt         = Hashtbl.create 37
    }, s)
  
 (*

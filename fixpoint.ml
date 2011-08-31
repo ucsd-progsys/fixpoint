@@ -73,7 +73,7 @@ let solve ac  =
   cs'
 
 let dump_solve cs = 
-  let cs' = BS.time "solve" solve cs in
+  let cs' = solve cs in
   let _   = BNstats.print stdout "Fixpoint Solver Time \n" in
   match cs' with 
   | [] -> (F.printf "\nSAT\n" ; exit 0)
