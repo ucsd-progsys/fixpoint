@@ -13,17 +13,4 @@
  *
  *)
 
-exception UnmappedKvar of Ast.Symbol.t
-
-type t
-val empty        : t 
-val read         : t -> FixConstraint.soln
-val top          : t -> Ast.Symbol.t list -> t
-val refine       : t -> FixConstraint.t -> (bool * t)
-val unsat        : t -> FixConstraint.t -> bool
-val create       : Config.t -> t
-val print        : Format.formatter -> t -> unit
-val print_stats  : Format.formatter -> t -> unit
-val print_raw    : Format.formatter -> t -> unit
-val save         : string -> t -> unit
-val dump_cluster : t -> unit
+module PredAbs : Config.DOMAIN  

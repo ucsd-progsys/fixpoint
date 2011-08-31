@@ -39,6 +39,9 @@ module PP = Prepass
 
 open Misc.Ops
 
+
+let mydebug = false 
+
 type t = {
    sri : Ci.t
  ; ws  : C.wf list
@@ -47,21 +50,21 @@ type t = {
  (* Stats *)
  ; stat_refines        : int ref
  ; stat_cfreqt         : (int * bool, int) Hashtbl.t 
- 
- (*
- ; stat_simple_refines : int ref 
- ; stat_tp_refines     : int ref 
- ; stat_imp_queries    : int ref 
- ; stat_valid_queries  : int ref 
- ; stat_matches        : int ref 
- ; stat_umatches       : int ref 
- ; stat_unsatLHS       : int ref 
- ; stat_emptyRHS       : int ref 
- *)
-
 }
 
-let mydebug = false 
+module type SOLVER = sig
+  type soln
+  val create    : Config.t -> (t * soln)
+  val solve     : t -> soln -> (soln * (FixConstraint.t list)) 
+  val save      : string -> t -> soln -> unit 
+  val read      : soln -> FixConstraint.soln
+end
+
+module Make (Dom : Config.DOMAIN) = struct
+
+type soln = Dom.t
+
+let read = Dom.read
 
 (*************************************************************)
 (********************* Stats *********************************)
@@ -81,58 +84,6 @@ let hashtbl_print_frequency t =
          n b (List.length xs) (Misc.map_to_string string_of_int xs) 
      end
 
-(* 
-(***************************************************************)
-(************************** Refinement *************************)
-(***************************************************************)
-
-let rhs_cands s = function
-  | C.Kvar (su, k) -> 
-      k |> FixSolution.p_read s 
-        |> List.map (fun (x, q) -> (x, A.substs_pred q su))
-        (* |> List.map (fun q -> ((k,q), A.substs_pred q su)) *)
-  | _ -> []
-
-let check_tp me env vv t lps f =  function [] -> [] | rcs ->
-  let env = SM.map snd3 env |> SM.add vv t in
-  let rv  = TP.set_filter me.tpc env vv lps f rcs in
-  let _   = ignore(me.stat_tp_refines    += 1);
-            ignore(me.stat_imp_queries   += (List.length rcs));
-            ignore(me.stat_valid_queries += (List.length rv)) in
-  rv
-
-let refine me s c =
-  let _   = me.stat_refines += 1 in
-  let env = C.env_of_t c in
-  let (vv1, t1, _) = C.lhs_of_t c in
-  let (_,_,ra2s) as r2 = C.rhs_of_t c in
-  let k2s = r2 |> C.kvars_of_reft |> List.map snd in
-  let rcs = BS.time "rhs_cands" (Misc.flap (rhs_cands s)) ra2s in
-  if rcs = [] then
-    let _ = me.stat_emptyRHS += 1 in
-    (false, s)
-  else 
-    let lps = BS.time "preds_of_lhs" (C.preds_of_lhs s) c in
-    if BS.time "lhs_contra" (List.exists P.is_contra) lps then 
-    let _ = me.stat_unsatLHS += 1 in
-    let _ = me.stat_umatches += List.length rcs in
-    (false, s)
-  else
-    let rcs     = List.filter (fun (_,p) -> not (P.is_contra p)) rcs in
-    let lt      = PH.create 17 in
-    let _       = List.iter (fun p -> PH.add lt p ()) lps in
-    let (x1,x2) = List.partition (fun (_,p) -> PH.mem lt p) rcs in
-    let _       = me.stat_matches += (List.length x1) in
-    let kqs1    = List.map fst x1 |> List.map Misc.single in
-    (if C.is_simple c 
-     then (ignore(me.stat_simple_refines += 1); kqs1) 
-     else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps (FixSolution.p_imp s)) x2))
-    |> FixSolution.p_update s k2s 
-
-    *)
-
-
-
 (***************************************************************)
 (************************ Debugging/Stats **********************)
 (***************************************************************)
@@ -151,22 +102,22 @@ let print_solver_stats ppf me =
 
 let dump me s = 
   Co.cLogPrintf Co.ol_solve_stats "%a \n" print_solver_stats me;
-  Co.cLogPrintf Co.ol_solve_stats "%a \n" FixSolution.print_stats s;
-  FixSolution.dump_cluster s
-
-(***************************************************************)
-(******************** Iterative Refinement *********************)
-(***************************************************************)
+  Co.cLogPrintf Co.ol_solve_stats "%a \n" Dom.print_stats s;
+  Dom.dump s
 
 let log_iter_stats me s =
-  (if Co.ck_olev Co.ol_insane then Co.logPrintf "%a" FixSolution.print s);
+  (if Co.ck_olev Co.ol_insane then Co.logPrintf "%a" Dom.print s);
   (if !(me.stat_refines) mod 100 = 0 then 
      let msg = Printf.sprintf "num refines=%d" !(me.stat_refines) in 
      let _   = Timer.log_event me.tt (Some msg) in
      let _   = Co.logPrintf "%s" msg in 
-     let _   = Co.logPrintf "%a \n" FixSolution.print_stats s in
+     let _   = Co.logPrintf "%a \n" Dom.print_stats s in
      ());
   ()
+
+(***************************************************************)
+(******************** Iterative Refinement *********************)
+(***************************************************************)
 
 let rec acsolve me w s =
   let _ = log_iter_stats me s in
@@ -176,7 +127,7 @@ let rec acsolve me w s =
       s 
   | (Some c, w') ->
       let _         = me.stat_refines += 1             in 
-      let (ch, s')  = BS.time "refine" (FixSolution.refine s) c in
+      let (ch, s')  = BS.time "refine" (Dom.refine s) c in
       let _         = hashtbl_incr_frequency me.stat_cfreqt (C.id_of_t c, ch) in  
       let _         = Co.bprintf mydebug "iter=%d id=%d ch=%b %a \n" 
                       !(me.stat_refines) (C.id_of_t c) ch C.print_tag (C.tag_of_t c) in
@@ -184,7 +135,7 @@ let rec acsolve me w s =
       acsolve me w'' s' 
 
 let unsat_constraints me s =
-  me.sri |> Ci.to_list |> List.filter (FixSolution.unsat s)
+  me.sri |> Ci.to_list |> List.filter (Dom.unsat s)
 
 
 
@@ -206,7 +157,7 @@ let unconstrained_kvars cs =
 let true_unconstrained sri s =
   sri |> Cindex.to_list 
       |> unconstrained_kvars
-      |> FixSolution.top s
+      |> Dom.top s
 
 (* 
 let true_unconstrained sri s = 
@@ -223,7 +174,7 @@ let solve me s =
   let _  = Co.logPrintf "Fixpoint: Validating Initial Solution \n" in
   let _  = BS.time "Prepass.profile" PP.profile me.sri in
   let s  = s |> (!Co.true_unconstrained <?> BS.time "Prepass.true_unconstr" (true_unconstrained me.sri)) in
-  (* let _  = Co.cprintf Co.ol_insane "%a%a" Ci.print me.sri FixSolution.print s; dump me s in *)
+  (* let _  = Co.cprintf Co.ol_insane "%a%a" Ci.print me.sri Dom.print s; dump me s in *)
   let _  = Co.logPrintf "Fixpoint: Initialize Worklist \n" in
   let w  = BS.time "Cindex.winit" Ci.winit me.sri in 
   let _  = Co.logPrintf "Fixpoint: Refinement Loop \n" in
@@ -248,9 +199,9 @@ let create cfg =
             |> (!Co.slice <?> BS.time "slice_wf" (Ci.slice_wf sri))
             |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf cfg.Config.cons)) 
             |> PP.validate_wfs in
-  let s   = FixSolution.create cfg in
+  let s   = Dom.create cfg in
   let _   = Ci.to_list sri 
-            |> BS.time "Validate" (PP.validate cfg.Config.a (FixSolution.read s)) in
+            |> BS.time "Validate" (PP.validate cfg.Config.a (Dom.read s)) in
   ({ sri          = sri; ws           = ws
    (* stat *)
    ; tt           = Timer.create "fixpoint iters"
@@ -263,11 +214,12 @@ let save fname me s =
   let ppf = F.formatter_of_out_channel oc in
   F.fprintf ppf "@[%a@] \n" Ci.print me.sri;
   F.fprintf ppf "@[%a@] \n" (Misc.pprint_many true "\n" (C.print_wf None)) me.ws;
-  F.fprintf ppf "@[%a@] \n" FixSolution.print s;
+  F.fprintf ppf "@[%a@] \n" Dom.print s;
   close_out oc
 
+end
+
 (* {{{ 
-  
   
 ORIG
 (* API *)
@@ -285,7 +237,7 @@ let create ts sm ps a ds consts cs ws bs0 qs =
                 |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf consts)) 
                 |> PP.validate_wfs in
   let bs  = BS.time "Qual Inst" (inst ws) qs (* >> List.iter ppBinding *) in 
-  let s   = FixSolution.of_bindings ts sm ps (bs0 ++ bs) in
+  let s   = Dom.of_bindings ts sm ps (bs0 ++ bs) in
   let _   = sri |> Ci.to_list |> BS.time "Validate" (PP.validate a s) in
   ({ tpc  = tpc;    sri  = sri;     ws = ws
    (* Stats *)

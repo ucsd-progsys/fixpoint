@@ -2,6 +2,8 @@ module MSM = Misc.StringMap
 
 open Misc.Ops
 
+exception UnmappedKvar of Ast.Symbol.t
+
 type deft = Srt of Ast.Sort.t 
           | Axm of Ast.pred 
           | Cst of FixConstraint.t
@@ -11,7 +13,7 @@ type deft = Srt of Ast.Sort.t
           | Qul of Ast.Qualifier.t
           | Dep of FixConstraint.dep
 
-type t = { 
+type cfg = { 
    a    : int                                           (* Tag arity *)
  ; ts   : Ast.Sort.t list                               (* New sorts, now = []*)
  ; ps   : Ast.pred list                                 (* New axioms, now = [] *)
@@ -53,3 +55,28 @@ let create ds =
   let s2d = List.map (fun (p, (n,s)) -> (p, (n2q n, s))) in
   ds |> List.fold_left (extend s2d) empty
      |> (fun cfg -> {cfg with a = get_arity cfg.cs})
+
+module type DOMAIN = sig
+  type t
+  val empty        : t 
+  val read         : t -> FixConstraint.soln
+  val top          : t -> Ast.Symbol.t list -> t
+  val refine       : t -> FixConstraint.t -> (bool * t)
+  val unsat        : t -> FixConstraint.t -> bool
+  
+  val create       : cfg -> t
+  val print        : Format.formatter -> t -> unit
+  val print_stats  : Format.formatter -> t -> unit
+  val dump         : t -> unit
+end
+
+module type SOLVER = sig
+  type t
+  type soln
+  val create    : cfg -> (t * soln)
+  val solve     : t -> soln -> (soln * (FixConstraint.t list)) 
+  val save      : string -> t -> soln -> unit 
+end
+
+
+type t = cfg

@@ -28,9 +28,11 @@ module BS = BNstats
 module SM = Ast.Symbol.SMap
 module Co = Constants 
 module C  = FixConstraint
-module S  = Solve
 module F  = Format
 module T  = Toplevel
+module PA = FixSolution.PredAbs
+
+module SPA = Solve.Make (FixSolution.PredAbs)
 
 open Misc.Ops
 
@@ -47,7 +49,7 @@ let save_raw fname cs s =
   let ppf = F.formatter_of_out_channel oc in
   let _   = print_now ("Fixpoint: save_raw into file = " ^ fname ^ " : BEGIN \n") in
   F.fprintf ppf "%a \n" print_raw_cs cs; 
-  F.fprintf ppf "%a \n" FixSolution.print_raw s;
+  F.fprintf ppf "%a \n" PA.print s;
   F.fprintf ppf "@.";
   F.print_flush ();
   close_out oc;
@@ -55,13 +57,9 @@ let save_raw fname cs s =
 
 let solve ac  = 
   let _       = print_now "Fixpoint: Creating  CI\n" in
-  let ctx, s  = BS.time "create" S.create ac in
-  (* let ctx,s   = BS.time "create" (S.create ac.Config.ts SM.empty ac.Config.ps a
-  ac.Config.ds ac.Config.cons ac.Config.cs ac.Config.ws ac.Config.bs)
-  ac.Config.qs in *)
-
+  let ctx, s  = BS.time "create" SPA.create ac in
   let _       = print_now "Fixpoint: Solving \n" in
-  let s, cs'  = BS.time "solve" (S.solve ctx) s in
+  let s, cs'  = BS.time "solve" (SPA.solve ctx) s in
 
   let _       = print_now "Fixpoint: Saving Result \n" in
   let _       = BS.time "save" (save_raw !Co.out_file cs') s in
@@ -99,13 +97,9 @@ let simplify_ts x =
 
 let dump_simp ac = 
   let ac    = {ac with Config.cs = simplify_ts ac.Config.cs; Config.bs = []; Config.qs = []} in
-  let ctx,_ = BS.time "create" S.create ac in
-  let s0    = FixSolution.create ac in 
-  (*
-  let ctx,_ = BS.time "create" (S.create ac.Config.ts SM.empty ac.Config.ps a ac.Config.ds ac.Config.cons cs ac.Config.ws []) [] in
-  let s0    = FixSolution.create ac.Config.ts SM.empty ac.Config.ps
-  *)  
-  let _     = BS.time "save" (S.save !Co.save_file ctx) s0 in
+  let ctx,_ = BS.time "create" SPA.create ac in
+  let s0    = PA.create ac in 
+  let _     = BS.time "save" (SPA.save !Co.save_file ctx) s0 in
   exit 1
 
 (*****************************************************************)

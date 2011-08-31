@@ -1,12 +1,4 @@
-(*
- * Copyright © 2009 The Regents of the University of California. All rights reserved. 
- *
- * Permission is hereby granted, without written agreement and without 
- * license or royalty fees, to use, copy, modify, and distribute this 
- * software and its documentation for any purpose, provided that the 
- * above copyright notice and the following two paragraphs appear in 
- * all copies of this software. 
- * 
+(* 
  * IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY 
  * FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES 
  * ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN 
@@ -21,9 +13,14 @@
  *
  *)
 
-(** This module implements a fixpoint solver *)
+type t
 
-type t 
-val create    : Config.t -> (t * FixSolution.t)
-val solve     : t -> FixSolution.t -> (FixSolution.t * (FixConstraint.t list)) 
-val save      : string -> t -> FixSolution.t -> unit 
+module type SOLVER = sig
+  type soln
+  val create    : Config.t -> (t * soln)
+  val solve     : t -> soln -> (soln * (FixConstraint.t list)) 
+  val save      : string -> t -> soln -> unit 
+  val read      : soln -> FixConstraint.soln
+end
+
+module Make (Dom : Config.DOMAIN) : SOLVER with type soln = Dom.t

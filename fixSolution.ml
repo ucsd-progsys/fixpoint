@@ -47,6 +47,9 @@ open Misc.Ops
 
 let mydebug = false 
 
+
+module PredAbs : Config.DOMAIN = struct
+
 let tag_of_qual = snd <.> Q.pred_of_t
 
 module V : Graph.Sig.COMPARABLE with type t = Q.t = struct
@@ -65,7 +68,6 @@ end
 module G   = Graph.Persistent.Digraph.ConcreteLabeled(V)(Id)
 module SCC = Graph.Components.Make(G)
 
-exception UnmappedKvar of Sy.t
 
 module TTM = Map.Make (struct
     type t = A.tag * A.tag 
@@ -396,7 +398,7 @@ let key_of_quals qs =
      |> String.concat ","
 
 (* API *)
-let dump_cluster s = 
+let dump s = 
   s.m 
   |> SM.to_list 
   |> List.map (snd <+> List.flatten <+> List.map fst)
@@ -589,6 +591,10 @@ let create c =
 
 (* API *)
 let empty = create Config.empty
+
+end
+
+
 
   
 (* {{{ DEPRECATED 

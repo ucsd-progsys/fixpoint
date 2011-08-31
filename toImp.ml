@@ -85,10 +85,12 @@ let get_instrs vv decls (subs, kvar) =
 let set_instr decls (subs, kvar) =
   Rset (List.map (fun v -> TVar v) (get_kdecl kvar decls), kvar)
 
+let emptySol = FixSolution.PredAbs.read FixSolution.PredAbs.empty
+
 let reft_to_get_instrs decls reft =
   let vv = C.vv_of_reft reft in
   let kvars = C.kvars_of_reft reft in
-  let preds = C.preds_of_reft (FixSolution.read FixSolution.empty) reft in
+  let preds = C.preds_of_reft emptySol reft in
   match (kvars, preds) with
   | ([], preds) -> Havc (PVar vv) :: Assm preds :: []
   | (kvars, []) -> Misc.flap (get_instrs vv decls) kvars
@@ -98,7 +100,7 @@ let reft_to_get_instrs decls reft =
 
 let reft_to_set_instrs decls reft =
   let kvars = C.kvars_of_reft reft in
-  let preds = C.preds_of_reft (FixSolution.read FixSolution.empty) reft in
+  let preds = C.preds_of_reft emptySol reft in
   match (kvars, preds) with
   | ([], preds) -> Asst preds :: []
   | (kvars, []) -> List.map (set_instr decls) kvars
