@@ -1062,6 +1062,9 @@ module Qualifier = struct
            ; vsort : Sort.t 
            ; pred  : pred }
 
+  type def = pred * (t * Subst.t)
+
+  
   let name_of_t = fun q -> q.name
   let vv_of_t   = fun q -> q.vvar
   let sort_of_t = fun q -> q.vsort

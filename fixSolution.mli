@@ -17,16 +17,16 @@
 exception UnmappedKvar of Ast.Symbol.t
 
 type t
-type def = Ast.pred * (Ast.Qualifier.t * Ast.Subst.t)
+
 
 val empty        : t 
 val read         : t -> FixConstraint.soln
 val top          : t -> Ast.Symbol.t list -> t
 val refine       : t -> FixConstraint.t -> (bool * t)
 val unsat        : t -> FixConstraint.t -> bool
+val create       : Config.t -> t
 
-(* TODO: create  : Config.t -> bindings -> t *)
-
+(*
 val create       : Ast.Sort.t list 
                    -> Ast.Sort.t Ast.Symbol.SMap.t 
                    -> Ast.pred list 
@@ -35,6 +35,7 @@ val create       : Ast.Sort.t list
                    -> Ast.Qualifier.t list
                    -> (Ast.Symbol.t * def list) list 
                    -> t
+*)
 
 val print        : Format.formatter -> t -> unit
 val print_stats  : Format.formatter -> t -> unit

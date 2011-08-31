@@ -10,14 +10,17 @@ type deft = Srt of Ast.Sort.t
           | Dep of FixConstraint.dep
 
 type t = { 
-   ts   : Ast.Sort.t list
- ; ps   : Ast.pred list
+   a    : int                                           (* Tag arity *)
+ ; ts   : Ast.Sort.t list                               (* New sorts, now = []*)
+ ; ps   : Ast.pred list                                 (* New axioms, now = [] *)
  ; cs   : FixConstraint.t list
  ; ws   : FixConstraint.wf list
  ; ds   : FixConstraint.dep list
  ; qs   : Ast.Qualifier.t list
- ; s    : (Ast.Symbol.t * FixSolution.def list) list
- ; cons : (Ast.Symbol.t * Ast.Sort.t) list
+ ; bs   : (Ast.Symbol.t * Ast.Qualifier.def list) list  (* Initial Sol Bindings *)
+ ; cons : (Ast.Symbol.t * Ast.Sort.t) list              (* Distinct Constants *)
+ ; uops : Ast.Sort.t Ast.Symbol.SMap.t                  (* Uninterpreted Funs *) 
 }
 
-val create : deft list -> t 
+val empty     : t 
+val create    : deft list -> t 

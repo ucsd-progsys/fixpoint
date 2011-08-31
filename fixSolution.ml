@@ -573,19 +573,22 @@ let create ts sm ps consts bs =
      ; stat_umatches       = ref 0; stat_unsatLHS       = ref 0
      ; stat_emptyRHS       = ref 0
      }
+let ppBinding (k, zs) = 
+  F.printf "ppBind %a := %a \n" 
+    Sy.print k 
+    (Misc.pprint_many false "," P.print) (List.map fst zs)
 
 (* API *)
-let create ts sm ps consts ws qs bs0 =
-  qs  |> Q.normalize 
-      >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) 
-      |> BS.time "Qual Inst" (inst ws)
-      (* >> List.iter ppBinding *)
-      |> (++) bs0
-      |> create ts sm ps consts
+let create c = 
+  c.Config.qs 
+  |> Q.normalize 
+  >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) 
+  |> BS.time "Qual Inst" (inst c.Config.ws) (* >> List.iter ppBinding *)
+  |> (++) c.Config.bs
+  |> create c.Config.ts c.Config.uops c.Config.ps c.Config.cons
 
 (* API *)
-let empty = create [] SM.empty [] [] [] [] []
-
+let empty = create Config.empty
 
   
 (* {{{ DEPRECATED 

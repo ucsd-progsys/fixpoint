@@ -24,22 +24,6 @@
 (** This module implements a fixpoint solver *)
 
 type t 
-
-val create    :  Ast.Sort.t list                  (* New sorts, now = []*)  
-              -> Ast.Sort.t Ast.Symbol.SMap.t     (* New operators, now = [] *)
-              -> Ast.pred list                    (* New axioms, now = [] *)
-              -> int                              (* Tag arity *)
-              -> FixConstraint.dep list           (* Dependencies *)
-              -> (Ast.Symbol.t * Ast.Sort.t) list (* Distinct Constants *) 
-              -> FixConstraint.t list             (* Subtyping Constraints *)
-              -> FixConstraint.wf list            (* WF Constraints *)
-              -> (Ast.Symbol.t * FixSolution.def list) list   (* Initial Sol Bindings *)
-              -> Ast.Qualifier.t list             (* Qualifiers *)
-              -> (t * FixSolution.t)              (* Solver Instance, 
-                                                     Post-WF solution *) 
-
-val solve     :  t                                (* Solver Instance   *)
-              -> FixSolution.t (* Starting Solution *)
-              -> (FixSolution.t * (FixConstraint.t list))    (* Fixpoint Solution, 
-                                                                     Unsat Constraints *)
+val create    : Config.t -> (t * FixSolution.t)
+val solve     : t -> FixSolution.t -> (FixSolution.t * (FixConstraint.t list)) 
 val save      : string -> t -> FixSolution.t -> unit 

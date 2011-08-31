@@ -34,11 +34,6 @@ module T  = Toplevel
 
 open Misc.Ops
 
-
-let get_arity = function
-  | []   -> assertf "Fixpoint: NO CONSTRAINTS!"
-  | c::_ -> c |> C.tag_of_t |> fst |> List.length
-
 (*****************************************************************)
 (********************* Hooking into Solver ***********************)
 (*****************************************************************)
@@ -60,8 +55,11 @@ let save_raw fname cs s =
 
 let solve ac  = 
   let _       = print_now "Fixpoint: Creating  CI\n" in
-  let a       = get_arity ac.Config.cs in
-  let ctx,s   = BS.time "create" (S.create ac.Config.ts SM.empty ac.Config.ps a ac.Config.ds ac.Config.cons ac.Config.cs ac.Config.ws ac.Config.s) ac.Config.qs in
+  let ctx, s  = BS.time "create" S.create ac in
+  (* let ctx,s   = BS.time "create" (S.create ac.Config.ts SM.empty ac.Config.ps a
+  ac.Config.ds ac.Config.cons ac.Config.cs ac.Config.ws ac.Config.bs)
+  ac.Config.qs in *)
+
   let _       = print_now "Fixpoint: Solving \n" in
   let s, cs'  = BS.time "solve" (S.solve ctx) s in
 
@@ -100,11 +98,13 @@ let simplify_ts x =
   else FixSimplify.simplify_ts x
 
 let dump_simp ac = 
-  let a     = get_arity ac.Config.cs in
-  let cs    = simplify_ts ac.Config.cs in
-  let s0    = FixSolution.create ac.Config.ts SM.empty ac.Config.ps
-  ac.Config.cons ac.Config.ws ac.Config.qs  ac.Config.s in
+  let ac    = {ac with Config.cs = simplify_ts ac.Config.cs; Config.bs = []; Config.qs = []} in
+  let ctx,_ = BS.time "create" S.create ac in
+  let s0    = FixSolution.create ac in 
+  (*
   let ctx,_ = BS.time "create" (S.create ac.Config.ts SM.empty ac.Config.ps a ac.Config.ds ac.Config.cons cs ac.Config.ws []) [] in
+  let s0    = FixSolution.create ac.Config.ts SM.empty ac.Config.ps
+  *)  
   let _     = BS.time "save" (S.save !Co.save_file ctx) s0 in
   exit 1
 

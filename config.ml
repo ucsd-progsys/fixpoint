@@ -12,35 +12,44 @@ type deft = Srt of Ast.Sort.t
           | Dep of FixConstraint.dep
 
 type t = { 
-   ts : Ast.Sort.t list
- ; ps : Ast.pred list
- ; cs : FixConstraint.t list
- ; ws : FixConstraint.wf list
- ; ds : FixConstraint.dep list
- ; qs : Ast.Qualifier.t list
- ; s  : (Ast.Symbol.t * FixSolution.def list) list
- ; cons : (Ast.Symbol.t * Ast.Sort.t) list
+   a    : int                                           (* Tag arity *)
+ ; ts   : Ast.Sort.t list                               (* New sorts, now = []*)
+ ; ps   : Ast.pred list                                 (* New axioms, now = [] *)
+ ; cs   : FixConstraint.t list
+ ; ws   : FixConstraint.wf list
+ ; ds   : FixConstraint.dep list
+ ; qs   : Ast.Qualifier.t list
+ ; bs   : (Ast.Symbol.t * Ast.Qualifier.def list) list  (* Initial Sol Bindings *)
+ ; cons : (Ast.Symbol.t * Ast.Sort.t) list              (* Distinct Constants *)
+ ; uops : Ast.Sort.t Ast.Symbol.SMap.t                  (* Uninterpreted Funs *) 
 }
+
+let get_arity = function
+  | []   -> assertf "Fixpoint: NO CONSTRAINTS!"
+  | c::_ -> c |> FixConstraint.tag_of_t |> fst |> List.length
 
 let sift_quals ds = 
   ds |> Misc.map_partial (function Qul q -> Some (Ast.Qualifier.name_of_t q, q) | _ -> None)
      >> (List.map fst <+> (fun ns -> asserts (Misc.distinct ns) "ERROR: duplicate quals!"))
      |> MSM.of_list
 
+let extend s2d cfg = function
+  | Srt t      -> {cfg with ts   = t     :: cfg.ts   }   
+  | Axm p      -> {cfg with ps   = p     :: cfg.ps   } 
+  | Cst c      -> {cfg with cs   = c     :: cfg.cs   }
+  | Wfc w      -> {cfg with ws   = w     :: cfg.ws   } 
+  | Con (s,t)  -> {cfg with cons = (s,t) :: cfg.cons; uops = Ast.Symbol.SMap.add s t cfg.uops} 
+  | Dep d      -> {cfg with ds   = d     :: cfg.ds   }
+  | Qul q      -> {cfg with qs   = q     :: cfg.qs   }
+  | Sol (k,ps) -> {cfg with bs   = (k, s2d ps) :: cfg.bs  }
+
+let empty = {a = 0; ts = []; ps = []; cs = []; ws = []; ds = []; qs = []; bs
+= []; cons = []; uops = Ast.Symbol.SMap.empty }
+
 (* API *)
 let create ds =
   let qm  = sift_quals ds in
   let n2q = fun n -> Misc.do_catchf ("name2qual: "^n) (MSM.find n) qm in
   let s2d = List.map (fun (p, (n,s)) -> (p, (n2q n, s))) in
-  List.fold_left begin fun a -> function 
-    | Srt t      -> {a with ts   = t     :: a.ts   }   
-    | Axm p      -> {a with ps   = p     :: a.ps   } 
-    | Cst c      -> {a with cs   = c     :: a.cs   }
-    | Wfc w      -> {a with ws   = w     :: a.ws   } 
-    | Con (s,t)  -> {a with cons = (s,t) :: a.cons } 
-    | Dep d      -> {a with ds   = d     :: a.ds   }
-    | Qul q      -> {a with qs   = q     :: a.qs   }
-    | Sol (k,ps) -> {a with s    = (k, s2d ps) :: a.s  }
-  end {ts = []; ps = []; cs = []; ws = []; ds = []; qs = []; s = []; cons = [] } ds 
-
-
+  ds |> List.fold_left (extend s2d) empty
+     |> (fun cfg -> {cfg with a = get_arity cfg.cs})

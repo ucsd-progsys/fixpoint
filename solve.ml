@@ -234,12 +234,42 @@ let solve me s =
   let _  = if u != [] then F.printf "Unsatisfied Constraints:\n %a" (Misc.pprint_many true "\n" (C.print_t None)) u in
   (s, u)
 
-let ppBinding (k, zs) = 
-  F.printf "ppBind %a := %a \n" 
-    Sy.print k 
-    (Misc.pprint_many false "," P.print) (List.map fst zs)
 
-(* ORIG
+(* API *)
+let create cfg = 
+  let sri = cfg.Config.cs 
+            >> Co.logPrintf "Pre-Simplify Stats\n%a" print_constr_stats 
+            |> BS.time  "Constant Env" (List.map (C.add_consts_t cfg.Config.cons))
+            |> BS.time  "Simplify" FixSimplify.simplify_ts
+            >> Co.logPrintf "Post-Simplify Stats\n%a" print_constr_stats
+            |> BS.time  "Ref Index" Ci.create cfg.Config.ds 
+            |> (!Co.slice <?> BS.time "Slice" Ci.slice) in
+  let ws  = cfg.Config.ws 
+            |> (!Co.slice <?> BS.time "slice_wf" (Ci.slice_wf sri))
+            |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf cfg.Config.cons)) 
+            |> PP.validate_wfs in
+  let s   = FixSolution.create cfg in
+  let _   = Ci.to_list sri 
+            |> BS.time "Validate" (PP.validate cfg.Config.a (FixSolution.read s)) in
+  ({ sri          = sri; ws           = ws
+   (* stat *)
+   ; tt           = Timer.create "fixpoint iters"
+   ; stat_refines = ref 0; stat_cfreqt  = Hashtbl.create 37
+   }, s)
+
+(* API *)
+let save fname me s =
+  let oc  = open_out fname in
+  let ppf = F.formatter_of_out_channel oc in
+  F.fprintf ppf "@[%a@] \n" Ci.print me.sri;
+  F.fprintf ppf "@[%a@] \n" (Misc.pprint_many true "\n" (C.print_wf None)) me.ws;
+  F.fprintf ppf "@[%a@] \n" FixSolution.print s;
+  close_out oc
+
+(* {{{ 
+  
+  
+ORIG
 (* API *)
 let create ts sm ps a ds consts cs ws bs0 qs =
   let sm  = List.fold_left (fun sm (x,so) -> SM.add x so sm) sm consts in
@@ -267,48 +297,9 @@ let create ts sm ps a ds consts cs ws bs0 qs =
    ; stat_emptyRHS       = ref 0; stat_cfreqt         = Hashtbl.create 37
    }, s)
 
-  *)
 
 
-(* API *)
-let create ts sm ps a ds consts cs ws bs0 qs =
-  let sri = cs  >> Co.logPrintf "Pre-Simplify Stats\n%a" print_constr_stats 
-                |> BS.time  "Constant Env" (List.map (C.add_consts_t consts))
-                |> BS.time  "Simplify" FixSimplify.simplify_ts
-                >> Co.logPrintf "Post-Simplify Stats\n%a" print_constr_stats
-                |> BS.time  "Ref Index" Ci.create ds 
-                |> (!Co.slice <?> BS.time "Slice" Ci.slice) in
-  let ws  = ws  |> (!Co.slice <?> BS.time "slice_wf" (Ci.slice_wf sri))
-                |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf consts)) 
-                |> PP.validate_wfs in
- 
-  let sm  = List.fold_left (fun sm (x, so) -> SM.add x so sm) sm consts in
-  let s   = FixSolution.create ts sm ps consts ws qs bs0 in
-  let _   = sri |> Ci.to_list |> BS.time "Validate" (PP.validate a (FixSolution.read s)) in
-  ({ sri          = sri
-   ; ws           = ws
-   ; tt           = Timer.create "fixpoint iters"
-   ; stat_refines = ref 0
-   ; stat_cfreqt  = Hashtbl.create 37
-   }, s)
 
-(*
-  let cs  = BS.time "Simplify" Simplify.simplify_ts cs in 
-  let cs' = BS.time "Validation" (PP.validate a s) cs in
-  let sri = BS.time "Ref Index" Ci.create ds cs' in
-*)
-  
-
-(* API *)
-let save fname me s =
-  let oc  = open_out fname in
-  let ppf = F.formatter_of_out_channel oc in
-  F.fprintf ppf "@[%a@] \n" Ci.print me.sri;
-  F.fprintf ppf "@[%a@] \n" (Misc.pprint_many true "\n" (C.print_wf None)) me.ws;
-  F.fprintf ppf "@[%a@] \n" FixSolution.print s;
-  close_out oc
-
-(*
 (* API *)
 let load_soln f =
   let _    = Errorline.startFile f in
@@ -332,4 +323,5 @@ let psolve n ts axs cs s0 =
   let css = partition cs n in
   let sis = pmap (Solve.create ts axs) css in
   Misc.fixpoint (one_solve sis) s0
-*)
+
+}}} *)

@@ -197,6 +197,7 @@ module Subst :
 module Qualifier : 
   sig
     type t 
+    type def      = pred * (t * Subst.t)
     
     val create    : string -> Symbol.t -> Sort.t -> pred -> t 
     val name_of_t : t -> string 
