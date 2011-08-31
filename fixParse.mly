@@ -46,8 +46,8 @@ let parse_error msg =
 %start defs 
 %start sols
 
-%type <FixConstraint.deft list>              defs
-%type <FixConstraint.deft>                   def
+%type <Config.deft list>              defs
+%type <Config.deft>                   def
 %type <(Ast.Symbol.t * (Ast.pred * (string * Ast.Subst.t)) list) list>  sols
 %type <So.t list>                            sorts, sortsne 
 %type <So.t>                                 sort
@@ -76,14 +76,14 @@ qual:
 
 
 def:
-    SRT COLON sort                      { C.Srt $3 }
-  | AXM COLON pred                      { C.Axm $3 }
-  | CST COLON cstr                      { C.Cst $3 }
-  | CON Id COLON sort                   { C.Con (Sy.of_string $2, $4) }
-  | WF  COLON wf                        { C.Wfc $3 }
-  | sol                                 { let sym, ps = $1 in C.Sol (sym, ps) }
-  | QUL qual                            { C.Qul $2 }
-  | dep                                 { C.Dep $1 }
+    SRT COLON sort                      { Config.Srt $3 }
+  | AXM COLON pred                      { Config.Axm $3 }
+  | CST COLON cstr                      { Config.Cst $3 }
+  | CON Id COLON sort                   { Config.Con (Sy.of_string $2, $4) }
+  | WF  COLON wf                        { Config.Wfc $3 }
+  | sol                                 { let sym, ps = $1 in Config.Sol (sym, ps) }
+  | QUL qual                            { Config.Qul $2 }
+  | dep                                 { Config.Dep $1 }
   ;
 
 sorts:

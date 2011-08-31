@@ -302,9 +302,13 @@ let ppBinding (k, zs) =
     Sy.print k 
     (Misc.pprint_many false "," P.print) (List.map fst zs)
 
+    (* ORIG
 (* API *)
 let create ts sm ps a ds consts cs ws bs0 qs =
- let sri = cs  >> Co.logPrintf "Pre-Simplify Stats\n%a" print_constr_stats 
+  let sm  = List.fold_left (fun sm (x,so) -> SM.add x so sm) sm consts in
+  let tpc = TP.create ts sm ps (List.map fst consts) in
+  let qs  = Q.normalize qs >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) in
+  let sri = cs  >> Co.logPrintf "Pre-Simplify Stats\n%a" print_constr_stats 
                 |> BS.time  "Constant Env" (List.map (C.add_consts_t consts))
                 |> BS.time  "Simplify" FixSimplify.simplify_ts
                 >> Co.logPrintf "Post-Simplify Stats\n%a" print_constr_stats
@@ -313,19 +317,8 @@ let create ts sm ps a ds consts cs ws bs0 qs =
   let ws  = ws  |> (!Co.slice <?> BS.time "slice_wf" (Ci.slice_wf sri))
                 |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf consts)) 
                 |> PP.validate_wfs in
-  let sm  = List.fold_left (fun sm (x,so) -> SM.add x so sm) sm consts in
-  let tpc = TP.create ts sm ps (List.map fst consts) in
-  let s   = qs  |> Q.normalize 
-                >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) 
-                |> BS.time "Qual Inst" (inst ws) (* >> List.iter ppBinding *)
-                |> (++) bs0
-                |> Sn.of_bindings ts sm ps in
-(*
-  let qs  = Q.normalize qs >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) in
   let bs  = BS.time "Qual Inst" (inst ws) qs (* >> List.iter ppBinding *) in 
   let s   = Sn.of_bindings ts sm ps (bs0 ++ bs) in
-*)
-  
   let _   = sri |> Ci.to_list |> BS.time "Validate" (PP.validate a s) in
   ({ tpc  = tpc;    sri  = sri;     ws = ws
    (* Stats *)
@@ -336,7 +329,42 @@ let create ts sm ps a ds consts cs ws bs0 qs =
    ; stat_umatches       = ref 0; stat_unsatLHS       = ref 0
    ; stat_emptyRHS       = ref 0; stat_cfreqt         = Hashtbl.create 37
    }, s)
+
+  *)
+
+
+(* API *)
+let create ts sm ps a ds consts cs ws bs0 qs =
+  let sri = cs  >> Co.logPrintf "Pre-Simplify Stats\n%a" print_constr_stats 
+                |> BS.time  "Constant Env" (List.map (C.add_consts_t consts))
+                |> BS.time  "Simplify" FixSimplify.simplify_ts
+                >> Co.logPrintf "Post-Simplify Stats\n%a" print_constr_stats
+                |> BS.time  "Ref Index" Ci.create ds 
+                |> (!Co.slice <?> BS.time "Slice" Ci.slice) in
+  let ws  = ws  |> (!Co.slice <?> BS.time "slice_wf" (Ci.slice_wf sri))
+                |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf consts)) 
+                |> PP.validate_wfs in
  
+  let sm  = List.fold_left (fun sm (x,so) -> SM.add x so sm) sm consts in
+ 
+  let s   = qs  |> Q.normalize 
+                >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) 
+                |> BS.time "Qual Inst" (inst ws)
+             (* >> List.iter ppBinding *)
+                |> (++) bs0
+                |> Sn.of_bindings ts sm ps in
+  let _   = sri |> Ci.to_list |> BS.time "Validate" (PP.validate a s) in
+  ({ tpc  = TP.create ts sm ps (List.map fst consts)
+   ;    sri  = sri;     ws = ws
+   (* Stats *)
+   ; tt                  = Timer.create "fixpoint iters"
+   ; stat_refines        = ref 0; stat_simple_refines = ref 0
+   ; stat_tp_refines     = ref 0; stat_imp_queries    = ref 0
+   ; stat_valid_queries  = ref 0; stat_matches        = ref 0
+   ; stat_umatches       = ref 0; stat_unsatLHS       = ref 0
+   ; stat_emptyRHS       = ref 0; stat_cfreqt         = Hashtbl.create 37
+   }, s)
+
 (*
   let cs  = BS.time "Simplify" Simplify.simplify_ts cs in 
   let cs' = BS.time "Validation" (PP.validate a s) cs in

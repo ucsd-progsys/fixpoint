@@ -62,8 +62,8 @@ let save_raw fname cs s =
 
 let solve ac  = 
   let _       = print_now "Fixpoint: Creating  CI\n" in
-  let a       = get_arity ac.C.cs in
-  let ctx,s   = BS.time "create" (S.create ac.C.ts SM.empty ac.C.ps a ac.C.ds ac.C.cons ac.C.cs ac.C.ws ac.C.s) ac.C.qs in
+  let a       = get_arity ac.Config.cs in
+  let ctx,s   = BS.time "create" (S.create ac.Config.ts SM.empty ac.Config.ps a ac.Config.ds ac.Config.cons ac.Config.cs ac.Config.ws ac.Config.s) ac.Config.qs in
   let _       = print_now "Fixpoint: Solving \n" in
   let s, cs'  = BS.time "solve" (S.solve ctx) s in
 
@@ -85,7 +85,7 @@ let dump_solve cs =
 (*****************************************************************)
 
 let dump_imp a = 
-  (List.map (fun c -> C.Cst c) a.C.cs ++ List.map (fun c -> C.Wfc c) a.C.ws)
+  (List.map (fun c -> Config.Cst c) a.Config.cs ++ List.map (fun c -> Config.Wfc c) a.Config.ws)
   |> ToImp.mk_program
   |> F.fprintf F.std_formatter "%a" Imp.print_program_as_c 
   |> fun _ -> exit 1 
@@ -102,10 +102,10 @@ let simplify_ts x =
   else FixSimplify.simplify_ts x
 
 let dump_simp ac = 
-  let a     = get_arity ac.C.cs in
-  let cs    = simplify_ts ac.C.cs in
-  let s0    = Sn.of_bindings ac.C.ts SM.empty ac.C.ps ac.C.s in
-  let ctx,_ = BS.time "create" (S.create ac.C.ts SM.empty ac.C.ps a ac.C.ds ac.C.cons cs ac.C.ws []) [] in
+  let a     = get_arity ac.Config.cs in
+  let cs    = simplify_ts ac.Config.cs in
+  let s0    = Sn.of_bindings ac.Config.ts SM.empty ac.Config.ps ac.Config.s in
+  let ctx,_ = BS.time "create" (S.create ac.Config.ts SM.empty ac.Config.ps a ac.Config.ds ac.Config.cons cs ac.Config.ws []) [] in
   let _     = BS.time "save" (S.save !Co.save_file ctx) s0 in
   exit 1
 

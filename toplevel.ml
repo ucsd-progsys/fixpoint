@@ -5,6 +5,7 @@ module C  = FixConstraint
 module F  = Format
 open Misc.Ops
 
+
 (*****************************************************************)
 (********************* Command line options **********************)
 (*****************************************************************)
@@ -26,5 +27,5 @@ let read_inputs usage =
   print_now "\n========================================================\n";
   let fs = ref [] in
   let _  = Arg.parse Co.arg_spec (fun s -> fs := s::!fs) usage in
-  let fq = BS.time "parse" (Misc.flap parse) !fs |> C.sift in 
+  let fq = !fs |> BS.time "parse" (Misc.flap parse) |> Config.create in 
   (!fs, fq)

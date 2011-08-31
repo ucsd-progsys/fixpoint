@@ -42,10 +42,10 @@ open Misc.Ops
 (* Declarations *)
 
 let filter_wfs cs =
-  Misc.maybe_list (List.map (function C.Wfc x -> Some x | _ -> None) cs)
+  Misc.maybe_list (List.map (function Config.Wfc x -> Some x | _ -> None) cs)
 
 let filter_subt cs =
-  Misc.maybe_list (List.map (function C.Cst x -> Some x | _ -> None) cs)
+  Misc.maybe_list (List.map (function Config.Cst x -> Some x | _ -> None) cs)
 
 let wf_to_decls wf =
   let vars  =

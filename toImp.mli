@@ -22,4 +22,4 @@
  *)
 
 val constraint_to_block : Imp.decl list -> FixConstraint.t -> Imp.block
-val mk_program : FixConstraint.deft list -> Imp.program
+val mk_program : Config.deft list -> Imp.program

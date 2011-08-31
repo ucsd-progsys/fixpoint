@@ -26,6 +26,8 @@ val read         : t -> Ast.Symbol.t -> Ast.pred list
 val p_read       : t -> Ast.Symbol.t -> (p * Ast.pred) list 
 val p_update     : t -> Ast.Symbol.t list -> p list list -> (bool * t)
 val p_imp        : t -> p -> p -> bool
+
+(* KEEP *)
 val of_bindings  : Ast.Sort.t list 
                    -> Ast.Sort.t Ast.Symbol.SMap.t 
                    -> Ast.pred list 
