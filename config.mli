@@ -3,6 +3,8 @@
 
 exception UnmappedKvar of Ast.Symbol.t
 
+type qbind = Ast.Qualifier.def list list
+
 type deft = Srt of Ast.Sort.t 
           | Axm of Ast.pred 
           | Cst of FixConstraint.t
@@ -39,12 +41,8 @@ module type DOMAIN = sig
   val print        : Format.formatter -> t -> unit
   val print_stats  : Format.formatter -> t -> unit
   val dump         : t -> unit
+  val mkbind       : qbind -> bind
 end
 
-
 val empty     : 'a cfg 
-
-type t        = Ast.Qualifier.def list list cfg
-val create    : deft list -> t
-
-
+val create    : deft list -> qbind cfg
