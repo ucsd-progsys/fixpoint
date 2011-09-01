@@ -54,18 +54,21 @@ type t = {
 
 module type SOLVER = sig
   type soln
-  val create    : Config.t -> (t * soln)
+  type bind
+  val create    : bind Config.cfg -> (t * soln)
   val solve     : t -> soln -> (soln * (FixConstraint.t list)) 
   val save      : string -> t -> soln -> unit 
-  val read      : soln -> FixConstraint.soln
-  val meet   : soln -> soln -> soln
+  val read      : soln -> bind FixConstraint.soln
+ val meet   : soln -> soln -> soln 
 end
 
 module Make (Dom : Config.DOMAIN) = struct
 
 type soln = Dom.t
+type bind = Dom.bind
+
 let read = Dom.read
-let meet = Dom.meet
+let meet = Dom.meet 
 
 (*************************************************************)
 (********************* Stats *********************************)

@@ -12,7 +12,7 @@ type deft = Srt of Ast.Sort.t
           | Qul of Ast.Qualifier.t
           | Dep of FixConstraint.dep
 
-type cfg = { 
+type 'bind cfg = { 
    a    : int                                           (* Tag arity *)
  ; ts   : Ast.Sort.t list                               (* New sorts, now = []*)
  ; ps   : Ast.pred list                                 (* New axioms, now = [] *)
@@ -20,31 +20,31 @@ type cfg = {
  ; ws   : FixConstraint.wf list
  ; ds   : FixConstraint.dep list
  ; qs   : Ast.Qualifier.t list
- ; bs   : (Ast.Symbol.t * Ast.Qualifier.def list) list  (* Initial Sol Bindings *)
+ ; bm   : 'bind Ast.Symbol.SMap.t                       (* Initial Sol Bindings *)
  ; cons : (Ast.Symbol.t * Ast.Sort.t) list              (* Distinct Constants *)
  ; uops : Ast.Sort.t Ast.Symbol.SMap.t                  (* Uninterpreted Funs *) 
 }
 
 
-
-
 module type DOMAIN = sig
   type t
+  type bind
   val empty        : t 
   val meet         : t -> t -> t
-  val read         : t -> FixConstraint.soln
+  val read         : t -> bind FixConstraint.soln
   val top          : t -> Ast.Symbol.t list -> t
   val refine       : t -> FixConstraint.t -> (bool * t)
   val unsat        : t -> FixConstraint.t -> bool
-  val create       : cfg -> t
+  val create       : bind cfg -> t
   val print        : Format.formatter -> t -> unit
   val print_stats  : Format.formatter -> t -> unit
   val dump         : t -> unit
 end
 
 
-type t  = cfg
-val empty     : t 
+val empty     : 'a cfg 
+
+type t        = Ast.Qualifier.def list list cfg
 val create    : deft list -> t
 
 

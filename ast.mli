@@ -226,6 +226,7 @@ val zero           : expr
 val one            : expr
 val bot            : expr
 
+val symm_pred      : pred -> pred
 val unify_pred     : pred -> pred -> Subst.t option
 val substs_pred    : pred -> Subst.t -> pred 
 val simplify_pred  : pred -> pred

@@ -51,8 +51,8 @@ type t    = { full    : envt;
               ido     : id option;
               tag     : tag; }
 
-type soln = { read    : Ast.Symbol.t -> Ast.pred list
-            ; dom     : Ast.Symbol.t list }
+type 'a soln = { read  : Ast.Symbol.t -> Ast.pred list
+               ; bindm : 'a Ast.Symbol.SMap.t }
 
 let mydebug = false 
 

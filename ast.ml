@@ -958,6 +958,15 @@ let remove_bot p =
   then remove_bot true p 
   else p
 
+let symm_brel = function
+  | Eq -> Eq 
+  | Ne -> Ne 
+  | Gt -> Lt
+  | Ge -> Le
+  | Lt -> Gt
+  | Le -> Ge
+
+
 let neg_brel = function 
   | Eq -> Ne
   | Ne -> Eq
@@ -1240,6 +1249,9 @@ and esUnify (e1s, e2s) =
 let unify_pred p1 p2 = try pUnify (p1, p2) |> Subst.of_list |> some with DoesNotUnify -> None 
 let into_of_expr = function Con (Constant.Int i), _  -> Some i | _ -> None
 
+let symm_pred = function 
+  | Atom (e1, r, e2), _ -> pAtom (e2, symm_brel r, e1)
+  | p                   -> p
 
 (* {{{
 let rec expr_subst hp he e x e' =
