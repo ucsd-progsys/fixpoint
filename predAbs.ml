@@ -124,6 +124,48 @@ let map_of_bindings bs =
   List.fold_left (fun s (k, ds) -> SM.add k (List.map (fun x -> [x]) ds) s) SM.empty bs 
 *)
 
+(* {{{ CODE for NON-HEIRARCHICAL SOLUTION MAP 
+let minimize s = 
+  Misc.cov_filter (fun x y -> p_imp s (fst x) (fst y)) (fun _ -> true)
+  <+> List.map fst
+
+let minimize s = !Constants.minquals <?> minimize s
+
+let minimize s qs = 
+  minimize s qs
+  >> F.printf "MINIMIZE: qs = [%a] qs' = [%a] \n\n" pprint_qs' qs pprint_qs'  
+
+(* API *)
+let read s k = 
+  p_read s k 
+  |> minimize s  
+  |> List.map snd
+
+  (* INV: qs' \subseteq qs *)
+let update m k ds' =
+  let ds  = SM.find k m in
+  (if mydebug then 
+     ds |> List.filter (fun d -> not (List.mem d ds'))
+        |> List.map fst
+        |> F.printf "Dropping %a: (%d) %a \n" Sy.print k
+        (List.length ds) pprint_ps
+  );
+  (not (Misc.same_length ds ds'), SM.add k ds' m)
+
+                              
+(* API *)
+let p_update s0 ks kds = 
+  let kdsm = Misc.kgroupby fst kds |> Sy.sm_of_list in
+  List.fold_left begin fun (b, m) k ->
+    (try SM.find k kdsm with Not_found -> [])
+    |> List.map snd 
+    |> update m k 
+    |> Misc.app_fst ((||) b)
+  end (false, s0.m) ks
+  |> Misc.app_snd (fun m -> { s0 with m = m })  
+
+}}} *)
+
 let map_of_bindings bs =
   List.fold_left begin fun s (k, ds) -> 
     ds |> List.map Misc.single 
@@ -229,6 +271,12 @@ let p_read s k =
   |> (!Constants.minquals <?> Misc.fsort (fun ((_,(_,(q,_))),_) -> rank_of_qual s q))
   |> List.rev
 
+let q_read s k =
+  let _ = asserts (SM.mem k s.m) "ERROR: q_read : unknown kvar %s\n" (Sy.to_string k) in
+  SM.find k s.m 
+  |> List.map List.hd
+  |> List.map fst
+
 let p_imp_subst su1 su2 = 
   Misc.join fst (Su.to_list su1) (Su.to_list su2)
   |> List.for_all (fun ((_,e1), (_, e2)) -> e1 = e2)
@@ -316,7 +364,7 @@ let print_m ppf s =
   SM.to_list s.m 
   |> List.map fst 
   >> List.iter begin fun k ->
-       p_read s k |> minimize s |> List.map snd
+       q_read s k
        |> F.fprintf ppf "//solution: %a := [%a] \n\n"  Sy.print k pprint_ps
      end 
   >> List.iter begin fun k ->
@@ -401,9 +449,10 @@ let check_tp me env vv t lps f =  function [] -> [] | rcs ->
             ignore(me.stat_valid_queries += (List.length rv)) in
   rv
 
+
 (* API *)
 let read s = {
-    C.read = p_read s <+> minimize s <+> List.map snd
+    C.read = q_read s
   ; C.dom  = SM.domain s.m 
 }
 
