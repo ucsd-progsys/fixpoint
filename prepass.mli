@@ -24,7 +24,7 @@
 (** This module implements various constraint validation and simplification 
  *  prepasses *)
 
-val validate           : int -> 'a FixConstraint.soln -> FixConstraint.t list -> unit 
+val validate           : int -> FixConstraint.soln -> FixConstraint.t list -> unit 
 val validate_wfs       : FixConstraint.wf list -> FixConstraint.wf list
 (* val true_unconstrained : FixSolution.t -> Cindex.t -> FixSolution.t
 *)

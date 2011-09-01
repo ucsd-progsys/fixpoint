@@ -30,10 +30,13 @@ type dep                (* NEVER EVER expose! dependencies between constraints *
 type tag  = int list * string (* for ordering: must have same dim, lexico-ordered *)
 type id   = int         (* for identifying: must be unique *) 
 
-
+(*
 type 'a soln = { read  : Ast.Symbol.t -> Ast.pred list
                ; bindm : 'a Ast.Symbol.SMap.t }
+type soln    = Ast.pred list Ast.Symbol.SMap.t
+*)
 
+type soln = Ast.Symbol.t -> Ast.pred list
 type refa = Conc of Ast.pred | Kvar of Ast.Subst.t * Ast.Symbol.t
 type reft = Ast.Symbol.t * Ast.Sort.t * refa list   (* { VV: t | [ra] } *)
 type envt = reft Ast.Symbol.SMap.t
@@ -44,11 +47,15 @@ val kvars_of_t       : t -> (Ast.Subst.t * Ast.Symbol.t) list
 
 val is_conc_refa     : refa -> bool
 
-val apply_solution   : 'a soln -> reft -> reft
-val preds_of_refa    : 'a soln -> refa -> Ast.pred list
-val preds_of_reft    : 'a soln -> reft -> Ast.pred list
-val preds_of_lhs     : 'a soln -> t -> Ast.pred list
-val vars_of_t        : 'a soln -> t -> Ast.Symbol.t list
+val empty_solution   : soln
+val meet_solution    : soln -> soln -> soln
+val apply_solution   : soln -> reft -> reft
+
+
+val preds_of_refa    : soln -> refa -> Ast.pred list
+val preds_of_reft    : soln -> reft -> Ast.pred list
+val preds_of_lhs     : soln -> t -> Ast.pred list
+val vars_of_t        : soln -> t -> Ast.Symbol.t list
 val is_tauto         : t -> bool
 
 val preds_kvars_of_reft : reft -> (Ast.pred list * (Ast.Subst.t * Ast.Symbol.t) list)
@@ -74,12 +81,12 @@ val lookup_env       : envt -> Ast.Symbol.t -> reft option
    Format.printf "%a" (Misc.pprint_many true "\n" (C.print_t None)) cs
    *)
 
-val print_env        : 'a soln option -> Format.formatter -> envt -> unit
-val print_wf         : 'a soln option -> Format.formatter -> wf -> unit
-val print_t          : 'a soln option -> Format.formatter -> t -> unit
-val print_reft       : 'a soln option -> Format.formatter -> reft -> unit
-val print_reft_pred  : 'a soln option -> Format.formatter -> reft -> unit
-val print_binding    : 'a soln option -> Format.formatter -> (Ast.Symbol.t * reft) -> unit
+val print_env        : soln option -> Format.formatter -> envt -> unit
+val print_wf         : soln option -> Format.formatter -> wf -> unit
+val print_t          : soln option -> Format.formatter -> t -> unit
+val print_reft       : soln option -> Format.formatter -> reft -> unit
+val print_reft_pred  : soln option -> Format.formatter -> reft -> unit
+val print_binding    : soln option -> Format.formatter -> (Ast.Symbol.t * reft) -> unit
 val print_tag        : Format.formatter -> tag -> unit
 val print_dep        : Format.formatter -> dep -> unit
 

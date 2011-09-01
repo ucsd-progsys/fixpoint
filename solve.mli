@@ -21,8 +21,9 @@ module type SOLVER = sig
   val create : bind Config.cfg -> (t * soln)
   val solve  : t -> soln -> (soln * (FixConstraint.t list)) 
   val save   : string -> t -> soln -> unit 
-  val read   : soln -> bind FixConstraint.soln
-  val meet   : soln -> soln -> soln
+  val read   : soln -> FixConstraint.soln
+  (* val meet   : soln -> soln -> soln *)
+
 end
 
 module Make (Dom : Config.DOMAIN) : SOLVER 

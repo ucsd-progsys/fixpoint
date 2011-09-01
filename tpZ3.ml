@@ -34,7 +34,7 @@ open Misc.Ops
 
 module Prover : ProverArch.PROVER = struct
 
-let mydebug = false 
+let mydebug = true 
 
 (********************************************************************************)
 (********************************** Type Definitions ****************************)

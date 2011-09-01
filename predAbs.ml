@@ -79,9 +79,10 @@ type bind = Q.def list list
 type t   = 
   { tpc : TP.t
   ; m    : bind SM.t
-  ; qm   : (Q.t * int) SSM.t (* name :-> (qualif, rank) *)
-  ; impm : bool TTM.t        (* (t1,t2) \in impm iff q1 => q2 /\ t1 = tag_of_qual q1 /\ t2 = tag_of_qual q2 *)
-  ; impg : G.t               (* same as impm but in graph format *) 
+  ; assm : FixConstraint.soln (* invariant assumption for K, should be a fixpoint wrt constraints *)
+  ; qm   : (Q.t * int) SSM.t  (* name :-> (qualif, rank) *)
+  ; impm : bool TTM.t         (* (t1,t2) \in impm iff q1 => q2 /\ t1 = tag_of_qual q1 /\ t2 = tag_of_qual q2 *)
+  ; impg : G.t                (* same as impm but in graph format *) 
   ; imp_memo_t: ((A.tag * A.tag), bool) H.t
 
   (* stats *)
@@ -458,10 +459,15 @@ let check_tp me env vv t lps f =  function [] -> [] | rcs ->
 
 
 (* API *)
-let read s = {
+(*
+ let read s = {
     C.read  = q_read s
   ; C.bindm = s.m 
 } 
+*)
+
+(* API *)
+let read s k = (s.assm k) ++ (if SM.mem k s.m    then q_read s k else []) 
 
 (* API *)
 let refine me c =
@@ -592,7 +598,7 @@ let inst ws qs =
 (*************************************************************************)
 
 (* API *)
-let create ts sm ps consts bm =
+let create ts sm ps consts assm bm =
   (* let m          = map_of_bindings bs in *)
   let qs         = quals_of_bindings bm in
   let im, ig, qm =
@@ -602,7 +608,8 @@ let create ts sm ps consts bm =
       |> (fun (im, ig) -> (im, ig, qual_ranks_of_impg ig)) 
     else
       (TTM.empty, G.empty, List.map (fun q -> (Q.name_of_t q, (q, 0))) qs |> SSM.of_list) 
-  in { m = bm; qm = qm; impm = im; impg = ig; imp_memo_t = H.create 37
+  in { m = bm; assm = assm; qm = qm
+     ; impm = im; impg = ig; imp_memo_t = H.create 37
      ; tpc  = TP.create ts sm ps (List.map fst consts)
      ; stat_simple_refines = ref 0
      ; stat_tp_refines     = ref 0; stat_imp_queries    = ref 0
@@ -624,7 +631,7 @@ let create c =
   |> BS.time "Qual Inst" (inst c.Config.ws) (* >> List.iter ppBinding *)
   |> map_of_bindings
   |> SM.extendWith (fun _ -> (++)) c.Config.bm
-  |> create c.Config.ts c.Config.uops c.Config.ps c.Config.cons
+  |> create c.Config.ts c.Config.uops c.Config.ps c.Config.cons c.Config.assm
 
 (* API *)
 let empty = create Config.empty

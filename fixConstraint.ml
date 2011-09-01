@@ -51,8 +51,13 @@ type t    = { full    : envt;
               ido     : id option;
               tag     : tag; }
 
-type 'a soln = { read  : Ast.Symbol.t -> Ast.pred list
-               ; bindm : 'a Ast.Symbol.SMap.t }
+type soln = Ast.Symbol.t -> Ast.pred list
+
+(*
+type soln    = Ast.pred list Ast.Symbol.SMap.t
+type soln = { read  : Ast.Symbol.t -> Ast.pred list
+            ; kvars : Ast.Symbol.SSet.t }
+*)
 
 let mydebug = false 
 
@@ -126,14 +131,20 @@ let is_conc_refa = function
   | Conc _ -> true
   | _      -> false
 
+let soln_read s k = s k (* SM.find k s *)
+
 (* API *)
 let preds_of_refa s = function
   | Conc p      -> [p]
-  | Kvar (su,k) -> s.read k |> List.map (Misc.flip A.substs_pred su)
+  | Kvar (su,k) -> soln_read s k |> List.map (Misc.flip A.substs_pred su)
 
 (* API *)
 let preds_of_reft f (_,_,ras) = 
   Misc.flap (preds_of_refa f) ras
+
+(* API *)
+let meet_solution s1 s2 = fun k -> s1 k ++ s2 k (* SM.extendWith (fun _ -> (++)) *)
+let empty_solution      = fun _ -> []
 
 let apply_solution_refa f ra = 
   Conc (A.pAnd (preds_of_refa f ra))

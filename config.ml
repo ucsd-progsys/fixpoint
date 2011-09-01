@@ -52,6 +52,8 @@ type 'bind cfg = {
  (* ; bs   : (Ast.Symbol.t * Ast.Qualifier.def list) list  -- Initial Sol Bindings *)
  ; cons : (Ast.Symbol.t * Ast.Sort.t) list              (* Distinct Constants *)
  ; uops : Ast.Sort.t Ast.Symbol.SMap.t                  (* Uninterpreted Funs *) 
+ ; assm : FixConstraint.soln
+          (* Seed Solution -- must be a fixpoint over constraints *)
 }
 
 let get_arity = function
@@ -76,7 +78,8 @@ let extend s2d cfg = function
 let empty = { a    = 0 ; ts   = []; ps = []
             ; cs   = []; ws   = []; ds = []
             ; qs   = []; bm   = SM.empty
-            ; cons = []; uops = SM.empty }
+            ; cons = []; uops = SM.empty 
+            ; assm = FixConstraint.empty_solution }
 
 
 (* API *)
@@ -91,8 +94,8 @@ module type DOMAIN = sig
   type t
   type bind
   val empty        : t 
-  val meet         : t -> t -> t
-  val read         : t -> bind FixConstraint.soln
+  (* val meet         : t -> t -> t *)
+  val read         : t -> FixConstraint.soln
   val top          : t -> Ast.Symbol.t list -> t
   val refine       : t -> FixConstraint.t -> (bool * t)
   val unsat        : t -> FixConstraint.t -> bool
