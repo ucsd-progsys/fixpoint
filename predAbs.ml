@@ -572,7 +572,7 @@ let create c =
 let empty = create Config.empty
 
 (* API *)
-let meet _ _ = failwith "FASTSCALAR:TODO: PredAbs.meet"
+let meet me you = {me with m = SM.extendWith (fun _ -> (++)) me.m you.m} 
 
 (* {{{ DEPRECATED 
 
