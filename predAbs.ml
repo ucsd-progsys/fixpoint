@@ -572,9 +572,8 @@ let create c =
 let empty = create Config.empty
 
 (* API *)
-let meet _ _ = failwith "TBD: PredAbs.meet"
+let meet _ _ = failwith "FASTSCALAR:TODO: PredAbs.meet"
 
-  
 (* {{{ DEPRECATED 
 
 let read s k = 

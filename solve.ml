@@ -58,13 +58,14 @@ module type SOLVER = sig
   val solve     : t -> soln -> (soln * (FixConstraint.t list)) 
   val save      : string -> t -> soln -> unit 
   val read      : soln -> FixConstraint.soln
+  val meet   : soln -> soln -> soln
 end
 
 module Make (Dom : Config.DOMAIN) = struct
 
 type soln = Dom.t
-
 let read = Dom.read
+let meet = Dom.meet
 
 (*************************************************************)
 (********************* Stats *********************************)
