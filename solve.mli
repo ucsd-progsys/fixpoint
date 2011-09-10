@@ -22,6 +22,7 @@ module type SOLVER = sig
   val solve  : t -> soln -> (soln * (FixConstraint.t list)) 
   val save   : string -> t -> soln -> unit 
   val read   : soln -> FixConstraint.soln
+  val read_bind : soln -> Ast.Symbol.t -> bind
   (* val meet   : soln -> soln -> soln *)
 
 end
