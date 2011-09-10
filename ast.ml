@@ -897,8 +897,8 @@ and sortcheck_op f (e1, op, e2) =
 and sortcheck_rel f (e1, r, e2) = 
   let t1o, t2o = (e1,e2) |> Misc.map_pair (sortcheck_expr f) in
   match r, t1o, t2o with
-  | _ , Some (Sort.Int),     Some (Sort.Ptr (_)) 
-  | _ , Some (Sort.Ptr (_)), Some (Sort.Int)
+  | _ , Some Sort.Int,     Some (Sort.Ptr (_)) 
+  | _ , Some (Sort.Ptr (_)), Some Sort.Int
   -> true
   | Eq, Some t1, Some t2 
   | Ne, Some t1, Some t2 
