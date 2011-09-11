@@ -897,16 +897,29 @@ and sortcheck_op f (e1, op, e2) =
 and sortcheck_rel f (e1, r, e2) = 
   let t1o, t2o = (e1,e2) |> Misc.map_pair (sortcheck_expr f) in
   match r, t1o, t2o with
-  | _ , Some Sort.Int,     Some (Sort.Ptr (_)) 
-  | _ , Some (Sort.Ptr (_)), Some Sort.Int
-  -> true
+  (*  | _ , Some Sort.Int,     Some (Sort.Ptr (_)) 
+      | _ , Some (Sort.Ptr (_)), Some Sort.Int
+      -> true *)
   | Eq, Some t1, Some t2 
   | Ne, Some t1, Some t2 
     -> t1 = t2 
   | _ , Some t1, Some t2 
     -> t1 = t2 && t1 != Sort.Bool
   | _ -> false 
- 
+
+(*
+and sortcheck_rel f (e1, r, e2) = 
+  let t1o, t2o = (e1,e2) |> Misc.map_pair (sortcheck_expr f) in
+  match r, t1o, t2o with
+  | Eq, Some t1, Some t2
+  | Ne, Some t1, Some t2 when t1 = t2 -> true
+  | Gt, Some t1, Some t2
+  | Ge, Some t1, Some t2
+  | Lt, Some t1, Some t2
+  | Le, Some t1, Some t2 when t1 = t2 -> t1 != Sort.Bool
+  | _                                 -> false  
+
+  *)
 and sortcheck_pred f p = 
   match puw p with
     | True  
