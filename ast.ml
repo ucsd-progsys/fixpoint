@@ -51,7 +51,8 @@ module Sort =
       | Var of int              (* type-var *)
       | Ptr of loc              (* c-pointer *)
       | Func of int * t list    (* type-var-arity, in-types @ [out-type] *)
-    
+      | Num                     (* kind, for numeric tyvars -- ptr(loc(s)) -- *)
+
     type sub = { locs: (int * string) list; 
                  vars: (int * t) list; }
 
@@ -65,6 +66,7 @@ module Sort =
     let loc_of_index  = fun i -> Lvar i
     *)
 
+    let t_num       = Num 
     let t_obj       = Obj
     let t_bool      = Bool
     let t_int       = Int
@@ -81,6 +83,7 @@ module Sort =
       | Int          -> "int"
       | Bool         -> "bool"
       | Obj          -> "obj"
+      | Num          -> "num"
       | Ptr l        -> Printf.sprintf "ptr(%s)" (loc_to_string l) 
       | Func (n, ts) -> ts |> List.map to_string 
                            |> String.concat " ; " 
@@ -158,6 +161,7 @@ module Sort =
     let lookup_loc = fun s j -> try Some (List.assoc j s.locs) with Not_found -> None
     
     let unifyt s = function 
+      | Num,_ | _, Num -> None
       | (Var i), ct 
         when ct != Bool -> 
           begin match lookup_var s i with 
@@ -822,14 +826,21 @@ let rec fixdiv = function
 (************* Type Checking Expressions and Predicates ********************)
 (***************************************************************************)
 
+let sortcheck_sym f s = 
+  try Some (f s) with _ -> None
+
+let sortcheck_loc f = function
+  | Sort.Loc s  -> sortcheck_sym f (Symbol.of_string s)
+  | Sort.Lvar _ -> None
+
 let rec sortcheck_expr f e = 
   match euw e with
   | Bot   -> 
       None
   | Con _ -> 
       Some Sort.Int 
-  | Var s -> 
-      (try Some (f s) with _ -> None)
+  | Var s ->
+      sortcheck_sym f s
   | Bin (e1, op, e2) -> 
       sortcheck_op f (e1, op, e2)
   | Ite (p, e1, e2) -> 
@@ -897,9 +908,9 @@ and sortcheck_op f (e1, op, e2) =
 and sortcheck_rel f (e1, r, e2) = 
   let t1o, t2o = (e1,e2) |> Misc.map_pair (sortcheck_expr f) in
   match r, t1o, t2o with
-  (*  | _ , Some Sort.Int,     Some (Sort.Ptr (_)) 
-      | _ , Some (Sort.Ptr (_)), Some Sort.Int
-      -> true *)
+  | _ , Some Sort.Int,     Some (Sort.Ptr l) 
+  | _ , Some (Sort.Ptr l), Some Sort.Int
+    -> (sortcheck_loc f l = Some Sort.Num) 
   | Eq, Some t1, Some t2 
   | Ne, Some t1, Some t2 
     -> t1 = t2 
@@ -907,19 +918,6 @@ and sortcheck_rel f (e1, r, e2) =
     -> t1 = t2 && t1 != Sort.Bool
   | _ -> false 
 
-(*
-and sortcheck_rel f (e1, r, e2) = 
-  let t1o, t2o = (e1,e2) |> Misc.map_pair (sortcheck_expr f) in
-  match r, t1o, t2o with
-  | Eq, Some t1, Some t2
-  | Ne, Some t1, Some t2 when t1 = t2 -> true
-  | Gt, Some t1, Some t2
-  | Ge, Some t1, Some t2
-  | Lt, Some t1, Some t2
-  | Le, Some t1, Some t2 when t1 = t2 -> t1 != Sort.Bool
-  | _                                 -> false  
-
-  *)
 and sortcheck_pred f p = 
   match puw p with
     | True  
@@ -934,9 +932,11 @@ and sortcheck_pred f p =
     | And ps  
     | Or ps ->
         List.for_all (sortcheck_pred f) ps
+
     | Atom ((Con (Constant.Int(0)),_), _, e) 
-    | Atom (e, _, (Con (Constant.Int(0)),_)) -> 
-        not (sortcheck_expr f e = None)
+    | Atom (e, _, (Con (Constant.Int(0)),_)) 
+      when not (!Constants.strictsortcheck)
+      -> not (sortcheck_expr f e = None)
     | Atom (e1, r, e2) ->
         sortcheck_rel f (e1, r, e2)
     | Forall (qs,p) ->
@@ -949,6 +949,7 @@ let sortcheck_pred f p =
   >> (fun b -> ignore <| F.printf "sortcheck_pred: p = %a, res = %b\n"
   Predicate.print p b)
 *)
+
 (***************************************************************************)
 (************* Simplifying Expressions and Predicates **********************)
 (***************************************************************************)

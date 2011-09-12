@@ -632,7 +632,7 @@ let create c =
   c.Config.qs 
   |> Q.normalize 
   >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) 
-  |> BS.time "Qual Inst" (inst c.Config.ws) >> List.iter ppBinding
+  |> BS.time "Qual Inst" (inst c.Config.ws) (* >> List.iter ppBinding *)
   |> map_of_bindings
   |> SM.extendWith (fun _ -> (++)) c.Config.bm
   |> create c.Config.ts c.Config.uops c.Config.ps c.Config.cons c.Config.assm
