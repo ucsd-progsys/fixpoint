@@ -1,0 +1,27 @@
+ 
+ 
+//solution: k_3 := [(0 <= VV_int);(1 = 0);(VV_int < n_main);(0 < VV_int);(VV_int <= n_main);(VV_int = 0);(VV_int > n_main);(VV_int >= n_main)] 
+
+//solution: k_2 := [(0 <= VV_int);(1 = 0);(0 < VV_int);(VV_int = 0)] 
+
+solution: k_3 := [((VV_int >= n_main), GEQ[~A0:=n_main]);((VV_int > n_main), GT[~A0:=n_main]);((VV_int = 0), EQZ);((VV_int <= n_main), LEQ[~A0:=n_main]);((0 < VV_int), GTZ);((VV_int < n_main), LT[~A0:=n_main]);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
+
+solution: k_2 := [((VV_int = 0), EQZ);((0 < VV_int), GTZ);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
+
+//QUALIFIERS 
+
+qualif LT(VV_int:int):(VV_int < ~A0)
+    
+qualif LEQ(VV_int:int):(VV_int <= ~A0)
+    
+qualif GTZ(VV_int:int):(0 < VV_int)
+    
+qualif GT(VV_int:int):(VV_int > ~A0)
+    
+qualif GEZ(VV_int:int):(0 <= VV_int)
+    
+qualif GEQ(VV_int:int):(VV_int >= ~A0) 
+qualif FALSE(VV_int:int):(1 = 0)
+    
+qualif EQZ(VV_int:int):(VV_int = 0) 
+ 

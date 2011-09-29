@@ -1,0 +1,46 @@
+constraint:
+ env  [y_bar:{VV_int : int | [true;true]};
+       __cil_tmp2_bar:{VV_int : int | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = (0 : int))]} 
+ rhs {VV_int : int | [k_0]} 
+ id 1 tag [2;1;-1;1] //bar 
+ 
+ 
+wf: env [y_bar:{VV_int : int | [true;true]};
+             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_0]} 
+      
+     
+//solution: k_0 := [(0 = VV_int);(VV_int = 0);(VV_int >= (BLOCK_BEGIN([VV_int]) + 0));(VV_int = (BLOCK_BEGIN([VV_int]) + 0));(VV_int >= 0);(0 <= VV_int)] 
+
+solution: k_0 := [((0 <= VV_int), GEZ);((VV_int >= 0), SCALAR);((VV_int = (BLOCK_BEGIN([VV_int]) + 0)), SCALAR0);((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR1);((VV_int = 0), SCALAR2);((0 = VV_int), EQZ)] 
+
+//QUALIFIERS 
+
+qualif SCALAR2(VV_int:int):(VV_int = 0)
+      
+qualif SCALAR1(VV_int:int):(VV_int >= (BLOCK_BEGIN([VV_int]) + 0))
+      
+qualif SCALAR0(VV_int:int):(VV_int = (BLOCK_BEGIN([VV_int]) + 0))
+      
+qualif SCALAR(VV_int:int):(VV_int >= 0)
+      
+qualif NEZ0(VV_int:int):(0 != VV_int) 
+qualif NEZ(VV_int:int):(0 = 1)
+      
+qualif GTZ(VV_int:int):(0 < VV_int)
+      
+qualif GEZ(VV_int:int):(0 <= VV_int)
+      
+qualif EQZ(VV_int:int):(0 = VV_int) 
+ 

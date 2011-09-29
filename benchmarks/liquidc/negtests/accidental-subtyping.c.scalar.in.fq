@@ -1,0 +1,103 @@
+constraint:
+ env  [p:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp2_main:{VV_int : int | []};
+       __cil_tmp1_main:{VV_int : int | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]} 
+ rhs {VV_int : int | [k_0]} 
+ id 1 tag [1;1;-1;1] //main 
+ 
+constraint:
+ env  [p:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp2_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
+       __cil_tmp1_main:{VV_int : int | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = __cil_tmp2_main);(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp2_main]))]} 
+ rhs {VV_int : int | [k_1]} 
+ id 2 tag [1;1;-2;1] //main 
+ 
+ 
+wf: env [p:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_1]} 
+      
+    
+
+    wf: env [p:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_0]} 
+      
+     
+//solution: k_1 := [(VV_int = 4);(((VV_int - 0) mod 8) = 0);(0 = 1);(((VV_int - 0) mod 4) = 0);(0 <= VV_int);(0 < VV_int);(VV_int >= 0);(VV_int = (BLOCK_BEGIN([VV_int]) + 0));(((VV_int - (BLOCK_BEGIN([VV_int]) + 4)) mod 8) = 0);(VV_int >= 8);(VV_int = (BLOCK_BEGIN([VV_int]) + 4));(VV_int >= (BLOCK_BEGIN([VV_int]) + 0));(VV_int = (BLOCK_BEGIN([VV_int]) + 8));(VV_int >= (BLOCK_BEGIN([VV_int]) + 4));(VV_int = 0);(0 = VV_int);(VV_int = 8);(VV_int >= (BLOCK_BEGIN([VV_int]) + 8));(0 != VV_int);(((VV_int - 4) mod 8) = 0);(VV_int >= 4);(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 8) = 0);(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0)] 
+
+//solution: k_0 := [(VV_int = 4);(((VV_int - 0) mod 8) = 0);(0 = 1);(((VV_int - 0) mod 4) = 0);(0 <= VV_int);(0 < VV_int);(VV_int >= 0);(VV_int = (BLOCK_BEGIN([VV_int]) + 0));(((VV_int - (BLOCK_BEGIN([VV_int]) + 4)) mod 8) = 0);(VV_int >= 8);(VV_int = (BLOCK_BEGIN([VV_int]) + 4));(VV_int >= (BLOCK_BEGIN([VV_int]) + 0));(VV_int = (BLOCK_BEGIN([VV_int]) + 8));(VV_int >= (BLOCK_BEGIN([VV_int]) + 4));(VV_int = 0);(0 = VV_int);(VV_int = 8);(VV_int >= (BLOCK_BEGIN([VV_int]) + 8));(0 != VV_int);(((VV_int - 4) mod 8) = 0);(VV_int >= 4);(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 8) = 0);(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0)] 
+
+solution: k_1 := [((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR16);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 8) = 0), SCALAR15);((VV_int >= 4), SCALAR14);((((VV_int - 4) mod 8) = 0), SCALAR13);((0 != VV_int), NEZ0);((VV_int >= (BLOCK_BEGIN([VV_int]) + 8)), SCALAR12);((VV_int = 8), SCALAR11);((0 = VV_int), EQZ);((VV_int = 0), SCALAR10);((VV_int >= (BLOCK_BEGIN([VV_int]) + 4)), SCALAR9);((VV_int = (BLOCK_BEGIN([VV_int]) + 8)), SCALAR8);((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR7);((VV_int = (BLOCK_BEGIN([VV_int]) + 4)), SCALAR6);((VV_int >= 8), SCALAR5);((((VV_int - (BLOCK_BEGIN([VV_int]) + 4)) mod 8) = 0), SCALAR4);((VV_int = (BLOCK_BEGIN([VV_int]) + 0)), SCALAR3);((VV_int >= 0), SCALAR2);((0 < VV_int), GTZ);((0 <= VV_int), GEZ);((((VV_int - 0) mod 4) = 0), SCALAR1);((0 = 1), NEZ);((((VV_int - 0) mod 8) = 0), SCALAR0);((VV_int = 4), SCALAR)] 
+
+solution: k_0 := [((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR16);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 8) = 0), SCALAR15);((VV_int >= 4), SCALAR14);((((VV_int - 4) mod 8) = 0), SCALAR13);((0 != VV_int), NEZ0);((VV_int >= (BLOCK_BEGIN([VV_int]) + 8)), SCALAR12);((VV_int = 8), SCALAR11);((0 = VV_int), EQZ);((VV_int = 0), SCALAR10);((VV_int >= (BLOCK_BEGIN([VV_int]) + 4)), SCALAR9);((VV_int = (BLOCK_BEGIN([VV_int]) + 8)), SCALAR8);((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR7);((VV_int = (BLOCK_BEGIN([VV_int]) + 4)), SCALAR6);((VV_int >= 8), SCALAR5);((((VV_int - (BLOCK_BEGIN([VV_int]) + 4)) mod 8) = 0), SCALAR4);((VV_int = (BLOCK_BEGIN([VV_int]) + 0)), SCALAR3);((VV_int >= 0), SCALAR2);((0 < VV_int), GTZ);((0 <= VV_int), GEZ);((((VV_int - 0) mod 4) = 0), SCALAR1);((0 = 1), NEZ);((((VV_int - 0) mod 8) = 0), SCALAR0);((VV_int = 4), SCALAR)] 
+
+//QUALIFIERS 
+
+qualif SCALAR9(VV_int:int):(VV_int >= (BLOCK_BEGIN([VV_int]) + 4))
+      
+qualif SCALAR8(VV_int:int):(VV_int = (BLOCK_BEGIN([VV_int]) + 8))
+      
+qualif SCALAR7(VV_int:int):(VV_int >= (BLOCK_BEGIN([VV_int]) + 0))
+      
+qualif SCALAR6(VV_int:int):(VV_int = (BLOCK_BEGIN([VV_int]) + 4))
+      
+qualif SCALAR5(VV_int:int):(VV_int >= 8)
+      
+qualif SCALAR4(VV_int:int):(((VV_int - (BLOCK_BEGIN([VV_int]) + 4)) mod 8) = 0)
+      
+qualif SCALAR3(VV_int:int):(VV_int = (BLOCK_BEGIN([VV_int]) + 0))
+      
+qualif SCALAR2(VV_int:int):(VV_int >= 0)
+      
+qualif SCALAR16(VV_int:int):(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0)
+      
+qualif SCALAR15(VV_int:int):(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 8) = 0)
+      
+qualif SCALAR14(VV_int:int):(VV_int >= 4)
+      
+qualif SCALAR13(VV_int:int):(((VV_int - 4) mod 8) = 0)
+      
+qualif SCALAR12(VV_int:int):(VV_int >= (BLOCK_BEGIN([VV_int]) + 8))
+      
+qualif SCALAR11(VV_int:int):(VV_int = 8)
+      
+qualif SCALAR10(VV_int:int):(VV_int = 0)
+      
+qualif SCALAR1(VV_int:int):(((VV_int - 0) mod 4) = 0)
+      
+qualif SCALAR0(VV_int:int):(((VV_int - 0) mod 8) = 0)
+      
+qualif SCALAR(VV_int:int):(VV_int = 4)
+      
+qualif NEZ0(VV_int:int):(0 != VV_int) 
+qualif NEZ(VV_int:int):(0 = 1)
+      
+qualif GTZ(VV_int:int):(0 < VV_int)
+      
+qualif GEZ(VV_int:int):(0 <= VV_int)
+      
+qualif EQZ(VV_int:int):(0 = VV_int) 
+ 

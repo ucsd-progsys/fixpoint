@@ -1,0 +1,31 @@
+del_dep: [1;1;-3;0] => * 
+constraint:
+ env  [tmp_main:{VV_ptr_A12 : ptr(A12) | []};
+       tmp___0_main:{VV_ptr_A11 : ptr(A11) | []};
+       root_main:{VV_ptr_A13 : ptr(A13) | []};
+       __cil_tmp4_main:{VV_int : int | [(VV_int = (8 : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = __cil_tmp4_main)]} 
+ rhs {VV_int : int | [(VV_int >= 0)]} 
+ id 1 tag [1;1;-2;0] //main 
+ 
+ 
+ 
+//solution: k_5 := [(0 <= VV_int);(1 = 0);(0 < VV_int);(VV_int = 0)] 
+
+solution: k_5 := [((VV_int = 0), EQZ);((0 < VV_int), GTZ);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
+
+//QUALIFIERS 
+
+qualif GTZ(VV_int:int):(0 < VV_int)
+      
+qualif GEZ(VV_int:int):(0 <= VV_int) 
+qualif FALSE(VV_int:int):(1 = 0)
+      
+qualif EQZ(VV_int:int):(VV_int = 0) 
+ 

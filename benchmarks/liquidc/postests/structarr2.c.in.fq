@@ -1,0 +1,1008 @@
+del_dep: [4;1;-2;0] => * 
+del_dep: [4;1;-5;0] => * 
+del_dep: [4;1;-10;0] => * 
+
+del_dep: [1;10;-3;1] => * 
+del_dep: [1;10;-9;1] => * 
+constraint:
+ env  [tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
+       tmp_main:{VV_int : int | []};
+       n_main__SSA__blk_0_1:{VV_int : int | [(VV_int = (tmp_main__SSA__blk_0_1 : int))]};
+       n_main:{VV_int : int | []};
+       g_main:{VV_ptr_A22 : ptr(A22) | []};
+       __cil_tmp6_main:{VV_ptr_A26 : ptr(A26) | []};
+       __cil_tmp5_main:{VV_ptr_A26 : ptr(A26) | []};
+       __cil_tmp4_main:{VV_ptr_A26 : ptr(A26) | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A18#Ix#0:{VV_ptr_A26 : ptr(A26) | [k_25[numvert_MakeGraph:=n_main__SSA__blk_0_1][VV_ptr_A10:=VV_ptr_A26][FIXPOINTSYMBOL_2:=FIXPOINTSYMBOL_5][A9#Ix#0:=A18#Ix#0]]}] 
+ grd true 
+ lhs {VV_ptr_A26 : ptr(A26) | [(VV_ptr_A26 = A18#Ix#0)]} 
+ rhs {VV_ptr_A26 : ptr(A26) | [k_34]} 
+ id 2 tag [4;1;-5;0] //main 
+ 
+constraint:
+ env  [tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
+       tmp_main:{VV_int : int | []};
+       n_main__SSA__blk_0_1:{VV_int : int | [(VV_int = (tmp_main__SSA__blk_0_1 : int))]};
+       n_main:{VV_int : int | []};
+       g_main:{VV_ptr_A22 : ptr(A22) | []};
+       __cil_tmp6_main:{VV_ptr_A26 : ptr(A26) | []};
+       __cil_tmp5_main:{VV_ptr_A26 : ptr(A26) | []};
+       __cil_tmp4_main:{VV_ptr_A26 : ptr(A26) | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = n_main__SSA__blk_0_1)]} 
+ rhs {VV_int : int | [k_27[numvert_MakeGraph:=n_main__SSA__blk_0_1]]} 
+ id 3 tag [4;1;-4;0] //main 
+ 
+constraint:
+ env  [tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
+       tmp_main:{VV_int : int | []};
+       n_main__SSA__blk_0_1:{VV_int : int | [(VV_int = (tmp_main__SSA__blk_0_1 : int))]};
+       n_main:{VV_int : int | []};
+       g_main:{VV_ptr_A22 : ptr(A22) | []};
+       __cil_tmp6_main:{VV_ptr_A26 : ptr(A26) | []};
+       __cil_tmp5_main:{VV_ptr_A26 : ptr(A26) | []};
+       __cil_tmp4_main:{VV_ptr_A26 : ptr(A26) | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_ptr_A18 : ptr(A18) | [k_26[numvert_MakeGraph:=n_main__SSA__blk_0_1][VV_ptr_A9:=VV_ptr_A18]]} 
+ rhs {VV_ptr_A18 : ptr(A18) | [k_35]} 
+ id 4 tag [4;1;-5;0] //main 
+ 
+constraint:
+ env  [tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
+       tmp_main:{VV_int : int | []};
+       n_main__SSA__blk_0_1:{VV_int : int | [(VV_int = (tmp_main__SSA__blk_0_1 : int))]};
+       n_main:{VV_int : int | []};
+       g_main__SSA__blk_0_1:{VV_ptr_A18 : ptr(A18) | [k_35[VV_ptr_C27:=VV_ptr_A18][VV_ptr_A18:=VV_ptr_A18]]};
+       g_main:{VV_ptr_A22 : ptr(A22) | []};
+       __cil_tmp6_main:{VV_ptr_A26 : ptr(A26) | []};
+       __cil_tmp5_main:{VV_ptr_A26 : ptr(A26) | []};
+       __cil_tmp4_main:{VV_ptr_A26 : ptr(A26) | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_ptr_A18 : ptr(A18) | [(VV_ptr_A18 = g_main__SSA__blk_0_1)]} 
+ rhs {VV_ptr_A18 : ptr(A18) | [|| [(UNCHECKED([VV_ptr_A18]) = 1);&& [(VV_ptr_A18 != 0) ; (BLOCK_BEGIN([VV_ptr_A18]) <= VV_ptr_A18) ; ((VV_ptr_A18 + 3) < BLOCK_END([VV_ptr_A18]))]]]} 
+ id 5 tag [4;1;-6;0] //main 
+ 
+constraint:
+ env  [tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
+       tmp_main:{VV_int : int | []};
+       n_main__SSA__blk_0_1:{VV_int : int | [(VV_int = (tmp_main__SSA__blk_0_1 : int))]};
+       n_main:{VV_int : int | []};
+       lqn#2:{VV_ptr_A26 : ptr(A26) | [(VV_ptr_A26 = (DEREF([(BLOCK_BEGIN([g_main__SSA__blk_0_1]) + 0)]) : ptr(A26)));k_34[A18#Ix#0:=lqn#2]]};
+       g_main__SSA__blk_0_1:{VV_ptr_A18 : ptr(A18) | [k_35[VV_ptr_C27:=VV_ptr_A18][VV_ptr_A18:=VV_ptr_A18]]};
+       g_main:{VV_ptr_A22 : ptr(A22) | []};
+       __cil_tmp6_main:{VV_ptr_A26 : ptr(A26) | [(VV_ptr_A26 = lqn#2)]};
+       __cil_tmp5_main:{VV_ptr_A26 : ptr(A26) | [(VV_ptr_A26 = __cil_tmp4_main);(BLOCK_BEGIN([VV_ptr_A26]) = BLOCK_BEGIN([__cil_tmp4_main]));(BLOCK_END([VV_ptr_A26]) = BLOCK_END([__cil_tmp4_main]));(UNCHECKED([VV_ptr_A26]) = UNCHECKED([__cil_tmp4_main]))]};
+       __cil_tmp4_main:{VV_ptr_A26 : ptr(A26) | [(VV_ptr_A26 = __cil_tmp6_main);(BLOCK_BEGIN([VV_ptr_A26]) = BLOCK_BEGIN([__cil_tmp6_main]));(BLOCK_END([VV_ptr_A26]) = BLOCK_END([__cil_tmp6_main]));(UNCHECKED([VV_ptr_A26]) = UNCHECKED([__cil_tmp6_main]))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_ptr_A26 : ptr(A26) | [(VV_ptr_A26 = __cil_tmp5_main);(BLOCK_BEGIN([VV_ptr_A26]) = BLOCK_BEGIN([__cil_tmp5_main]));(BLOCK_END([VV_ptr_A26]) = BLOCK_END([__cil_tmp5_main]));(UNCHECKED([VV_ptr_A26]) = UNCHECKED([__cil_tmp5_main]))]} 
+ rhs {VV_ptr_A26 : ptr(A26) | [&& [(VV_ptr_A26 > 0) ; (BLOCK_BEGIN([VV_ptr_A26]) <= VV_ptr_A26) ; (VV_ptr_A26 < BLOCK_END([VV_ptr_A26]))]]} 
+ id 6 tag [4;1;-9;0] //main 
+ 
+constraint:
+ env  [vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | []};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | []};
+       __cil_tmp8_MakeGraph:{VV_int : int | []};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | []};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp10_MakeGraph:{VV_int : int | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = __cil_tmp7_MakeGraph)]} 
+ rhs {VV_int : int | [(VV_int >= 0)]} 
+ id 7 tag [1;10;-2;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | [k_27]};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | []};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = __cil_tmp10_MakeGraph)]} 
+ rhs {VV_int : int | [(VV_int >= 0)]} 
+ id 9 tag [1;10;-8;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | []};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | []};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = retval_MakeGraph__SSA__blk_0_1)]} 
+ rhs {VV_ptr_A9 : ptr(A9) | [|| [(UNCHECKED([VV_ptr_A9]) = 1);&& [(VV_ptr_A9 != 0) ; (BLOCK_BEGIN([VV_ptr_A9]) <= VV_ptr_A9) ; ((VV_ptr_A9 + 3) < BLOCK_END([VV_ptr_A9]))]]]} 
+ id 10 tag [1;10;-11;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph__SSA__phi_3:{VV_ptr_A10 : ptr(A10) | []};
+       vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | [k_27]};
+       lqn#1:{VV_ptr_A10 : ptr(A10) | []};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__phi_3:{VV_int : int | [k_32]};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | [(VV_int = ((i_MakeGraph__SSA__phi_3 < numvert_MakeGraph) ? 1 : 0))]};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd (__cil_tmp12_MakeGraph != 0) 
+ lhs {VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = retval_MakeGraph__SSA__blk_0_1)]} 
+ rhs {VV_ptr_A9 : ptr(A9) | [|| [(UNCHECKED([VV_ptr_A9]) = 1);&& [(VV_ptr_A9 != 0) ; (BLOCK_BEGIN([VV_ptr_A9]) <= VV_ptr_A9) ; ((VV_ptr_A9 + 3) < BLOCK_END([VV_ptr_A9]))]]]} 
+ id 11 tag [1;3;-1;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph__SSA__phi_3:{VV_ptr_A10 : ptr(A10) | []};
+       vf_MakeGraph__SSA__blk_8_1:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = __cil_tmp14_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp14_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp14_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp14_MakeGraph]))]};
+       vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | [k_27]};
+       lqn#1:{VV_ptr_A10 : ptr(A10) | [k_30[C46#Ix#0:=lqn#1]]};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__phi_3:{VV_int : int | [k_32]};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = lqn#1)]};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | [&& [(VV_ptr_A10 = (__cil_tmp13_MakeGraph + (4 * i_MakeGraph__SSA__phi_3))) ; (__cil_tmp13_MakeGraph <= VV_ptr_A10)];(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp13_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp13_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp13_MakeGraph]))]};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = __cil_tmp15_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp15_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp15_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp15_MakeGraph]))]};
+       __cil_tmp12_MakeGraph:{VV_int : int | [(VV_int = ((i_MakeGraph__SSA__phi_3 < numvert_MakeGraph) ? 1 : 0))]};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd (__cil_tmp12_MakeGraph != 0) 
+ lhs {VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = vf_MakeGraph__SSA__blk_8_1)]} 
+ rhs {VV_ptr_A10 : ptr(A10) | [|| [(UNCHECKED([VV_ptr_A10]) = 1);&& [(VV_ptr_A10 != 0) ; (BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10) ; ((VV_ptr_A10 + 3) < BLOCK_END([VV_ptr_A10]))]]]} 
+ id 13 tag [1;3;-5;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph__SSA__phi_3:{VV_ptr_A10 : ptr(A10) | []};
+       vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | [k_27]};
+       lqn#1:{VV_ptr_A10 : ptr(A10) | []};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__phi_3:{VV_int : int | [k_32]};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | [(VV_int = ((i_MakeGraph__SSA__phi_3 < numvert_MakeGraph) ? 1 : 0))]};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A9#Ix#0:{VV_ptr_A10 : ptr(A10) | [k_29]}] 
+ grd (~ ((__cil_tmp12_MakeGraph != 0))) 
+ lhs {VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = A9#Ix#0)]} 
+ rhs {VV_ptr_A10 : ptr(A10) | [k_25]} 
+ id 15 tag [1;0;-1000;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph__SSA__phi_3:{VV_ptr_A10 : ptr(A10) | []};
+       vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | [k_27]};
+       lqn#1:{VV_ptr_A10 : ptr(A10) | []};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__phi_3:{VV_int : int | [k_32]};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | [(VV_int = ((i_MakeGraph__SSA__phi_3 < numvert_MakeGraph) ? 1 : 0))]};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd (~ ((__cil_tmp12_MakeGraph != 0))) 
+ lhs {VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = retval_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([retval_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([retval_MakeGraph__SSA__blk_0_1]))]} 
+ rhs {VV_ptr_A9 : ptr(A9) | [k_26]} 
+ id 16 tag [1;0;-1000;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | [k_27]};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | []};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       C46#Ix#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = FINAL0)]};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = C46#Ix#0)]} 
+ rhs {VV_ptr_A10 : ptr(A10) | [k_29[A9#Ix#0:=C46#Ix#0]]} 
+ id 17 tag [1;10;0;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | [k_27]};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | []};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       C46#Ix#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = FINAL0)]};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = C46#Ix#0)]} 
+ rhs {VV_ptr_A10 : ptr(A10) | [k_29[A9#Ix#0:=C46#Ix#0]]} 
+ id 19 tag [1;9;0;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | []};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | []};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = i_MakeGraph__SSA__blk_0_1)]} 
+ rhs {VV_int : int | [k_32[vf_MakeGraph__SSA__phi_3:=vf_MakeGraph][i_MakeGraph__SSA__phi_3:=i_MakeGraph__SSA__blk_0_1]]} 
+ id 22 tag [1;8;0;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | [k_27]};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | []};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       C46#Ix#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = FINAL0)]};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = C46#Ix#0)]} 
+ rhs {VV_ptr_A10 : ptr(A10) | [k_30[vf_MakeGraph__SSA__phi_3:=vf_MakeGraph][i_MakeGraph__SSA__phi_3:=i_MakeGraph__SSA__blk_0_1]]} 
+ id 24 tag [1;8;0;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph__SSA__phi_3:{VV_ptr_A10 : ptr(A10) | []};
+       vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | []};
+       lqn#1:{VV_ptr_A10 : ptr(A10) | [k_30[C46#Ix#0:=lqn#1]]};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__phi_3:{VV_int : int | []};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | []};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       C46#Ix#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = lqn#1)]};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = C46#Ix#0)]} 
+ rhs {VV_ptr_A10 : ptr(A10) | [k_29[A9#Ix#0:=C46#Ix#0]]} 
+ id 25 tag [1;7;0;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph__SSA__phi_3:{VV_ptr_A10 : ptr(A10) | []};
+       vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | []};
+       lqn#1:{VV_ptr_A10 : ptr(A10) | [k_30[C46#Ix#0:=lqn#1]]};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__phi_3:{VV_int : int | []};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | []};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       C46#Ix#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = lqn#1)]};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = C46#Ix#0)]} 
+ rhs {VV_ptr_A10 : ptr(A10) | [k_29[A9#Ix#0:=C46#Ix#0]]} 
+ id 26 tag [1;6;0;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph__SSA__phi_3:{VV_ptr_A10 : ptr(A10) | []};
+       vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | []};
+       lqn#1:{VV_ptr_A10 : ptr(A10) | [k_30[C46#Ix#0:=lqn#1]]};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__phi_3:{VV_int : int | []};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | [(VV_int = ((i_MakeGraph__SSA__phi_3 < numvert_MakeGraph) ? 1 : 0))]};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       C46#Ix#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = lqn#1)]};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = C46#Ix#0)]} 
+ rhs {VV_ptr_A10 : ptr(A10) | [k_29[A9#Ix#0:=C46#Ix#0]]} 
+ id 27 tag [1;5;0;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph__SSA__phi_3:{VV_ptr_A10 : ptr(A10) | []};
+       vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | []};
+       lqn#1:{VV_ptr_A10 : ptr(A10) | [k_30[C46#Ix#0:=lqn#1]]};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__phi_3:{VV_int : int | []};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | [(VV_int = ((i_MakeGraph__SSA__phi_3 < numvert_MakeGraph) ? 1 : 0))]};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       C46#Ix#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = lqn#1)]};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = C46#Ix#0)]} 
+ rhs {VV_ptr_A10 : ptr(A10) | [k_29[A9#Ix#0:=C46#Ix#0]]} 
+ id 28 tag [1;4;0;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph__SSA__phi_3:{VV_ptr_A10 : ptr(A10) | []};
+       vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | []};
+       lqn#1:{VV_ptr_A10 : ptr(A10) | [k_30[C46#Ix#0:=lqn#1]]};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__phi_3:{VV_int : int | []};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | [(VV_int = ((i_MakeGraph__SSA__phi_3 < numvert_MakeGraph) ? 1 : 0))]};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       C46#Ix#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = lqn#1)]};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = C46#Ix#0)]} 
+ rhs {VV_ptr_A10 : ptr(A10) | [k_29[A9#Ix#0:=C46#Ix#0]]} 
+ id 29 tag [1;4;0;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph__SSA__phi_3:{VV_ptr_A10 : ptr(A10) | []};
+       vf_MakeGraph__SSA__blk_8_1:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = __cil_tmp14_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp14_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp14_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp14_MakeGraph]))]};
+       vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | [k_27]};
+       lqn#1:{VV_ptr_A10 : ptr(A10) | []};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__phi_3:{VV_int : int | [k_32]};
+       i_MakeGraph__SSA__blk_8_1:{VV_int : int | [(VV_int = (i_MakeGraph__SSA__phi_3 + 1))]};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = lqn#1)]};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | [&& [(VV_ptr_A10 = (__cil_tmp13_MakeGraph + (4 * i_MakeGraph__SSA__phi_3))) ; (__cil_tmp13_MakeGraph <= VV_ptr_A10)];(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp13_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp13_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp13_MakeGraph]))]};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = __cil_tmp15_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp15_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp15_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp15_MakeGraph]))]};
+       __cil_tmp12_MakeGraph:{VV_int : int | [(VV_int = ((i_MakeGraph__SSA__phi_3 < numvert_MakeGraph) ? 1 : 0))]};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd (__cil_tmp12_MakeGraph != 0) 
+ lhs {VV_int : int | [(VV_int = i_MakeGraph__SSA__blk_8_1)]} 
+ rhs {VV_int : int | [k_32[vf_MakeGraph__SSA__phi_3:=vf_MakeGraph__SSA__blk_8_1][i_MakeGraph__SSA__phi_3:=i_MakeGraph__SSA__blk_8_1]]} 
+ id 31 tag [1;3;0;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph__SSA__phi_3:{VV_ptr_A10 : ptr(A10) | []};
+       vf_MakeGraph__SSA__blk_8_1:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = __cil_tmp14_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp14_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp14_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp14_MakeGraph]))]};
+       vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | [k_27]};
+       lqn#1:{VV_ptr_A10 : ptr(A10) | [k_30[C46#Ix#0:=lqn#1]]};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__phi_3:{VV_int : int | [k_32]};
+       i_MakeGraph__SSA__blk_8_1:{VV_int : int | [(VV_int = (i_MakeGraph__SSA__phi_3 + 1))]};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = lqn#1)]};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | [&& [(VV_ptr_A10 = (__cil_tmp13_MakeGraph + (4 * i_MakeGraph__SSA__phi_3))) ; (__cil_tmp13_MakeGraph <= VV_ptr_A10)];(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp13_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp13_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp13_MakeGraph]))]};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = __cil_tmp15_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp15_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp15_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp15_MakeGraph]))]};
+       __cil_tmp12_MakeGraph:{VV_int : int | [(VV_int = ((i_MakeGraph__SSA__phi_3 < numvert_MakeGraph) ? 1 : 0))]};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       C46#Ix#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = lqn#1)]};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd (__cil_tmp12_MakeGraph != 0) 
+ lhs {VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = C46#Ix#0)]} 
+ rhs {VV_ptr_A10 : ptr(A10) | [k_30[vf_MakeGraph__SSA__phi_3:=vf_MakeGraph__SSA__blk_8_1][i_MakeGraph__SSA__phi_3:=i_MakeGraph__SSA__blk_8_1]]} 
+ id 33 tag [1;3;0;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph__SSA__phi_3:{VV_ptr_A10 : ptr(A10) | []};
+       vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | [k_27]};
+       lqn#1:{VV_ptr_A10 : ptr(A10) | [k_30[C46#Ix#0:=lqn#1]]};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__phi_3:{VV_int : int | [k_32]};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | [(VV_int = ((i_MakeGraph__SSA__phi_3 < numvert_MakeGraph) ? 1 : 0))]};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       C46#Ix#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = lqn#1)]};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd (~ ((__cil_tmp12_MakeGraph != 0))) 
+ lhs {VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = C46#Ix#0)]} 
+ rhs {VV_ptr_A10 : ptr(A10) | [k_29[A9#Ix#0:=C46#Ix#0]]} 
+ id 34 tag [1;2;0;1] //MakeGraph 
+ 
+constraint:
+ env  [vf_MakeGraph__SSA__phi_3:{VV_ptr_A10 : ptr(A10) | []};
+       vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+       tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+       tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+       tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+       retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+       retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+       numvert_MakeGraph:{VV_int : int | [k_27]};
+       lqn#1:{VV_ptr_A10 : ptr(A10) | [k_30[C46#Ix#0:=lqn#1]]};
+       lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+       i_MakeGraph__SSA__phi_3:{VV_int : int | [k_32]};
+       i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_MakeGraph:{VV_int : int | []};
+       __cil_tmp9_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp8_MakeGraph * 4))]};
+       __cil_tmp8_MakeGraph:{VV_int : int | [&& [(VV_int = (numvert_MakeGraph : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_MakeGraph:{VV_int : int | [(VV_int = (4 : int))]};
+       __cil_tmp15_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp14_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp13_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+       __cil_tmp12_MakeGraph:{VV_int : int | [(VV_int = ((i_MakeGraph__SSA__phi_3 < numvert_MakeGraph) ? 1 : 0))]};
+       __cil_tmp11_MakeGraph:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = tmp___0_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([tmp___0_MakeGraph__SSA__blk_0_1]))]};
+       __cil_tmp10_MakeGraph:{VV_int : int | [(VV_int = (__cil_tmp9_MakeGraph : int))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       C46#Ix#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = lqn#1)]};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd (~ ((__cil_tmp12_MakeGraph != 0))) 
+ lhs {VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = C46#Ix#0)]} 
+ rhs {VV_ptr_A10 : ptr(A10) | [k_29[A9#Ix#0:=C46#Ix#0]]} 
+ id 35 tag [1;1;0;1] //MakeGraph 
+ 
+ 
+wf: env [numvert_MakeGraph:{VV_int : int | [k_27]};
+             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             A9#Ix#0:{VV_ptr_A10 : ptr(A10) | [k_25]}] 
+     reft {VV_ptr_A10 : ptr(A10) | [k_25]} 
+      
+    
+
+    wf: env [numvert_MakeGraph:{VV_int : int | [k_27]};
+             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_27]} 
+      
+    
+
+    wf: env [numvert_MakeGraph:{VV_int : int | [k_27]};
+             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_ptr_A9 : ptr(A9) | [k_26]} 
+      
+    
+
+    wf: env [vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+             tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+             tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+             tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+             tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+             retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+             retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+             numvert_MakeGraph:{VV_int : int | [k_27]};
+             lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+             i_MakeGraph__SSA__phi_3:{VV_int : int | [k_32]};
+             i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_MakeGraph:{VV_int : int | []};
+             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             C46#Ix#0:{VV_ptr_A10 : ptr(A10) | [k_30]};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_ptr_A10 : ptr(A10) | [k_30]} 
+      
+    
+
+    wf: env [vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+             tmp___0_MakeGraph__SSA__blk_0_1:{VV_ptr_A10 : ptr(A10) | [&& [((VV_ptr_A10 + __cil_tmp10_MakeGraph) = BLOCK_END([VV_ptr_A10])) ; (VV_ptr_A10 > 0) ; (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))]]};
+             tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+             tmp_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [&& [((VV_ptr_A9 + __cil_tmp7_MakeGraph) = BLOCK_END([VV_ptr_A9])) ; (VV_ptr_A9 > 0) ; (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))]]};
+             tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+             retval_MakeGraph__SSA__blk_0_1:{VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = tmp_MakeGraph__SSA__blk_0_1);(BLOCK_BEGIN([VV_ptr_A9]) = BLOCK_BEGIN([tmp_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A9]) = BLOCK_END([tmp_MakeGraph__SSA__blk_0_1]));(UNCHECKED([VV_ptr_A9]) = UNCHECKED([tmp_MakeGraph__SSA__blk_0_1]))]};
+             retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+             numvert_MakeGraph:{VV_int : int | [k_27]};
+             lqn#0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = 0)]};
+             i_MakeGraph__SSA__phi_3:{VV_int : int | [k_32]};
+             i_MakeGraph__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_MakeGraph:{VV_int : int | []};
+             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             FINAL0:{VV_ptr_A10 : ptr(A10) | [(VV_ptr_A10 = (DEREF([(BLOCK_BEGIN([retval_MakeGraph__SSA__blk_0_1]) + 0)]) : ptr(A10)));(VV_ptr_A10 = __cil_tmp11_MakeGraph);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp11_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp11_MakeGraph]));(UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp11_MakeGraph]))]};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_32]} 
+      
+    
+
+    wf: env [vf_MakeGraph:{VV_ptr_A10 : ptr(A10) | []};
+             tmp___0_MakeGraph:{VV_ptr_A38 : ptr(A38) | []};
+             tmp_MakeGraph:{VV_ptr_A39 : ptr(A39) | []};
+             retval_MakeGraph:{VV_ptr_A41 : ptr(A41) | []};
+             numvert_MakeGraph:{VV_int : int | [k_27]};
+             i_MakeGraph:{VV_int : int | []};
+             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             A9#Ix#0:{VV_ptr_A10 : ptr(A10) | [k_29]}] 
+     reft {VV_ptr_A10 : ptr(A10) | [k_29]} 
+      
+    
+
+    wf: env [tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
+             tmp_main:{VV_int : int | []};
+             n_main__SSA__blk_0_1:{VV_int : int | [(VV_int = (tmp_main__SSA__blk_0_1 : int))]};
+             n_main:{VV_int : int | []};
+             g_main:{VV_ptr_A22 : ptr(A22) | []};
+             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_ptr_A18 : ptr(A18) | [k_35]} 
+      
+    
+
+    wf: env [tmp_main:{VV_int : int | []};
+             n_main:{VV_int : int | []};
+             g_main:{VV_ptr_A22 : ptr(A22) | []};
+             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             A18#Ix#0:{VV_ptr_A26 : ptr(A26) | [k_34]}] 
+     reft {VV_ptr_A26 : ptr(A26) | [k_34]} 
+      
+     
+//solution: k_35 := [((VV_ptr_A18 != 0) => && [(0 < VV_ptr_A18) ; (BLOCK_BEGIN([VV_ptr_A18]) <= VV_ptr_A18) ; (VV_ptr_A18 < BLOCK_END([VV_ptr_A18]))]);((VV_ptr_A18 != 0) => ((BLOCK_END([VV_ptr_A18]) - VV_ptr_A18) >= 4));((VV_ptr_A18 + (4 * tmp_main__SSA__blk_0_1)) <= BLOCK_END([VV_ptr_A18]));((VV_ptr_A18 + (4 * tmp_main)) <= BLOCK_END([VV_ptr_A18]));((VV_ptr_A18 + (4 * n_main__SSA__blk_0_1)) <= BLOCK_END([VV_ptr_A18]));((VV_ptr_A18 + (4 * n_main)) <= BLOCK_END([VV_ptr_A18]));(VV_ptr_A18 < BLOCK_END([VV_ptr_A18]));(0 < VV_ptr_A18);((VV_ptr_A18 != 0) => (VV_ptr_A18 = BLOCK_BEGIN([VV_ptr_A18])));(0 <= VV_ptr_A18);(VV_ptr_A18 = 0);(VV_ptr_A18 = BLOCK_BEGIN([VV_ptr_A18]));(BLOCK_BEGIN([VV_ptr_A18]) <= VV_ptr_A18);(UNCHECKED([VV_ptr_A18]) = 1);(BLOCK_END([VV_ptr_A18]) >= (BLOCK_BEGIN([VV_ptr_A18]) + tmp_main__SSA__blk_0_1));(BLOCK_END([VV_ptr_A18]) >= (BLOCK_BEGIN([VV_ptr_A18]) + tmp_main));(BLOCK_END([VV_ptr_A18]) >= (BLOCK_BEGIN([VV_ptr_A18]) + n_main__SSA__blk_0_1));(BLOCK_END([VV_ptr_A18]) >= (BLOCK_BEGIN([VV_ptr_A18]) + n_main))] 
+
+//solution: k_34 := [((VV_ptr_A26 != 0) => && [(0 < VV_ptr_A26) ; (BLOCK_BEGIN([VV_ptr_A26]) <= VV_ptr_A26) ; (VV_ptr_A26 < BLOCK_END([VV_ptr_A26]))]);(BLOCK_END([VV_ptr_A26]) = BLOCK_END([A18#Ix#0]));((VV_ptr_A26 != 0) => ((BLOCK_END([VV_ptr_A26]) - VV_ptr_A26) >= 4));((VV_ptr_A26 + (4 * tmp_main)) <= BLOCK_END([VV_ptr_A26]));((VV_ptr_A26 + (4 * n_main)) <= BLOCK_END([VV_ptr_A26]));(VV_ptr_A26 < BLOCK_END([VV_ptr_A26]));(0 < VV_ptr_A26);(BLOCK_BEGIN([VV_ptr_A26]) = BLOCK_BEGIN([A18#Ix#0]));((VV_ptr_A26 != 0) => (VV_ptr_A26 = BLOCK_BEGIN([VV_ptr_A26])));(0 <= VV_ptr_A26);(VV_ptr_A26 = 0);(VV_ptr_A26 = BLOCK_BEGIN([VV_ptr_A26]));(BLOCK_BEGIN([VV_ptr_A26]) <= VV_ptr_A26);(UNCHECKED([VV_ptr_A26]) = 1);(BLOCK_END([VV_ptr_A26]) >= (BLOCK_BEGIN([VV_ptr_A26]) + tmp_main));(BLOCK_END([VV_ptr_A26]) >= (BLOCK_BEGIN([VV_ptr_A26]) + n_main))] 
+
+//solution: k_33 := [(0 <= VV_int);(1 = 0);(VV_int < tmp_main);(VV_int < n_main);(0 < VV_int);(VV_int <= tmp_main);(VV_int <= n_main);(VV_int = 0);(VV_int > tmp_main);(VV_int > n_main);(VV_int >= tmp_main);(VV_int >= n_main)] 
+
+//solution: k_32 := [(0 <= VV_int);(1 = 0);(VV_int < numvert_MakeGraph);(VV_int < i_MakeGraph__SSA__phi_3);(VV_int < i_MakeGraph__SSA__blk_0_1);(VV_int < i_MakeGraph);(0 < VV_int);(VV_int <= numvert_MakeGraph);(VV_int <= i_MakeGraph__SSA__phi_3);(VV_int <= i_MakeGraph__SSA__blk_0_1);(VV_int <= i_MakeGraph);(VV_int = 0);(VV_int > numvert_MakeGraph);(VV_int > i_MakeGraph__SSA__phi_3);(VV_int > i_MakeGraph__SSA__blk_0_1);(VV_int > i_MakeGraph);(VV_int >= numvert_MakeGraph);(VV_int >= i_MakeGraph__SSA__phi_3);(VV_int >= i_MakeGraph__SSA__blk_0_1);(VV_int >= i_MakeGraph)] 
+
+//solution: k_31 := [((VV_ptr_A10 != 0) => && [(0 < VV_ptr_A10) ; (BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10) ; (VV_ptr_A10 < BLOCK_END([VV_ptr_A10]))]);(BLOCK_END([VV_ptr_A10]) = BLOCK_END([vf_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([lqn#0]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([FINAL0]));((VV_ptr_A10 != 0) => ((BLOCK_END([VV_ptr_A10]) - VV_ptr_A10) >= 4));((VV_ptr_A10 + (4 * numvert_MakeGraph)) <= BLOCK_END([VV_ptr_A10]));((VV_ptr_A10 + (4 * i_MakeGraph__SSA__phi_3)) <= BLOCK_END([VV_ptr_A10]));((VV_ptr_A10 + (4 * i_MakeGraph__SSA__blk_0_1)) <= BLOCK_END([VV_ptr_A10]));((VV_ptr_A10 + (4 * i_MakeGraph)) <= BLOCK_END([VV_ptr_A10]));(VV_ptr_A10 < BLOCK_END([VV_ptr_A10]));(0 < VV_ptr_A10);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([vf_MakeGraph]));(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([lqn#0]));(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([FINAL0]));((VV_ptr_A10 != 0) => (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10])));(0 <= VV_ptr_A10);(VV_ptr_A10 = 0);(VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]));(BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10);(UNCHECKED([VV_ptr_A10]) = 1);(BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + numvert_MakeGraph));(BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + i_MakeGraph__SSA__phi_3));(BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + i_MakeGraph__SSA__blk_0_1));(BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + i_MakeGraph))] 
+
+//solution: k_30 := [((VV_ptr_A10 != 0) => && [(0 < VV_ptr_A10) ; (BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10) ; (VV_ptr_A10 < BLOCK_END([VV_ptr_A10]))]);(BLOCK_END([VV_ptr_A10]) = BLOCK_END([vf_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([lqn#0]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([FINAL0]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([C46#Ix#0]));((VV_ptr_A10 != 0) => ((BLOCK_END([VV_ptr_A10]) - VV_ptr_A10) >= 4));((VV_ptr_A10 + (4 * numvert_MakeGraph)) <= BLOCK_END([VV_ptr_A10]));((VV_ptr_A10 + (4 * i_MakeGraph__SSA__phi_3)) <= BLOCK_END([VV_ptr_A10]));((VV_ptr_A10 + (4 * i_MakeGraph__SSA__blk_0_1)) <= BLOCK_END([VV_ptr_A10]));((VV_ptr_A10 + (4 * i_MakeGraph)) <= BLOCK_END([VV_ptr_A10]));(VV_ptr_A10 < BLOCK_END([VV_ptr_A10]));(0 < VV_ptr_A10);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([vf_MakeGraph]));(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1]));(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([lqn#0]));(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([FINAL0]));(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([C46#Ix#0]));((VV_ptr_A10 != 0) => (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10])));(0 <= VV_ptr_A10);(VV_ptr_A10 = 0);(VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]));(BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10);(UNCHECKED([VV_ptr_A10]) = 1);(BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + numvert_MakeGraph));(BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + i_MakeGraph__SSA__phi_3));(BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + i_MakeGraph__SSA__blk_0_1));(BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + i_MakeGraph))] 
+
+//solution: k_29 := [((VV_ptr_A10 != 0) => && [(0 < VV_ptr_A10) ; (BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10) ; (VV_ptr_A10 < BLOCK_END([VV_ptr_A10]))]);(BLOCK_END([VV_ptr_A10]) = BLOCK_END([vf_MakeGraph]));(BLOCK_END([VV_ptr_A10]) = BLOCK_END([A9#Ix#0]));((VV_ptr_A10 != 0) => ((BLOCK_END([VV_ptr_A10]) - VV_ptr_A10) >= 4));((VV_ptr_A10 + (4 * numvert_MakeGraph)) <= BLOCK_END([VV_ptr_A10]));((VV_ptr_A10 + (4 * i_MakeGraph)) <= BLOCK_END([VV_ptr_A10]));(VV_ptr_A10 < BLOCK_END([VV_ptr_A10]));(0 < VV_ptr_A10);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([vf_MakeGraph]));(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([A9#Ix#0]));((VV_ptr_A10 != 0) => (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10])));(0 <= VV_ptr_A10);(VV_ptr_A10 = 0);(VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]));(BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10);(UNCHECKED([VV_ptr_A10]) = 1);(BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + numvert_MakeGraph));(BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + i_MakeGraph))] 
+
+//solution: k_28 := [(0 <= VV_int);(1 = 0);(VV_int < numvert_MakeGraph);(VV_int < i_MakeGraph);(0 < VV_int);(VV_int <= numvert_MakeGraph);(VV_int <= i_MakeGraph);(VV_int = 0);(VV_int > numvert_MakeGraph);(VV_int > i_MakeGraph);(VV_int >= numvert_MakeGraph);(VV_int >= i_MakeGraph)] 
+
+//solution: k_27 := [(0 <= VV_int);(1 = 0);(VV_int < numvert_MakeGraph);(0 < VV_int);(VV_int <= numvert_MakeGraph);(VV_int = 0);(VV_int > numvert_MakeGraph);(VV_int >= numvert_MakeGraph)] 
+
+//solution: k_26 := [((VV_ptr_A9 != 0) => && [(0 < VV_ptr_A9) ; (BLOCK_BEGIN([VV_ptr_A9]) <= VV_ptr_A9) ; (VV_ptr_A9 < BLOCK_END([VV_ptr_A9]))]);((VV_ptr_A9 != 0) => ((BLOCK_END([VV_ptr_A9]) - VV_ptr_A9) >= 4));((VV_ptr_A9 + (4 * numvert_MakeGraph)) <= BLOCK_END([VV_ptr_A9]));(VV_ptr_A9 < BLOCK_END([VV_ptr_A9]));(0 < VV_ptr_A9);((VV_ptr_A9 != 0) => (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9])));(0 <= VV_ptr_A9);(VV_ptr_A9 = 0);(VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]));(BLOCK_BEGIN([VV_ptr_A9]) <= VV_ptr_A9);(UNCHECKED([VV_ptr_A9]) = 1);(BLOCK_END([VV_ptr_A9]) >= (BLOCK_BEGIN([VV_ptr_A9]) + numvert_MakeGraph))] 
+
+//solution: k_25 := [((VV_ptr_A10 != 0) => && [(0 < VV_ptr_A10) ; (BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10) ; (VV_ptr_A10 < BLOCK_END([VV_ptr_A10]))]);(BLOCK_END([VV_ptr_A10]) = BLOCK_END([A9#Ix#0]));((VV_ptr_A10 != 0) => ((BLOCK_END([VV_ptr_A10]) - VV_ptr_A10) >= 4));((VV_ptr_A10 + (4 * numvert_MakeGraph)) <= BLOCK_END([VV_ptr_A10]));(VV_ptr_A10 < BLOCK_END([VV_ptr_A10]));(0 < VV_ptr_A10);(BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([A9#Ix#0]));((VV_ptr_A10 != 0) => (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10])));(0 <= VV_ptr_A10);(VV_ptr_A10 = 0);(VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]));(BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10);(UNCHECKED([VV_ptr_A10]) = 1);(BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + numvert_MakeGraph))] 
+
+//solution: k_24 := [(0 <= VV_int);(1 = 0);(VV_int < numvert_MakeGraph);(0 < VV_int);(VV_int <= numvert_MakeGraph);(VV_int = 0);(VV_int > numvert_MakeGraph);(VV_int >= numvert_MakeGraph)] 
+
+//solution: k_23 := [(0 <= VV_int);(1 = 0);(0 < VV_int);(VV_int = 0)] 
+
+solution: k_35 := [((BLOCK_END([VV_ptr_A18]) >= (BLOCK_BEGIN([VV_ptr_A18]) + n_main)), SIZE0[~A0:=n_main][VV_ptr_0:=VV_ptr_A18]);((BLOCK_END([VV_ptr_A18]) >= (BLOCK_BEGIN([VV_ptr_A18]) + n_main__SSA__blk_0_1)), SIZE0[~A0:=n_main__SSA__blk_0_1][VV_ptr_0:=VV_ptr_A18]);((BLOCK_END([VV_ptr_A18]) >= (BLOCK_BEGIN([VV_ptr_A18]) + tmp_main)), SIZE0[~A0:=tmp_main][VV_ptr_0:=VV_ptr_A18]);((BLOCK_END([VV_ptr_A18]) >= (BLOCK_BEGIN([VV_ptr_A18]) + tmp_main__SSA__blk_0_1)), SIZE0[~A0:=tmp_main__SSA__blk_0_1][VV_ptr_0:=VV_ptr_A18]);((UNCHECKED([VV_ptr_A18]) = 1), UCH[VV_ptr_0:=VV_ptr_A18]);((BLOCK_BEGIN([VV_ptr_A18]) <= VV_ptr_A18), LB[VV_ptr_0:=VV_ptr_A18]);((VV_ptr_A18 = BLOCK_BEGIN([VV_ptr_A18])), ISBS[VV_ptr_0:=VV_ptr_A18]);((VV_ptr_A18 = 0), EQZ0[VV_ptr_0:=VV_ptr_A18]);((0 <= VV_ptr_A18), GTZP0[VV_ptr_0:=VV_ptr_A18]);(((VV_ptr_A18 != 0) => (VV_ptr_A18 = BLOCK_BEGIN([VV_ptr_A18]))), NULLorBEGIN[VV_ptr_0:=VV_ptr_A18]);((0 < VV_ptr_A18), GTZP[VV_ptr_0:=VV_ptr_A18]);((VV_ptr_A18 < BLOCK_END([VV_ptr_A18])), UB[VV_ptr_0:=VV_ptr_A18]);(((VV_ptr_A18 + (4 * n_main)) <= BLOCK_END([VV_ptr_A18])), SIZE[~A0:=n_main][VV_ptr_0:=VV_ptr_A18]);(((VV_ptr_A18 + (4 * n_main__SSA__blk_0_1)) <= BLOCK_END([VV_ptr_A18])), SIZE[~A0:=n_main__SSA__blk_0_1][VV_ptr_0:=VV_ptr_A18]);(((VV_ptr_A18 + (4 * tmp_main)) <= BLOCK_END([VV_ptr_A18])), SIZE[~A0:=tmp_main][VV_ptr_0:=VV_ptr_A18]);(((VV_ptr_A18 + (4 * tmp_main__SSA__blk_0_1)) <= BLOCK_END([VV_ptr_A18])), SIZE[~A0:=tmp_main__SSA__blk_0_1][VV_ptr_0:=VV_ptr_A18]);(((VV_ptr_A18 != 0) => ((BLOCK_END([VV_ptr_A18]) - VV_ptr_A18) >= 4)), WORDSIZE[VV_ptr_0:=VV_ptr_A18]);(((VV_ptr_A18 != 0) => && [(0 < VV_ptr_A18) ; (BLOCK_BEGIN([VV_ptr_A18]) <= VV_ptr_A18) ; (VV_ptr_A18 < BLOCK_END([VV_ptr_A18]))]), NULLorVALID[VV_ptr_0:=VV_ptr_A18])] 
+
+solution: k_34 := [((BLOCK_END([VV_ptr_A26]) >= (BLOCK_BEGIN([VV_ptr_A26]) + n_main)), SIZE0[~A0:=n_main][VV_ptr_0:=VV_ptr_A26]);((BLOCK_END([VV_ptr_A26]) >= (BLOCK_BEGIN([VV_ptr_A26]) + tmp_main)), SIZE0[~A0:=tmp_main][VV_ptr_0:=VV_ptr_A26]);((UNCHECKED([VV_ptr_A26]) = 1), UCH[VV_ptr_0:=VV_ptr_A26]);((BLOCK_BEGIN([VV_ptr_A26]) <= VV_ptr_A26), LB[VV_ptr_0:=VV_ptr_A26]);((VV_ptr_A26 = BLOCK_BEGIN([VV_ptr_A26])), ISBS[VV_ptr_0:=VV_ptr_A26]);((VV_ptr_A26 = 0), EQZ0[VV_ptr_0:=VV_ptr_A26]);((0 <= VV_ptr_A26), GTZP0[VV_ptr_0:=VV_ptr_A26]);(((VV_ptr_A26 != 0) => (VV_ptr_A26 = BLOCK_BEGIN([VV_ptr_A26]))), NULLorBEGIN[VV_ptr_0:=VV_ptr_A26]);((BLOCK_BEGIN([VV_ptr_A26]) = BLOCK_BEGIN([A18#Ix#0])), BEGIN[~A0:=A18#Ix#0][VV_ptr_0:=VV_ptr_A26]);((0 < VV_ptr_A26), GTZP[VV_ptr_0:=VV_ptr_A26]);((VV_ptr_A26 < BLOCK_END([VV_ptr_A26])), UB[VV_ptr_0:=VV_ptr_A26]);(((VV_ptr_A26 + (4 * n_main)) <= BLOCK_END([VV_ptr_A26])), SIZE[~A0:=n_main][VV_ptr_0:=VV_ptr_A26]);(((VV_ptr_A26 + (4 * tmp_main)) <= BLOCK_END([VV_ptr_A26])), SIZE[~A0:=tmp_main][VV_ptr_0:=VV_ptr_A26]);(((VV_ptr_A26 != 0) => ((BLOCK_END([VV_ptr_A26]) - VV_ptr_A26) >= 4)), WORDSIZE[VV_ptr_0:=VV_ptr_A26]);((BLOCK_END([VV_ptr_A26]) = BLOCK_END([A18#Ix#0])), END[~A0:=A18#Ix#0][VV_ptr_0:=VV_ptr_A26]);(((VV_ptr_A26 != 0) => && [(0 < VV_ptr_A26) ; (BLOCK_BEGIN([VV_ptr_A26]) <= VV_ptr_A26) ; (VV_ptr_A26 < BLOCK_END([VV_ptr_A26]))]), NULLorVALID[VV_ptr_0:=VV_ptr_A26])] 
+
+solution: k_33 := [((VV_int >= n_main), GEQ[~A0:=n_main]);((VV_int >= tmp_main), GEQ[~A0:=tmp_main]);((VV_int > n_main), GT[~A0:=n_main]);((VV_int > tmp_main), GT[~A0:=tmp_main]);((VV_int = 0), EQZ);((VV_int <= n_main), LEQ[~A0:=n_main]);((VV_int <= tmp_main), LEQ[~A0:=tmp_main]);((0 < VV_int), GTZ);((VV_int < n_main), LT[~A0:=n_main]);((VV_int < tmp_main), LT[~A0:=tmp_main]);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
+
+solution: k_32 := [((VV_int >= i_MakeGraph), GEQ[~A0:=i_MakeGraph]);((VV_int >= i_MakeGraph__SSA__blk_0_1), GEQ[~A0:=i_MakeGraph__SSA__blk_0_1]);((VV_int >= i_MakeGraph__SSA__phi_3), GEQ[~A0:=i_MakeGraph__SSA__phi_3]);((VV_int >= numvert_MakeGraph), GEQ[~A0:=numvert_MakeGraph]);((VV_int > i_MakeGraph), GT[~A0:=i_MakeGraph]);((VV_int > i_MakeGraph__SSA__blk_0_1), GT[~A0:=i_MakeGraph__SSA__blk_0_1]);((VV_int > i_MakeGraph__SSA__phi_3), GT[~A0:=i_MakeGraph__SSA__phi_3]);((VV_int > numvert_MakeGraph), GT[~A0:=numvert_MakeGraph]);((VV_int = 0), EQZ);((VV_int <= i_MakeGraph), LEQ[~A0:=i_MakeGraph]);((VV_int <= i_MakeGraph__SSA__blk_0_1), LEQ[~A0:=i_MakeGraph__SSA__blk_0_1]);((VV_int <= i_MakeGraph__SSA__phi_3), LEQ[~A0:=i_MakeGraph__SSA__phi_3]);((VV_int <= numvert_MakeGraph), LEQ[~A0:=numvert_MakeGraph]);((0 < VV_int), GTZ);((VV_int < i_MakeGraph), LT[~A0:=i_MakeGraph]);((VV_int < i_MakeGraph__SSA__blk_0_1), LT[~A0:=i_MakeGraph__SSA__blk_0_1]);((VV_int < i_MakeGraph__SSA__phi_3), LT[~A0:=i_MakeGraph__SSA__phi_3]);((VV_int < numvert_MakeGraph), LT[~A0:=numvert_MakeGraph]);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
+
+solution: k_31 := [((BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + i_MakeGraph)), SIZE0[~A0:=i_MakeGraph][VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + i_MakeGraph__SSA__blk_0_1)), SIZE0[~A0:=i_MakeGraph__SSA__blk_0_1][VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + i_MakeGraph__SSA__phi_3)), SIZE0[~A0:=i_MakeGraph__SSA__phi_3][VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + numvert_MakeGraph)), SIZE0[~A0:=numvert_MakeGraph][VV_ptr_0:=VV_ptr_A10]);((UNCHECKED([VV_ptr_A10]) = 1), UCH[VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10), LB[VV_ptr_0:=VV_ptr_A10]);((VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10])), ISBS[VV_ptr_0:=VV_ptr_A10]);((VV_ptr_A10 = 0), EQZ0[VV_ptr_0:=VV_ptr_A10]);((0 <= VV_ptr_A10), GTZP0[VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 != 0) => (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))), NULLorBEGIN[VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([FINAL0])), BEGIN[~A0:=FINAL0][VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([lqn#0])), BEGIN[~A0:=lqn#0][VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1])), BEGIN[~A0:=tmp___0_MakeGraph__SSA__blk_0_1][VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([vf_MakeGraph])), BEGIN[~A0:=vf_MakeGraph][VV_ptr_0:=VV_ptr_A10]);((0 < VV_ptr_A10), GTZP[VV_ptr_0:=VV_ptr_A10]);((VV_ptr_A10 < BLOCK_END([VV_ptr_A10])), UB[VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 + (4 * i_MakeGraph)) <= BLOCK_END([VV_ptr_A10])), SIZE[~A0:=i_MakeGraph][VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 + (4 * i_MakeGraph__SSA__blk_0_1)) <= BLOCK_END([VV_ptr_A10])), SIZE[~A0:=i_MakeGraph__SSA__blk_0_1][VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 + (4 * i_MakeGraph__SSA__phi_3)) <= BLOCK_END([VV_ptr_A10])), SIZE[~A0:=i_MakeGraph__SSA__phi_3][VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 + (4 * numvert_MakeGraph)) <= BLOCK_END([VV_ptr_A10])), SIZE[~A0:=numvert_MakeGraph][VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 != 0) => ((BLOCK_END([VV_ptr_A10]) - VV_ptr_A10) >= 4)), WORDSIZE[VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) = BLOCK_END([FINAL0])), END[~A0:=FINAL0][VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) = BLOCK_END([lqn#0])), END[~A0:=lqn#0][VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1])), END[~A0:=tmp___0_MakeGraph__SSA__blk_0_1][VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) = BLOCK_END([vf_MakeGraph])), END[~A0:=vf_MakeGraph][VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 != 0) => && [(0 < VV_ptr_A10) ; (BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10) ; (VV_ptr_A10 < BLOCK_END([VV_ptr_A10]))]), NULLorVALID[VV_ptr_0:=VV_ptr_A10])] 
+
+solution: k_30 := [((BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + i_MakeGraph)), SIZE0[~A0:=i_MakeGraph][VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + i_MakeGraph__SSA__blk_0_1)), SIZE0[~A0:=i_MakeGraph__SSA__blk_0_1][VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + i_MakeGraph__SSA__phi_3)), SIZE0[~A0:=i_MakeGraph__SSA__phi_3][VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + numvert_MakeGraph)), SIZE0[~A0:=numvert_MakeGraph][VV_ptr_0:=VV_ptr_A10]);((UNCHECKED([VV_ptr_A10]) = 1), UCH[VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10), LB[VV_ptr_0:=VV_ptr_A10]);((VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10])), ISBS[VV_ptr_0:=VV_ptr_A10]);((VV_ptr_A10 = 0), EQZ0[VV_ptr_0:=VV_ptr_A10]);((0 <= VV_ptr_A10), GTZP0[VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 != 0) => (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))), NULLorBEGIN[VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([C46#Ix#0])), BEGIN[~A0:=C46#Ix#0][VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([FINAL0])), BEGIN[~A0:=FINAL0][VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([lqn#0])), BEGIN[~A0:=lqn#0][VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([tmp___0_MakeGraph__SSA__blk_0_1])), BEGIN[~A0:=tmp___0_MakeGraph__SSA__blk_0_1][VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([vf_MakeGraph])), BEGIN[~A0:=vf_MakeGraph][VV_ptr_0:=VV_ptr_A10]);((0 < VV_ptr_A10), GTZP[VV_ptr_0:=VV_ptr_A10]);((VV_ptr_A10 < BLOCK_END([VV_ptr_A10])), UB[VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 + (4 * i_MakeGraph)) <= BLOCK_END([VV_ptr_A10])), SIZE[~A0:=i_MakeGraph][VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 + (4 * i_MakeGraph__SSA__blk_0_1)) <= BLOCK_END([VV_ptr_A10])), SIZE[~A0:=i_MakeGraph__SSA__blk_0_1][VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 + (4 * i_MakeGraph__SSA__phi_3)) <= BLOCK_END([VV_ptr_A10])), SIZE[~A0:=i_MakeGraph__SSA__phi_3][VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 + (4 * numvert_MakeGraph)) <= BLOCK_END([VV_ptr_A10])), SIZE[~A0:=numvert_MakeGraph][VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 != 0) => ((BLOCK_END([VV_ptr_A10]) - VV_ptr_A10) >= 4)), WORDSIZE[VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) = BLOCK_END([C46#Ix#0])), END[~A0:=C46#Ix#0][VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) = BLOCK_END([FINAL0])), END[~A0:=FINAL0][VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) = BLOCK_END([lqn#0])), END[~A0:=lqn#0][VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) = BLOCK_END([tmp___0_MakeGraph__SSA__blk_0_1])), END[~A0:=tmp___0_MakeGraph__SSA__blk_0_1][VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) = BLOCK_END([vf_MakeGraph])), END[~A0:=vf_MakeGraph][VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 != 0) => && [(0 < VV_ptr_A10) ; (BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10) ; (VV_ptr_A10 < BLOCK_END([VV_ptr_A10]))]), NULLorVALID[VV_ptr_0:=VV_ptr_A10])] 
+
+solution: k_29 := [((BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + i_MakeGraph)), SIZE0[~A0:=i_MakeGraph][VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + numvert_MakeGraph)), SIZE0[~A0:=numvert_MakeGraph][VV_ptr_0:=VV_ptr_A10]);((UNCHECKED([VV_ptr_A10]) = 1), UCH[VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10), LB[VV_ptr_0:=VV_ptr_A10]);((VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10])), ISBS[VV_ptr_0:=VV_ptr_A10]);((VV_ptr_A10 = 0), EQZ0[VV_ptr_0:=VV_ptr_A10]);((0 <= VV_ptr_A10), GTZP0[VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 != 0) => (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))), NULLorBEGIN[VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([A9#Ix#0])), BEGIN[~A0:=A9#Ix#0][VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([vf_MakeGraph])), BEGIN[~A0:=vf_MakeGraph][VV_ptr_0:=VV_ptr_A10]);((0 < VV_ptr_A10), GTZP[VV_ptr_0:=VV_ptr_A10]);((VV_ptr_A10 < BLOCK_END([VV_ptr_A10])), UB[VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 + (4 * i_MakeGraph)) <= BLOCK_END([VV_ptr_A10])), SIZE[~A0:=i_MakeGraph][VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 + (4 * numvert_MakeGraph)) <= BLOCK_END([VV_ptr_A10])), SIZE[~A0:=numvert_MakeGraph][VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 != 0) => ((BLOCK_END([VV_ptr_A10]) - VV_ptr_A10) >= 4)), WORDSIZE[VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) = BLOCK_END([A9#Ix#0])), END[~A0:=A9#Ix#0][VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) = BLOCK_END([vf_MakeGraph])), END[~A0:=vf_MakeGraph][VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 != 0) => && [(0 < VV_ptr_A10) ; (BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10) ; (VV_ptr_A10 < BLOCK_END([VV_ptr_A10]))]), NULLorVALID[VV_ptr_0:=VV_ptr_A10])] 
+
+solution: k_28 := [((VV_int >= i_MakeGraph), GEQ[~A0:=i_MakeGraph]);((VV_int >= numvert_MakeGraph), GEQ[~A0:=numvert_MakeGraph]);((VV_int > i_MakeGraph), GT[~A0:=i_MakeGraph]);((VV_int > numvert_MakeGraph), GT[~A0:=numvert_MakeGraph]);((VV_int = 0), EQZ);((VV_int <= i_MakeGraph), LEQ[~A0:=i_MakeGraph]);((VV_int <= numvert_MakeGraph), LEQ[~A0:=numvert_MakeGraph]);((0 < VV_int), GTZ);((VV_int < i_MakeGraph), LT[~A0:=i_MakeGraph]);((VV_int < numvert_MakeGraph), LT[~A0:=numvert_MakeGraph]);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
+
+solution: k_27 := [((VV_int >= numvert_MakeGraph), GEQ[~A0:=numvert_MakeGraph]);((VV_int > numvert_MakeGraph), GT[~A0:=numvert_MakeGraph]);((VV_int = 0), EQZ);((VV_int <= numvert_MakeGraph), LEQ[~A0:=numvert_MakeGraph]);((0 < VV_int), GTZ);((VV_int < numvert_MakeGraph), LT[~A0:=numvert_MakeGraph]);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
+
+solution: k_26 := [((BLOCK_END([VV_ptr_A9]) >= (BLOCK_BEGIN([VV_ptr_A9]) + numvert_MakeGraph)), SIZE0[~A0:=numvert_MakeGraph][VV_ptr_0:=VV_ptr_A9]);((UNCHECKED([VV_ptr_A9]) = 1), UCH[VV_ptr_0:=VV_ptr_A9]);((BLOCK_BEGIN([VV_ptr_A9]) <= VV_ptr_A9), LB[VV_ptr_0:=VV_ptr_A9]);((VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9])), ISBS[VV_ptr_0:=VV_ptr_A9]);((VV_ptr_A9 = 0), EQZ0[VV_ptr_0:=VV_ptr_A9]);((0 <= VV_ptr_A9), GTZP0[VV_ptr_0:=VV_ptr_A9]);(((VV_ptr_A9 != 0) => (VV_ptr_A9 = BLOCK_BEGIN([VV_ptr_A9]))), NULLorBEGIN[VV_ptr_0:=VV_ptr_A9]);((0 < VV_ptr_A9), GTZP[VV_ptr_0:=VV_ptr_A9]);((VV_ptr_A9 < BLOCK_END([VV_ptr_A9])), UB[VV_ptr_0:=VV_ptr_A9]);(((VV_ptr_A9 + (4 * numvert_MakeGraph)) <= BLOCK_END([VV_ptr_A9])), SIZE[~A0:=numvert_MakeGraph][VV_ptr_0:=VV_ptr_A9]);(((VV_ptr_A9 != 0) => ((BLOCK_END([VV_ptr_A9]) - VV_ptr_A9) >= 4)), WORDSIZE[VV_ptr_0:=VV_ptr_A9]);(((VV_ptr_A9 != 0) => && [(0 < VV_ptr_A9) ; (BLOCK_BEGIN([VV_ptr_A9]) <= VV_ptr_A9) ; (VV_ptr_A9 < BLOCK_END([VV_ptr_A9]))]), NULLorVALID[VV_ptr_0:=VV_ptr_A9])] 
+
+solution: k_25 := [((BLOCK_END([VV_ptr_A10]) >= (BLOCK_BEGIN([VV_ptr_A10]) + numvert_MakeGraph)), SIZE0[~A0:=numvert_MakeGraph][VV_ptr_0:=VV_ptr_A10]);((UNCHECKED([VV_ptr_A10]) = 1), UCH[VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10), LB[VV_ptr_0:=VV_ptr_A10]);((VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10])), ISBS[VV_ptr_0:=VV_ptr_A10]);((VV_ptr_A10 = 0), EQZ0[VV_ptr_0:=VV_ptr_A10]);((0 <= VV_ptr_A10), GTZP0[VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 != 0) => (VV_ptr_A10 = BLOCK_BEGIN([VV_ptr_A10]))), NULLorBEGIN[VV_ptr_0:=VV_ptr_A10]);((BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([A9#Ix#0])), BEGIN[~A0:=A9#Ix#0][VV_ptr_0:=VV_ptr_A10]);((0 < VV_ptr_A10), GTZP[VV_ptr_0:=VV_ptr_A10]);((VV_ptr_A10 < BLOCK_END([VV_ptr_A10])), UB[VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 + (4 * numvert_MakeGraph)) <= BLOCK_END([VV_ptr_A10])), SIZE[~A0:=numvert_MakeGraph][VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 != 0) => ((BLOCK_END([VV_ptr_A10]) - VV_ptr_A10) >= 4)), WORDSIZE[VV_ptr_0:=VV_ptr_A10]);((BLOCK_END([VV_ptr_A10]) = BLOCK_END([A9#Ix#0])), END[~A0:=A9#Ix#0][VV_ptr_0:=VV_ptr_A10]);(((VV_ptr_A10 != 0) => && [(0 < VV_ptr_A10) ; (BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10) ; (VV_ptr_A10 < BLOCK_END([VV_ptr_A10]))]), NULLorVALID[VV_ptr_0:=VV_ptr_A10])] 
+
+solution: k_24 := [((VV_int >= numvert_MakeGraph), GEQ[~A0:=numvert_MakeGraph]);((VV_int > numvert_MakeGraph), GT[~A0:=numvert_MakeGraph]);((VV_int = 0), EQZ);((VV_int <= numvert_MakeGraph), LEQ[~A0:=numvert_MakeGraph]);((0 < VV_int), GTZ);((VV_int < numvert_MakeGraph), LT[~A0:=numvert_MakeGraph]);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
+
+solution: k_23 := [((VV_int = 0), EQZ);((0 < VV_int), GTZ);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
+
+//QUALIFIERS 
+
+qualif WORDSIZE(VV_ptr_0:ptr(0)):((VV_ptr_0 != 0) => ((BLOCK_END([VV_ptr_0]) - VV_ptr_0) >= 4))
+      
+qualif UCH(VV_ptr_0:ptr(0)):(UNCHECKED([VV_ptr_0]) = 1)
+      
+qualif UB(VV_ptr_0:ptr(0)):(VV_ptr_0 < BLOCK_END([VV_ptr_0]))
+      
+qualif SIZE0(VV_ptr_0:ptr(0)):(BLOCK_END([VV_ptr_0]) >= (BLOCK_BEGIN([VV_ptr_0]) + ~A0))
+      
+qualif SIZE(VV_ptr_0:ptr(0)):((VV_ptr_0 + (4 * ~A0)) <= BLOCK_END([VV_ptr_0]))
+      
+qualif NULLorVALID(VV_ptr_0:ptr(0)):((VV_ptr_0 != 0) => && [(0 < VV_ptr_0) ; (BLOCK_BEGIN([VV_ptr_0]) <= VV_ptr_0) ; (VV_ptr_0 < BLOCK_END([VV_ptr_0]))])
+      
+qualif NULLorBEGIN(VV_ptr_0:ptr(0)):((VV_ptr_0 != 0) => (VV_ptr_0 = BLOCK_BEGIN([VV_ptr_0])))
+      
+qualif LT(VV_int:int):(VV_int < ~A0)
+      
+qualif LEQ(VV_int:int):(VV_int <= ~A0)
+      
+qualif LB(VV_ptr_0:ptr(0)):(BLOCK_BEGIN([VV_ptr_0]) <= VV_ptr_0)
+      
+qualif ISBS(VV_ptr_0:ptr(0)):(VV_ptr_0 = BLOCK_BEGIN([VV_ptr_0]))
+      
+qualif GTZP0(VV_ptr_0:ptr(0)):(0 <= VV_ptr_0)
+      
+qualif GTZP(VV_ptr_0:ptr(0)):(0 < VV_ptr_0)
+      
+qualif GTZ(VV_int:int):(0 < VV_int)
+      
+qualif GT(VV_int:int):(VV_int > ~A0)
+      
+qualif GEZ(VV_int:int):(0 <= VV_int)
+      
+qualif GEQ(VV_int:int):(VV_int >= ~A0)
+      
+qualif FALSE(VV_int:int):(1 = 0)
+      
+qualif EQZ0(VV_ptr_0:ptr(0)):(VV_ptr_0 = 0)
+      
+qualif EQZ(VV_int:int):(VV_int = 0)
+      
+qualif END(VV_ptr_0:ptr(0)):(BLOCK_END([VV_ptr_0]) = BLOCK_END([~A0]))
+      
+qualif BEGIN(VV_ptr_0:ptr(0)):(BLOCK_BEGIN([VV_ptr_0]) = BLOCK_BEGIN([~A0]))
+      
+ 
