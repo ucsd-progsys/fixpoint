@@ -461,7 +461,7 @@ constraint:
        tmp___4_main:{VV_int : int | []};
        tmp___3_main__SSA__blk_0_1:{VV_int : int | [true]};
        tmp___3_main:{VV_int : int | []};
-       tmp___2_main__SSA__phi_4:{VV_int : int | []};
+       tmp___2_main__SSA__phi_4:{VV_int : int | [k_0]};
        tmp___2_main:{VV_int : int | []};
        tmp___0_main__SSA__blk_0_1:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        tmp___0_main:{VV_int : int | []};
@@ -493,7 +493,7 @@ constraint:
        tmp___4_main:{VV_int : int | []};
        tmp___3_main__SSA__blk_0_1:{VV_int : int | [true]};
        tmp___3_main:{VV_int : int | []};
-       tmp___2_main__SSA__phi_4:{VV_int : int | []};
+       tmp___2_main__SSA__phi_4:{VV_int : int | [k_0]};
        tmp___2_main:{VV_int : int | []};
        tmp___0_main__SSA__blk_0_1:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        tmp___0_main:{VV_int : int | []};

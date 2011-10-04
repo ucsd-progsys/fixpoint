@@ -6,7 +6,7 @@ del_dep: [2;8;-3;0] => *
 constraint:
  env  [tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
        tmp_main:{VV_int : int | []};
-       outp_main__SSA__phi_3:{VV_int : int | []};
+       outp_main__SSA__phi_3:{VV_int : int | [k_36]};
        outp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = outp0_main__SSA__blk_0_1)]};
        outp_main:{VV_int : int | []};
        outp0_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
@@ -23,7 +23,55 @@ constraint:
        inp_main:{VV_int : int | []};
        inp0_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        inp0_main:{VV_int : int | []};
-       bufferstep_main__SSA__phi_3:{VV_int : int | []};
+       bufferstep_main__SSA__phi_3:{VV_int : int | [k_35]};
+       bufferstep_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 1)]};
+       bufferstep_main:{VV_int : int | []};
+       __cil_tmp24_main:{VV_int : int | []};
+       __cil_tmp23_main:{VV_int : int | []};
+       __cil_tmp22_main:{VV_int : int | []};
+       __cil_tmp21_main:{VV_int : int | []};
+       __cil_tmp20_main:{VV_int : int | []};
+       __cil_tmp19_main:{VV_int : int | []};
+       __cil_tmp18_main:{VV_int : int | []};
+       __cil_tmp17_main:{VV_int : int | []};
+       __cil_tmp16_main:{VV_int : int | []};
+       __cil_tmp15_main:{VV_int : int | []};
+       __cil_tmp14_main:{VV_int : int | []};
+       __cil_tmp13_main:{VV_int : int | []};
+       __cil_tmp12_main:{VV_int : int | []};
+       __cil_tmp11_main:{VV_int : int | []};
+       __cil_tmp10_main:{VV_int : int | [(VV_int = ((0 < len_main__SSA__phi_3) ? 1 : 0))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd (~ ((__cil_tmp10_main != 0))) 
+ lhs {VV_int : int | [(VV_int = 0)]} 
+ rhs {VV_int : int | [k_33]} 
+ id 1 tag [2;2;-1000;0] //main 
+ 
+constraint:
+ env  [tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
+       tmp_main:{VV_int : int | []};
+       outp_main__SSA__phi_3:{VV_int : int | [k_36]};
+       outp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = outp0_main__SSA__blk_0_1)]};
+       outp_main:{VV_int : int | []};
+       outp0_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       outp0_main:{VV_int : int | []};
+       nsamples_main__SSA__blk_0_1:{VV_int : int | [(VV_int = (2 * n_main__SSA__blk_0_1))]};
+       nsamples_main:{VV_int : int | []};
+       n_main__SSA__blk_0_1:{VV_int : int | [(VV_int = (tmp_main__SSA__blk_0_1 : int))]};
+       n_main:{VV_int : int | []};
+       len_main__SSA__phi_3:{VV_int : int | [k_34]};
+       len_main__SSA__blk_0_1:{VV_int : int | [(VV_int = nsamples_main__SSA__blk_0_1)]};
+       len_main:{VV_int : int | []};
+       inp_main__SSA__phi_3:{VV_int : int | [k_37]};
+       inp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = inp0_main__SSA__blk_0_1)]};
+       inp_main:{VV_int : int | []};
+       inp0_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       inp0_main:{VV_int : int | []};
+       bufferstep_main__SSA__phi_3:{VV_int : int | [k_35]};
        bufferstep_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 1)]};
        bufferstep_main:{VV_int : int | []};
        __cil_tmp24_main:{VV_int : int | []};
@@ -54,7 +102,7 @@ constraint:
 constraint:
  env  [tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
        tmp_main:{VV_int : int | []};
-       outp_main__SSA__phi_3:{VV_int : int | []};
+       outp_main__SSA__phi_3:{VV_int : int | [k_36]};
        outp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = outp0_main__SSA__blk_0_1)]};
        outp_main:{VV_int : int | []};
        outp0_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
@@ -66,13 +114,13 @@ constraint:
        len_main__SSA__phi_3:{VV_int : int | [k_34]};
        len_main__SSA__blk_0_1:{VV_int : int | [(VV_int = nsamples_main__SSA__blk_0_1)]};
        len_main:{VV_int : int | []};
-       inp_main__SSA__phi_3:{VV_int : int | []};
+       inp_main__SSA__phi_3:{VV_int : int | [k_37]};
        inp_main__SSA__blk_12_1:{VV_int : int | [(VV_int = (inp_main__SSA__phi_3 + 1))]};
        inp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = inp0_main__SSA__blk_0_1)]};
        inp_main:{VV_int : int | []};
        inp0_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        inp0_main:{VV_int : int | []};
-       bufferstep_main__SSA__phi_3:{VV_int : int | []};
+       bufferstep_main__SSA__phi_3:{VV_int : int | [k_35]};
        bufferstep_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 1)]};
        bufferstep_main:{VV_int : int | []};
        __cil_tmp24_main:{VV_int : int | []};
@@ -115,7 +163,7 @@ constraint:
        len_main__SSA__phi_3:{VV_int : int | [k_34]};
        len_main__SSA__blk_0_1:{VV_int : int | [(VV_int = nsamples_main__SSA__blk_0_1)]};
        len_main:{VV_int : int | []};
-       inp_main__SSA__phi_3:{VV_int : int | []};
+       inp_main__SSA__phi_3:{VV_int : int | [k_37]};
        inp_main__SSA__blk_12_1:{VV_int : int | [(VV_int = (inp_main__SSA__phi_3 + 1))]};
        inp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = inp0_main__SSA__blk_0_1)]};
        inp_main:{VV_int : int | []};
@@ -340,7 +388,7 @@ constraint:
        len_main__SSA__phi_3:{VV_int : int | [k_34]};
        len_main__SSA__blk_0_1:{VV_int : int | [(VV_int = nsamples_main__SSA__blk_0_1)]};
        len_main:{VV_int : int | []};
-       inp_main__SSA__phi_3:{VV_int : int | []};
+       inp_main__SSA__phi_3:{VV_int : int | [k_37]};
        inp_main__SSA__blk_12_1:{VV_int : int | [(VV_int = (inp_main__SSA__phi_3 + 1))]};
        inp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = inp0_main__SSA__blk_0_1)]};
        inp_main:{VV_int : int | []};
@@ -377,8 +425,8 @@ constraint:
 constraint:
  env  [tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
        tmp_main:{VV_int : int | []};
-       outp_main__SSA__phi_3:{VV_int : int | []};
-       outp_main__SSA__phi_25:{VV_int : int | []};
+       outp_main__SSA__phi_3:{VV_int : int | [k_36]};
+       outp_main__SSA__phi_25:{VV_int : int | [k_38]};
        outp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = outp0_main__SSA__blk_0_1)]};
        outp_main:{VV_int : int | []};
        outp0_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
@@ -397,7 +445,7 @@ constraint:
        inp_main:{VV_int : int | []};
        inp0_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        inp0_main:{VV_int : int | []};
-       bufferstep_main__SSA__phi_3:{VV_int : int | []};
+       bufferstep_main__SSA__phi_3:{VV_int : int | [k_35]};
        bufferstep_main__SSA__blk_25_1:{VV_int : int | [(VV_int = (1 - bufferstep_main__SSA__phi_3))]};
        bufferstep_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 1)]};
        bufferstep_main:{VV_int : int | []};
@@ -429,7 +477,7 @@ constraint:
 constraint:
  env  [tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
        tmp_main:{VV_int : int | []};
-       outp_main__SSA__phi_3:{VV_int : int | []};
+       outp_main__SSA__phi_3:{VV_int : int | [k_36]};
        outp_main__SSA__phi_25:{VV_int : int | [k_38]};
        outp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = outp0_main__SSA__blk_0_1)]};
        outp_main:{VV_int : int | []};
@@ -443,13 +491,13 @@ constraint:
        len_main__SSA__blk_25_1:{VV_int : int | [(VV_int = (len_main__SSA__phi_3 - 1))]};
        len_main__SSA__blk_0_1:{VV_int : int | [(VV_int = nsamples_main__SSA__blk_0_1)]};
        len_main:{VV_int : int | []};
-       inp_main__SSA__phi_3:{VV_int : int | []};
+       inp_main__SSA__phi_3:{VV_int : int | [k_37]};
        inp_main__SSA__blk_12_1:{VV_int : int | [(VV_int = (inp_main__SSA__phi_3 + 1))]};
        inp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = inp0_main__SSA__blk_0_1)]};
        inp_main:{VV_int : int | []};
        inp0_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        inp0_main:{VV_int : int | []};
-       bufferstep_main__SSA__phi_3:{VV_int : int | []};
+       bufferstep_main__SSA__phi_3:{VV_int : int | [k_35]};
        bufferstep_main__SSA__blk_25_1:{VV_int : int | [(VV_int = (1 - bufferstep_main__SSA__phi_3))]};
        bufferstep_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 1)]};
        bufferstep_main:{VV_int : int | []};
@@ -481,8 +529,8 @@ constraint:
 constraint:
  env  [tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
        tmp_main:{VV_int : int | []};
-       outp_main__SSA__phi_3:{VV_int : int | []};
-       outp_main__SSA__phi_25:{VV_int : int | []};
+       outp_main__SSA__phi_3:{VV_int : int | [k_36]};
+       outp_main__SSA__phi_25:{VV_int : int | [k_38]};
        outp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = outp0_main__SSA__blk_0_1)]};
        outp_main:{VV_int : int | []};
        outp0_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
@@ -495,7 +543,7 @@ constraint:
        len_main__SSA__blk_25_1:{VV_int : int | [(VV_int = (len_main__SSA__phi_3 - 1))]};
        len_main__SSA__blk_0_1:{VV_int : int | [(VV_int = nsamples_main__SSA__blk_0_1)]};
        len_main:{VV_int : int | []};
-       inp_main__SSA__phi_3:{VV_int : int | []};
+       inp_main__SSA__phi_3:{VV_int : int | [k_37]};
        inp_main__SSA__blk_12_1:{VV_int : int | [(VV_int = (inp_main__SSA__phi_3 + 1))]};
        inp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = inp0_main__SSA__blk_0_1)]};
        inp_main:{VV_int : int | []};
@@ -533,8 +581,8 @@ constraint:
 constraint:
  env  [tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
        tmp_main:{VV_int : int | []};
-       outp_main__SSA__phi_3:{VV_int : int | []};
-       outp_main__SSA__phi_25:{VV_int : int | []};
+       outp_main__SSA__phi_3:{VV_int : int | [k_36]};
+       outp_main__SSA__phi_25:{VV_int : int | [k_38]};
        outp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = outp0_main__SSA__blk_0_1)]};
        outp_main:{VV_int : int | []};
        outp0_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
@@ -547,13 +595,13 @@ constraint:
        len_main__SSA__blk_25_1:{VV_int : int | [(VV_int = (len_main__SSA__phi_3 - 1))]};
        len_main__SSA__blk_0_1:{VV_int : int | [(VV_int = nsamples_main__SSA__blk_0_1)]};
        len_main:{VV_int : int | []};
-       inp_main__SSA__phi_3:{VV_int : int | []};
+       inp_main__SSA__phi_3:{VV_int : int | [k_37]};
        inp_main__SSA__blk_12_1:{VV_int : int | [(VV_int = (inp_main__SSA__phi_3 + 1))]};
        inp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = inp0_main__SSA__blk_0_1)]};
        inp_main:{VV_int : int | []};
        inp0_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        inp0_main:{VV_int : int | []};
-       bufferstep_main__SSA__phi_3:{VV_int : int | []};
+       bufferstep_main__SSA__phi_3:{VV_int : int | [k_35]};
        bufferstep_main__SSA__blk_25_1:{VV_int : int | [(VV_int = (1 - bufferstep_main__SSA__phi_3))]};
        bufferstep_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 1)]};
        bufferstep_main:{VV_int : int | []};
@@ -598,7 +646,7 @@ constraint:
        len_main__SSA__phi_3:{VV_int : int | [k_34]};
        len_main__SSA__blk_0_1:{VV_int : int | [(VV_int = nsamples_main__SSA__blk_0_1)]};
        len_main:{VV_int : int | []};
-       inp_main__SSA__phi_3:{VV_int : int | []};
+       inp_main__SSA__phi_3:{VV_int : int | [k_37]};
        inp_main__SSA__blk_12_1:{VV_int : int | [(VV_int = (inp_main__SSA__phi_3 + 1))]};
        inp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = inp0_main__SSA__blk_0_1)]};
        inp_main:{VV_int : int | []};
@@ -632,8 +680,28 @@ constraint:
  rhs {VV_int : int | [k_38[outp_main__SSA__phi_25:=outp_main__SSA__blk_24_1]]} 
  id 14 tag [2;1;0;0] //main 
  
+constraint:
+ env  [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [k_33]} 
+ rhs {VV_int : int | [((VV_int != 0) => true)]} 
+ id 15 tag [2;27;0;0] //main 
  
-wf: env [tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
+ 
+wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_33]} 
+      
+    
+
+    wf: env [tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
              tmp_main:{VV_int : int | []};
              outp_main__SSA__phi_3:{VV_int : int | [k_36]};
              outp_main__SSA__phi_25:{VV_int : int | [k_38]};

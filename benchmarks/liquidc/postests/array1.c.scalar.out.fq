@@ -9,7 +9,7 @@ constraint:
        BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd true 
- lhs {VV_int : int | [&& [(VV_int = (100 : int)) ; (0 <= VV_int)]]} 
+ lhs {VV_int : int | [|| [&& [(100 >= 0) ; (VV_int = 100)];&& [(100 < 0) ; (VV_int > 0)]]]} 
  rhs {VV_int : int | [k_1]} 
  id 1 tag [2;9;-1;0] //main 
  
@@ -17,7 +17,7 @@ constraint:
  env  [x_main:{VV_int : int | []};
        tmp_main:{VV_int : int | []};
        tmp___0_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [&& [(VV_int = (100 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp4_main:{VV_int : int | [|| [&& [(100 >= 0) ; (VV_int = 100)];&& [(100 < 0) ; (VV_int > 0)]]]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
        DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
@@ -33,7 +33,7 @@ constraint:
        tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        tmp_main:{VV_int : int | []};
        tmp___0_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [&& [(VV_int = (100 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp4_main:{VV_int : int | [|| [&& [(100 >= 0) ; (VV_int = 100)];&& [(100 < 0) ; (VV_int > 0)]]]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
        DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
@@ -49,9 +49,9 @@ constraint:
        x_main:{VV_int : int | []};
        tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        tmp_main:{VV_int : int | []};
-       tmp___0_main__SSA__phi_3:{VV_int : int | []};
+       tmp___0_main__SSA__phi_3:{VV_int : int | [k_0]};
        tmp___0_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [&& [(VV_int = (100 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp4_main:{VV_int : int | [|| [&& [(100 >= 0) ; (VV_int = 100)];&& [(100 < 0) ; (VV_int > 0)]]]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
        DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
@@ -68,7 +68,7 @@ constraint:
        tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        tmp_main:{VV_int : int | []};
        tmp___0_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [&& [(VV_int = (100 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp4_main:{VV_int : int | [|| [&& [(100 >= 0) ; (VV_int = 100)];&& [(100 < 0) ; (VV_int > 0)]]]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
        DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
@@ -87,7 +87,7 @@ constraint:
        tmp___0_main__SSA__phi_3:{VV_int : int | []};
        tmp___0_main__SSA__blk_4_1:{VV_int : int | [true]};
        tmp___0_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [&& [(VV_int = (100 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp4_main:{VV_int : int | [|| [&& [(100 >= 0) ; (VV_int = 100)];&& [(100 < 0) ; (VV_int > 0)]]]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
        DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};

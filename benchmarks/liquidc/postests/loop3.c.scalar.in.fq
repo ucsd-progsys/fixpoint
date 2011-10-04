@@ -36,7 +36,7 @@ constraint:
  id 2 tag [1;11;-2;0] //main 
  
 constraint:
- env  [j_main__SSA__phi_3:{VV_int : int | []};
+ env  [j_main__SSA__phi_3:{VV_int : int | [k_1]};
        j_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        j_main:{VV_int : int | []};
        i_main__SSA__phi_3:{VV_int : int | [k_0]};
@@ -80,7 +80,7 @@ constraint:
  id 4 tag [1;4;-1;0] //main 
  
 constraint:
- env  [j_main__SSA__phi_3:{VV_int : int | []};
+ env  [j_main__SSA__phi_3:{VV_int : int | [k_1]};
        j_main__SSA__blk_8_1:{VV_int : int | [(VV_int = (j_main__SSA__phi_3 + 1))]};
        j_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        j_main:{VV_int : int | []};
@@ -255,7 +255,7 @@ constraint:
  id 12 tag [1;4;0;0] //main 
  
 constraint:
- env  [j_main__SSA__phi_3:{VV_int : int | []};
+ env  [j_main__SSA__phi_3:{VV_int : int | [k_1]};
        j_main__SSA__blk_8_1:{VV_int : int | [(VV_int = (j_main__SSA__phi_3 + 1))]};
        j_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        j_main:{VV_int : int | []};

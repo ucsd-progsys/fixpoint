@@ -115,7 +115,7 @@ constraint:
        BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd true 
- lhs {VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]} 
+ lhs {VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]} 
  rhs {VV_int : int | [k_5]} 
  id 6 tag [1;1;-7;0] //main 
  
@@ -126,7 +126,7 @@ constraint:
        tmp_main:{VV_int : int | []};
        t_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
-       __cil_tmp8_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
+       __cil_tmp8_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp7_main:{VV_int : int | [(VV_int = (__cil_tmp6_main : int))]};
        __cil_tmp6_main:{VV_int : int | [(VV_int = 0)]};
        __cil_tmp5_main:{VV_int : int | [(VV_int = (4 : int))]};
@@ -147,7 +147,7 @@ constraint:
        tmp_main:{VV_int : int | []};
        t_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | [(VV_int = (__cil_tmp8_main : int))]};
-       __cil_tmp8_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
+       __cil_tmp8_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp7_main:{VV_int : int | [(VV_int = (__cil_tmp6_main : int))]};
        __cil_tmp6_main:{VV_int : int | [(VV_int = 0)]};
        __cil_tmp5_main:{VV_int : int | [(VV_int = (4 : int))]};

@@ -87,7 +87,7 @@ constraint:
  id 4 tag [2;4;0;0] //main 
  
 constraint:
- env  [z_main__SSA__phi_3:{VV_int : int | []};
+ env  [z_main__SSA__phi_3:{VV_int : int | [k_12]};
        z_main__SSA__blk_8_1:{VV_int : int | [(VV_int = (z_main__SSA__phi_3 - i_main__SSA__phi_3))]};
        z_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        z_main:{VV_int : int | []};
@@ -110,8 +110,28 @@ constraint:
  rhs {VV_int : int | [k_11[z_main__SSA__phi_3:=z_main__SSA__blk_8_1][i_main__SSA__phi_3:=i_main__SSA__blk_8_1]]} 
  id 5 tag [2;4;0;0] //main 
  
+constraint:
+ env  [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [k_10]} 
+ rhs {VV_int : int | [((VV_int != 0) => true)]} 
+ id 6 tag [2;11;0;0] //main 
  
-wf: env [z_main__SSA__phi_3:{VV_int : int | [k_12]};
+ 
+wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_10]} 
+      
+    
+
+    wf: env [z_main__SSA__phi_3:{VV_int : int | [k_12]};
              z_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
              z_main:{VV_int : int | []};
              n_main__SSA__blk_0_1:{VV_int : int | [true]};
@@ -148,13 +168,13 @@ wf: env [z_main__SSA__phi_3:{VV_int : int | [k_12]};
 
 //solution: k_11 := [(VV_int >= i_main__SSA__blk_0_1);(VV_int >= i_main__SSA__phi_3);(VV_int >= z_main__SSA__blk_0_1);(VV_int >= z_main__SSA__phi_3);(VV_int <= i_main__SSA__phi_3);(VV_int >= 0);(0 <= VV_int)] 
 
-//solution: k_10 := [(0 <= VV_int);(1 = 0);(0 < VV_int);(VV_int >= 0);(VV_int = 0)] 
+//solution: k_10 := [] 
 
 solution: k_12 := [((VV_int >= z_main__SSA__phi_3), GE[~A0:=z_main__SSA__phi_3]);((VV_int <= i_main__SSA__blk_0_1), LE[~A0:=i_main__SSA__blk_0_1]);((VV_int <= i_main__SSA__phi_3), LE[~A0:=i_main__SSA__phi_3]);((VV_int <= z_main__SSA__blk_0_1), LE[~A0:=z_main__SSA__blk_0_1]);((VV_int <= z_main__SSA__phi_3), LE[~A0:=z_main__SSA__phi_3])] 
 
 solution: k_11 := [((0 <= VV_int), GEZ);((VV_int >= 0), POS);((VV_int <= i_main__SSA__phi_3), LE[~A0:=i_main__SSA__phi_3]);((VV_int >= z_main__SSA__phi_3), GE[~A0:=z_main__SSA__phi_3]);((VV_int >= z_main__SSA__blk_0_1), GE[~A0:=z_main__SSA__blk_0_1]);((VV_int >= i_main__SSA__phi_3), GE[~A0:=i_main__SSA__phi_3]);((VV_int >= i_main__SSA__blk_0_1), GE[~A0:=i_main__SSA__blk_0_1])] 
 
-solution: k_10 := [((VV_int = 0), EQZ);((VV_int >= 0), POS);((0 < VV_int), GTZ);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
+solution: k_10 := [] 
 
 //QUALIFIERS 
 

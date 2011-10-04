@@ -10,10 +10,66 @@ constraint:
        __cil_tmp6_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
        __cil_tmp4_main:{VV_int : int | []};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | []};
        __cil_tmp16_main:{VV_int : int | []};
        __cil_tmp15_main:{VV_int : int | []};
+       __cil_tmp14_main:{VV_int : int | []};
+       __cil_tmp13_main:{VV_int : int | []};
+       __cil_tmp12_main:{VV_int : int | []};
+       __cil_tmp11_main:{VV_int : int | []};
+       __cil_tmp10_main:{VV_int : int | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]} 
+ rhs {VV_int : int | [k_1]} 
+ id 1 tag [0;12;-1;0] //main 
+ 
+constraint:
+ env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       n_main:{VV_int : int | []};
+       j_main:{VV_int : int | []};
+       i_main:{VV_int : int | []};
+       __cil_tmp9_main:{VV_int : int | []};
+       __cil_tmp8_main:{VV_int : int | []};
+       __cil_tmp7_main:{VV_int : int | []};
+       __cil_tmp6_main:{VV_int : int | []};
+       __cil_tmp5_main:{VV_int : int | []};
+       __cil_tmp4_main:{VV_int : int | []};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | []};
+       __cil_tmp14_main:{VV_int : int | []};
+       __cil_tmp13_main:{VV_int : int | []};
+       __cil_tmp12_main:{VV_int : int | []};
+       __cil_tmp11_main:{VV_int : int | []};
+       __cil_tmp10_main:{VV_int : int | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]} 
+ rhs {VV_int : int | [k_2]} 
+ id 2 tag [0;12;-2;0] //main 
+ 
+constraint:
+ env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       n_main:{VV_int : int | []};
+       j_main:{VV_int : int | []};
+       i_main:{VV_int : int | []};
+       __cil_tmp9_main:{VV_int : int | []};
+       __cil_tmp8_main:{VV_int : int | []};
+       __cil_tmp7_main:{VV_int : int | []};
+       __cil_tmp6_main:{VV_int : int | []};
+       __cil_tmp5_main:{VV_int : int | []};
+       __cil_tmp4_main:{VV_int : int | []};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
@@ -26,16 +82,16 @@ constraint:
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd true 
  lhs {VV_int : int | [(VV_int = 0)]} 
- rhs {VV_int : int | [k_1]} 
- id 1 tag [0;11;-1;0] //main 
+ rhs {VV_int : int | [k_3]} 
+ id 3 tag [0;11;-1;0] //main 
  
 constraint:
  env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        n_main:{VV_int : int | []};
        j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main__SSA__phi_4:{VV_int : int | [k_0]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
        __cil_tmp8_main:{VV_int : int | []};
@@ -43,10 +99,8 @@ constraint:
        __cil_tmp6_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
        __cil_tmp4_main:{VV_int : int | []};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | []};
-       __cil_tmp16_main:{VV_int : int | []};
-       __cil_tmp15_main:{VV_int : int | []};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
@@ -58,28 +112,26 @@ constraint:
        BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd true 
- lhs {VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]} 
- rhs {VV_int : int | [k_2]} 
- id 2 tag [0;6;-1;0] //main 
+ lhs {VV_int : int | [(VV_int = ((i_main__SSA__phi_4 < 10) ? 1 : 0))]} 
+ rhs {VV_int : int | [k_4]} 
+ id 4 tag [0;6;-1;0] //main 
  
 constraint:
  env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        n_main:{VV_int : int | []};
        j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main__SSA__phi_4:{VV_int : int | [k_0]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
        __cil_tmp8_main:{VV_int : int | []};
        __cil_tmp7_main:{VV_int : int | []};
        __cil_tmp6_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | []};
-       __cil_tmp16_main:{VV_int : int | []};
-       __cil_tmp15_main:{VV_int : int | []};
+       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_4 < 10) ? 1 : 0))]};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
@@ -91,61 +143,26 @@ constraint:
        BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd (__cil_tmp4_main != 0) 
- lhs {VV_int : int | [(VV_int = (i_main__SSA__phi_3 * 4))]} 
- rhs {VV_int : int | [k_3]} 
- id 3 tag [0;4;-1;0] //main 
+ lhs {VV_int : int | [(VV_int = (i_main__SSA__phi_4 * 4))]} 
+ rhs {VV_int : int | [k_5]} 
+ id 5 tag [0;4;-1;0] //main 
  
 constraint:
  env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        n_main:{VV_int : int | []};
        j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main__SSA__phi_4:{VV_int : int | [k_0]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
        __cil_tmp8_main:{VV_int : int | []};
        __cil_tmp7_main:{VV_int : int | []};
        __cil_tmp6_main:{VV_int : int | []};
-       __cil_tmp5_main:{VV_int : int | [(VV_int = (i_main__SSA__phi_3 * 4))]};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | []};
-       __cil_tmp16_main:{VV_int : int | []};
-       __cil_tmp15_main:{VV_int : int | []};
-       __cil_tmp14_main:{VV_int : int | []};
-       __cil_tmp13_main:{VV_int : int | []};
-       __cil_tmp12_main:{VV_int : int | []};
-       __cil_tmp11_main:{VV_int : int | []};
-       __cil_tmp10_main:{VV_int : int | []};
-       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
-       SKOLEM:{VV_func : func(0, [int ; int]) | []};
-       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
-       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
-       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
- grd (__cil_tmp4_main != 0) 
- lhs {VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]} 
- rhs {VV_int : int | [k_4]} 
- id 4 tag [0;4;-2;0] //main 
- 
-constraint:
- env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-       x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-       n_main:{VV_int : int | []};
-       j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
-       i_main:{VV_int : int | []};
-       __cil_tmp9_main:{VV_int : int | []};
-       __cil_tmp8_main:{VV_int : int | []};
-       __cil_tmp7_main:{VV_int : int | []};
-       __cil_tmp6_main:{VV_int : int | []};
-       __cil_tmp5_main:{VV_int : int | [(VV_int = (i_main__SSA__phi_3 * 4))]};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | []};
-       __cil_tmp16_main:{VV_int : int | []};
-       __cil_tmp15_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
+       __cil_tmp5_main:{VV_int : int | [(VV_int = (i_main__SSA__phi_4 * 4))]};
+       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_4 < 10) ? 1 : 0))]};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
@@ -158,27 +175,25 @@ constraint:
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd (__cil_tmp4_main != 0) 
  lhs {VV_int : int | [&& [(VV_int = (__cil_tmp15_main + __cil_tmp5_main)) ; (__cil_tmp15_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp15_main]))]} 
- rhs {VV_int : int | [k_5]} 
- id 5 tag [0;4;-3;0] //main 
+ rhs {VV_int : int | [k_6]} 
+ id 6 tag [0;4;-2;0] //main 
  
 constraint:
  env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        n_main:{VV_int : int | []};
        j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main__SSA__phi_4:{VV_int : int | [k_0]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
        __cil_tmp8_main:{VV_int : int | []};
        __cil_tmp7_main:{VV_int : int | []};
        __cil_tmp6_main:{VV_int : int | [&& [(VV_int = (__cil_tmp15_main + __cil_tmp5_main)) ; (__cil_tmp15_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp15_main]))]};
-       __cil_tmp5_main:{VV_int : int | [(VV_int = (i_main__SSA__phi_3 * 4))]};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | []};
-       __cil_tmp16_main:{VV_int : int | []};
-       __cil_tmp15_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
+       __cil_tmp5_main:{VV_int : int | [(VV_int = (i_main__SSA__phi_4 * 4))]};
+       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_4 < 10) ? 1 : 0))]};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
@@ -190,28 +205,26 @@ constraint:
        BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd (__cil_tmp4_main != 0) 
- lhs {VV_int : int | [(VV_int = (i_main__SSA__phi_3 + 1))]} 
- rhs {VV_int : int | [k_6]} 
- id 6 tag [0;4;-5;0] //main 
+ lhs {VV_int : int | [(VV_int = (i_main__SSA__phi_4 + 1))]} 
+ rhs {VV_int : int | [k_7]} 
+ id 7 tag [0;4;-4;0] //main 
  
 constraint:
  env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        n_main:{VV_int : int | []};
        j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main__SSA__phi_4:{VV_int : int | [k_0]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
        __cil_tmp8_main:{VV_int : int | []};
        __cil_tmp7_main:{VV_int : int | []};
        __cil_tmp6_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | []};
-       __cil_tmp16_main:{VV_int : int | []};
-       __cil_tmp15_main:{VV_int : int | []};
+       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_4 < 10) ? 1 : 0))]};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
@@ -224,60 +237,25 @@ constraint:
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd (~ ((__cil_tmp4_main != 0))) 
  lhs {VV_int : int | [(VV_int = (5 * 4))]} 
- rhs {VV_int : int | [k_7]} 
- id 7 tag [0;1;-1;0] //main 
- 
-constraint:
- env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-       x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-       n_main:{VV_int : int | []};
-       j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
-       i_main:{VV_int : int | []};
-       __cil_tmp9_main:{VV_int : int | []};
-       __cil_tmp8_main:{VV_int : int | []};
-       __cil_tmp7_main:{VV_int : int | [(VV_int = (5 * 4))]};
-       __cil_tmp6_main:{VV_int : int | []};
-       __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | []};
-       __cil_tmp16_main:{VV_int : int | []};
-       __cil_tmp15_main:{VV_int : int | []};
-       __cil_tmp14_main:{VV_int : int | []};
-       __cil_tmp13_main:{VV_int : int | []};
-       __cil_tmp12_main:{VV_int : int | []};
-       __cil_tmp11_main:{VV_int : int | []};
-       __cil_tmp10_main:{VV_int : int | []};
-       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
-       SKOLEM:{VV_func : func(0, [int ; int]) | []};
-       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
-       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
-       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
- grd (~ ((__cil_tmp4_main != 0))) 
- lhs {VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]} 
  rhs {VV_int : int | [k_8]} 
- id 8 tag [0;1;-2;0] //main 
+ id 8 tag [0;1;-1;0] //main 
  
 constraint:
  env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        n_main:{VV_int : int | []};
        j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main__SSA__phi_4:{VV_int : int | [k_0]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
        __cil_tmp8_main:{VV_int : int | []};
        __cil_tmp7_main:{VV_int : int | [(VV_int = (5 * 4))]};
        __cil_tmp6_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | []};
-       __cil_tmp16_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp15_main:{VV_int : int | []};
+       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_4 < 10) ? 1 : 0))]};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
@@ -289,28 +267,26 @@ constraint:
        BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd (~ ((__cil_tmp4_main != 0))) 
- lhs {VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp7_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]} 
+ lhs {VV_int : int | [&& [(VV_int = (__cil_tmp15_main + __cil_tmp7_main)) ; (__cil_tmp15_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp15_main]))]} 
  rhs {VV_int : int | [k_9]} 
- id 9 tag [0;1;-3;0] //main 
+ id 9 tag [0;1;-2;0] //main 
  
 constraint:
  env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        n_main:{VV_int : int | []};
        j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main__SSA__phi_4:{VV_int : int | [k_0]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
-       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp7_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]};
+       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp15_main + __cil_tmp7_main)) ; (__cil_tmp15_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp15_main]))]};
        __cil_tmp7_main:{VV_int : int | [(VV_int = (5 * 4))]};
        __cil_tmp6_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | []};
-       __cil_tmp16_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp15_main:{VV_int : int | []};
+       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_4 < 10) ? 1 : 0))]};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
@@ -324,26 +300,24 @@ constraint:
  grd (~ ((__cil_tmp4_main != 0))) 
  lhs {VV_int : int | []} 
  rhs {VV_int : int | [k_10]} 
- id 10 tag [0;1;-4;0] //main 
+ id 10 tag [0;1;-3;0] //main 
  
 constraint:
  env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        n_main:{VV_int : int | []};
        j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main__SSA__phi_4:{VV_int : int | [k_0]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
-       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp7_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]};
+       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp15_main + __cil_tmp7_main)) ; (__cil_tmp15_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp15_main]))]};
        __cil_tmp7_main:{VV_int : int | [(VV_int = (5 * 4))]};
        __cil_tmp6_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | []};
-       __cil_tmp16_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp15_main:{VV_int : int | []};
+       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_4 < 10) ? 1 : 0))]};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
@@ -357,27 +331,25 @@ constraint:
  grd (~ ((__cil_tmp4_main != 0))) 
  lhs {VV_int : int | [(VV_int = __cil_tmp13_main)]} 
  rhs {VV_int : int | [k_11]} 
- id 11 tag [0;1;-5;0] //main 
+ id 11 tag [0;1;-4;0] //main 
  
 constraint:
  env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        n_main:{VV_int : int | []};
-       j_main__SSA__blk_10_1:{VV_int : int | [(VV_int = __cil_tmp13_main)]};
+       j_main__SSA__blk_11_1:{VV_int : int | [(VV_int = __cil_tmp13_main)]};
        j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main__SSA__phi_4:{VV_int : int | [k_0]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
-       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp7_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]};
+       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp15_main + __cil_tmp7_main)) ; (__cil_tmp15_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp15_main]))]};
        __cil_tmp7_main:{VV_int : int | [(VV_int = (5 * 4))]};
        __cil_tmp6_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | []};
-       __cil_tmp16_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp15_main:{VV_int : int | []};
+       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_4 < 10) ? 1 : 0))]};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
@@ -389,29 +361,27 @@ constraint:
        BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd (~ ((__cil_tmp4_main != 0))) 
- lhs {VV_int : int | [(VV_int = (j_main__SSA__blk_10_1 * 4))]} 
+ lhs {VV_int : int | [(VV_int = (j_main__SSA__blk_11_1 * 4))]} 
  rhs {VV_int : int | [k_12]} 
- id 12 tag [0;1;-6;0] //main 
+ id 12 tag [0;1;-5;0] //main 
  
 constraint:
  env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        n_main:{VV_int : int | []};
-       j_main__SSA__blk_10_1:{VV_int : int | [(VV_int = __cil_tmp13_main)]};
+       j_main__SSA__blk_11_1:{VV_int : int | [(VV_int = __cil_tmp13_main)]};
        j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main__SSA__phi_4:{VV_int : int | [k_0]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
-       __cil_tmp9_main:{VV_int : int | [(VV_int = (j_main__SSA__blk_10_1 * 4))]};
-       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp7_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]};
+       __cil_tmp9_main:{VV_int : int | [(VV_int = (j_main__SSA__blk_11_1 * 4))]};
+       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp15_main + __cil_tmp7_main)) ; (__cil_tmp15_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp15_main]))]};
        __cil_tmp7_main:{VV_int : int | [(VV_int = (5 * 4))]};
        __cil_tmp6_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | []};
-       __cil_tmp16_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp15_main:{VV_int : int | []};
+       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_4 < 10) ? 1 : 0))]};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
@@ -423,68 +393,32 @@ constraint:
        BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd (~ ((__cil_tmp4_main != 0))) 
- lhs {VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]} 
+ lhs {VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp9_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]} 
  rhs {VV_int : int | [k_13]} 
- id 13 tag [0;1;-7;0] //main 
+ id 13 tag [0;1;-6;0] //main 
  
 constraint:
  env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        n_main:{VV_int : int | []};
-       j_main__SSA__blk_10_1:{VV_int : int | [(VV_int = __cil_tmp13_main)]};
+       j_main__SSA__blk_11_1:{VV_int : int | [(VV_int = __cil_tmp13_main)]};
        j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main__SSA__phi_4:{VV_int : int | [k_0]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
-       __cil_tmp9_main:{VV_int : int | [(VV_int = (j_main__SSA__blk_10_1 * 4))]};
-       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp7_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]};
+       __cil_tmp9_main:{VV_int : int | [(VV_int = (j_main__SSA__blk_11_1 * 4))]};
+       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp15_main + __cil_tmp7_main)) ; (__cil_tmp15_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp15_main]))]};
        __cil_tmp7_main:{VV_int : int | [(VV_int = (5 * 4))]};
        __cil_tmp6_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp16_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp15_main:{VV_int : int | []};
+       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_4 < 10) ? 1 : 0))]};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
        __cil_tmp11_main:{VV_int : int | []};
-       __cil_tmp10_main:{VV_int : int | []};
-       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
-       SKOLEM:{VV_func : func(0, [int ; int]) | []};
-       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
-       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
-       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
- grd (~ ((__cil_tmp4_main != 0))) 
- lhs {VV_int : int | [&& [(VV_int = (__cil_tmp17_main + __cil_tmp9_main)) ; (__cil_tmp17_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp17_main]))]} 
- rhs {VV_int : int | [k_14]} 
- id 14 tag [0;1;-8;0] //main 
- 
-constraint:
- env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-       x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-       n_main:{VV_int : int | []};
-       j_main__SSA__blk_10_1:{VV_int : int | [(VV_int = __cil_tmp13_main)]};
-       j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
-       i_main:{VV_int : int | []};
-       __cil_tmp9_main:{VV_int : int | [(VV_int = (j_main__SSA__blk_10_1 * 4))]};
-       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp7_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]};
-       __cil_tmp7_main:{VV_int : int | [(VV_int = (5 * 4))]};
-       __cil_tmp6_main:{VV_int : int | []};
-       __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp16_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp15_main:{VV_int : int | []};
-       __cil_tmp14_main:{VV_int : int | []};
-       __cil_tmp13_main:{VV_int : int | []};
-       __cil_tmp12_main:{VV_int : int | []};
-       __cil_tmp11_main:{VV_int : int | []};
-       __cil_tmp10_main:{VV_int : int | [&& [(VV_int = (__cil_tmp17_main + __cil_tmp9_main)) ; (__cil_tmp17_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp17_main]))]};
+       __cil_tmp10_main:{VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp9_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
        DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
@@ -492,33 +426,31 @@ constraint:
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd (~ ((__cil_tmp4_main != 0))) 
  lhs {VV_int : int | []} 
- rhs {VV_int : int | [k_15]} 
- id 15 tag [0;1;-9;0] //main 
+ rhs {VV_int : int | [k_14]} 
+ id 14 tag [0;1;-7;0] //main 
  
 constraint:
  env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        n_main:{VV_int : int | []};
-       j_main__SSA__blk_10_1:{VV_int : int | [(VV_int = __cil_tmp13_main)]};
+       j_main__SSA__blk_11_1:{VV_int : int | [(VV_int = __cil_tmp13_main)]};
        j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main__SSA__phi_4:{VV_int : int | [k_0]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
-       __cil_tmp9_main:{VV_int : int | [(VV_int = (j_main__SSA__blk_10_1 * 4))]};
-       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp7_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]};
+       __cil_tmp9_main:{VV_int : int | [(VV_int = (j_main__SSA__blk_11_1 * 4))]};
+       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp15_main + __cil_tmp7_main)) ; (__cil_tmp15_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp15_main]))]};
        __cil_tmp7_main:{VV_int : int | [(VV_int = (5 * 4))]};
        __cil_tmp6_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp16_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp15_main:{VV_int : int | []};
+       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_4 < 10) ? 1 : 0))]};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
        __cil_tmp11_main:{VV_int : int | []};
-       __cil_tmp10_main:{VV_int : int | [&& [(VV_int = (__cil_tmp17_main + __cil_tmp9_main)) ; (__cil_tmp17_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp17_main]))]};
+       __cil_tmp10_main:{VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp9_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
        DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
@@ -526,120 +458,81 @@ constraint:
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd (~ ((__cil_tmp4_main != 0))) 
  lhs {VV_int : int | [(VV_int = __cil_tmp14_main)]} 
- rhs {VV_int : int | [k_16]} 
- id 16 tag [0;1;-10;0] //main 
+ rhs {VV_int : int | [k_15]} 
+ id 15 tag [0;1;-8;0] //main 
  
 constraint:
  env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-       n_main__SSA__blk_10_1:{VV_int : int | [(VV_int = __cil_tmp14_main)]};
+       n_main__SSA__blk_11_1:{VV_int : int | [(VV_int = __cil_tmp14_main)]};
        n_main:{VV_int : int | []};
-       j_main__SSA__blk_10_1:{VV_int : int | [(VV_int = __cil_tmp13_main)]};
+       j_main__SSA__blk_11_1:{VV_int : int | [(VV_int = __cil_tmp13_main)]};
        j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main__SSA__phi_4:{VV_int : int | [k_0]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
-       __cil_tmp9_main:{VV_int : int | [(VV_int = (j_main__SSA__blk_10_1 * 4))]};
-       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp7_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]};
+       __cil_tmp9_main:{VV_int : int | [(VV_int = (j_main__SSA__blk_11_1 * 4))]};
+       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp15_main + __cil_tmp7_main)) ; (__cil_tmp15_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp15_main]))]};
        __cil_tmp7_main:{VV_int : int | [(VV_int = (5 * 4))]};
        __cil_tmp6_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp16_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp15_main:{VV_int : int | []};
+       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_4 < 10) ? 1 : 0))]};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
        __cil_tmp11_main:{VV_int : int | []};
-       __cil_tmp10_main:{VV_int : int | [&& [(VV_int = (__cil_tmp17_main + __cil_tmp9_main)) ; (__cil_tmp17_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp17_main]))]};
+       __cil_tmp10_main:{VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp9_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
        DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
        BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd (~ ((__cil_tmp4_main != 0))) 
- lhs {VV_int : int | [(VV_int = (j_main__SSA__blk_10_1 * 4))]} 
+ lhs {VV_int : int | [(VV_int = (j_main__SSA__blk_11_1 * 4))]} 
+ rhs {VV_int : int | [k_16]} 
+ id 16 tag [0;1;-9;0] //main 
+ 
+constraint:
+ env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       n_main__SSA__blk_11_1:{VV_int : int | [(VV_int = __cil_tmp14_main)]};
+       n_main:{VV_int : int | []};
+       j_main__SSA__blk_11_1:{VV_int : int | [(VV_int = __cil_tmp13_main)]};
+       j_main:{VV_int : int | []};
+       i_main__SSA__phi_4:{VV_int : int | [k_0]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
+       i_main:{VV_int : int | []};
+       __cil_tmp9_main:{VV_int : int | [(VV_int = (j_main__SSA__blk_11_1 * 4))]};
+       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp15_main + __cil_tmp7_main)) ; (__cil_tmp15_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp15_main]))]};
+       __cil_tmp7_main:{VV_int : int | [(VV_int = (5 * 4))]};
+       __cil_tmp6_main:{VV_int : int | []};
+       __cil_tmp5_main:{VV_int : int | []};
+       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_4 < 10) ? 1 : 0))]};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp14_main:{VV_int : int | []};
+       __cil_tmp13_main:{VV_int : int | []};
+       __cil_tmp12_main:{VV_int : int | []};
+       __cil_tmp11_main:{VV_int : int | [(VV_int = (j_main__SSA__blk_11_1 * 4))]};
+       __cil_tmp10_main:{VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp9_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd (~ ((__cil_tmp4_main != 0))) 
+ lhs {VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp11_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]} 
  rhs {VV_int : int | [k_17]} 
- id 17 tag [0;1;-11;0] //main 
- 
-constraint:
- env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-       x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-       n_main__SSA__blk_10_1:{VV_int : int | [(VV_int = __cil_tmp14_main)]};
-       n_main:{VV_int : int | []};
-       j_main__SSA__blk_10_1:{VV_int : int | [(VV_int = __cil_tmp13_main)]};
-       j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
-       i_main:{VV_int : int | []};
-       __cil_tmp9_main:{VV_int : int | [(VV_int = (j_main__SSA__blk_10_1 * 4))]};
-       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp7_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]};
-       __cil_tmp7_main:{VV_int : int | [(VV_int = (5 * 4))]};
-       __cil_tmp6_main:{VV_int : int | []};
-       __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp16_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp15_main:{VV_int : int | []};
-       __cil_tmp14_main:{VV_int : int | []};
-       __cil_tmp13_main:{VV_int : int | []};
-       __cil_tmp12_main:{VV_int : int | []};
-       __cil_tmp11_main:{VV_int : int | [(VV_int = (j_main__SSA__blk_10_1 * 4))]};
-       __cil_tmp10_main:{VV_int : int | [&& [(VV_int = (__cil_tmp17_main + __cil_tmp9_main)) ; (__cil_tmp17_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp17_main]))]};
-       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
-       SKOLEM:{VV_func : func(0, [int ; int]) | []};
-       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
-       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
-       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
- grd (~ ((__cil_tmp4_main != 0))) 
- lhs {VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]} 
- rhs {VV_int : int | [k_18]} 
- id 18 tag [0;1;-12;0] //main 
- 
-constraint:
- env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-       x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-       n_main__SSA__blk_10_1:{VV_int : int | [(VV_int = __cil_tmp14_main)]};
-       n_main:{VV_int : int | []};
-       j_main__SSA__blk_10_1:{VV_int : int | [(VV_int = __cil_tmp13_main)]};
-       j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
-       i_main:{VV_int : int | []};
-       __cil_tmp9_main:{VV_int : int | [(VV_int = (j_main__SSA__blk_10_1 * 4))]};
-       __cil_tmp8_main:{VV_int : int | [&& [(VV_int = (__cil_tmp16_main + __cil_tmp7_main)) ; (__cil_tmp16_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp16_main]))]};
-       __cil_tmp7_main:{VV_int : int | [(VV_int = (5 * 4))]};
-       __cil_tmp6_main:{VV_int : int | []};
-       __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp17_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp16_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
-       __cil_tmp15_main:{VV_int : int | []};
-       __cil_tmp14_main:{VV_int : int | []};
-       __cil_tmp13_main:{VV_int : int | []};
-       __cil_tmp12_main:{VV_int : int | []};
-       __cil_tmp11_main:{VV_int : int | [(VV_int = (j_main__SSA__blk_10_1 * 4))]};
-       __cil_tmp10_main:{VV_int : int | [&& [(VV_int = (__cil_tmp17_main + __cil_tmp9_main)) ; (__cil_tmp17_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp17_main]))]};
-       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
-       SKOLEM:{VV_func : func(0, [int ; int]) | []};
-       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
-       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
-       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
- grd (~ ((__cil_tmp4_main != 0))) 
- lhs {VV_int : int | [&& [(VV_int = (__cil_tmp18_main + __cil_tmp11_main)) ; (__cil_tmp18_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp18_main]))]} 
- rhs {VV_int : int | [k_19]} 
- id 19 tag [0;1;-13;0] //main 
+ id 17 tag [0;1;-10;0] //main 
  
 constraint:
  env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        n_main:{VV_int : int | []};
        j_main:{VV_int : int | []};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
        __cil_tmp8_main:{VV_int : int | []};
@@ -647,10 +540,8 @@ constraint:
        __cil_tmp6_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
        __cil_tmp4_main:{VV_int : int | []};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | []};
-       __cil_tmp16_main:{VV_int : int | []};
-       __cil_tmp15_main:{VV_int : int | []};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
@@ -662,29 +553,27 @@ constraint:
        BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd true 
- lhs {VV_int : int | [(VV_int = i_main__SSA__blk_0_1)]} 
- rhs {VV_int : int | [k_0[i_main__SSA__phi_3:=i_main__SSA__blk_0_1]]} 
- id 20 tag [0;9;0;0] //main 
+ lhs {VV_int : int | [(VV_int = i_main__SSA__blk_1_1)]} 
+ rhs {VV_int : int | [k_0[i_main__SSA__phi_4:=i_main__SSA__blk_1_1]]} 
+ id 18 tag [0;9;0;0] //main 
  
 constraint:
  env  [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        n_main:{VV_int : int | []};
        j_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | [k_0]};
-       i_main__SSA__blk_8_1:{VV_int : int | [(VV_int = (i_main__SSA__phi_3 + 1))]};
-       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main__SSA__phi_4:{VV_int : int | [k_0]};
+       i_main__SSA__blk_9_1:{VV_int : int | [(VV_int = (i_main__SSA__phi_4 + 1))]};
+       i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
        __cil_tmp8_main:{VV_int : int | []};
        __cil_tmp7_main:{VV_int : int | []};
        __cil_tmp6_main:{VV_int : int | [&& [(VV_int = (__cil_tmp15_main + __cil_tmp5_main)) ; (__cil_tmp15_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp15_main]))]};
-       __cil_tmp5_main:{VV_int : int | [(VV_int = (i_main__SSA__phi_3 * 4))]};
-       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_3 < 10) ? 1 : 0))]};
-       __cil_tmp18_main:{VV_int : int | []};
-       __cil_tmp17_main:{VV_int : int | []};
-       __cil_tmp16_main:{VV_int : int | []};
-       __cil_tmp15_main:{VV_int : int | [(VV_int = BLOCK_BEGIN([VV_int]))]};
+       __cil_tmp5_main:{VV_int : int | [(VV_int = (i_main__SSA__phi_4 * 4))]};
+       __cil_tmp4_main:{VV_int : int | [(VV_int = ((i_main__SSA__phi_4 < 10) ? 1 : 0))]};
+       __cil_tmp16_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+       __cil_tmp15_main:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
        __cil_tmp14_main:{VV_int : int | []};
        __cil_tmp13_main:{VV_int : int | []};
        __cil_tmp12_main:{VV_int : int | []};
@@ -696,49 +585,17 @@ constraint:
        BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd (__cil_tmp4_main != 0) 
- lhs {VV_int : int | [(VV_int = i_main__SSA__blk_8_1)]} 
- rhs {VV_int : int | [k_0[i_main__SSA__phi_3:=i_main__SSA__blk_8_1]]} 
- id 21 tag [0;4;0;0] //main 
+ lhs {VV_int : int | [(VV_int = i_main__SSA__blk_9_1)]} 
+ rhs {VV_int : int | [k_0[i_main__SSA__phi_4:=i_main__SSA__blk_9_1]]} 
+ id 19 tag [0;4;0;0] //main 
  
  
 wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              n_main:{VV_int : int | []};
              j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
-             i_main:{VV_int : int | []};
-             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
-             SKOLEM:{VV_func : func(0, [int ; int]) | []};
-             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
-             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
-             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
-     reft {VV_int : int | [k_19]} 
-      
-    
-
-    wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-             x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-             n_main:{VV_int : int | []};
-             j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
-             i_main:{VV_int : int | []};
-             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
-             SKOLEM:{VV_func : func(0, [int ; int]) | []};
-             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
-             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
-             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
-     reft {VV_int : int | [k_18]} 
-      
-    
-
-    wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-             x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-             n_main:{VV_int : int | []};
-             j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main__SSA__phi_4:{VV_int : int | [k_0]};
+             i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};
              UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
              SKOLEM:{VV_func : func(0, [int ; int]) | []};
@@ -753,8 +610,8 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              n_main:{VV_int : int | []};
              j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main__SSA__phi_4:{VV_int : int | [k_0]};
+             i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};
              UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
              SKOLEM:{VV_func : func(0, [int ; int]) | []};
@@ -769,8 +626,8 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              n_main:{VV_int : int | []};
              j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main__SSA__phi_4:{VV_int : int | [k_0]};
+             i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};
              UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
              SKOLEM:{VV_func : func(0, [int ; int]) | []};
@@ -785,8 +642,8 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              n_main:{VV_int : int | []};
              j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main__SSA__phi_4:{VV_int : int | [k_0]};
+             i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};
              UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
              SKOLEM:{VV_func : func(0, [int ; int]) | []};
@@ -801,8 +658,8 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              n_main:{VV_int : int | []};
              j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main__SSA__phi_4:{VV_int : int | [k_0]};
+             i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};
              UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
              SKOLEM:{VV_func : func(0, [int ; int]) | []};
@@ -817,8 +674,8 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              n_main:{VV_int : int | []};
              j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main__SSA__phi_4:{VV_int : int | [k_0]};
+             i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};
              UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
              SKOLEM:{VV_func : func(0, [int ; int]) | []};
@@ -833,8 +690,8 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              n_main:{VV_int : int | []};
              j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main__SSA__phi_4:{VV_int : int | [k_0]};
+             i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};
              UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
              SKOLEM:{VV_func : func(0, [int ; int]) | []};
@@ -849,8 +706,8 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              n_main:{VV_int : int | []};
              j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main__SSA__phi_4:{VV_int : int | [k_0]};
+             i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};
              UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
              SKOLEM:{VV_func : func(0, [int ; int]) | []};
@@ -865,8 +722,8 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              n_main:{VV_int : int | []};
              j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main__SSA__phi_4:{VV_int : int | [k_0]};
+             i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};
              UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
              SKOLEM:{VV_func : func(0, [int ; int]) | []};
@@ -881,8 +738,8 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              n_main:{VV_int : int | []};
              j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main__SSA__phi_4:{VV_int : int | [k_0]};
+             i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};
              UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
              SKOLEM:{VV_func : func(0, [int ; int]) | []};
@@ -897,8 +754,8 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              n_main:{VV_int : int | []};
              j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main__SSA__phi_4:{VV_int : int | [k_0]};
+             i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};
              UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
              SKOLEM:{VV_func : func(0, [int ; int]) | []};
@@ -913,8 +770,8 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              n_main:{VV_int : int | []};
              j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main__SSA__phi_4:{VV_int : int | [k_0]};
+             i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};
              UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
              SKOLEM:{VV_func : func(0, [int ; int]) | []};
@@ -929,8 +786,8 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              n_main:{VV_int : int | []};
              j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main__SSA__phi_4:{VV_int : int | [k_0]};
+             i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};
              UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
              SKOLEM:{VV_func : func(0, [int ; int]) | []};
@@ -945,8 +802,8 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              n_main:{VV_int : int | []};
              j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main__SSA__phi_4:{VV_int : int | [k_0]};
+             i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};
              UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
              SKOLEM:{VV_func : func(0, [int ; int]) | []};
@@ -961,40 +818,8 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              n_main:{VV_int : int | []};
              j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
-             i_main:{VV_int : int | []};
-             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
-             SKOLEM:{VV_func : func(0, [int ; int]) | []};
-             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
-             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
-             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
-     reft {VV_int : int | [k_3]} 
-      
-    
-
-    wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-             x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-             n_main:{VV_int : int | []};
-             j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
-             i_main:{VV_int : int | []};
-             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
-             SKOLEM:{VV_func : func(0, [int ; int]) | []};
-             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
-             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
-             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
-     reft {VV_int : int | [k_2]} 
-      
-    
-
-    wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-             x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
-             n_main:{VV_int : int | []};
-             j_main:{VV_int : int | []};
-             i_main__SSA__phi_3:{VV_int : int | [k_0]};
-             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main__SSA__phi_4:{VV_int : int | [k_0]};
+             i_main__SSA__blk_1_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};
              UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
              SKOLEM:{VV_func : func(0, [int ; int]) | []};
@@ -1015,38 +840,62 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
              DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
              BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
              BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_3]} 
+      
+    
+
+    wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+             x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+             n_main:{VV_int : int | []};
+             j_main:{VV_int : int | []};
+             i_main:{VV_int : int | []};
+             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_2]} 
+      
+    
+
+    wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+             x:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
+             n_main:{VV_int : int | []};
+             j_main:{VV_int : int | []};
+             i_main:{VV_int : int | []};
+             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
      reft {VV_int : int | [k_1]} 
       
      
 //solution: k_9 := [(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0);(VV_int < (BLOCK_BEGIN([VV_int]) + 36));(0 != VV_int);(VV_int <= (BLOCK_BEGIN([VV_int]) + 36));(VV_int >= (BLOCK_BEGIN([VV_int]) + 0));(VV_int >= (BLOCK_BEGIN([VV_int]) + 1))] 
 
-//solution: k_8 := [(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0);(VV_int < (BLOCK_BEGIN([VV_int]) + 36));(VV_int <= (BLOCK_BEGIN([VV_int]) + 36));(VV_int >= (BLOCK_BEGIN([VV_int]) + 0));(VV_int = (BLOCK_BEGIN([VV_int]) + 0))] 
+//solution: k_8 := [(VV_int < 36);(0 != VV_int);(VV_int >= 0);(0 < VV_int);(0 <= VV_int);(VV_int >= 1);(((VV_int - 0) mod 4) = 0)] 
 
-//solution: k_7 := [(VV_int < 36);(0 != VV_int);(VV_int >= 0);(0 < VV_int);(0 <= VV_int);(VV_int >= 1);(((VV_int - 0) mod 4) = 0)] 
+//solution: k_7 := [(VV_int < 36);(0 != VV_int);(VV_int >= 0);(0 < VV_int);(0 <= VV_int);(VV_int >= 1)] 
 
-//solution: k_6 := [(VV_int < 36);(0 != VV_int);(VV_int >= 0);(0 < VV_int);(0 <= VV_int);(VV_int >= 1)] 
+//solution: k_6 := [(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0);(VV_int <= (BLOCK_BEGIN([VV_int]) + 36));(VV_int >= (BLOCK_BEGIN([VV_int]) + 0))] 
 
-//solution: k_5 := [(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0);(VV_int <= (BLOCK_BEGIN([VV_int]) + 36));(VV_int >= (BLOCK_BEGIN([VV_int]) + 0))] 
+//solution: k_5 := [(VV_int >= 0);(0 <= VV_int);(((VV_int - 0) mod 4) = 0)] 
 
-//solution: k_4 := [(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0);(VV_int < (BLOCK_BEGIN([VV_int]) + 36));(VV_int <= (BLOCK_BEGIN([VV_int]) + 36));(VV_int >= (BLOCK_BEGIN([VV_int]) + 0));(VV_int = (BLOCK_BEGIN([VV_int]) + 0))] 
+//solution: k_4 := [(VV_int < 36);(VV_int >= 0);(0 <= VV_int)] 
 
-//solution: k_3 := [(VV_int >= 0);(0 <= VV_int);(((VV_int - 0) mod 4) = 0)] 
+//solution: k_3 := [(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0);(VV_int < (BLOCK_BEGIN([VV_int]) + 36));(VV_int < 36);(0 = VV_int);(VV_int <= (BLOCK_BEGIN([VV_int]) + 36));(VV_int >= (BLOCK_BEGIN([VV_int]) + 0));(VV_int = (BLOCK_BEGIN([VV_int]) + 0));(VV_int >= 0);(0 <= VV_int);(((VV_int - 0) mod 4) = 0);(VV_int = 0)] 
 
-//solution: k_2 := [(VV_int < 36);(VV_int >= 0);(0 <= VV_int)] 
+//solution: k_2 := [(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0);(VV_int < (BLOCK_BEGIN([VV_int]) + 36));(VV_int <= (BLOCK_BEGIN([VV_int]) + 36));(VV_int >= (BLOCK_BEGIN([VV_int]) + 0));(VV_int = (BLOCK_BEGIN([VV_int]) + 0))] 
 
-//solution: k_19 := [(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0);(VV_int >= (BLOCK_BEGIN([VV_int]) + 0))] 
+//solution: k_17 := [(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0);(VV_int >= (BLOCK_BEGIN([VV_int]) + 0))] 
 
-//solution: k_18 := [(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0);(VV_int < (BLOCK_BEGIN([VV_int]) + 36));(VV_int <= (BLOCK_BEGIN([VV_int]) + 36));(VV_int >= (BLOCK_BEGIN([VV_int]) + 0));(VV_int = (BLOCK_BEGIN([VV_int]) + 0))] 
-
-//solution: k_17 := [(VV_int >= 0);(0 <= VV_int);(((VV_int - 0) mod 4) = 0)] 
-
-//solution: k_16 := [] 
+//solution: k_16 := [(VV_int >= 0);(0 <= VV_int);(((VV_int - 0) mod 4) = 0)] 
 
 //solution: k_15 := [] 
 
-//solution: k_14 := [(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0);(VV_int >= (BLOCK_BEGIN([VV_int]) + 0))] 
+//solution: k_14 := [] 
 
-//solution: k_13 := [(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0);(VV_int < (BLOCK_BEGIN([VV_int]) + 36));(VV_int <= (BLOCK_BEGIN([VV_int]) + 36));(VV_int >= (BLOCK_BEGIN([VV_int]) + 0));(VV_int = (BLOCK_BEGIN([VV_int]) + 0))] 
+//solution: k_13 := [(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0);(VV_int >= (BLOCK_BEGIN([VV_int]) + 0))] 
 
 //solution: k_12 := [(((VV_int - 0) mod 4) = 0)] 
 
@@ -1054,39 +903,35 @@ wf: env [y:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
 
 //solution: k_10 := [] 
 
-//solution: k_1 := [(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0);(VV_int < (BLOCK_BEGIN([VV_int]) + 36));(VV_int < 36);(0 = VV_int);(VV_int <= (BLOCK_BEGIN([VV_int]) + 36));(VV_int >= (BLOCK_BEGIN([VV_int]) + 0));(VV_int = (BLOCK_BEGIN([VV_int]) + 0));(VV_int >= 0);(0 <= VV_int);(((VV_int - 0) mod 4) = 0);(VV_int = 0)] 
+//solution: k_1 := [(((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0);(VV_int < (BLOCK_BEGIN([VV_int]) + 36));(VV_int <= (BLOCK_BEGIN([VV_int]) + 36));(VV_int >= (BLOCK_BEGIN([VV_int]) + 0));(VV_int = (BLOCK_BEGIN([VV_int]) + 0))] 
 
 //solution: k_0 := [(VV_int < 36);(VV_int >= 0);(0 <= VV_int)] 
 
 solution: k_9 := [((VV_int >= (BLOCK_BEGIN([VV_int]) + 1)), SCALAR2);((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR8);((VV_int <= (BLOCK_BEGIN([VV_int]) + 36)), SCALAR9);((0 != VV_int), NEZ0);((VV_int < (BLOCK_BEGIN([VV_int]) + 36)), SCALAR12);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR13)] 
 
-solution: k_8 := [((VV_int = (BLOCK_BEGIN([VV_int]) + 0)), SCALAR7);((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR8);((VV_int <= (BLOCK_BEGIN([VV_int]) + 36)), SCALAR9);((VV_int < (BLOCK_BEGIN([VV_int]) + 36)), SCALAR12);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR13)] 
+solution: k_8 := [((((VV_int - 0) mod 4) = 0), SCALAR0);((VV_int >= 1), SCALAR3);((0 <= VV_int), GEZ);((0 < VV_int), GTZ);((VV_int >= 0), SCALAR6);((0 != VV_int), NEZ0);((VV_int < 36), SCALAR11)] 
 
-solution: k_7 := [((((VV_int - 0) mod 4) = 0), SCALAR0);((VV_int >= 1), SCALAR3);((0 <= VV_int), GEZ);((0 < VV_int), GTZ);((VV_int >= 0), SCALAR6);((0 != VV_int), NEZ0);((VV_int < 36), SCALAR11)] 
+solution: k_7 := [((VV_int >= 1), SCALAR3);((0 <= VV_int), GEZ);((0 < VV_int), GTZ);((VV_int >= 0), SCALAR6);((0 != VV_int), NEZ0);((VV_int < 36), SCALAR11)] 
 
-solution: k_6 := [((VV_int >= 1), SCALAR3);((0 <= VV_int), GEZ);((0 < VV_int), GTZ);((VV_int >= 0), SCALAR6);((0 != VV_int), NEZ0);((VV_int < 36), SCALAR11)] 
+solution: k_6 := [((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR8);((VV_int <= (BLOCK_BEGIN([VV_int]) + 36)), SCALAR9);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR13)] 
 
-solution: k_5 := [((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR8);((VV_int <= (BLOCK_BEGIN([VV_int]) + 36)), SCALAR9);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR13)] 
+solution: k_5 := [((((VV_int - 0) mod 4) = 0), SCALAR0);((0 <= VV_int), GEZ);((VV_int >= 0), SCALAR6)] 
 
-solution: k_4 := [((VV_int = (BLOCK_BEGIN([VV_int]) + 0)), SCALAR7);((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR8);((VV_int <= (BLOCK_BEGIN([VV_int]) + 36)), SCALAR9);((VV_int < (BLOCK_BEGIN([VV_int]) + 36)), SCALAR12);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR13)] 
+solution: k_4 := [((0 <= VV_int), GEZ);((VV_int >= 0), SCALAR6);((VV_int < 36), SCALAR11)] 
 
-solution: k_3 := [((((VV_int - 0) mod 4) = 0), SCALAR0);((0 <= VV_int), GEZ);((VV_int >= 0), SCALAR6)] 
+solution: k_3 := [((VV_int = 0), SCALAR10);((((VV_int - 0) mod 4) = 0), SCALAR0);((0 <= VV_int), GEZ);((VV_int >= 0), SCALAR6);((VV_int = (BLOCK_BEGIN([VV_int]) + 0)), SCALAR7);((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR8);((VV_int <= (BLOCK_BEGIN([VV_int]) + 36)), SCALAR9);((0 = VV_int), EQZ);((VV_int < 36), SCALAR11);((VV_int < (BLOCK_BEGIN([VV_int]) + 36)), SCALAR12);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR13)] 
 
-solution: k_2 := [((0 <= VV_int), GEZ);((VV_int >= 0), SCALAR6);((VV_int < 36), SCALAR11)] 
+solution: k_2 := [((VV_int = (BLOCK_BEGIN([VV_int]) + 0)), SCALAR7);((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR8);((VV_int <= (BLOCK_BEGIN([VV_int]) + 36)), SCALAR9);((VV_int < (BLOCK_BEGIN([VV_int]) + 36)), SCALAR12);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR13)] 
 
-solution: k_19 := [((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR8);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR13)] 
+solution: k_17 := [((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR8);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR13)] 
 
-solution: k_18 := [((VV_int = (BLOCK_BEGIN([VV_int]) + 0)), SCALAR7);((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR8);((VV_int <= (BLOCK_BEGIN([VV_int]) + 36)), SCALAR9);((VV_int < (BLOCK_BEGIN([VV_int]) + 36)), SCALAR12);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR13)] 
-
-solution: k_17 := [((((VV_int - 0) mod 4) = 0), SCALAR0);((0 <= VV_int), GEZ);((VV_int >= 0), SCALAR6)] 
-
-solution: k_16 := [] 
+solution: k_16 := [((((VV_int - 0) mod 4) = 0), SCALAR0);((0 <= VV_int), GEZ);((VV_int >= 0), SCALAR6)] 
 
 solution: k_15 := [] 
 
-solution: k_14 := [((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR8);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR13)] 
+solution: k_14 := [] 
 
-solution: k_13 := [((VV_int = (BLOCK_BEGIN([VV_int]) + 0)), SCALAR7);((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR8);((VV_int <= (BLOCK_BEGIN([VV_int]) + 36)), SCALAR9);((VV_int < (BLOCK_BEGIN([VV_int]) + 36)), SCALAR12);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR13)] 
+solution: k_13 := [((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR8);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR13)] 
 
 solution: k_12 := [((((VV_int - 0) mod 4) = 0), SCALAR0)] 
 
@@ -1094,7 +939,7 @@ solution: k_11 := []
 
 solution: k_10 := [] 
 
-solution: k_1 := [((VV_int = 0), SCALAR10);((((VV_int - 0) mod 4) = 0), SCALAR0);((0 <= VV_int), GEZ);((VV_int >= 0), SCALAR6);((VV_int = (BLOCK_BEGIN([VV_int]) + 0)), SCALAR7);((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR8);((VV_int <= (BLOCK_BEGIN([VV_int]) + 36)), SCALAR9);((0 = VV_int), EQZ);((VV_int < 36), SCALAR11);((VV_int < (BLOCK_BEGIN([VV_int]) + 36)), SCALAR12);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR13)] 
+solution: k_1 := [((VV_int = (BLOCK_BEGIN([VV_int]) + 0)), SCALAR7);((VV_int >= (BLOCK_BEGIN([VV_int]) + 0)), SCALAR8);((VV_int <= (BLOCK_BEGIN([VV_int]) + 36)), SCALAR9);((VV_int < (BLOCK_BEGIN([VV_int]) + 36)), SCALAR12);((((VV_int - (BLOCK_BEGIN([VV_int]) + 0)) mod 4) = 0), SCALAR13)] 
 
 solution: k_0 := [((0 <= VV_int), GEZ);((VV_int >= 0), SCALAR6);((VV_int < 36), SCALAR11)] 
 

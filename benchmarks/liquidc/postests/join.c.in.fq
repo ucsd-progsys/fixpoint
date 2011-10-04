@@ -95,8 +95,28 @@ constraint:
  rhs {VV_int : int | [k_10[y_main__SSA__phi_4:=y_main__SSA__blk_2_1][x_main__SSA__phi_4:=x_main__SSA__blk_2_1]]} 
  id 5 tag [2;2;0;0] //main 
  
+constraint:
+ env  [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [k_9]} 
+ rhs {VV_int : int | [((VV_int != 0) => true)]} 
+ id 6 tag [2;5;0;0] //main 
  
-wf: env [y_main__SSA__phi_4:{VV_int : int | [k_10]};
+ 
+wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_9]} 
+      
+    
+
+    wf: env [y_main__SSA__phi_4:{VV_int : int | [k_10]};
              y_main:{VV_int : int | []};
              x_main__SSA__phi_4:{VV_int : int | [k_11]};
              x_main:{VV_int : int | []};

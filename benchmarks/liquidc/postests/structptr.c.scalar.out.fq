@@ -121,9 +121,9 @@ constraint:
 constraint:
  env  [tmp___1_main__SSA__blk_0_1:{VV_int : int | [true]};
        tmp___1_main:{VV_int : int | []};
-       tmp___0_main__SSA__phi_4:{VV_int : int | []};
+       tmp___0_main__SSA__phi_4:{VV_int : int | [k_1]};
        tmp___0_main:{VV_int : int | []};
-       s_main__SSA__phi_4:{VV_int : int | []};
+       s_main__SSA__phi_4:{VV_int : int | [k_0]};
        s_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
        __cil_tmp8_main:{VV_int : int | []};
@@ -147,9 +147,9 @@ constraint:
 constraint:
  env  [tmp___1_main__SSA__blk_0_1:{VV_int : int | [true]};
        tmp___1_main:{VV_int : int | []};
-       tmp___0_main__SSA__phi_4:{VV_int : int | []};
+       tmp___0_main__SSA__phi_4:{VV_int : int | [k_1]};
        tmp___0_main:{VV_int : int | []};
-       s_main__SSA__phi_4:{VV_int : int | []};
+       s_main__SSA__phi_4:{VV_int : int | [k_0]};
        s_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
        __cil_tmp8_main:{VV_int : int | []};
@@ -173,7 +173,7 @@ constraint:
 constraint:
  env  [tmp___1_main__SSA__blk_0_1:{VV_int : int | [true]};
        tmp___1_main:{VV_int : int | []};
-       tmp___0_main__SSA__phi_4:{VV_int : int | []};
+       tmp___0_main__SSA__phi_4:{VV_int : int | [k_1]};
        tmp___0_main:{VV_int : int | []};
        s_main__SSA__phi_4:{VV_int : int | [k_0]};
        s_main:{VV_int : int | []};
@@ -199,7 +199,7 @@ constraint:
 constraint:
  env  [tmp___1_main__SSA__blk_0_1:{VV_int : int | [true]};
        tmp___1_main:{VV_int : int | []};
-       tmp___0_main__SSA__phi_4:{VV_int : int | []};
+       tmp___0_main__SSA__phi_4:{VV_int : int | [k_1]};
        tmp___0_main:{VV_int : int | []};
        s_main__SSA__phi_4:{VV_int : int | [k_0]};
        s_main:{VV_int : int | []};
@@ -225,7 +225,7 @@ constraint:
 constraint:
  env  [tmp___1_main__SSA__blk_0_1:{VV_int : int | [true]};
        tmp___1_main:{VV_int : int | []};
-       tmp___0_main__SSA__phi_4:{VV_int : int | []};
+       tmp___0_main__SSA__phi_4:{VV_int : int | [k_1]};
        tmp___0_main:{VV_int : int | []};
        s_main__SSA__phi_4:{VV_int : int | [k_0]};
        s_main:{VV_int : int | []};
@@ -251,7 +251,7 @@ constraint:
 constraint:
  env  [tmp___1_main__SSA__blk_0_1:{VV_int : int | [true]};
        tmp___1_main:{VV_int : int | []};
-       tmp___0_main__SSA__phi_4:{VV_int : int | []};
+       tmp___0_main__SSA__phi_4:{VV_int : int | [k_1]};
        tmp___0_main:{VV_int : int | []};
        s_main__SSA__phi_4:{VV_int : int | [k_0]};
        s_main:{VV_int : int | []};
@@ -277,7 +277,7 @@ constraint:
 constraint:
  env  [tmp___1_main__SSA__blk_0_1:{VV_int : int | [true]};
        tmp___1_main:{VV_int : int | []};
-       tmp___0_main__SSA__phi_4:{VV_int : int | []};
+       tmp___0_main__SSA__phi_4:{VV_int : int | [k_1]};
        tmp___0_main:{VV_int : int | []};
        s_main__SSA__phi_4:{VV_int : int | [k_0]};
        s_main:{VV_int : int | []};
@@ -303,7 +303,7 @@ constraint:
 constraint:
  env  [tmp___1_main__SSA__blk_0_1:{VV_int : int | [true]};
        tmp___1_main:{VV_int : int | []};
-       tmp___0_main__SSA__phi_4:{VV_int : int | []};
+       tmp___0_main__SSA__phi_4:{VV_int : int | [k_1]};
        tmp___0_main:{VV_int : int | []};
        s_main__SSA__phi_4:{VV_int : int | [k_0]};
        s_main:{VV_int : int | []};

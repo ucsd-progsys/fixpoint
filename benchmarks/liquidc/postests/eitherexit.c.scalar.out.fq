@@ -96,7 +96,7 @@ constraint:
        b_maim__SSA__phi_3:{VV_int : int | [k_0]};
        b_maim__SSA__blk_0_1:{VV_int : int | [(VV_int = (tmp___0_maim__SSA__blk_0_1 : int))]};
        b_maim:{VV_int : int | []};
-       a_maim__SSA__phi_3:{VV_int : int | []};
+       a_maim__SSA__phi_3:{VV_int : int | [k_1]};
        a_maim__SSA__blk_0_1:{VV_int : int | [(VV_int = (tmp_maim__SSA__blk_0_1 : int))]};
        a_maim:{VV_int : int | []};
        __cil_tmp9_maim:{VV_int : int | []};
@@ -120,7 +120,7 @@ constraint:
        tmp_maim:{VV_int : int | []};
        tmp___0_maim__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
        tmp___0_maim:{VV_int : int | []};
-       b_maim__SSA__phi_3:{VV_int : int | []};
+       b_maim__SSA__phi_3:{VV_int : int | [k_0]};
        b_maim__SSA__blk_0_1:{VV_int : int | [(VV_int = (tmp___0_maim__SSA__blk_0_1 : int))]};
        b_maim:{VV_int : int | []};
        a_maim__SSA__phi_3:{VV_int : int | [k_1]};

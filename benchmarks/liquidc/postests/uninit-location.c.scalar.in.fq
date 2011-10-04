@@ -104,9 +104,9 @@ constraint:
        tmp___3_main:{VV_int : int | []};
        tmp___2_main__SSA__phi_4:{VV_int : int | [k_6]};
        tmp___2_main:{VV_int : int | []};
-       tmp___1_main__SSA__phi_4:{VV_int : int | []};
+       tmp___1_main__SSA__phi_4:{VV_int : int | [k_5]};
        tmp___1_main:{VV_int : int | []};
-       tmp___0_main__SSA__phi_4:{VV_int : int | []};
+       tmp___0_main__SSA__phi_4:{VV_int : int | [k_7]};
        tmp___0_main:{VV_int : int | []};
        p_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
@@ -127,9 +127,9 @@ constraint:
        tmp___3_main:{VV_int : int | []};
        tmp___2_main__SSA__phi_4:{VV_int : int | [k_6]};
        tmp___2_main:{VV_int : int | []};
-       tmp___1_main__SSA__phi_4:{VV_int : int | []};
+       tmp___1_main__SSA__phi_4:{VV_int : int | [k_5]};
        tmp___1_main:{VV_int : int | []};
-       tmp___0_main__SSA__phi_4:{VV_int : int | []};
+       tmp___0_main__SSA__phi_4:{VV_int : int | [k_7]};
        tmp___0_main:{VV_int : int | []};
        p_main__SSA__blk_4_1:{VV_int : int | [(VV_int = tmp___2_main__SSA__phi_4);(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([tmp___2_main__SSA__phi_4]))]};
        p_main:{VV_int : int | []};
@@ -151,9 +151,9 @@ constraint:
        tmp___3_main:{VV_int : int | []};
        tmp___2_main__SSA__phi_4:{VV_int : int | [k_6]};
        tmp___2_main:{VV_int : int | []};
-       tmp___1_main__SSA__phi_4:{VV_int : int | []};
+       tmp___1_main__SSA__phi_4:{VV_int : int | [k_5]};
        tmp___1_main:{VV_int : int | []};
-       tmp___0_main__SSA__phi_4:{VV_int : int | []};
+       tmp___0_main__SSA__phi_4:{VV_int : int | [k_7]};
        tmp___0_main:{VV_int : int | []};
        p_main__SSA__blk_4_1:{VV_int : int | [(VV_int = tmp___2_main__SSA__phi_4);(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([tmp___2_main__SSA__phi_4]))]};
        p_main:{VV_int : int | []};
@@ -175,9 +175,9 @@ constraint:
        tmp___3_main:{VV_int : int | []};
        tmp___2_main__SSA__phi_4:{VV_int : int | [k_6]};
        tmp___2_main:{VV_int : int | []};
-       tmp___1_main__SSA__phi_4:{VV_int : int | []};
+       tmp___1_main__SSA__phi_4:{VV_int : int | [k_5]};
        tmp___1_main:{VV_int : int | []};
-       tmp___0_main__SSA__phi_4:{VV_int : int | []};
+       tmp___0_main__SSA__phi_4:{VV_int : int | [k_7]};
        tmp___0_main:{VV_int : int | []};
        p_main__SSA__blk_4_1:{VV_int : int | [(VV_int = tmp___2_main__SSA__phi_4);(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([tmp___2_main__SSA__phi_4]))]};
        p_main:{VV_int : int | []};

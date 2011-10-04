@@ -294,7 +294,7 @@ constraint:
 constraint:
  env  [y_main__SSA__blk_0_1:{VV_int : int | [(VV_int = tmp___0_main__SSA__blk_0_1);(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([tmp___0_main__SSA__blk_0_1]))]};
        y_main:{VV_int : int | []};
-       x_main__SSA__phi_3:{VV_int : int | []};
+       x_main__SSA__phi_3:{VV_int : int | [k_0]};
        x_main__SSA__blk_0_1:{VV_int : int | [(VV_int = tmp_main__SSA__blk_0_1);(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([tmp_main__SSA__blk_0_1]))]};
        x_main:{VV_int : int | []};
        tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};

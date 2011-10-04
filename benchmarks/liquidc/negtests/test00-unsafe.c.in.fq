@@ -1,7 +1,7 @@
 del_dep: [2;6;-2;0] => * 
 del_dep: [2;1;-4;0] => * 
 constraint:
- env  [tmp_main__SSA__phi_3:{VV_int : int | []};
+ env  [tmp_main__SSA__phi_3:{VV_int : int | [k_8]};
        tmp_main__SSA__blk_4_1:{VV_int : int | [true]};
        tmp_main:{VV_int : int | []};
        i_main__SSA__phi_3:{VV_int : int | [k_9]};
@@ -36,7 +36,23 @@ constraint:
  id 2 tag [2;8;0;0] //main 
  
 constraint:
- env  [tmp_main__SSA__phi_3:{VV_int : int | []};
+ env  [tmp_main:{VV_int : int | []};
+       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main:{VV_int : int | []};
+       __cil_tmp4_main:{VV_int : int | []};
+       __cil_tmp3_main:{VV_int : int | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | []} 
+ rhs {VV_int : int | [k_8[tmp_main__SSA__phi_3:=tmp_main][i_main__SSA__phi_3:=i_main__SSA__blk_0_1]]} 
+ id 3 tag [2;8;0;0] //main 
+ 
+constraint:
+ env  [tmp_main__SSA__phi_3:{VV_int : int | [k_8]};
        tmp_main__SSA__blk_4_1:{VV_int : int | [true]};
        tmp_main:{VV_int : int | []};
        i_main__SSA__phi_3:{VV_int : int | [k_9]};
@@ -55,8 +71,61 @@ constraint:
  rhs {VV_int : int | [k_9[tmp_main__SSA__phi_3:=tmp_main__SSA__blk_4_1][i_main__SSA__phi_3:=i_main__SSA__blk_7_1]]} 
  id 4 tag [2;4;0;0] //main 
  
+constraint:
+ env  [tmp_main__SSA__phi_3:{VV_int : int | []};
+       tmp_main__SSA__blk_4_1:{VV_int : int | [true]};
+       tmp_main:{VV_int : int | []};
+       i_main__SSA__phi_3:{VV_int : int | [k_9]};
+       i_main__SSA__blk_7_1:{VV_int : int | [(VV_int = (i_main__SSA__phi_3 + 1))]};
+       i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+       i_main:{VV_int : int | []};
+       __cil_tmp4_main:{VV_int : int | []};
+       __cil_tmp3_main:{VV_int : int | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd (tmp_main__SSA__blk_4_1 != 0) 
+ lhs {VV_int : int | [(VV_int = tmp_main__SSA__blk_4_1)]} 
+ rhs {VV_int : int | [k_8[tmp_main__SSA__phi_3:=tmp_main__SSA__blk_4_1][i_main__SSA__phi_3:=i_main__SSA__blk_7_1]]} 
+ id 5 tag [2;4;0;0] //main 
  
-wf: env [tmp_main:{VV_int : int | []};
+constraint:
+ env  [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [k_7]} 
+ rhs {VV_int : int | [((VV_int != 0) => true)]} 
+ id 6 tag [2;10;0;0] //main 
+ 
+ 
+wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_7]} 
+      
+    
+
+    wf: env [tmp_main:{VV_int : int | []};
+             i_main__SSA__phi_3:{VV_int : int | [k_9]};
+             i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
+             i_main:{VV_int : int | []};
+             UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_8]} 
+      
+    
+
+    wf: env [tmp_main:{VV_int : int | []};
              i_main__SSA__phi_3:{VV_int : int | [k_9]};
              i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
              i_main:{VV_int : int | []};

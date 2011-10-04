@@ -1,5 +1,5 @@
 constraint:
- env  [n_main__SSA__phi_2:{VV_int : int | []};
+ env  [n_main__SSA__phi_2:{VV_int : int | [k_0]};
        n_main:{VV_int : int | []};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
