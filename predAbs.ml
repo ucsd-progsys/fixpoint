@@ -467,7 +467,10 @@ let check_tp me env vv t lps f =  function [] -> [] | rcs ->
 *)
 
 (* API *)
-let read s k = (s.assm k) ++ (if SM.mem k s.m    then q_read s k else []) 
+let read s k = (s.assm k) ++ (if SM.mem k s.m    then q_read s k else [])
+
+(* API *)
+let read_bind s k = failwith "TBD"
 
 (* API *)
 let refine me c =
