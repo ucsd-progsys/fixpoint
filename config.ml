@@ -96,6 +96,7 @@ module type DOMAIN = sig
   val empty        : t 
   (* val meet         : t -> t -> t *)
   val read         : t -> FixConstraint.soln
+  val read_bind    : t -> Ast.Symbol.t -> bind
   val top          : t -> Ast.Symbol.t list -> t
   val refine       : t -> FixConstraint.t -> (bool * t)
   val unsat        : t -> FixConstraint.t -> bool
