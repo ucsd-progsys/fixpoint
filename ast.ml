@@ -930,11 +930,12 @@ and sortcheck_pred f p =
         let f' = fun x -> try List.assoc x qs with _ -> f x in
         sortcheck_pred f' p
 
+(*
 let sortcheck_pred f p = 
   sortcheck_pred f p
   >> (fun b -> ignore <| F.printf "sortcheck_pred: p = %a, res = %b\n"
   Predicate.print p b)
-
+*)
 (***************************************************************************)
 (************* Simplifying Expressions and Predicates **********************)
 (***************************************************************************)
