@@ -89,6 +89,7 @@ rule token = parse
   | ">"		            { GT }
   | "mod"               { MOD }
   | "obj"               { OBJ }
+  | "num"               { NUM }
   | "int"               { INT }
   | "ptr"               { PTR }
   | "bool"              { BOOL }

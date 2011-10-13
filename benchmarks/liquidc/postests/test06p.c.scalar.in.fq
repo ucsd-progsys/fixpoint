@@ -10,7 +10,7 @@ constraint:
        BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd true 
- lhs {VV_int : int | [&& [(VV_int = (0 : int)) ; (0 <= VV_int)]]} 
+ lhs {VV_int : int | [|| [&& [(0 >= 0) ; (VV_int = 0)];&& [(0 < 0) ; (VV_int > 0)]]]} 
  rhs {VV_int : int | [k_0]} 
  id 1 tag [1;1;-1;0] //main 
  
@@ -19,7 +19,7 @@ constraint:
        tmp_main:{VV_int : int | []};
        t_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [&& [(VV_int = (0 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp4_main:{VV_int : int | [|| [&& [(0 >= 0) ; (VV_int = 0)];&& [(0 < 0) ; (VV_int > 0)]]]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
        DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
@@ -36,7 +36,7 @@ constraint:
        tmp_main:{VV_int : int | []};
        t_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [&& [(VV_int = (0 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp4_main:{VV_int : int | [|| [&& [(0 >= 0) ; (VV_int = 0)];&& [(0 < 0) ; (VV_int > 0)]]]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
        DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
@@ -54,7 +54,7 @@ constraint:
        t_main__SSA__blk_0_1:{VV_int : int | [(VV_int = tmp_main__SSA__blk_0_1);(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([tmp_main__SSA__blk_0_1]))]};
        t_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [&& [(VV_int = (0 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp4_main:{VV_int : int | [|| [&& [(0 >= 0) ; (VV_int = 0)];&& [(0 < 0) ; (VV_int > 0)]]]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
        DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
@@ -63,7 +63,7 @@ constraint:
  grd true 
  lhs {VV_int : int | []} 
  rhs {VV_int : int | [k_3]} 
- id 4 tag [1;1;-4;0] //main 
+ id 4 tag [1;1;-5;0] //main 
  
 constraint:
  env  [x_main:{VV_int : int | []};
@@ -72,7 +72,7 @@ constraint:
        t_main__SSA__blk_0_1:{VV_int : int | [(VV_int = tmp_main__SSA__blk_0_1);(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([tmp_main__SSA__blk_0_1]))]};
        t_main:{VV_int : int | []};
        __cil_tmp5_main:{VV_int : int | []};
-       __cil_tmp4_main:{VV_int : int | [&& [(VV_int = (0 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp4_main:{VV_int : int | [|| [&& [(0 >= 0) ; (VV_int = 0)];&& [(0 < 0) ; (VV_int > 0)]]]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
        DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
@@ -81,7 +81,7 @@ constraint:
  grd true 
  lhs {VV_int : int | [(VV_int = __cil_tmp5_main)]} 
  rhs {VV_int : int | [k_4]} 
- id 5 tag [1;1;-5;0] //main 
+ id 5 tag [1;1;-6;0] //main 
  
  
 wf: env [x_main:{VV_int : int | []};

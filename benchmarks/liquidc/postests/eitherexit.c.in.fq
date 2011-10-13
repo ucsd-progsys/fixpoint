@@ -1,7 +1,34 @@
-del_dep: [2;14;-2;0] => * 
 del_dep: [2;14;-5;0] => * 
+del_dep: [2;14;-2;0] => * 
 del_dep: [2;1;-4;0] => * 
 
+constraint:
+ env  [tmp_maim__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
+       tmp_maim:{VV_int : int | []};
+       tmp___0_maim__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
+       tmp___0_maim:{VV_int : int | []};
+       b_maim__SSA__phi_3:{VV_int : int | [k_15]};
+       b_maim__SSA__blk_0_1:{VV_int : int | [(VV_int = (tmp___0_maim__SSA__blk_0_1 : int))]};
+       b_maim:{VV_int : int | []};
+       a_maim__SSA__phi_3:{VV_int : int | [k_16]};
+       a_maim__SSA__blk_0_1:{VV_int : int | [(VV_int = (tmp_maim__SSA__blk_0_1 : int))]};
+       a_maim:{VV_int : int | []};
+       __cil_tmp9_maim:{VV_int : int | []};
+       __cil_tmp8_maim:{VV_int : int | [(VV_int = ((a_maim__SSA__phi_3 > 0) ? 1 : 0))]};
+       __cil_tmp7_maim:{VV_int : int | [(VV_int = (&& [(__cil_tmp6_maim != 0) ; (__cil_tmp5_maim != 0)] ? 1 : 0))]};
+       __cil_tmp6_maim:{VV_int : int | [(VV_int = ((a_maim__SSA__phi_3 > 0) ? 1 : 0))]};
+       __cil_tmp5_maim:{VV_int : int | [(VV_int = ((b_maim__SSA__phi_3 > 0) ? 1 : 0))]};
+       __cil_tmp10_maim:{VV_int : int | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd (~ ((__cil_tmp7_maim != 0))) 
+ lhs {VV_int : int | [(VV_int = 0)]} 
+ rhs {VV_int : int | [k_14]} 
+ id 1 tag [2;0;-1000;0] //maim 
+ 
 constraint:
  env  [tmp_maim__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
        tmp_maim:{VV_int : int | []};
@@ -137,8 +164,28 @@ constraint:
  rhs {VV_int : int | [k_15[b_maim__SSA__phi_3:=b_maim__SSA__blk_8_1][a_maim__SSA__phi_3:=a_maim__SSA__blk_8_1]]} 
  id 6 tag [2;7;0;0] //maim 
  
+constraint:
+ env  [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [k_14]} 
+ rhs {VV_int : int | [((VV_int != 0) => true)]} 
+ id 7 tag [2;14;0;0] //maim 
  
-wf: env [tmp_maim__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
+ 
+wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_14]} 
+      
+    
+
+    wf: env [tmp_maim__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
              tmp_maim:{VV_int : int | []};
              tmp___0_maim__SSA__blk_0_1:{VV_int : int | [(VV_int >= 1)]};
              tmp___0_maim:{VV_int : int | []};

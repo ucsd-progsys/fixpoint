@@ -60,8 +60,28 @@ constraint:
  rhs {VV_int : int | [k_9[n4_main__SSA__phi_6:=n4_main__SSA__blk_7_1]]} 
  id 3 tag [2;1;0;0] //main 
  
+constraint:
+ env  [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [k_8]} 
+ rhs {VV_int : int | [((VV_int != 0) => true)]} 
+ id 4 tag [2;12;0;0] //main 
  
-wf: env [tmp_main__SSA__blk_0_1:{VV_int : int | [true]};
+ 
+wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_8]} 
+      
+    
+
+    wf: env [tmp_main__SSA__blk_0_1:{VV_int : int | [true]};
              tmp_main:{VV_int : int | []};
              n4_main__SSA__phi_6:{VV_int : int | [k_9]};
              n4_main__SSA__blk_0_1:{VV_int : int | [(VV_int = tmp_main__SSA__blk_0_1)]};
@@ -76,11 +96,11 @@ wf: env [tmp_main__SSA__blk_0_1:{VV_int : int | [true]};
      
 //solution: k_9 := [(VV_int >= n4_main__SSA__phi_6);(VV_int <= n4_main__SSA__blk_0_1);(VV_int <= n4_main__SSA__phi_6);(VV_int <= tmp_main__SSA__blk_0_1);(0 < VV_int);(0 <= VV_int)] 
 
-//solution: k_8 := [(0 <= VV_int);(1 = 0);(0 < VV_int);(VV_int = 0)] 
+//solution: k_8 := [] 
 
 solution: k_9 := [((0 <= VV_int), GEZ);((0 < VV_int), GTZ);((VV_int <= tmp_main__SSA__blk_0_1), LEQ[~A0:=tmp_main__SSA__blk_0_1]);((VV_int <= n4_main__SSA__phi_6), LEQ[~A0:=n4_main__SSA__phi_6]);((VV_int <= n4_main__SSA__blk_0_1), LEQ[~A0:=n4_main__SSA__blk_0_1]);((VV_int >= n4_main__SSA__phi_6), GEQ[~A0:=n4_main__SSA__phi_6])] 
 
-solution: k_8 := [((VV_int = 0), EQZ);((0 < VV_int), GTZ);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
+solution: k_8 := [] 
 
 //QUALIFIERS 
 

@@ -621,6 +621,7 @@ let create ts sm ps consts assm bm =
      ; stat_emptyRHS       = ref 0
      }
 
+(* RJ: DO NOT DELETE! *)
 let ppBinding (k, zs) = 
   F.printf "ppBind %a := %a \n" 
     Sy.print k 

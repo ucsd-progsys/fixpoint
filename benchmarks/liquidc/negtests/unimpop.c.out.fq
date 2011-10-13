@@ -1,5 +1,5 @@
-del_dep: [2;1;-2;0] => * 
 del_dep: [2;1;-7;0] => * 
+del_dep: [2;1;-2;0] => * 
 constraint:
  env  [x_main__SSA__blk_0_1:{VV_int : int | [(VV_int = tmp_main__SSA__blk_0_1)]};
        x_main:{VV_int : int | []};
@@ -17,11 +17,29 @@ constraint:
  rhs {VV_int : int | [(VV_int != 0)]} 
  id 1 tag [2;1;-6;0] //main 
  
+constraint:
+ env  [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [k_4]} 
+ rhs {VV_int : int | [((VV_int != 0) => true)]} 
+ id 2 tag [2;1;0;0] //main 
  
  
-//solution: k_4 := [(0 <= VV_int);(1 = 0);(0 < VV_int);(VV_int = 0)] 
+wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_4]} 
+      
+     
+//solution: k_4 := [] 
 
-solution: k_4 := [((VV_int = 0), EQZ);((0 < VV_int), GTZ);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
+solution: k_4 := [] 
 
 //QUALIFIERS 
 

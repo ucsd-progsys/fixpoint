@@ -16,7 +16,7 @@ constraint:
        BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd true 
- lhs {VV_int : int | [&& [(VV_int = (40 : int)) ; (0 <= VV_int)]]} 
+ lhs {VV_int : int | [|| [&& [(40 >= 0) ; (VV_int = 40)];&& [(40 < 0) ; (VV_int > 0)]]]} 
  rhs {VV_int : int | [k_0]} 
  id 1 tag [2;1;-1;0] //main 
  
@@ -29,7 +29,7 @@ constraint:
        c_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
        __cil_tmp8_main:{VV_int : int | []};
-       __cil_tmp7_main:{VV_int : int | [&& [(VV_int = (40 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_main:{VV_int : int | [|| [&& [(40 >= 0) ; (VV_int = 40)];&& [(40 < 0) ; (VV_int > 0)]]]};
        __cil_tmp11_main:{VV_int : int | []};
        __cil_tmp10_main:{VV_int : int | []};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
@@ -52,7 +52,7 @@ constraint:
        c_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
        __cil_tmp8_main:{VV_int : int | []};
-       __cil_tmp7_main:{VV_int : int | [&& [(VV_int = (40 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_main:{VV_int : int | [|| [&& [(40 >= 0) ; (VV_int = 40)];&& [(40 < 0) ; (VV_int > 0)]]]};
        __cil_tmp11_main:{VV_int : int | []};
        __cil_tmp10_main:{VV_int : int | []};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
@@ -76,7 +76,7 @@ constraint:
        c_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
        __cil_tmp8_main:{VV_int : int | []};
-       __cil_tmp7_main:{VV_int : int | [&& [(VV_int = (40 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_main:{VV_int : int | [|| [&& [(40 >= 0) ; (VV_int = 40)];&& [(40 < 0) ; (VV_int > 0)]]]};
        __cil_tmp11_main:{VV_int : int | []};
        __cil_tmp10_main:{VV_int : int | []};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
@@ -101,7 +101,7 @@ constraint:
        c_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
        __cil_tmp8_main:{VV_int : int | []};
-       __cil_tmp7_main:{VV_int : int | [&& [(VV_int = (40 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_main:{VV_int : int | [|| [&& [(40 >= 0) ; (VV_int = 40)];&& [(40 < 0) ; (VV_int > 0)]]]};
        __cil_tmp11_main:{VV_int : int | []};
        __cil_tmp10_main:{VV_int : int | []};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
@@ -126,7 +126,7 @@ constraint:
        c_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
        __cil_tmp8_main:{VV_int : int | [(VV_int = (4 : int))]};
-       __cil_tmp7_main:{VV_int : int | [&& [(VV_int = (40 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_main:{VV_int : int | [|| [&& [(40 >= 0) ; (VV_int = 40)];&& [(40 < 0) ; (VV_int > 0)]]]};
        __cil_tmp11_main:{VV_int : int | []};
        __cil_tmp10_main:{VV_int : int | []};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
@@ -151,7 +151,7 @@ constraint:
        c_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | [(VV_int = (tmp___0_main__SSA__blk_0_1 * __cil_tmp8_main))]};
        __cil_tmp8_main:{VV_int : int | [(VV_int = (4 : int))]};
-       __cil_tmp7_main:{VV_int : int | [&& [(VV_int = (40 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_main:{VV_int : int | [|| [&& [(40 >= 0) ; (VV_int = 40)];&& [(40 < 0) ; (VV_int > 0)]]]};
        __cil_tmp11_main:{VV_int : int | []};
        __cil_tmp10_main:{VV_int : int | []};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
@@ -177,7 +177,7 @@ constraint:
        c_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | [(VV_int = (tmp___0_main__SSA__blk_0_1 * __cil_tmp8_main))]};
        __cil_tmp8_main:{VV_int : int | [(VV_int = (4 : int))]};
-       __cil_tmp7_main:{VV_int : int | [&& [(VV_int = (40 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_main:{VV_int : int | [|| [&& [(40 >= 0) ; (VV_int = 40)];&& [(40 < 0) ; (VV_int > 0)]]]};
        __cil_tmp11_main:{VV_int : int | []};
        __cil_tmp10_main:{VV_int : int | []};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
@@ -203,7 +203,7 @@ constraint:
        c_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | [(VV_int = (tmp___0_main__SSA__blk_0_1 * __cil_tmp8_main))]};
        __cil_tmp8_main:{VV_int : int | [(VV_int = (4 : int))]};
-       __cil_tmp7_main:{VV_int : int | [&& [(VV_int = (40 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_main:{VV_int : int | [|| [&& [(40 >= 0) ; (VV_int = 40)];&& [(40 < 0) ; (VV_int > 0)]]]};
        __cil_tmp11_main:{VV_int : int | []};
        __cil_tmp10_main:{VV_int : int | [(VV_int = p_main__SSA__blk_0_1);(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([p_main__SSA__blk_0_1]))]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
@@ -229,7 +229,7 @@ constraint:
        c_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | [(VV_int = (tmp___0_main__SSA__blk_0_1 * __cil_tmp8_main))]};
        __cil_tmp8_main:{VV_int : int | [(VV_int = (4 : int))]};
-       __cil_tmp7_main:{VV_int : int | [&& [(VV_int = (40 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_main:{VV_int : int | [|| [&& [(40 >= 0) ; (VV_int = 40)];&& [(40 < 0) ; (VV_int > 0)]]]};
        __cil_tmp11_main:{VV_int : int | [&& [(VV_int = (__cil_tmp10_main + off_main__SSA__blk_0_1)) ; (__cil_tmp10_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp10_main]))]};
        __cil_tmp10_main:{VV_int : int | [(VV_int = p_main__SSA__blk_0_1);(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([p_main__SSA__blk_0_1]))]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
@@ -256,7 +256,7 @@ constraint:
        c_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | [(VV_int = (tmp___0_main__SSA__blk_0_1 * __cil_tmp8_main))]};
        __cil_tmp8_main:{VV_int : int | [(VV_int = (4 : int))]};
-       __cil_tmp7_main:{VV_int : int | [&& [(VV_int = (40 : int)) ; (0 <= VV_int)]]};
+       __cil_tmp7_main:{VV_int : int | [|| [&& [(40 >= 0) ; (VV_int = 40)];&& [(40 < 0) ; (VV_int > 0)]]]};
        __cil_tmp11_main:{VV_int : int | [&& [(VV_int = (__cil_tmp10_main + off_main__SSA__blk_0_1)) ; (__cil_tmp10_main <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([__cil_tmp10_main]))]};
        __cil_tmp10_main:{VV_int : int | [(VV_int = p_main__SSA__blk_0_1);(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([p_main__SSA__blk_0_1]))]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};

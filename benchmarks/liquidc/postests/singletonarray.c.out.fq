@@ -1,14 +1,394 @@
+constraint:
+ env  [__cil_tmp1_main:{VV_ptr_A3 : ptr(A3) | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [false]};
+       A3#Ix#3:{VV_int : int | [false]};
+       A3#Ix#2:{VV_int : int | [false]};
+       A3#Ix#0:{VV_int : int | [false]}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = A3#Ix#0)]} 
+ rhs {VV_int : int | [k_8]} 
+ id 1 tag [0;2;0;0] //main 
+ 
+constraint:
+ env  [__cil_tmp1_main:{VV_ptr_A3 : ptr(A3) | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [false]};
+       A3#Ix#3:{VV_int : int | [false]};
+       A3#Ix#2:{VV_int : int | [false]};
+       A3#Ix#0:{VV_int : int | [false]}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = A3#Ix#2)]} 
+ rhs {VV_int : int | [k_9]} 
+ id 2 tag [0;2;0;0] //main 
+ 
+constraint:
+ env  [__cil_tmp1_main:{VV_ptr_A3 : ptr(A3) | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [false]};
+       A3#Ix#3:{VV_int : int | [false]};
+       A3#Ix#2:{VV_int : int | [false]};
+       A3#Ix#0:{VV_int : int | [false]}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = A3#Ix#3)]} 
+ rhs {VV_int : int | [k_10]} 
+ id 3 tag [0;2;0;0] //main 
+ 
+constraint:
+ env  [__cil_tmp1_main:{VV_ptr_A3 : ptr(A3) | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [false]};
+       A3#Ix#3:{VV_int : int | [false]};
+       A3#Ix#2:{VV_int : int | [false]};
+       A3#Ix#0:{VV_int : int | [false]}] 
+ grd true 
+ lhs {VV_ptr_A4 : ptr(A4) | [(VV_ptr_A4 = A3#Ix#4)]} 
+ rhs {VV_ptr_A4 : ptr(A4) | [k_11]} 
+ id 4 tag [0;2;0;0] //main 
+ 
+constraint:
+ env  [__cil_tmp1_main:{VV_ptr_A3 : ptr(A3) | []};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A4#Ix#0:{VV_int : int | [false]}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = A4#Ix#0)]} 
+ rhs {VV_int : int | [k_7]} 
+ id 5 tag [0;2;0;0] //main 
+ 
+constraint:
+ env  [__cil_tmp1_main:{VV_ptr_A3 : ptr(A3) | [(VV_ptr_A3 = 0)]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_ptr_A3 : ptr(A3) | [(VV_ptr_A3 = __cil_tmp1_main);(BLOCK_BEGIN([VV_ptr_A3]) = BLOCK_BEGIN([__cil_tmp1_main]));(BLOCK_END([VV_ptr_A3]) = BLOCK_END([__cil_tmp1_main]));(UNCHECKED([VV_ptr_A3]) = UNCHECKED([__cil_tmp1_main]))]} 
+ rhs {VV_ptr_A3 : ptr(A3) | [k_6]} 
+ id 6 tag [0;0;-1000;0] //main 
+ 
+constraint:
+ env  [__cil_tmp1_main:{VV_ptr_A3 : ptr(A3) | [(VV_ptr_A3 = 0)]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [k_11]};
+       A3#Ix#3:{VV_int : int | [k_10]};
+       A3#Ix#2:{VV_int : int | [k_9]};
+       A3#Ix#0:{VV_int : int | [k_8]}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = A3#Ix#0)]} 
+ rhs {VV_int : int | [k_2]} 
+ id 7 tag [0;0;-1000;0] //main 
+ 
+constraint:
+ env  [__cil_tmp1_main:{VV_ptr_A3 : ptr(A3) | [(VV_ptr_A3 = 0)]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [k_11]};
+       A3#Ix#3:{VV_int : int | [k_10]};
+       A3#Ix#2:{VV_int : int | [k_9]};
+       A3#Ix#0:{VV_int : int | [k_8]}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = A3#Ix#2)]} 
+ rhs {VV_int : int | [k_3]} 
+ id 8 tag [0;0;-1000;0] //main 
+ 
+constraint:
+ env  [__cil_tmp1_main:{VV_ptr_A3 : ptr(A3) | [(VV_ptr_A3 = 0)]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [k_11]};
+       A3#Ix#3:{VV_int : int | [k_10]};
+       A3#Ix#2:{VV_int : int | [k_9]};
+       A3#Ix#0:{VV_int : int | [k_8]}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = A3#Ix#3)]} 
+ rhs {VV_int : int | [k_4]} 
+ id 9 tag [0;0;-1000;0] //main 
+ 
+constraint:
+ env  [__cil_tmp1_main:{VV_ptr_A3 : ptr(A3) | [(VV_ptr_A3 = 0)]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [k_11]};
+       A3#Ix#3:{VV_int : int | [k_10]};
+       A3#Ix#2:{VV_int : int | [k_9]};
+       A3#Ix#0:{VV_int : int | [k_8]}] 
+ grd true 
+ lhs {VV_ptr_A4 : ptr(A4) | [(VV_ptr_A4 = A3#Ix#4)]} 
+ rhs {VV_ptr_A4 : ptr(A4) | [k_5]} 
+ id 10 tag [0;0;-1000;0] //main 
+ 
+constraint:
+ env  [__cil_tmp1_main:{VV_ptr_A3 : ptr(A3) | [(VV_ptr_A3 = 0)]};
+       UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A4#Ix#0:{VV_int : int | [k_7]}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = A4#Ix#0)]} 
+ rhs {VV_int : int | [k_1]} 
+ id 11 tag [0;0;-1000;0] //main 
+ 
+constraint:
+ env  [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_ptr_A10 : ptr(A10) | [k_6[VV_ptr_A3:=VV_ptr_A10][A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]} 
+ rhs {VV_ptr_A10 : ptr(A10) | [((VV_ptr_A10 != 0) => (VV_ptr_A10 = (BLOCK_BEGIN([VV_ptr_A10]) + 0)))]} 
+ id 12 tag [0;2;0;0] //main 
+ 
+constraint:
+ env  [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A9#Ix#0:{VV_int : int | [k_1[A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = A9#Ix#0)]} 
+ rhs {VV_int : int | [((VV_int != 0) => true)]} 
+ id 13 tag [0;2;0;0] //main 
+ 
+constraint:
+ env  [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A10#Ix#4:{VV_ptr_A9 : ptr(A9) | [k_5[VV_ptr_A4:=VV_ptr_A9][A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]};
+       A10#Ix#3:{VV_int : int | [k_4[A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]};
+       A10#Ix#2:{VV_int : int | [k_3[A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]};
+       A10#Ix#0:{VV_int : int | [k_2[A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = A10#Ix#0)]} 
+ rhs {VV_int : int | [((VV_int != 0) => true)]} 
+ id 14 tag [0;2;0;0] //main 
+ 
+constraint:
+ env  [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A10#Ix#4:{VV_ptr_A9 : ptr(A9) | [k_5[VV_ptr_A4:=VV_ptr_A9][A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]};
+       A10#Ix#3:{VV_int : int | [k_4[A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]};
+       A10#Ix#2:{VV_int : int | [k_3[A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]};
+       A10#Ix#0:{VV_int : int | [k_2[A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = A10#Ix#2)]} 
+ rhs {VV_int : int | [((VV_int != 0) => true)]} 
+ id 15 tag [0;2;0;0] //main 
+ 
+constraint:
+ env  [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A10#Ix#4:{VV_ptr_A9 : ptr(A9) | [k_5[VV_ptr_A4:=VV_ptr_A9][A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]};
+       A10#Ix#3:{VV_int : int | [k_4[A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]};
+       A10#Ix#2:{VV_int : int | [k_3[A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]};
+       A10#Ix#0:{VV_int : int | [k_2[A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]}] 
+ grd true 
+ lhs {VV_int : int | [(VV_int = A10#Ix#3)]} 
+ rhs {VV_int : int | [((VV_int != 0) => true)]} 
+ id 16 tag [0;2;0;0] //main 
+ 
+constraint:
+ env  [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       A10#Ix#4:{VV_ptr_A9 : ptr(A9) | [k_5[VV_ptr_A4:=VV_ptr_A9][A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]};
+       A10#Ix#3:{VV_int : int | [k_4[A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]};
+       A10#Ix#2:{VV_int : int | [k_3[A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]};
+       A10#Ix#0:{VV_int : int | [k_2[A4#Ix#0:=A9#Ix#0][A3#Ix#4:=A10#Ix#4][A3#Ix#3:=A10#Ix#3][A3#Ix#2:=A10#Ix#2][A3#Ix#0:=A10#Ix#0]]}] 
+ grd true 
+ lhs {VV_ptr_A9 : ptr(A9) | [(VV_ptr_A9 = A10#Ix#4)]} 
+ rhs {VV_ptr_A9 : ptr(A9) | [((VV_ptr_A9 != 0) => (VV_ptr_A9 = (BLOCK_BEGIN([VV_ptr_A9]) + 0)))]} 
+ id 17 tag [0;2;0;0] //main 
  
  
+wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [k_5]};
+             A3#Ix#3:{VV_int : int | [k_4]};
+             A3#Ix#2:{VV_int : int | [k_3]};
+             A3#Ix#0:{VV_int : int | [k_2]}] 
+     reft {VV_int : int | [k_2]} 
+      
+    
+
+    wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [k_5]};
+             A3#Ix#3:{VV_int : int | [k_4]};
+             A3#Ix#2:{VV_int : int | [k_3]};
+             A3#Ix#0:{VV_int : int | [k_2]}] 
+     reft {VV_int : int | [k_3]} 
+      
+    
+
+    wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [k_5]};
+             A3#Ix#3:{VV_int : int | [k_4]};
+             A3#Ix#2:{VV_int : int | [k_3]};
+             A3#Ix#0:{VV_int : int | [k_2]}] 
+     reft {VV_int : int | [k_4]} 
+      
+    
+
+    wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [k_5]};
+             A3#Ix#3:{VV_int : int | [k_4]};
+             A3#Ix#2:{VV_int : int | [k_3]};
+             A3#Ix#0:{VV_int : int | [k_2]}] 
+     reft {VV_ptr_A4 : ptr(A4) | [k_5]} 
+      
+    
+
+    wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             A4#Ix#0:{VV_int : int | [k_1]}] 
+     reft {VV_int : int | [k_1]} 
+      
+    
+
+    wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_ptr_A3 : ptr(A3) | [k_6]} 
+      
+    
+
+    wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             A4#Ix#0:{VV_int : int | [k_7]}] 
+     reft {VV_int : int | [k_7]} 
+      
+    
+
+    wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [k_11]};
+             A3#Ix#3:{VV_int : int | [k_10]};
+             A3#Ix#2:{VV_int : int | [k_9]};
+             A3#Ix#0:{VV_int : int | [k_8]}] 
+     reft {VV_ptr_A4 : ptr(A4) | [k_11]} 
+      
+    
+
+    wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [k_11]};
+             A3#Ix#3:{VV_int : int | [k_10]};
+             A3#Ix#2:{VV_int : int | [k_9]};
+             A3#Ix#0:{VV_int : int | [k_8]}] 
+     reft {VV_int : int | [k_10]} 
+      
+    
+
+    wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [k_11]};
+             A3#Ix#3:{VV_int : int | [k_10]};
+             A3#Ix#2:{VV_int : int | [k_9]};
+             A3#Ix#0:{VV_int : int | [k_8]}] 
+     reft {VV_int : int | [k_9]} 
+      
+    
+
+    wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             A3#Ix#4:{VV_ptr_A4 : ptr(A4) | [k_11]};
+             A3#Ix#3:{VV_int : int | [k_10]};
+             A3#Ix#2:{VV_int : int | [k_9]};
+             A3#Ix#0:{VV_int : int | [k_8]}] 
+     reft {VV_int : int | [k_8]} 
+      
+     
 //solution: k_9 := [(0 <= VV_int);(1 = 0);(VV_int < A3#Ix#3);(VV_int < A3#Ix#2);(VV_int < A3#Ix#0);(0 < VV_int);(VV_int <= A3#Ix#3);(VV_int <= A3#Ix#2);(VV_int <= A3#Ix#0);(VV_int = 0);(VV_int > A3#Ix#3);(VV_int > A3#Ix#2);(VV_int > A3#Ix#0);(VV_int >= A3#Ix#3);(VV_int >= A3#Ix#2);(VV_int >= A3#Ix#0)] 
 
 //solution: k_8 := [(0 <= VV_int);(1 = 0);(VV_int < A3#Ix#3);(VV_int < A3#Ix#2);(VV_int < A3#Ix#0);(0 < VV_int);(VV_int <= A3#Ix#3);(VV_int <= A3#Ix#2);(VV_int <= A3#Ix#0);(VV_int = 0);(VV_int > A3#Ix#3);(VV_int > A3#Ix#2);(VV_int > A3#Ix#0);(VV_int >= A3#Ix#3);(VV_int >= A3#Ix#2);(VV_int >= A3#Ix#0)] 
 
 //solution: k_7 := [(0 <= VV_int);(1 = 0);(VV_int < A4#Ix#0);(0 < VV_int);(VV_int <= A4#Ix#0);(VV_int = 0);(VV_int > A4#Ix#0);(VV_int >= A4#Ix#0)] 
 
-//solution: k_6 := [((VV_ptr_A3 != 0) => && [(0 < VV_ptr_A3) ; (BLOCK_BEGIN([VV_ptr_A3]) <= VV_ptr_A3) ; (VV_ptr_A3 < BLOCK_END([VV_ptr_A3]))]);((VV_ptr_A3 != 0) => ((BLOCK_END([VV_ptr_A3]) - VV_ptr_A3) >= 4));(VV_ptr_A3 < BLOCK_END([VV_ptr_A3]));(0 < VV_ptr_A3);((VV_ptr_A3 != 0) => (VV_ptr_A3 = BLOCK_BEGIN([VV_ptr_A3])));(0 <= VV_ptr_A3);(VV_ptr_A3 = 0);(VV_ptr_A3 = BLOCK_BEGIN([VV_ptr_A3]));(BLOCK_BEGIN([VV_ptr_A3]) <= VV_ptr_A3);(UNCHECKED([VV_ptr_A3]) = 1)] 
+//solution: k_6 := [(((VV_ptr_A3 - BLOCK_BEGIN([VV_ptr_A3])) mod 8) = 0);(BLOCK_BEGIN([VV_ptr_A3]) <= VV_ptr_A3);(VV_ptr_A3 = BLOCK_BEGIN([VV_ptr_A3]));(VV_ptr_A3 = 0);(0 <= VV_ptr_A3);((VV_ptr_A3 != 0) => (VV_ptr_A3 = BLOCK_BEGIN([VV_ptr_A3])));((VV_ptr_A3 != 0) => ((BLOCK_END([VV_ptr_A3]) - VV_ptr_A3) >= 4));((VV_ptr_A3 != 0) => && [(0 < VV_ptr_A3) ; (BLOCK_BEGIN([VV_ptr_A3]) <= VV_ptr_A3) ; (VV_ptr_A3 < BLOCK_END([VV_ptr_A3]))]);(((VV_ptr_A3 - BLOCK_BEGIN([VV_ptr_A3])) mod 4) = 0)] 
 
-//solution: k_5 := [((VV_ptr_A4 != 0) => && [(0 < VV_ptr_A4) ; (BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4) ; (VV_ptr_A4 < BLOCK_END([VV_ptr_A4]))]);(BLOCK_END([VV_ptr_A4]) = BLOCK_END([A3#Ix#4]));((VV_ptr_A4 != 0) => ((BLOCK_END([VV_ptr_A4]) - VV_ptr_A4) >= 4));((VV_ptr_A4 + (4 * A3#Ix#3)) <= BLOCK_END([VV_ptr_A4]));((VV_ptr_A4 + (4 * A3#Ix#2)) <= BLOCK_END([VV_ptr_A4]));((VV_ptr_A4 + (4 * A3#Ix#0)) <= BLOCK_END([VV_ptr_A4]));(VV_ptr_A4 < BLOCK_END([VV_ptr_A4]));(0 < VV_ptr_A4);(BLOCK_BEGIN([VV_ptr_A4]) = BLOCK_BEGIN([A3#Ix#4]));((VV_ptr_A4 != 0) => (VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4])));(0 <= VV_ptr_A4);(VV_ptr_A4 = 0);(VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4]));(BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4);(UNCHECKED([VV_ptr_A4]) = 1);(BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#3));(BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#2));(BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#0))] 
+//solution: k_5 := [(((VV_ptr_A4 - BLOCK_BEGIN([VV_ptr_A4])) mod 4) = 0);((VV_ptr_A4 != 0) => && [(0 < VV_ptr_A4) ; (BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4) ; (VV_ptr_A4 < BLOCK_END([VV_ptr_A4]))]);(BLOCK_END([VV_ptr_A4]) = BLOCK_END([A3#Ix#4]));((VV_ptr_A4 != 0) => ((BLOCK_END([VV_ptr_A4]) - VV_ptr_A4) >= 4));((VV_ptr_A4 + (4 * A3#Ix#3)) <= BLOCK_END([VV_ptr_A4]));((VV_ptr_A4 + (4 * A3#Ix#2)) <= BLOCK_END([VV_ptr_A4]));((VV_ptr_A4 + (4 * A3#Ix#0)) <= BLOCK_END([VV_ptr_A4]));(VV_ptr_A4 < BLOCK_END([VV_ptr_A4]));(0 < VV_ptr_A4);(BLOCK_BEGIN([VV_ptr_A4]) = BLOCK_BEGIN([A3#Ix#4]));((VV_ptr_A4 != 0) => (VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4])));(0 <= VV_ptr_A4);(VV_ptr_A4 = 0);(VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4]));(BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4);(UNCHECKED([VV_ptr_A4]) = 1);(BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#3));(BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#2));(BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#0));(((VV_ptr_A4 - BLOCK_BEGIN([VV_ptr_A4])) mod 8) = 0)] 
 
 //solution: k_4 := [(0 <= VV_int);(1 = 0);(VV_int < A3#Ix#3);(VV_int < A3#Ix#2);(VV_int < A3#Ix#0);(0 < VV_int);(VV_int <= A3#Ix#3);(VV_int <= A3#Ix#2);(VV_int <= A3#Ix#0);(VV_int = 0);(VV_int > A3#Ix#3);(VV_int > A3#Ix#2);(VV_int > A3#Ix#0);(VV_int >= A3#Ix#3);(VV_int >= A3#Ix#2);(VV_int >= A3#Ix#0)] 
 
@@ -16,7 +396,7 @@
 
 //solution: k_2 := [(0 <= VV_int);(1 = 0);(VV_int < A3#Ix#3);(VV_int < A3#Ix#2);(VV_int < A3#Ix#0);(0 < VV_int);(VV_int <= A3#Ix#3);(VV_int <= A3#Ix#2);(VV_int <= A3#Ix#0);(VV_int = 0);(VV_int > A3#Ix#3);(VV_int > A3#Ix#2);(VV_int > A3#Ix#0);(VV_int >= A3#Ix#3);(VV_int >= A3#Ix#2);(VV_int >= A3#Ix#0)] 
 
-//solution: k_11 := [((VV_ptr_A4 != 0) => && [(0 < VV_ptr_A4) ; (BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4) ; (VV_ptr_A4 < BLOCK_END([VV_ptr_A4]))]);(BLOCK_END([VV_ptr_A4]) = BLOCK_END([A3#Ix#4]));((VV_ptr_A4 != 0) => ((BLOCK_END([VV_ptr_A4]) - VV_ptr_A4) >= 4));((VV_ptr_A4 + (4 * A3#Ix#3)) <= BLOCK_END([VV_ptr_A4]));((VV_ptr_A4 + (4 * A3#Ix#2)) <= BLOCK_END([VV_ptr_A4]));((VV_ptr_A4 + (4 * A3#Ix#0)) <= BLOCK_END([VV_ptr_A4]));(VV_ptr_A4 < BLOCK_END([VV_ptr_A4]));(0 < VV_ptr_A4);(BLOCK_BEGIN([VV_ptr_A4]) = BLOCK_BEGIN([A3#Ix#4]));((VV_ptr_A4 != 0) => (VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4])));(0 <= VV_ptr_A4);(VV_ptr_A4 = 0);(VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4]));(BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4);(UNCHECKED([VV_ptr_A4]) = 1);(BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#3));(BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#2));(BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#0))] 
+//solution: k_11 := [(((VV_ptr_A4 - BLOCK_BEGIN([VV_ptr_A4])) mod 4) = 0);((VV_ptr_A4 != 0) => && [(0 < VV_ptr_A4) ; (BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4) ; (VV_ptr_A4 < BLOCK_END([VV_ptr_A4]))]);(BLOCK_END([VV_ptr_A4]) = BLOCK_END([A3#Ix#4]));((VV_ptr_A4 != 0) => ((BLOCK_END([VV_ptr_A4]) - VV_ptr_A4) >= 4));((VV_ptr_A4 + (4 * A3#Ix#3)) <= BLOCK_END([VV_ptr_A4]));((VV_ptr_A4 + (4 * A3#Ix#2)) <= BLOCK_END([VV_ptr_A4]));((VV_ptr_A4 + (4 * A3#Ix#0)) <= BLOCK_END([VV_ptr_A4]));(VV_ptr_A4 < BLOCK_END([VV_ptr_A4]));(0 < VV_ptr_A4);(BLOCK_BEGIN([VV_ptr_A4]) = BLOCK_BEGIN([A3#Ix#4]));((VV_ptr_A4 != 0) => (VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4])));(0 <= VV_ptr_A4);(VV_ptr_A4 = 0);(VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4]));(BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4);(UNCHECKED([VV_ptr_A4]) = 1);(BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#3));(BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#2));(BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#0));(((VV_ptr_A4 - BLOCK_BEGIN([VV_ptr_A4])) mod 8) = 0)] 
 
 //solution: k_10 := [(0 <= VV_int);(1 = 0);(VV_int < A3#Ix#3);(VV_int < A3#Ix#2);(VV_int < A3#Ix#0);(0 < VV_int);(VV_int <= A3#Ix#3);(VV_int <= A3#Ix#2);(VV_int <= A3#Ix#0);(VV_int = 0);(VV_int > A3#Ix#3);(VV_int > A3#Ix#2);(VV_int > A3#Ix#0);(VV_int >= A3#Ix#3);(VV_int >= A3#Ix#2);(VV_int >= A3#Ix#0)] 
 
@@ -28,9 +408,9 @@ solution: k_8 := [((VV_int >= A3#Ix#0), GEQ[~A0:=A3#Ix#0]);((VV_int >= A3#Ix#2),
 
 solution: k_7 := [((VV_int >= A4#Ix#0), GEQ[~A0:=A4#Ix#0]);((VV_int > A4#Ix#0), GT[~A0:=A4#Ix#0]);((VV_int = 0), EQZ);((VV_int <= A4#Ix#0), LEQ[~A0:=A4#Ix#0]);((0 < VV_int), GTZ);((VV_int < A4#Ix#0), LT[~A0:=A4#Ix#0]);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
 
-solution: k_6 := [((UNCHECKED([VV_ptr_A3]) = 1), UCH[VV_ptr_0:=VV_ptr_A3]);((BLOCK_BEGIN([VV_ptr_A3]) <= VV_ptr_A3), LB[VV_ptr_0:=VV_ptr_A3]);((VV_ptr_A3 = BLOCK_BEGIN([VV_ptr_A3])), ISBS[VV_ptr_0:=VV_ptr_A3]);((VV_ptr_A3 = 0), EQZ0[VV_ptr_0:=VV_ptr_A3]);((0 <= VV_ptr_A3), GTZP0[VV_ptr_0:=VV_ptr_A3]);(((VV_ptr_A3 != 0) => (VV_ptr_A3 = BLOCK_BEGIN([VV_ptr_A3]))), NULLorBEGIN[VV_ptr_0:=VV_ptr_A3]);((0 < VV_ptr_A3), GTZP[VV_ptr_0:=VV_ptr_A3]);((VV_ptr_A3 < BLOCK_END([VV_ptr_A3])), UB[VV_ptr_0:=VV_ptr_A3]);(((VV_ptr_A3 != 0) => ((BLOCK_END([VV_ptr_A3]) - VV_ptr_A3) >= 4)), WORDSIZE[VV_ptr_0:=VV_ptr_A3]);(((VV_ptr_A3 != 0) => && [(0 < VV_ptr_A3) ; (BLOCK_BEGIN([VV_ptr_A3]) <= VV_ptr_A3) ; (VV_ptr_A3 < BLOCK_END([VV_ptr_A3]))]), NULLorVALID[VV_ptr_0:=VV_ptr_A3])] 
+solution: k_6 := [((((VV_ptr_A3 - BLOCK_BEGIN([VV_ptr_A3])) mod 4) = 0), ARRAYMOD[VV_ptr_0:=VV_ptr_A3]);(((VV_ptr_A3 != 0) => && [(0 < VV_ptr_A3) ; (BLOCK_BEGIN([VV_ptr_A3]) <= VV_ptr_A3) ; (VV_ptr_A3 < BLOCK_END([VV_ptr_A3]))]), NULLorVALID[VV_ptr_0:=VV_ptr_A3]);(((VV_ptr_A3 != 0) => ((BLOCK_END([VV_ptr_A3]) - VV_ptr_A3) >= 4)), WORDSIZE[VV_ptr_0:=VV_ptr_A3]);(((VV_ptr_A3 != 0) => (VV_ptr_A3 = BLOCK_BEGIN([VV_ptr_A3]))), NULLorBEGIN[VV_ptr_0:=VV_ptr_A3]);((0 <= VV_ptr_A3), GTZP0[VV_ptr_0:=VV_ptr_A3]);((VV_ptr_A3 = 0), EQZ0[VV_ptr_0:=VV_ptr_A3]);((VV_ptr_A3 = BLOCK_BEGIN([VV_ptr_A3])), ISBS[VV_ptr_0:=VV_ptr_A3]);((BLOCK_BEGIN([VV_ptr_A3]) <= VV_ptr_A3), LB[VV_ptr_0:=VV_ptr_A3]);((((VV_ptr_A3 - BLOCK_BEGIN([VV_ptr_A3])) mod 8) = 0), ARRAYMOD0[VV_ptr_0:=VV_ptr_A3])] 
 
-solution: k_5 := [((BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#0)), SIZE0[~A0:=A3#Ix#0][VV_ptr_0:=VV_ptr_A4]);((BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#2)), SIZE0[~A0:=A3#Ix#2][VV_ptr_0:=VV_ptr_A4]);((BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#3)), SIZE0[~A0:=A3#Ix#3][VV_ptr_0:=VV_ptr_A4]);((UNCHECKED([VV_ptr_A4]) = 1), UCH[VV_ptr_0:=VV_ptr_A4]);((BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4), LB[VV_ptr_0:=VV_ptr_A4]);((VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4])), ISBS[VV_ptr_0:=VV_ptr_A4]);((VV_ptr_A4 = 0), EQZ0[VV_ptr_0:=VV_ptr_A4]);((0 <= VV_ptr_A4), GTZP0[VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 != 0) => (VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4]))), NULLorBEGIN[VV_ptr_0:=VV_ptr_A4]);((BLOCK_BEGIN([VV_ptr_A4]) = BLOCK_BEGIN([A3#Ix#4])), BEGIN[~A0:=A3#Ix#4][VV_ptr_0:=VV_ptr_A4]);((0 < VV_ptr_A4), GTZP[VV_ptr_0:=VV_ptr_A4]);((VV_ptr_A4 < BLOCK_END([VV_ptr_A4])), UB[VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 + (4 * A3#Ix#0)) <= BLOCK_END([VV_ptr_A4])), SIZE[~A0:=A3#Ix#0][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 + (4 * A3#Ix#2)) <= BLOCK_END([VV_ptr_A4])), SIZE[~A0:=A3#Ix#2][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 + (4 * A3#Ix#3)) <= BLOCK_END([VV_ptr_A4])), SIZE[~A0:=A3#Ix#3][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 != 0) => ((BLOCK_END([VV_ptr_A4]) - VV_ptr_A4) >= 4)), WORDSIZE[VV_ptr_0:=VV_ptr_A4]);((BLOCK_END([VV_ptr_A4]) = BLOCK_END([A3#Ix#4])), END[~A0:=A3#Ix#4][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 != 0) => && [(0 < VV_ptr_A4) ; (BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4) ; (VV_ptr_A4 < BLOCK_END([VV_ptr_A4]))]), NULLorVALID[VV_ptr_0:=VV_ptr_A4])] 
+solution: k_5 := [((((VV_ptr_A4 - BLOCK_BEGIN([VV_ptr_A4])) mod 8) = 0), ARRAYMOD0[VV_ptr_0:=VV_ptr_A4]);((BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#0)), SIZE0[~A0:=A3#Ix#0][VV_ptr_0:=VV_ptr_A4]);((BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#2)), SIZE0[~A0:=A3#Ix#2][VV_ptr_0:=VV_ptr_A4]);((BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#3)), SIZE0[~A0:=A3#Ix#3][VV_ptr_0:=VV_ptr_A4]);((UNCHECKED([VV_ptr_A4]) = 1), UCH[VV_ptr_0:=VV_ptr_A4]);((BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4), LB[VV_ptr_0:=VV_ptr_A4]);((VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4])), ISBS[VV_ptr_0:=VV_ptr_A4]);((VV_ptr_A4 = 0), EQZ0[VV_ptr_0:=VV_ptr_A4]);((0 <= VV_ptr_A4), GTZP0[VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 != 0) => (VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4]))), NULLorBEGIN[VV_ptr_0:=VV_ptr_A4]);((BLOCK_BEGIN([VV_ptr_A4]) = BLOCK_BEGIN([A3#Ix#4])), BEGIN[~A0:=A3#Ix#4][VV_ptr_0:=VV_ptr_A4]);((0 < VV_ptr_A4), GTZP[VV_ptr_0:=VV_ptr_A4]);((VV_ptr_A4 < BLOCK_END([VV_ptr_A4])), UB[VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 + (4 * A3#Ix#0)) <= BLOCK_END([VV_ptr_A4])), SIZE[~A0:=A3#Ix#0][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 + (4 * A3#Ix#2)) <= BLOCK_END([VV_ptr_A4])), SIZE[~A0:=A3#Ix#2][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 + (4 * A3#Ix#3)) <= BLOCK_END([VV_ptr_A4])), SIZE[~A0:=A3#Ix#3][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 != 0) => ((BLOCK_END([VV_ptr_A4]) - VV_ptr_A4) >= 4)), WORDSIZE[VV_ptr_0:=VV_ptr_A4]);((BLOCK_END([VV_ptr_A4]) = BLOCK_END([A3#Ix#4])), END[~A0:=A3#Ix#4][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 != 0) => && [(0 < VV_ptr_A4) ; (BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4) ; (VV_ptr_A4 < BLOCK_END([VV_ptr_A4]))]), NULLorVALID[VV_ptr_0:=VV_ptr_A4]);((((VV_ptr_A4 - BLOCK_BEGIN([VV_ptr_A4])) mod 4) = 0), ARRAYMOD[VV_ptr_0:=VV_ptr_A4])] 
 
 solution: k_4 := [((VV_int >= A3#Ix#0), GEQ[~A0:=A3#Ix#0]);((VV_int >= A3#Ix#2), GEQ[~A0:=A3#Ix#2]);((VV_int >= A3#Ix#3), GEQ[~A0:=A3#Ix#3]);((VV_int > A3#Ix#0), GT[~A0:=A3#Ix#0]);((VV_int > A3#Ix#2), GT[~A0:=A3#Ix#2]);((VV_int > A3#Ix#3), GT[~A0:=A3#Ix#3]);((VV_int = 0), EQZ);((VV_int <= A3#Ix#0), LEQ[~A0:=A3#Ix#0]);((VV_int <= A3#Ix#2), LEQ[~A0:=A3#Ix#2]);((VV_int <= A3#Ix#3), LEQ[~A0:=A3#Ix#3]);((0 < VV_int), GTZ);((VV_int < A3#Ix#0), LT[~A0:=A3#Ix#0]);((VV_int < A3#Ix#2), LT[~A0:=A3#Ix#2]);((VV_int < A3#Ix#3), LT[~A0:=A3#Ix#3]);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
 
@@ -38,7 +418,7 @@ solution: k_3 := [((VV_int >= A3#Ix#0), GEQ[~A0:=A3#Ix#0]);((VV_int >= A3#Ix#2),
 
 solution: k_2 := [((VV_int >= A3#Ix#0), GEQ[~A0:=A3#Ix#0]);((VV_int >= A3#Ix#2), GEQ[~A0:=A3#Ix#2]);((VV_int >= A3#Ix#3), GEQ[~A0:=A3#Ix#3]);((VV_int > A3#Ix#0), GT[~A0:=A3#Ix#0]);((VV_int > A3#Ix#2), GT[~A0:=A3#Ix#2]);((VV_int > A3#Ix#3), GT[~A0:=A3#Ix#3]);((VV_int = 0), EQZ);((VV_int <= A3#Ix#0), LEQ[~A0:=A3#Ix#0]);((VV_int <= A3#Ix#2), LEQ[~A0:=A3#Ix#2]);((VV_int <= A3#Ix#3), LEQ[~A0:=A3#Ix#3]);((0 < VV_int), GTZ);((VV_int < A3#Ix#0), LT[~A0:=A3#Ix#0]);((VV_int < A3#Ix#2), LT[~A0:=A3#Ix#2]);((VV_int < A3#Ix#3), LT[~A0:=A3#Ix#3]);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
 
-solution: k_11 := [((BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#0)), SIZE0[~A0:=A3#Ix#0][VV_ptr_0:=VV_ptr_A4]);((BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#2)), SIZE0[~A0:=A3#Ix#2][VV_ptr_0:=VV_ptr_A4]);((BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#3)), SIZE0[~A0:=A3#Ix#3][VV_ptr_0:=VV_ptr_A4]);((UNCHECKED([VV_ptr_A4]) = 1), UCH[VV_ptr_0:=VV_ptr_A4]);((BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4), LB[VV_ptr_0:=VV_ptr_A4]);((VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4])), ISBS[VV_ptr_0:=VV_ptr_A4]);((VV_ptr_A4 = 0), EQZ0[VV_ptr_0:=VV_ptr_A4]);((0 <= VV_ptr_A4), GTZP0[VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 != 0) => (VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4]))), NULLorBEGIN[VV_ptr_0:=VV_ptr_A4]);((BLOCK_BEGIN([VV_ptr_A4]) = BLOCK_BEGIN([A3#Ix#4])), BEGIN[~A0:=A3#Ix#4][VV_ptr_0:=VV_ptr_A4]);((0 < VV_ptr_A4), GTZP[VV_ptr_0:=VV_ptr_A4]);((VV_ptr_A4 < BLOCK_END([VV_ptr_A4])), UB[VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 + (4 * A3#Ix#0)) <= BLOCK_END([VV_ptr_A4])), SIZE[~A0:=A3#Ix#0][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 + (4 * A3#Ix#2)) <= BLOCK_END([VV_ptr_A4])), SIZE[~A0:=A3#Ix#2][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 + (4 * A3#Ix#3)) <= BLOCK_END([VV_ptr_A4])), SIZE[~A0:=A3#Ix#3][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 != 0) => ((BLOCK_END([VV_ptr_A4]) - VV_ptr_A4) >= 4)), WORDSIZE[VV_ptr_0:=VV_ptr_A4]);((BLOCK_END([VV_ptr_A4]) = BLOCK_END([A3#Ix#4])), END[~A0:=A3#Ix#4][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 != 0) => && [(0 < VV_ptr_A4) ; (BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4) ; (VV_ptr_A4 < BLOCK_END([VV_ptr_A4]))]), NULLorVALID[VV_ptr_0:=VV_ptr_A4])] 
+solution: k_11 := [((((VV_ptr_A4 - BLOCK_BEGIN([VV_ptr_A4])) mod 8) = 0), ARRAYMOD0[VV_ptr_0:=VV_ptr_A4]);((BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#0)), SIZE0[~A0:=A3#Ix#0][VV_ptr_0:=VV_ptr_A4]);((BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#2)), SIZE0[~A0:=A3#Ix#2][VV_ptr_0:=VV_ptr_A4]);((BLOCK_END([VV_ptr_A4]) >= (BLOCK_BEGIN([VV_ptr_A4]) + A3#Ix#3)), SIZE0[~A0:=A3#Ix#3][VV_ptr_0:=VV_ptr_A4]);((UNCHECKED([VV_ptr_A4]) = 1), UCH[VV_ptr_0:=VV_ptr_A4]);((BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4), LB[VV_ptr_0:=VV_ptr_A4]);((VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4])), ISBS[VV_ptr_0:=VV_ptr_A4]);((VV_ptr_A4 = 0), EQZ0[VV_ptr_0:=VV_ptr_A4]);((0 <= VV_ptr_A4), GTZP0[VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 != 0) => (VV_ptr_A4 = BLOCK_BEGIN([VV_ptr_A4]))), NULLorBEGIN[VV_ptr_0:=VV_ptr_A4]);((BLOCK_BEGIN([VV_ptr_A4]) = BLOCK_BEGIN([A3#Ix#4])), BEGIN[~A0:=A3#Ix#4][VV_ptr_0:=VV_ptr_A4]);((0 < VV_ptr_A4), GTZP[VV_ptr_0:=VV_ptr_A4]);((VV_ptr_A4 < BLOCK_END([VV_ptr_A4])), UB[VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 + (4 * A3#Ix#0)) <= BLOCK_END([VV_ptr_A4])), SIZE[~A0:=A3#Ix#0][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 + (4 * A3#Ix#2)) <= BLOCK_END([VV_ptr_A4])), SIZE[~A0:=A3#Ix#2][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 + (4 * A3#Ix#3)) <= BLOCK_END([VV_ptr_A4])), SIZE[~A0:=A3#Ix#3][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 != 0) => ((BLOCK_END([VV_ptr_A4]) - VV_ptr_A4) >= 4)), WORDSIZE[VV_ptr_0:=VV_ptr_A4]);((BLOCK_END([VV_ptr_A4]) = BLOCK_END([A3#Ix#4])), END[~A0:=A3#Ix#4][VV_ptr_0:=VV_ptr_A4]);(((VV_ptr_A4 != 0) => && [(0 < VV_ptr_A4) ; (BLOCK_BEGIN([VV_ptr_A4]) <= VV_ptr_A4) ; (VV_ptr_A4 < BLOCK_END([VV_ptr_A4]))]), NULLorVALID[VV_ptr_0:=VV_ptr_A4]);((((VV_ptr_A4 - BLOCK_BEGIN([VV_ptr_A4])) mod 4) = 0), ARRAYMOD[VV_ptr_0:=VV_ptr_A4])] 
 
 solution: k_10 := [((VV_int >= A3#Ix#0), GEQ[~A0:=A3#Ix#0]);((VV_int >= A3#Ix#2), GEQ[~A0:=A3#Ix#2]);((VV_int >= A3#Ix#3), GEQ[~A0:=A3#Ix#3]);((VV_int > A3#Ix#0), GT[~A0:=A3#Ix#0]);((VV_int > A3#Ix#2), GT[~A0:=A3#Ix#2]);((VV_int > A3#Ix#3), GT[~A0:=A3#Ix#3]);((VV_int = 0), EQZ);((VV_int <= A3#Ix#0), LEQ[~A0:=A3#Ix#0]);((VV_int <= A3#Ix#2), LEQ[~A0:=A3#Ix#2]);((VV_int <= A3#Ix#3), LEQ[~A0:=A3#Ix#3]);((0 < VV_int), GTZ);((VV_int < A3#Ix#0), LT[~A0:=A3#Ix#0]);((VV_int < A3#Ix#2), LT[~A0:=A3#Ix#2]);((VV_int < A3#Ix#3), LT[~A0:=A3#Ix#3]);((1 = 0), FALSE);((0 <= VV_int), GEZ)] 
 
@@ -47,46 +427,51 @@ solution: k_1 := [((VV_int >= A4#Ix#0), GEQ[~A0:=A4#Ix#0]);((VV_int > A4#Ix#0), 
 //QUALIFIERS 
 
 qualif WORDSIZE(VV_ptr_0:ptr(0)):((VV_ptr_0 != 0) => ((BLOCK_END([VV_ptr_0]) - VV_ptr_0) >= 4))
-    
+      
 qualif UCH(VV_ptr_0:ptr(0)):(UNCHECKED([VV_ptr_0]) = 1)
-    
+      
 qualif UB(VV_ptr_0:ptr(0)):(VV_ptr_0 < BLOCK_END([VV_ptr_0]))
-    
+      
 qualif SIZE0(VV_ptr_0:ptr(0)):(BLOCK_END([VV_ptr_0]) >= (BLOCK_BEGIN([VV_ptr_0]) + ~A0))
-    
+      
 qualif SIZE(VV_ptr_0:ptr(0)):((VV_ptr_0 + (4 * ~A0)) <= BLOCK_END([VV_ptr_0]))
-    
+      
 qualif NULLorVALID(VV_ptr_0:ptr(0)):((VV_ptr_0 != 0) => && [(0 < VV_ptr_0) ; (BLOCK_BEGIN([VV_ptr_0]) <= VV_ptr_0) ; (VV_ptr_0 < BLOCK_END([VV_ptr_0]))])
-    
+      
 qualif NULLorBEGIN(VV_ptr_0:ptr(0)):((VV_ptr_0 != 0) => (VV_ptr_0 = BLOCK_BEGIN([VV_ptr_0])))
-    
+      
 qualif LT(VV_int:int):(VV_int < ~A0)
-    
+      
 qualif LEQ(VV_int:int):(VV_int <= ~A0)
-    
+      
 qualif LB(VV_ptr_0:ptr(0)):(BLOCK_BEGIN([VV_ptr_0]) <= VV_ptr_0)
-    
+      
 qualif ISBS(VV_ptr_0:ptr(0)):(VV_ptr_0 = BLOCK_BEGIN([VV_ptr_0]))
-    
+      
 qualif GTZP0(VV_ptr_0:ptr(0)):(0 <= VV_ptr_0)
-    
+      
 qualif GTZP(VV_ptr_0:ptr(0)):(0 < VV_ptr_0)
-    
+      
 qualif GTZ(VV_int:int):(0 < VV_int)
-    
+      
 qualif GT(VV_int:int):(VV_int > ~A0)
-    
+      
 qualif GEZ(VV_int:int):(0 <= VV_int)
-    
-qualif GEQ(VV_int:int):(VV_int >= ~A0) 
+      
+qualif GEQ(VV_int:int):(VV_int >= ~A0)
+      
 qualif FALSE(VV_int:int):(1 = 0)
-    
+      
 qualif EQZ0(VV_ptr_0:ptr(0)):(VV_ptr_0 = 0)
-    
+      
 qualif EQZ(VV_int:int):(VV_int = 0)
-    
+      
 qualif END(VV_ptr_0:ptr(0)):(BLOCK_END([VV_ptr_0]) = BLOCK_END([~A0]))
-    
+      
 qualif BEGIN(VV_ptr_0:ptr(0)):(BLOCK_BEGIN([VV_ptr_0]) = BLOCK_BEGIN([~A0]))
-    
+      
+qualif ARRAYMOD0(VV_ptr_0:ptr(0)):(((VV_ptr_0 - BLOCK_BEGIN([VV_ptr_0])) mod 8) = 0)
+      
+qualif ARRAYMOD(VV_ptr_0:ptr(0)):(((VV_ptr_0 - BLOCK_BEGIN([VV_ptr_0])) mod 4) = 0)
+      
  

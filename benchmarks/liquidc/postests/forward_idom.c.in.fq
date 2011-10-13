@@ -1,5 +1,23 @@
+constraint:
+ env  [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [k_2]} 
+ rhs {VV_int : int | [((VV_int != 0) => true)]} 
+ id 3 tag [0;1;0;0] //main 
  
  
+wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_2]} 
+      
+     
 //solution: k_3 := [(0 <= VV_int);(1 = 0);(VV_int < n_main);(0 < VV_int);(VV_int <= n_main);(VV_int = 0);(VV_int > n_main);(VV_int >= n_main)] 
 
 //solution: k_2 := [(0 <= VV_int);(1 = 0);(0 < VV_int);(VV_int = 0)] 
@@ -11,17 +29,18 @@ solution: k_2 := [((VV_int = 0), EQZ);((0 < VV_int), GTZ);((1 = 0), FALSE);((0 <
 //QUALIFIERS 
 
 qualif LT(VV_int:int):(VV_int < ~A0)
-    
+      
 qualif LEQ(VV_int:int):(VV_int <= ~A0)
-    
+      
 qualif GTZ(VV_int:int):(0 < VV_int)
-    
+      
 qualif GT(VV_int:int):(VV_int > ~A0)
-    
+      
 qualif GEZ(VV_int:int):(0 <= VV_int)
-    
-qualif GEQ(VV_int:int):(VV_int >= ~A0) 
-qualif FALSE(VV_int:int):(1 = 0)
-    
-qualif EQZ(VV_int:int):(VV_int = 0) 
+      
+qualif GEQ(VV_int:int):(VV_int >= ~A0)
+      
+qualif FALSE(VV_int:int):(1 = 0) 
+qualif EQZ(VV_int:int):(VV_int = 0)
+      
  

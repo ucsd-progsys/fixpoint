@@ -76,7 +76,7 @@ constraint:
        BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
  grd true 
- lhs {VV_int : int | [&& [(VV_int = (n_allocstr : int)) ; (0 <= VV_int)]]} 
+ lhs {VV_int : int | [|| [&& [(n_allocstr >= 0) ; (VV_int = n_allocstr)];&& [(n_allocstr < 0) ; (VV_int > 0)]]]} 
  rhs {VV_int : int | [k_0]} 
  id 5 tag [1;1;-1;1] //allocstr 
  
@@ -85,7 +85,7 @@ constraint:
        s_allocstr:{VV_int : int | []};
        n_allocstr:{VV_int : int | [true;true]};
        __cil_tmp5_allocstr:{VV_int : int | []};
-       __cil_tmp4_allocstr:{VV_int : int | [&& [(VV_int = (n_allocstr : int)) ; (0 <= VV_int)]]};
+       __cil_tmp4_allocstr:{VV_int : int | [|| [&& [(n_allocstr >= 0) ; (VV_int = n_allocstr)];&& [(n_allocstr < 0) ; (VV_int > 0)]]]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
        DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
@@ -101,7 +101,7 @@ constraint:
        s_allocstr:{VV_int : int | []};
        n_allocstr:{VV_int : int | [true;true]};
        __cil_tmp5_allocstr:{VV_int : int | [(VV_int = (__cil_tmp4_allocstr : int))]};
-       __cil_tmp4_allocstr:{VV_int : int | [&& [(VV_int = (n_allocstr : int)) ; (0 <= VV_int)]]};
+       __cil_tmp4_allocstr:{VV_int : int | [|| [&& [(n_allocstr >= 0) ; (VV_int = n_allocstr)];&& [(n_allocstr < 0) ; (VV_int > 0)]]]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
        DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
@@ -118,7 +118,7 @@ constraint:
        s_allocstr:{VV_int : int | []};
        n_allocstr:{VV_int : int | [true;true]};
        __cil_tmp5_allocstr:{VV_int : int | [(VV_int = (__cil_tmp4_allocstr : int))]};
-       __cil_tmp4_allocstr:{VV_int : int | [&& [(VV_int = (n_allocstr : int)) ; (0 <= VV_int)]]};
+       __cil_tmp4_allocstr:{VV_int : int | [|| [&& [(n_allocstr >= 0) ; (VV_int = n_allocstr)];&& [(n_allocstr < 0) ; (VV_int > 0)]]]};
        UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
        SKOLEM:{VV_func : func(0, [int ; int]) | []};
        DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};

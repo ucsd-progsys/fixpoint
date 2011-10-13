@@ -14,9 +14,9 @@ constraint:
  id 1 tag [2;10;-1;0] //main 
  
 constraint:
- env  [tmp_main__SSA__phi_3:{VV_int : int | []};
+ env  [tmp_main__SSA__phi_3:{VV_int : int | [k_0]};
        tmp_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | []};
+       i_main__SSA__phi_3:{VV_int : int | [k_1]};
        i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
        __cil_tmp4_main:{VV_int : int | []};
@@ -32,7 +32,7 @@ constraint:
  id 2 tag [2;6;-1;0] //main 
  
 constraint:
- env  [tmp_main__SSA__phi_3:{VV_int : int | []};
+ env  [tmp_main__SSA__phi_3:{VV_int : int | [k_0]};
        tmp_main__SSA__blk_4_1:{VV_int : int | [true]};
        tmp_main:{VV_int : int | []};
        i_main__SSA__phi_3:{VV_int : int | [k_1]};
@@ -51,7 +51,7 @@ constraint:
  id 3 tag [2;4;-1;0] //main 
  
 constraint:
- env  [tmp_main__SSA__phi_3:{VV_int : int | []};
+ env  [tmp_main__SSA__phi_3:{VV_int : int | [k_0]};
        tmp_main__SSA__blk_4_1:{VV_int : int | [true]};
        tmp_main:{VV_int : int | []};
        i_main__SSA__phi_3:{VV_int : int | [k_1]};
@@ -70,7 +70,7 @@ constraint:
  id 4 tag [2;1;-1;0] //main 
  
 constraint:
- env  [tmp_main__SSA__phi_3:{VV_int : int | []};
+ env  [tmp_main__SSA__phi_3:{VV_int : int | [k_0]};
        tmp_main__SSA__blk_4_1:{VV_int : int | [true]};
        tmp_main:{VV_int : int | []};
        i_main__SSA__phi_3:{VV_int : int | [k_1]};
@@ -121,7 +121,7 @@ constraint:
  id 7 tag [2;8;0;0] //main 
  
 constraint:
- env  [tmp_main__SSA__phi_3:{VV_int : int | []};
+ env  [tmp_main__SSA__phi_3:{VV_int : int | [k_0]};
        tmp_main__SSA__blk_4_1:{VV_int : int | [true]};
        tmp_main:{VV_int : int | []};
        i_main__SSA__phi_3:{VV_int : int | [k_1]};
@@ -144,7 +144,7 @@ constraint:
  env  [tmp_main__SSA__phi_3:{VV_int : int | []};
        tmp_main__SSA__blk_4_1:{VV_int : int | [true]};
        tmp_main:{VV_int : int | []};
-       i_main__SSA__phi_3:{VV_int : int | []};
+       i_main__SSA__phi_3:{VV_int : int | [k_1]};
        i_main__SSA__blk_7_1:{VV_int : int | [(VV_int = (i_main__SSA__phi_3 + 1))]};
        i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};

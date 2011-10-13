@@ -70,7 +70,7 @@ constraint:
  id 4 tag [2;10;-4;0] //main 
  
 constraint:
- env  [x_main__SSA__phi_3:{VV_int : int | []};
+ env  [x_main__SSA__phi_3:{VV_int : int | [k_1]};
        x_main__SSA__blk_0_1:{VV_int : int | [(VV_int = tmp_main__SSA__blk_0_1);(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([tmp_main__SSA__blk_0_1]))]};
        x_main:{VV_int : int | []};
        tmp_main__SSA__blk_0_1:{VV_int : int | [(VV_int = (BLOCK_BEGIN([VV_int]) + 0))]};
@@ -136,7 +136,7 @@ constraint:
  id 7 tag [2;3;-4;0] //main 
  
 constraint:
- env  [x_main__SSA__phi_3:{VV_int : int | []};
+ env  [x_main__SSA__phi_3:{VV_int : int | [k_1]};
        x_main__SSA__blk_8_1:{VV_int : int | [&& [(VV_int = (x_main__SSA__phi_3 + 4)) ; (x_main__SSA__phi_3 <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([x_main__SSA__phi_3]))]};
        x_main__SSA__blk_0_1:{VV_int : int | [(VV_int = tmp_main__SSA__blk_0_1);(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([tmp_main__SSA__blk_0_1]))]};
        x_main:{VV_int : int | []};
@@ -223,7 +223,7 @@ constraint:
  id 11 tag [2;3;0;0] //main 
  
 constraint:
- env  [x_main__SSA__phi_3:{VV_int : int | []};
+ env  [x_main__SSA__phi_3:{VV_int : int | [k_1]};
        x_main__SSA__blk_8_1:{VV_int : int | [&& [(VV_int = (x_main__SSA__phi_3 + 4)) ; (x_main__SSA__phi_3 <= VV_int)];(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([x_main__SSA__phi_3]))]};
        x_main__SSA__blk_0_1:{VV_int : int | [(VV_int = tmp_main__SSA__blk_0_1);(BLOCK_BEGIN([VV_int]) = BLOCK_BEGIN([tmp_main__SSA__blk_0_1]))]};
        x_main:{VV_int : int | []};

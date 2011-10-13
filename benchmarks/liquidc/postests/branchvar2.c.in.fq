@@ -38,8 +38,26 @@ constraint:
  rhs {VV_int : int | [(VV_int != 0)]} 
  id 2 tag [2;8;-3;0] //main 
  
+constraint:
+ env  [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+       SKOLEM:{VV_func : func(0, [int ; int]) | []};
+       DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+       BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+       BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+ grd true 
+ lhs {VV_int : int | [k_10]} 
+ rhs {VV_int : int | [((VV_int != 0) => true)]} 
+ id 7 tag [2;13;0;0] //main 
  
  
+wf: env [UNCHECKED:{VV_func : func(1, [@(0) ; int]) | []};
+             SKOLEM:{VV_func : func(0, [int ; int]) | []};
+             DEREF:{VV_func : func(1, [@(0) ; @(1)]) | []};
+             BLOCK_END:{VV_func : func(1, [@(0) ; @(0)]) | []};
+             BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | []}] 
+     reft {VV_int : int | [k_10]} 
+      
+     
 //solution: k_12 := [(0 <= VV_int);(1 = 0);(VV_int < t_main__SSA__blk_0_1);(VV_int < t_main);(VV_int < s_main__SSA__phi_14);(VV_int < s_main);(0 < VV_int);(VV_int <= t_main__SSA__blk_0_1);(VV_int <= t_main);(VV_int <= s_main__SSA__phi_14);(VV_int <= s_main);(VV_int = 0);(VV_int > t_main__SSA__blk_0_1);(VV_int > t_main);(VV_int > s_main__SSA__phi_14);(VV_int > s_main);(VV_int >= t_main__SSA__blk_0_1);(VV_int >= t_main);(VV_int >= s_main__SSA__phi_14);(VV_int >= s_main)] 
 
 //solution: k_11 := [(0 <= VV_int);(1 = 0);(VV_int < t_main__SSA__blk_0_1);(VV_int < t_main);(VV_int < s_main__SSA__phi_13);(VV_int < s_main);(0 < VV_int);(VV_int <= t_main__SSA__blk_0_1);(VV_int <= t_main);(VV_int <= s_main__SSA__phi_13);(VV_int <= s_main);(VV_int = 0);(VV_int > t_main__SSA__blk_0_1);(VV_int > t_main);(VV_int > s_main__SSA__phi_13);(VV_int > s_main);(VV_int >= t_main__SSA__blk_0_1);(VV_int >= t_main);(VV_int >= s_main__SSA__phi_13);(VV_int >= s_main)] 

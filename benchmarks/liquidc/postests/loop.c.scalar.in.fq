@@ -105,11 +105,11 @@ constraint:
  id 5 tag [1;11;-6;0] //main 
  
 constraint:
- env  [z_main__SSA__phi_3:{VV_int : int | []};
+ env  [z_main__SSA__phi_3:{VV_int : int | [k_1]};
        z_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        z_main:{VV_int : int | []};
        n_main:{VV_int : int | [true;true]};
-       i_main__SSA__phi_3:{VV_int : int | []};
+       i_main__SSA__phi_3:{VV_int : int | [k_0]};
        i_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        i_main:{VV_int : int | []};
        __cil_tmp9_main:{VV_int : int | []};
@@ -130,7 +130,7 @@ constraint:
  id 6 tag [1;6;-1;0] //main 
  
 constraint:
- env  [z_main__SSA__phi_3:{VV_int : int | []};
+ env  [z_main__SSA__phi_3:{VV_int : int | [k_1]};
        z_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        z_main:{VV_int : int | []};
        n_main:{VV_int : int | [true;true]};
@@ -261,7 +261,7 @@ constraint:
  id 11 tag [1;4;-4;0] //main 
  
 constraint:
- env  [z_main__SSA__phi_3:{VV_int : int | []};
+ env  [z_main__SSA__phi_3:{VV_int : int | [k_1]};
        z_main__SSA__blk_8_4:{VV_int : int | [(VV_int = (z_main__SSA__blk_8_3 + i_main__SSA__phi_3))]};
        z_main__SSA__blk_8_3:{VV_int : int | [(VV_int = (z_main__SSA__blk_8_2 + i_main__SSA__phi_3))]};
        z_main__SSA__blk_8_2:{VV_int : int | [(VV_int = (z_main__SSA__blk_8_1 + i_main__SSA__phi_3))]};
@@ -416,7 +416,7 @@ constraint:
  id 17 tag [1;4;0;0] //main 
  
 constraint:
- env  [z_main__SSA__phi_3:{VV_int : int | []};
+ env  [z_main__SSA__phi_3:{VV_int : int | [k_1]};
        z_main__SSA__blk_8_4:{VV_int : int | [(VV_int = (z_main__SSA__blk_8_3 + i_main__SSA__phi_3))]};
        z_main__SSA__blk_8_3:{VV_int : int | [(VV_int = (z_main__SSA__blk_8_2 + i_main__SSA__phi_3))]};
        z_main__SSA__blk_8_2:{VV_int : int | [(VV_int = (z_main__SSA__blk_8_1 + i_main__SSA__phi_3))]};

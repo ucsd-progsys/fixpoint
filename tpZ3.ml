@@ -160,7 +160,9 @@ let z3Var_memo me env x =
   Misc.do_memo me.vart
     (fun () -> 
       let t   = x |> varSort env |> z3VarType me in
-      let sym = fresh "z3v" |> Z3.mk_string_symbol me.c in
+      let sym = fresh "z3v" 
+                (* >> Format.printf "z3Var_memo: %a :->  %s\n" Sy.print x *)
+                |> Z3.mk_string_symbol me.c in 
       let rv  = Const (Z3.mk_const me.c sym t) in
       let _   = me.vars <- vx :: me.vars in 
       rv) 
@@ -191,9 +193,9 @@ let z3Fun me env p t k =
         rv
   end () (Fun (p, k))
 
-(************************************************************************)
-(********************** Pred/Expr Transl ********************************)
-(************************************************************************)
+(**********************************************************************)
+(********************** Pred/Expr Transl ******************************)
+(**********************************************************************)
 
 let is_z3_bool me a =
   a |> Z3.get_sort me.c   

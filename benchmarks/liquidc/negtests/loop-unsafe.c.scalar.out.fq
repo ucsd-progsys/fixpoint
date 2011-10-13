@@ -53,7 +53,7 @@ constraint:
  id 3 tag [2;11;-3;0] //main 
  
 constraint:
- env  [z_main__SSA__phi_3:{VV_int : int | []};
+ env  [z_main__SSA__phi_3:{VV_int : int | [k_1]};
        z_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        z_main:{VV_int : int | []};
        n_main__SSA__blk_0_1:{VV_int : int | [true]};
@@ -97,7 +97,7 @@ constraint:
  id 5 tag [2;4;-1;0] //main 
  
 constraint:
- env  [z_main__SSA__phi_3:{VV_int : int | []};
+ env  [z_main__SSA__phi_3:{VV_int : int | [k_1]};
        z_main__SSA__blk_8_1:{VV_int : int | [(VV_int = (z_main__SSA__phi_3 - i_main__SSA__phi_3))]};
        z_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        z_main:{VV_int : int | []};
@@ -228,7 +228,7 @@ constraint:
  id 11 tag [2;4;0;0] //main 
  
 constraint:
- env  [z_main__SSA__phi_3:{VV_int : int | []};
+ env  [z_main__SSA__phi_3:{VV_int : int | [k_1]};
        z_main__SSA__blk_8_1:{VV_int : int | [(VV_int = (z_main__SSA__phi_3 - i_main__SSA__phi_3))]};
        z_main__SSA__blk_0_1:{VV_int : int | [(VV_int = 0)]};
        z_main:{VV_int : int | []};
@@ -424,7 +424,7 @@ wf: env [z_main__SSA__phi_3:{VV_int : int | [k_1]};
 
 //solution: k_1 := [] 
 
-//solution: k_0 := [(VV_int >= 0);(0 <= VV_int)] 
+//solution: k_0 := [(0 <= VV_int);(VV_int >= 0)] 
 
 solution: k_9 := [((0 <= VV_int), GEZ);((VV_int >= 0), SCALAR)] 
 
@@ -444,7 +444,7 @@ solution: k_2 := []
 
 solution: k_1 := [] 
 
-solution: k_0 := [((0 <= VV_int), GEZ);((VV_int >= 0), SCALAR)] 
+solution: k_0 := [((VV_int >= 0), SCALAR);((0 <= VV_int), GEZ)] 
 
 //QUALIFIERS 
 
