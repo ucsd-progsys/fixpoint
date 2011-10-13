@@ -286,7 +286,7 @@ let p_imp_subst su1 su2 =
   Misc.join fst (Su.to_list su1) (Su.to_list su2)
   |> List.for_all (fun ((_,e1), (_, e2)) -> e1 = e2)
 
-let p_imp_qual s q1 q2 = 
+let p_imp_qual s q1 q2 =
   TTM.mem (Misc.map_pair tag_of_qual (q1, q2)) s.impm 
 
 (* API *)
@@ -294,9 +294,9 @@ let p_imp s (_, (p1, (q1, su1)))  (_, (p2, (q2, su2))) =
   Misc.do_memo s.imp_memo_t begin fun ((q1,su1), (q2,su2)) ->
     p_imp_subst su1 su2 && p_imp_qual s q1 q2
   end ((q1, su1), (q2, su2)) (snd p1, snd p2)
-(*  >>  F.printf "P_IMP: [p1 = %a] [p2 = %a] [res = %b]\n" P.print p1 P.print p2
+(*  >> F.printf "P_IMP: [p1 = %a] [p2 = %a] [res = %b]\n" P.print p1 P.print p2
 *)
-
+    
 (* {{{ CODE for NON-HEIRARCHICAL SOLUTION MAP 
   (* INV: qs' \subseteq qs *)
 let update m k ds' =
@@ -626,8 +626,64 @@ let ppBinding (k, zs) =
     Sy.print k 
     (Misc.pprint_many false "," P.print) (List.map fst zs)
 
+(* Take in a solution of things that are known to be true, kf. Using
+   this, we can prune qualifiers whose negations are implied by
+   information in kf *)
+let update_pruned ks me fqm =
+  List.fold_left begin fun m k ->
+    if SM.mem k fqm then
+      let false_qs = SM.find k fqm |> Misc.flatten  in
+      let qs = SM.find k m
+             |> List.map (List.filter (fun q -> (not (List.mem (k,q) false_qs))))
+	     |> List.filter (fun q -> q <> [])
+      in
+	SM.add k qs m
+    else
+      m
+  end
+    me.m
+    ks
+
+
+let apply_facts_c kf me c =
+  let env = C.env_of_t c in
+  let (vv, t, lras) as lhs = C.lhs_of_t c in
+  let (_,_,ras) as rhs = C.rhs_of_t c in
+  let ks = rhs |> C.kvars_of_reft |> List.map snd in
+  let lps = C.preds_of_lhs kf c in (* Use the known facts here *)
+  let rcs = (Misc.flap (rhs_cands me)) ras in
+  let f _ _ = false in
+    if rcs = [] then
+      (* Nothing on the right hand side *)
+      me
+(*    else if List.exists P.is_contra lps then
+      me *)
+    else if check_tp me env vv t lps f [(0, A.pFalse)] = [[0]] then
+      me
+    else
+      
+      let rcs = List.filter (fun (_,p) -> not (P.is_contra p)) rcs
+                |> List.map (fun (x,p) -> (x, A.pNot p)) in
+	(* can we prove anything on the left implies something on the
+	   right is false? *)
+      let fqs = BS.time "apply_facts tp" (check_tp me env vv t lps f) rcs in
+      let fqm = fqs |> Misc.flap reprs 
+                    |> Misc.kgroupby (List.hd <+> fst)
+                    |> SM.of_list
+      in
+	{me with m = BS.time "update pruned" (update_pruned ks me) fqm}
+
+let apply_facts kf me cs =
+  let numqs = me.m |> Ast.Symbol.SMap.to_list
+              |> List.map snd |> List.concat |> List.length in
+  let sol   = List.fold_left (apply_facts_c kf) me cs in
+  let numqs' = sol.m |> Ast.Symbol.SMap.to_list
+               |> List.map snd |> List.concat |> List.length in
+  let _ = Printf.printf "Started with %d, proved %d false\n" numqs (numqs-numqs') in
+    sol
+
 (* API *)
-let create c = 
+let create c facts = 
   c.Config.qs 
   |> Q.normalize 
   >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) 
@@ -635,9 +691,13 @@ let create c =
   |> map_of_bindings
   |> SM.extendWith (fun _ -> (++)) c.Config.bm
   |> create c.Config.ts c.Config.uops c.Config.ps c.Config.cons c.Config.assm
+  |> fun me -> match facts with
+       | None -> me
+       | Some kf -> BS.time "apply facts" (apply_facts kf me) (c.Config.cs)
+	     
 
 (* API *)
-let empty = create Config.empty
+let empty = create Config.empty None
 
 (* API *)
 let meet me you = {me with m = SM.extendWith (fun _ -> (++)) me.m you.m} 

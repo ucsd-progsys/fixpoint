@@ -51,7 +51,7 @@ type 'bind cfg = {
  ; bm   : 'bind SM.t                       (* Initial Sol Bindings *)
  (* ; bs   : (Ast.Symbol.t * Ast.Qualifier.def list) list  -- Initial Sol Bindings *)
  ; cons : (Ast.Symbol.t * Ast.Sort.t) list              (* Distinct Constants *)
- ; uops : Ast.Sort.t Ast.Symbol.SMap.t                  (* Uninterpreted Funs *) 
+ ; uops : Ast.Sort.t Ast.Symbol.SMap.t                  (* Uninterpreted Funs *)
  ; assm : FixConstraint.soln
           (* Seed Solution -- must be a fixpoint over constraints *)
 }
@@ -100,7 +100,7 @@ module type DOMAIN = sig
   val top          : t -> Ast.Symbol.t list -> t
   val refine       : t -> FixConstraint.t -> (bool * t)
   val unsat        : t -> FixConstraint.t -> bool
-  val create       : bind cfg -> t
+  val create       : bind cfg -> FixConstraint.soln option -> t
   val print        : Format.formatter -> t -> unit
   val print_stats  : Format.formatter -> t -> unit
   val dump         : t -> unit

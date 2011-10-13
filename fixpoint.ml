@@ -56,7 +56,7 @@ let save_raw fname cs s =
 
 let solve ac  = 
   let _       = print_now "Fixpoint: Creating  CI\n" in
-  let ctx, s  = BS.time "create" SPA.create ac in
+  let ctx, s  = BS.time "create" SPA.create ac None in
   let _       = print_now "Fixpoint: Solving \n" in
   let s, cs'  = BS.time "solve" (SPA.solve ctx) s in
 
@@ -96,8 +96,8 @@ let simplify_ts x =
 
 let dump_simp ac = 
   let ac    = {ac with Config.cs = simplify_ts ac.Config.cs; Config.bm = SM.empty; Config.qs = []} in
-  let ctx,_ = BS.time "create" SPA.create ac in
-  let s0    = PA.create ac in 
+  let ctx,_ = BS.time "create" SPA.create ac None in
+  let s0    = PA.create ac None in 
   let _     = BS.time "save" (SPA.save !Co.save_file ctx) s0 in
   exit 1
 

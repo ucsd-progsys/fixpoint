@@ -55,7 +55,7 @@ type t = {
 module type SOLVER = sig
   type soln
   type bind
-  val create    : bind Config.cfg -> (t * soln)
+  val create    : bind Config.cfg -> FixConstraint.soln option -> (t * soln)
   val solve  : t -> soln -> (soln * (FixConstraint.t list)) 
   val save      : string -> t -> soln -> unit 
   val read      : soln -> FixConstraint.soln
@@ -195,7 +195,7 @@ let solve me s =
 
 
 (* API *)
-let create cfg = 
+let create cfg kf = 
   let sri = cfg.Config.cs 
             >> Co.logPrintf "Pre-Simplify Stats\n%a" print_constr_stats 
             |> BS.time  "Constant Env" (List.map (C.add_consts_t cfg.Config.cons))
@@ -207,7 +207,7 @@ let create cfg =
             |> (!Co.slice <?> BS.time "slice_wf" (Ci.slice_wf sri))
             |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf cfg.Config.cons)) 
             |> PP.validate_wfs in
-  let s   = Dom.create cfg in
+  let s   = Dom.create cfg kf in
   let _   = Ci.to_list sri 
             |> BS.time "Validate" (PP.validate cfg.Config.a (Dom.read s)) in
   ({ sri          = sri; ws           = ws
