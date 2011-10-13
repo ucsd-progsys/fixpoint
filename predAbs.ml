@@ -657,8 +657,6 @@ let apply_facts_c kf me c =
     if rcs = [] then
       (* Nothing on the right hand side *)
       me
-(*    else if List.exists P.is_contra lps then
-      me *)
     else if check_tp me env vv t lps f [(0, A.pFalse)] = [[0]] then
       me
     else
