@@ -96,7 +96,7 @@ let simplify_ts x =
 
 let dump_simp ac = 
   (* let ac    = {ac with Config.cs = simplify_ts ac.Config.cs; Config.bm = SM.empty; Config.qs = []} in *)
-  let ac    = {ac with Config.cs = simplify_ts ac.Config.cs} in 
+  let ac    = {ac with Config.cs = simplify_ts ac.Config.cs; Config.bm = SM.empty} in
   let ctx,_ = BS.time "create" SPA.create ac None in
   let s0    = PA.create ac None in 
   let _     = BS.time "save" (SPA.save !Co.save_file ctx) s0 in
@@ -109,12 +109,12 @@ let dump_simp ac =
 let usage = "Usage: fixpoint.native <options> [source-files]\noptions are:"
 
 let main () =
-  let cs  = usage |> Toplevel.read_inputs |> snd in 
+  let cfg  = usage |> Toplevel.read_inputs |> snd in 
   if !Co.dump_imp then 
-    dump_imp cs 
+    dump_imp cfg 
   else if !Co.dump_simp <> "" then 
-    dump_simp cs
+    dump_simp cfg
   else
-    dump_solve cs 
+    dump_solve cfg 
 
 let _ = main ()
