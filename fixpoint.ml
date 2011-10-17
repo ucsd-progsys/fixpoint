@@ -95,7 +95,8 @@ let simplify_ts x =
   else FixSimplify.simplify_ts x
 
 let dump_simp ac = 
-  let ac    = {ac with Config.cs = simplify_ts ac.Config.cs; Config.bm = SM.empty; Config.qs = []} in
+  (* let ac    = {ac with Config.cs = simplify_ts ac.Config.cs; Config.bm = SM.empty; Config.qs = []} in *)
+  let ac    = {ac with Config.cs = simplify_ts ac.Config.cs} in 
   let ctx,_ = BS.time "create" SPA.create ac None in
   let s0    = PA.create ac None in 
   let _     = BS.time "save" (SPA.save !Co.save_file ctx) s0 in
