@@ -230,5 +230,9 @@ let profile2 sri =
       |> fun n -> Co.cLogPrintf Co.ol_solve_stats "Constraint Clusters = %d \n" n
 
 (* API *) 
-let profile sri = sri >> profile1 >> profile2 |> ignore 
+let profile sri = 
+  sri 
+  >> profile1 
+  >> profile2 
+  |> ignore 
 

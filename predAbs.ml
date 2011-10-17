@@ -328,7 +328,7 @@ let p_update s0 ks kds =
 
 (* INV: qs' \subseteq qs *)
 let update m k dss' =
-  let dss = SM.find k m in
+  let dss = try SM.find k m with Not_found -> [] in
   (not (Misc.same_length dss dss'), SM.add k dss' m)
 
 let reprs kds = match kds with
@@ -351,7 +351,14 @@ let p_update s0 ks kdss =
   |> Misc.app_snd (fun m -> { s0 with m = m })  
 
 (* API *)
-let top s ks = snd <| p_update s ks [] 
+let top s ks = 
+  ks (* |> List.partition (fun k -> SM.mem k s.m)
+     >> (fun (_, badks) -> Co.logPrintf "WARNING: Trueing Unbound KVars = %s \n" (Misc.fsprintf (Misc.pprint_many false "," Sy.print) badks))
+     |> fst *)
+     |> Misc.flip (p_update s) []
+     |> snd
+
+
 
 (************************************************************)
 (*********************** Profile/Stats **********************)

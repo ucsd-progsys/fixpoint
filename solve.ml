@@ -164,9 +164,11 @@ let unconstrained_kvars cs =
 
 let true_unconstrained sri s =
   sri |> Cindex.to_list 
+      >> (fun _ -> Co.logPrintf "Fixpoint: true_unconstrained Step 2 \n")
       |> unconstrained_kvars
+      >> (fun _ -> Co.logPrintf "Fixpoint: true_unconstrained Step 2 \n")
       |> Dom.top s
-
+      >> (fun _ -> Co.logPrintf "Fixpoint: true_unconstrained Step 3 \n")
 (* 
 let true_unconstrained sri s = 
   if !Co.true_unconstrained then 
@@ -181,6 +183,7 @@ let true_unconstrained sri s =
 let solve me s = 
   let _  = Co.logPrintf "Fixpoint: Validating Initial Solution \n" in
   let _  = BS.time "Prepass.profile" PP.profile me.sri in
+  let _  = Co.logPrintf "Fixpoint: Trueing Unconstrained Variables \n" in
   let s  = s |> (!Co.true_unconstrained <?> BS.time "Prepass.true_unconstr" (true_unconstrained me.sri)) in
   (* let _  = Co.cprintf Co.ol_insane "%a%a" Ci.print me.sri Dom.print s; dump me s in *)
   let _  = Co.logPrintf "Fixpoint: Initialize Worklist \n" in

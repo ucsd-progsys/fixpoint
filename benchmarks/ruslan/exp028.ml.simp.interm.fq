@@ -2085,4 +2085,6 @@ wf: env [y_79:{VV_int : int | []};
      
 //QUALIFIERS 
 
- 
+qualif FALSE0(v:bool) : 0 = 1
+qualif FALSE1(v:int) : 0 = 1
+qualif FALSE2(v:ptr) : 0 = 1
