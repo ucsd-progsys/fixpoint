@@ -48,12 +48,19 @@ open Misc.Ops
 
 let mydebug = false 
 
-let tag_of_qual = snd <.> Q.pred_of_t
+let tag_of_qual  = snd <.> Q.pred_of_t
+let tag_of_qual2 = Misc.map_pair tag_of_qual
 
 module QS = Misc.ESet (struct
   type t = Q.t
-  let compare q1 q2 = compare (tag_of_qual q1) (tag_of_qual q2)
+  let compare x y = compare (tag_of_qual x) (tag_of_qual y)
 end)
+
+module Q2S = Misc.ESet (struct
+  type t = Q.t * Q.t
+  let compare x y = compare (tag_of_qual2 x) (tag_of_qual2 y)
+end)
+
 
 module V : Graph.Sig.COMPARABLE with type t = Q.t = struct
   type t = Q.t
@@ -84,7 +91,7 @@ type t   =
   ; assm : FixConstraint.soln (* invariant assumption for K, 
                                  must be a fixpoint wrt constraints *)
   ; qs   : QS.t 
-
+  ; qleqs: Q2S.t              (* (q1,q2) \in qleqs implies q1 => q2 *)
   (* stats *)
   ; stat_simple_refines : int ref 
   ; stat_tp_refines     : int ref 
@@ -164,6 +171,7 @@ let dump_graph s g =
     >> (fun oc -> Dot.output_graph oc g)
     |> close_out 
 
+(* {{{
 (************************************************************)
 (***************** Build Implication Graph ******************)
 (************************************************************)
@@ -176,7 +184,6 @@ let check_tp tp sm q qs =
      |> TP.set_filter tp sm vv lps (fun _ _ -> false) 
      >> (List.flatten <+> List.map fst <+> F.printf "CHECK_TP: %a OUT %a \n" Q.print q pprint_qs)
 
-let cluster_quals = Misc.groupby Q.sort_of_t 
 
 let update_impm_for_quals tp sm impmg qs = 
   List.fold_left begin fun impmg q ->
@@ -199,6 +206,8 @@ let impm_of_quals ts sm ps qs =
   qs |> cluster_quals 
      |> List.fold_left (update_impm_for_quals tp sm) (TTM.empty, G.empty)
      >> (fun _ -> ignore <| Printf.printf "DONE: Building IMP Graph \n")  
+
+ }}} *)
 
 let p_read s k =
   let _ = asserts (SM.mem k s.m) "ERROR: p_read : unknown kvar %s\n" (Sy.to_string k) in
@@ -324,9 +333,6 @@ let check_tp me env vv t lps =  function [] -> [] | rcs ->
 let read s k = (s.assm k) ++ (if SM.mem k s.m then p_read s k |>: snd else [])
 
 (* API *)
-let min_read s k = failwith "TBD: min_read"
-
-(* API *)
 let read_bind s k = failwith "TBD: read_bind"
 
 (* API *)
@@ -374,6 +380,67 @@ let unsat me c =
   let msg = Printf.sprintf "unsat_cstr %d" (C.id_of_t c) in
   Misc.do_catch msg (unsat me s) c
 *)
+
+(****************************************************************)
+(************* Minimization: For Prettier Output ****************)
+(****************************************************************)
+
+let canonize_subs = 
+  Su.to_list <+> List.sort (fun (x,_) (y,_) -> compare x y)
+
+let subst_leq =
+  Misc.map_pair canonize_subs <+> Misc.isPrefix
+ 
+let qual_leq s = 
+  Misc.flip Q2S.mem s.qleqs
+
+let def_leq s (_, (q1, su1)) (_, (q2, su2)) = 
+  qual_leq s (q1, q2) && subst_leq (su1, su2)
+
+let min_read s k = 
+  if SM.mem k s.m then 
+    SM.find k s.m 
+    |> Misc.rootsBy (def_leq s)  
+    |> List.map fst 
+  else []
+
+(* API *)
+let min_read s k =
+  if !Constants.minquals then min_read s k else read s k
+
+(*  check_leq tp sm q qs = [q' | q' <- qs, Z3 |- q => q'] *)
+let check_leq tp sm (q : Q.t) (qs : Q.t list) : Q.t list = 
+  let vv  = Q.vv_of_t q in
+  let lps = [Q.pred_of_t q] in
+  qs |> List.map (fun q -> (q, Q.pred_of_t q))
+     >> (List.map fst <+> F.printf "CHECK_TP: %a IN %a \n" Q.print q pprint_qs)
+     |> TP.set_filter tp sm vv lps (fun _ _ -> false)
+     |> List.flatten
+     >> F.printf "CHECK_TP: %a OUT %a \n" Q.print q pprint_qs
+
+let qimps_of_partition tp sm qs =
+  foreach qs begin fun q ->
+    let qs' = check_leq tp sm q qs in
+    foreach qs' begin fun q' ->
+      (q, q')
+    end
+  end
+
+let close_env qs sm =
+  qs |> Misc.flap   (Q.pred_of_t <+> P.support) 
+     |> Misc.filter (not <.> Misc.flip SM.mem sm)
+     |> Misc.map    (fun x -> (x, Ast.Sort.t_int))
+     |> SM.of_list
+     |> SM.extend sm
+
+let qleqs_of_qs ts sm ps qs =
+  let sm = close_env qs sm       in
+  let tp = TP.create ts sm ps [] in
+  qs |> Misc.groupby Q.sort_of_t
+     |> Misc.flap (qimps_of_partition tp sm)
+     |> Misc.flatten
+     |> Q2S.of_list
+     >> (fun _ -> ignore <| Printf.printf "DONE: Building qleqs_of_qs \n")  
 
 (***************************************************************)
 (******************** Qualifier Instantiation ******************)
@@ -458,10 +525,9 @@ let inst ws qs =
 
 let create ts sm ps consts assm bm =
   let qs         = quals_of_bindings bm in
-  { m = bm
-  ; assm = assm
-  ; qs = QS.of_list qs 
-  ; tpc  = TP.create ts sm ps (List.map fst consts)
+  { m = bm; assm = assm; qs = QS.of_list qs 
+  ; qleqs               = qleqs_of_qs ts sm ps qs 
+  ; tpc                 = TP.create ts sm ps (List.map fst consts)
   ; stat_simple_refines = ref 0
   ; stat_tp_refines     = ref 0; stat_imp_queries    = ref 0
   ; stat_valid_queries  = ref 0; stat_matches        = ref 0
@@ -536,29 +602,6 @@ let empty = create Config.empty None
 (* API *)
 let meet me you = {me with m = SM.extendWith (fun _ -> (++)) me.m you.m} 
 
-(* {{{ DEPRECATED 
-
-let read s k = 
-  try SM.find k s.m with Not_found -> begin
-    Printf.printf "ERROR: Solution.read : unknown kvar %s \n" 
-    (Sy.to_string k);
-    raise (UnmappedKvar k)
-  end
 
 
-let query s k =
-  try SM.find k s with Not_found -> []
 
-let add s k qs' = 
-  let qs   = query s k in
-  let qs'' = qs' ++ qs in
-  (not (Misc.same_length qs qs''), SM.add k qs'' s)
-
-let merge s1 s2 =
-  SM.fold (fun k qs s -> add s k qs |> snd) s1 s2 
-
-let map_of_bindings (bs : (Sy.t * def list) list) =
-  bs |> List.map (fun (k, defs) -> (k, List.map fst defs)) 
-     |> List.fold_left (fun s (k, ps) -> SM.add k ps s) SM.empty 
-  
-  }}} *)
