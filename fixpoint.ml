@@ -30,7 +30,7 @@ module Co  = Constants
 module C   = FixConstraint
 module F   = Format
 module T   = Toplevel
-module PA  = PredAbs
+module PA  = PredAbs2
 module SPA = Solve.Make (PA)
 
 open Misc.Ops
