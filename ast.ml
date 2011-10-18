@@ -892,7 +892,8 @@ let rec fixdiv = function
 (***************************************************************************)
 
 let sortcheck_sym f s = 
-  try Some (f s) with _ -> None
+  try Some (f s) with _ -> 
+    if !Constants.default_sort then Some (Sort.t_int) else None
 
 let sortcheck_loc f = function
   | Sort.Loc s  -> sortcheck_sym f (Symbol.of_string s)

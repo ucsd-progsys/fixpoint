@@ -120,7 +120,7 @@ let phase4 a =
 (* 5. check that all refinements are well-formed *)
 let validate_vars env msg vs = 
   List.iter begin fun v -> 
-    if not(SM.mem v env) then 
+    if not (SM.mem v env || !Constants.default_sort) then 
       let _ = F.printf "ERROR: out_of_scope variable %a (%s)" Sy.print v (Lazy.force msg) in
       raise (Out_of_scope v)
   end vs 
