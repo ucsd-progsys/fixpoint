@@ -289,7 +289,6 @@ let save fname s =
   F.fprintf ppf "@[%a@] \n" print s;
   close_out oc
 
-
 let key_of_quals qs = 
   qs |> List.map P.to_string 
      |> List.sort compare
@@ -523,10 +522,10 @@ let inst ws qs =
 (*************************** Creation ************************************)
 (*************************************************************************)
 
-let create ts sm ps consts assm bm =
-  let qs         = quals_of_bindings bm in
+let create ts sm ps consts assm qs0 bm =
+  let qs         = Misc.sort_and_compact (qs0 ++ quals_of_bindings bm) in
   { m = bm; assm = assm; qs = QS.of_list qs 
-  ; qleqs               = qleqs_of_qs ts sm ps qs 
+  ; qleqs               = if !Constants.minquals then qleqs_of_qs ts sm ps qs else Q2S.empty
   ; tpc                 = TP.create ts sm ps (List.map fst consts)
   ; stat_simple_refines = ref 0
   ; stat_tp_refines     = ref 0; stat_imp_queries    = ref 0
@@ -586,11 +585,11 @@ let apply_facts kf me cs =
 let create c facts = 
   c.Config.qs 
   |> Q.normalize 
-  >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) 
+  (* >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) *)
   |> BS.time "Qual Inst" (inst c.Config.ws) (* >> List.iter ppBinding *)
   |> SM.of_list 
   |> SM.extendWith (fun _ -> (++)) c.Config.bm
-  |> create c.Config.ts c.Config.uops c.Config.ps c.Config.cons c.Config.assm
+  |> create c.Config.ts c.Config.uops c.Config.ps c.Config.cons c.Config.assm c.Config.qs
   |> fun me -> match facts with
        | None -> me
        | Some kf -> BS.time "apply facts" (apply_facts kf me) (c.Config.cs)

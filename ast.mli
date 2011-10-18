@@ -201,6 +201,7 @@ module Qualifier :
     type def      = pred * (t * Subst.t)
     
     val create    : string -> Symbol.t -> Sort.t -> pred -> t 
+    val rename    : string -> t -> t
     val name_of_t : t -> string 
     val vv_of_t   : t -> Symbol.t
     val pred_of_t : t -> pred

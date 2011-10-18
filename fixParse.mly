@@ -22,7 +22,7 @@ let parse_error msg =
 %token TRUE FALSE
 %token LPAREN  RPAREN LB RB LC RC
 %token EQ NE GT GE LT LE
-%token AND OR NOT IMPL IFF FORALL SEMI COMMA COLON MID
+%token AND OR NOT NOTWORD IMPL IFF IFFWORD FORALL SEMI COMMA COLON MID
 %token EOF
 %token MOD 
 %token PLUS
@@ -34,7 +34,7 @@ let parse_error msg =
 %token SRT AXM CON CST WF SOL QUL ADP DDP
 %token ENV GRD LHS RHS REF
 
-%right IFF
+%right IFF IFFWORD
 %right IMPL
 %left PLUS
 %left MINUS
@@ -70,9 +70,12 @@ defs:
   ;
 
 qual:
-  Id LPAREN Id COLON sort RPAREN COLON pred  
+   Id LPAREN Id COLON sort RPAREN COLON pred  
                                         { A.Qualifier.create $1 (Sy.of_string $3) $5 $8 }
-  ;
+ | Id LPAREN Id RPAREN COLON pred  
+                                        { A.Qualifier.create $1 (Sy.of_string $3) So.t_int $6 }
+ 
+                                        ;
 
 
 def:
@@ -136,13 +139,16 @@ predsne:
 ;
 
 pred:
-    TRUE				{ A.pTrue }
-  | FALSE				{ A.pFalse }
+    TRUE				                { A.pTrue }
+  | FALSE				                { A.pFalse }
   | BEXP expr                           { A.pBexp $2 }
   | QM expr                             { A.pBexp $2 }
-  | AND preds   			{ A.pAnd ($2) }
-  | OR  preds 	        		{ A.pOr  ($2) }
-  | NOT pred				{ A.pNot ($2) }
+  | AND preds   			            { A.pAnd ($2) }
+  | OR  preds 	        		        { A.pOr  ($2) }
+  | NOT pred				            { A.pNot ($2) }
+  | NOTWORD pred				        { A.pNot ($2) }
+  | LPAREN pred AND pred RPAREN         { A.pAnd [$2; $4] }
+  | LPAREN pred OR  pred RPAREN         { A.pOr  [$2; $4] }
   | expr EQ expr                        { A.pAtom ($1, A.Eq, $3) }
   | expr NE expr                        { A.pAtom ($1, A.Ne, $3) }
   | expr GT expr                        { A.pAtom ($1, A.Gt, $3) }
@@ -152,6 +158,7 @@ pred:
   | FORALL binds DOT pred               { A.pForall ($2, $4) }
   | pred IMPL pred                      { A.pImp ($1, $3) }
   | pred IFF pred                       { A.pIff ($1, $3) }
+  | pred IFFWORD pred                   { A.pIff ($1, $3) }
   | LPAREN pred RPAREN			{ $2 }
   ;
 
@@ -174,7 +181,9 @@ expr:
   | expr MINUS expr                       { A.eBin ($1, A.Minus, $3) }
   | expr TIMES expr                       { A.eBin ($1, A.Times, $3) }
   | expr DIV expr                         { A.eBin ($1, A.Div, $3) }
-  | Id LPAREN  exprs RPAREN               { A.eApp ((Sy.of_string $1), $3) }
+  | Id LPAREN exprs RPAREN                { A.eApp ((Sy.of_string $1), $3) }
+  
+  | Id Id                                 { A.eApp ((Sy.of_string $1), [A.eVar (Sy.of_string $2)]) }
   | LPAREN pred QM expr COLON expr RPAREN { A.eIte ($2,$4,$6) }
   | expr DOT Id                           { A.eFld ((Sy.of_string $3), $1) }
   | LPAREN expr COLON sort RPAREN         { A.eCst ($2, $4) }

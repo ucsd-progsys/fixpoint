@@ -71,6 +71,7 @@ rule token = parse
   | '/'                 { DIV }
   | '?'                 { QM }
   | '.'                 { DOT }
+  | "not"               { NOTWORD }
   | "tag"               { TAG }
   | "id"                { ID }
   | "Bexp"              { BEXP }
@@ -80,6 +81,7 @@ rule token = parse
   | "&&"                { AND }
   | "||"                { OR  }
   | "<=>"               { IFF }
+  | "iff"               { IFFWORD }
   | "=>"                { IMPL }
   | "!="		        { NE }
   | "="		            { EQ }

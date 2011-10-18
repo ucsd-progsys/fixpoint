@@ -23,13 +23,14 @@
 
 module MSM = Misc.StringMap
 module SM  = Ast.Symbol.SMap
+module Q   = Ast.Qualifier
 
 open Misc.Ops
 
 exception UnmappedKvar of Ast.Symbol.t
 
 
-type qbind = Ast.Qualifier.def list list
+type qbind = Q.def list list
 
 type deft = Srt of Ast.Sort.t 
           | Axm of Ast.pred 
@@ -57,13 +58,28 @@ type 'bind cfg = {
 }
 
 let get_arity = function
-  | []   -> assertf "Fixpoint: NO CONSTRAINTS!"
+  | []   -> Constants.logPrintf "WARNING: NO CONSTRAINTS!"; 0
   | c::_ -> c |> FixConstraint.tag_of_t |> fst |> List.length
 
+let qual_rename i q = 
+  Q.rename ((Q.name_of_t q)^(string_of_int i)) q
+
+let sift_quals ds = 
+  ds |> Misc.map_partial (function Qul q -> Some q | _ -> None)
+     |> List.fold_left begin fun (i, m) q -> 
+          let n       = Q.name_of_t q in
+          let (i',q') = if MSM.mem n m then (i+1, qual_rename i q) else (i, q) in
+          (i', MSM.add (Q.name_of_t q') q' m)
+        end (0, MSM.empty)
+     >> (fun (i, _) -> if i <> 0 then Constants.logPrintf "WARNING: duplicate qualifier names")
+     |> snd
+
+(*
 let sift_quals ds = 
   ds |> Misc.map_partial (function Qul q -> Some (Ast.Qualifier.name_of_t q, q) | _ -> None)
      >> (List.map fst <+> (fun ns -> asserts (Misc.distinct ns) "ERROR: duplicate quals!"))
      |> MSM.of_list
+*)
 
 let extend s2d cfg = function
   | Srt t      -> {cfg with ts   = t     :: cfg.ts   }   

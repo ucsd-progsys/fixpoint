@@ -1160,7 +1160,7 @@ module Qualifier = struct
 
   type def = pred * (t * Subst.t)
 
-  
+  let rename    = fun n -> fun q -> {q with name = n} 
   let name_of_t = fun q -> q.name
   let vv_of_t   = fun q -> q.vvar
   let sort_of_t = fun q -> q.vsort
