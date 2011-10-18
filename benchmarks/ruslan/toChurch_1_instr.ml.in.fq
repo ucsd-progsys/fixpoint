@@ -58914,9 +58914,9 @@ wf: env [true_0:{VV_bool : bool | []};
 //QUALIFIERS 
 
  
-mdep Pervasives
-const_ints 0, 1, 10
-(*Program Identifiers: a, p, res, x, y*)
+//mdep Pervasives
+//const_ints 0, 1, 10
+//(*Program Identifiers: a, p, res, x, y*)
 qualif MLQ(_V) : (((~X >= 0) &&  (~Y >= 0)) => ((_V >= 0) &&  ((_V <= ~X) &&  (_V <= ~Y))))
 qualif MLQ(_V) : (((~X >= 0) &&  (~Y >= 0)) => (_V >= 0))
 qualif MLQ(_V) : ((? (_V)) iff ((? (~X)) &&  (? (~Y))))

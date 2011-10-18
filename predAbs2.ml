@@ -445,8 +445,12 @@ let qleqs_of_qs ts sm ps qs =
 (******************** Qualifier Instantiation ******************)
 (***************************************************************)
 
-let wellformed env q = 
-  A.sortcheck_pred (fun x -> snd3 (SM.find x env)) (Q.pred_of_t q)
+let wellformed env q =
+  Misc.do_catch_ret "PA.wellformed: sortcheck_pred " 
+    (A.sortcheck_pred (fun x -> snd3 (SM.find x env))) 
+    (Q.pred_of_t q)
+    false
+
 (*  >> (F.printf "\nwellformed: q = @[%a@] in env = @[%a@] result %b\n"  
         Q.print q (C.print_env None) env)
  *)

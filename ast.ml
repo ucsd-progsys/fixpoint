@@ -931,11 +931,10 @@ let rec sortcheck_expr f e =
 
 (* TODO: OMG! 5 levels of matching!!!!! *)
 and sortcheck_app f so_expected uf es =
-  uf |> Misc.do_catchf ("ERROR: unknown uf = "^uf) f
-     |> Sort.func_of_t 
-     |> function 
-          | None -> None 
-          | Some (i_ts, o_t) -> 
+  sortcheck_sym f uf
+  |> function None -> None | Some t -> 
+       Sort.func_of_t t 
+       |> function None -> None | Some (i_ts, o_t) -> 
               let _  = asserts (List.length es = List.length i_ts) 
                          "ERROR: uf arg-arity error: uf=%s" uf in
               let e_ts = es |> List.map (sortcheck_expr f) |> Misc.map_partial id in
