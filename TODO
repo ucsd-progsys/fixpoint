@@ -1,0 +1,9 @@
+Two tricks:
+
+../../fixpoint.native fold_left_1_instr.ml.in.fq -refinesort -strictsortcheck
+
+now fold_left_1_instr.ml.in.fq
+
+finishes with "UNSAT" ...
+
+
