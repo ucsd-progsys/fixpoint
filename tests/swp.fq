@@ -51,7 +51,7 @@ constraint:
        BLOCK_BEGIN:{VV_func : func(1, [@(0) ; @(0)]) | [&& []]}] 
  grd true 
  lhs {VV_ptr_A10 : ptr(A10) | [&& [(VV_ptr_A10 = __cil_tmp14_quicksort) ; (BLOCK_BEGIN([VV_ptr_A10]) = BLOCK_BEGIN([__cil_tmp14_quicksort])) ; (BLOCK_END([VV_ptr_A10]) = BLOCK_END([__cil_tmp14_quicksort])) ; (UNCHECKED([VV_ptr_A10]) = UNCHECKED([__cil_tmp14_quicksort]))]]} 
- rhs {VV_ptr_A10 : ptr(A10) | [&& [&& [&& [(VV_ptr_A10 > 0) ; (BLOCK_BEGIN([VV_ptr_A10]) <= VV_ptr_A10) ; (VV_ptr_A10 < BLOCK_END([VV_ptr_A10]))] ; ((VV_ptr_A10 + (4 * __cil_tmp15_quicksort)) <= BLOCK_END([VV_ptr_A10]))]]]} 
+ rhs {VV_ptr_A10 : ptr(A10) | [&& [&& [((VV_ptr_A10 + (4 * __cil_tmp15_quicksort)) <= BLOCK_END([VV_ptr_A10]))]]]} 
  id 13 tag [3;1;-15;0] //quicksort 
 
 
