@@ -497,8 +497,68 @@ let brel_to_string = function
   | Lt -> "<"
   | Le -> "<="
 
-let bind_to_string (s,t) = 
+let print_binding ppf (s,t) = 
+  F.fprintf ppf "%a:%a" Symbol.print s Sort.print t
+
+let bind_to_string  (s,t) = 
   Printf.sprintf "%s:%s" (Symbol.to_string s) (Sort.to_string t)
+
+let rec print_expr ppf e = match euw e with
+  | Con c -> 
+      F.fprintf ppf "%a" Constant.print c 
+  | Var s -> 
+      F.fprintf ppf "%a" Symbol.print s
+  | App (s, es) -> 
+      F.fprintf ppf "%a([%a])" 
+        Symbol.print s
+        (Misc.pprint_many false "; " print_expr) es
+  | Bin (e1, op, e2) ->
+      F.fprintf ppf "(%a %s %a)" 
+        print_expr e1 
+        (bop_to_string op) 
+        print_expr e2
+  | Ite(ip,te,ee) -> 
+      F.fprintf ppf "(%a ? %a : %a)" 
+        print_pred ip 
+        print_expr te
+        print_expr ee
+  | Fld(s, e) -> 
+      F.fprintf ppf "%a.%s" print_expr e s 
+  | Cst(e,t) ->
+      F.fprintf ppf "(%a : %a)" 
+        print_expr e 
+        Sort.print t
+  | Bot ->
+      F.fprintf ppf "_|_" 
+
+and print_pred ppf p = match puw p with
+  | True -> 
+      F.fprintf ppf "true"
+  | False -> 
+      F.fprintf ppf "false"
+  | Bexp e ->
+      F.fprintf ppf "(Bexp %a)" print_expr e
+  | Not p -> 
+      F.fprintf ppf "(~ (%a))" print_pred p
+  | Imp (p1, p2) -> 
+      F.fprintf ppf "(%a => %a)" print_pred p1 print_pred p2 
+  | Iff (p1, p2) ->
+      F.fprintf ppf "(%a <=> %a)" print_pred p1 print_pred p2 
+  | And ps -> 
+      F.fprintf ppf "&& [@[%a@]]" 
+        (Misc.pprint_many_box " ; " print_pred) ps
+  | Or ps -> 
+      F.fprintf ppf "|| [@[%a@]]" 
+        (Misc.pprint_many_box " ; " print_pred) ps
+  | Atom (e1, r, e2) ->
+      F.fprintf ppf "@[(%a %s %a)@]" 
+        print_expr e1 
+        (brel_to_string r) 
+        print_expr e2
+  | Forall (qs, p) -> 
+      F.fprintf ppf "forall [%a] . %a" 
+        (Misc.pprint_many false "; " print_binding) qs
+        print_pred p
 
 let rec expr_to_string e = 
   match euw e with
@@ -645,8 +705,10 @@ module Expression =
       
     let to_string = expr_to_string
 
-    let print     = fun fmt e -> Format.pp_print_string fmt (to_string e)
-
+    (* let print     = fun fmt e -> Format.pp_print_string fmt (to_string e)
+     *)
+    let print = print_expr
+    
     let show      = print Format.std_formatter
 
     let map fp fe e =
@@ -689,9 +751,12 @@ module Predicate =
       module Hash = PredHash 
 	
       let to_string = pred_to_string
-
-      let print     = fun fmt p -> Format.pp_print_string fmt (to_string p)
-
+(*
+     let print     = fun fmt p -> Format.pp_print_string fmt (to_string p)
+  *)    
+     
+      let print = print_pred
+ 
       let show      = print Format.std_formatter
 			
       let map fp fe p =
