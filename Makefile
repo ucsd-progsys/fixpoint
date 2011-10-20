@@ -16,7 +16,7 @@ LFLAGS=-lflags -cc,g++ \
        -lflags -cclib,-lz3stubs \
        -lflags -cclib,-lcamlidl
 
-CFLAGS=-cflags -dtypes \
+CFLAGS=-cflags -dtypes,-annot \
        -cflags -I,$(Z3HOME)/ocaml \
        -cflags -I,$(OCAMLGRAPHHOME) \
 			 -cflags -thread
@@ -26,8 +26,8 @@ OFLAGS=$(DIRS) $(IFLAGS) $(LFLAGS) $(CFLAGS)
 all:
 	ln -sf ../misc
 	ocamlbuild -r $(LIBS) $(OFLAGS) -tags thread fixpoint.native
-	ocamlbuild -r $(OFLAGS) fix.cmxa
-	cp _build/fixpoint.native .
+# ocamlbuild -r $(OFLAGS) fix.cmxa
+# cp _build/fixpoint.native .
 
 clean:
 	rm -rf *.byte *.native _build _log
