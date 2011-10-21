@@ -54,7 +54,7 @@ let phase3a =
     let (vv1,t1,_) = C.lhs_of_t c in
     let (vv2,t2,_) = C.rhs_of_t c in
     if not (vv1 = vv2 && t1 = t2) then 
-      let _ = Format.printf "Invalid Constraints 3a in \n %a " (C.print_t None) c in
+      let _ = Format.printf "Invalid Constraints 3a (LHS/RHS sort mismatch) in \n %a " (C.print_t None) c in
       let _ = 0/0 in 
       () 
   end
