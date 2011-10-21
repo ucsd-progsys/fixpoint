@@ -93,7 +93,7 @@ let hook_simplify_ts = function
                 <+> Simplification.simplify_ts
   | "jhala"  -> FixSimplify.simplify_ts
   (* put other transforms here *)
-  | _        -> Misc.id
+  | _        -> id
 
 let simplify_ts = hook_simplify_ts !Co.dump_simp 
 
