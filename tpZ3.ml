@@ -230,6 +230,8 @@ and z3Cast me env a t =
   if st = st' then a else cast me env a (st, st')  
 *)
 
+exception Z3RelTypeError
+
 let rec z3Rel me env (e1, r, e2) =
   if A.sortcheck_pred (varSort env) (A.pAtom (e1, r, e2)) then 
     let a1, a2 = Misc.map_pair (z3Exp me env) (e1, e2) in 
@@ -244,8 +246,7 @@ let rec z3Rel me env (e1, r, e2) =
     SM.iter (fun s t -> Format.printf "@[%a :: %a@]@." Sy.print s So.print t) env;
     Format.printf "@[%a@]@.@." P.print (A.pAtom (e1, r, e2));
     Format.print_flush ();
-    asserti (false) "ERROR: z3Rel type error";
-    assert false
+    raise Z3RelTypeError
   end
 
 and z3App me env p zes =
