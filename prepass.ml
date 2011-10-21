@@ -95,7 +95,6 @@ let phase3a =
 
 	...,(y:b) |- b <: b			(2)
 
-*) 
 let phase3b cs =
   let memo = Hashtbl.create 17 in
   List.iter begin fun c ->
@@ -110,6 +109,7 @@ let phase3b cs =
         Hashtbl.replace memo x t
     end env
   end cs
+*) 
 
 (* 4. check that each tag has the same arity [a] *)
 let phase4 a = 
