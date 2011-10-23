@@ -37,6 +37,8 @@ module P  = Ast.Predicate
 
 open Misc.Ops
 
+let mydebug = false
+
 (***********************************************************************)
 (***************** Index Data Structures and Accessors *****************)
 (***********************************************************************)
@@ -103,13 +105,17 @@ let make_deps cm =
   let get = fun km k -> try SM.find k km with Not_found -> [] in
   let upd = fun id km k -> SM.add k (id::(get km k)) km in
   let km  = IM.fold (fun id c vm -> List.fold_left (upd id) vm (lhs_ks c)) cm SM.empty in
+            (* >> SM.iter (fun k ids -> Co.bprintf mydebug "ReadIn %a := %a\n" Ast.Symbol.print k Misc.pprint_pretty_ints ids) *)
   IM.fold begin fun id c acc ->
     List.fold_left begin fun (dm, deps) k -> 
-      let kds = get km k in
-      let deps' = List.map (fun id' -> (id, id')) kds in
-      (IM.add id kds dm, (deps' ++ deps)) 
+      let rd_ids = get km k in
+      let deps'  = List.map (fun rd_id -> (id, rd_id)) rd_ids in
+(*    let _      = Co.bprintf mydebug "Constraint %d writes %a which is read in [%a]\n" id
+ *    Ast.Symbol.print k Misc.pprint_pretty_ints rd_ids in *)
+      (IM.adds id rd_ids dm, (deps' ++ deps)) 
     end acc (rhs_ks c) 
   end cm (IM.empty,[])
+(* >> (fst <+> IM.iter (fun i js -> Co.bprintf mydebug "DepsOf (id = %d) = @[%a@]\n" i Misc.pprint_pretty_ints js)) *)
 
 (***********************************************************************)
 (************* Adjusting Dependencies with Provided Tag-Deps ***********)
@@ -227,7 +233,6 @@ let save fname me =
     F.fprintf ppf "@[%a@] \n" print me
   end
 
-
 (* The "adjusted" dependencies are used to create the SCC ranks ONLY.
  * For soundness, the "real" dependencies must be used to push 
  * "successors" into the worklist. *)
@@ -269,7 +274,7 @@ let pp_cstr_ids ppf cs = F.fprintf ppf "@[%a@.@]" (Misc.pprint_many false "," pp
 let deps me c =
   (try IM.find (C.id_of_t c) me.depm with Not_found -> [])
   |> List.map (get_ref_constraint me)
-  >> (Co.logPrintf "Deps %d = [%a]\n" (C.id_of_t c) pp_cstr_ids)
+  >> (List.map C.id_of_t <+> Co.logPrintf "Deps %d = [%a]\n" (C.id_of_t c) Misc.pprint_pretty_ints)
 
 (* API *)
 let to_list me = IM.range me.cnst

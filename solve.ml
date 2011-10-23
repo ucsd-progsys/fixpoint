@@ -41,7 +41,7 @@ module Cg = FixConfig
 open Misc.Ops
 
 
-let mydebug = true 
+let mydebug = false 
 
 type t = {
    sri : Ci.t
