@@ -98,12 +98,20 @@ let hook_simplify_ts = function
 let simplify_ts = hook_simplify_ts !Co.dump_simp 
 
 let dump_simp ac = 
+  let ac = {ac with Config.cs = simplify_ts ac.Config.cs; Config.bm = SM.empty} in
+  Misc.with_out_formatter !Co.save_file (fun ppf -> Config.print ppf ac)
+
+   (*
+let dump_simp ac = 
   (* let ac    = {ac with Config.cs = simplify_ts ac.Config.cs; Config.bm = SM.empty; Config.qs = []} in *)
   let ac    = {ac with Config.cs = simplify_ts ac.Config.cs; Config.bm = SM.empty} in
+  Misc.with_out_formatter !Co.save_file (fun ppf -> Config.print ppf ac)
+
   let ctx,_ = BS.time "create" SPA.create ac None in
-  let s0    = PA.create ac None in 
+  let s0    = PA.empty (* PA.create ac None *) in 
   let _     = BS.time "save" (SPA.save !Co.save_file ctx) s0 in
   exit 1
+*)
 
 (*****************************************************************)
 (*********************** Main ************************************)
@@ -119,5 +127,7 @@ let main () =
     dump_simp cfg
   else
     dump_solve cfg 
+
+
 
 let _ = main ()

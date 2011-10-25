@@ -24,6 +24,7 @@
 module MSM = Misc.StringMap
 module SM  = Ast.Symbol.SMap
 module Q   = Ast.Qualifier
+module C   = FixConstraint
 
 open Misc.Ops
 
@@ -64,6 +65,7 @@ let get_arity = function
 let qual_rename i q = 
   Q.rename ((Q.name_of_t q)^(string_of_int i)) q
 
+(*
 let sift_quals ds = 
   ds |> Misc.map_partial (function Qul q -> Some q | _ -> None)
      |> List.fold_left begin fun (i, m) q -> 
@@ -73,13 +75,12 @@ let sift_quals ds =
         end (0, MSM.empty)
      >> (fun (i, _) -> if i <> 0 then Constants.logPrintf "WARNING: duplicate qualifier names")
      |> snd
+*)
 
-(*
 let sift_quals ds = 
   ds |> Misc.map_partial (function Qul q -> Some (Ast.Qualifier.name_of_t q, q) | _ -> None)
-     >> (List.map fst <+> (fun ns -> asserts (Misc.distinct ns) "ERROR: duplicate quals!"))
-     |> MSM.of_list
-*)
+(*     >> (List.map fst <+> (fun ns -> asserts (Misc.distinct ns) "ERROR: duplicate quals!"))
+  *)   |> MSM.of_list
 
 let extend s2d cfg = function
   | Srt t      -> {cfg with ts   = t     :: cfg.ts   }   
@@ -125,4 +126,12 @@ module type DOMAIN = sig
 end
 
 (* type t = Ast.Qualifier.def list list cfg *)
+
+let print ppf me = 
+  (* Print cs *)
+  Format.fprintf ppf "@[%a@] \n" (Misc.pprint_many true "\n" (C.print_t None)) me.cs;
+  (* Print ws *)
+  Format.fprintf ppf "@[%a@] \n" (Misc.pprint_many true "\n" (C.print_wf None)) me.ws;
+  (* Print qs *)
+  Format.fprintf ppf "@[%a@] \n" (Misc.pprint_many true "\n" Q.print) (Q.normalize me.qs)
 

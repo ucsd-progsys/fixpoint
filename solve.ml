@@ -131,9 +131,9 @@ let refine_constraint s c =
   try
     BS.time "refine" (Dom.refine s) c
   with ex ->
-    let _ = F.printf "constraint refinement fails with: %s\n" (Printexc.to_string ex) in
+    let _ = F.printf "constraint refinment fails with: %s\n" (Printexc.to_string ex) in
     let _ = F.printf "Failed on constraint:\n%a\n" (C.print_t None) c in
-    assert false
+      assert false
 
 let rec acsolve me w s =
   let _ = log_iter_stats me s in
@@ -218,7 +218,7 @@ let create cfg kf =
             |> (!Co.slice <?> BS.time "slice_wf" (Ci.slice_wf sri))
             |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf cfg.Config.cons)) 
             |> PP.validate_wfs in
-  let s   = Dom.create cfg kf in
+  let s   = if !Constants.dump_simp <> "" then Dom.empty else Dom.create cfg kf in
   let _   = Ci.to_list sri 
             |> BS.time "Validate" (PP.validate cfg.Config.a (Dom.read s)) in
   ({ sri          = sri; ws           = ws
@@ -231,7 +231,6 @@ let create cfg kf =
 let save fname me s =
   let oc  = open_out fname in
   let ppf = F.formatter_of_out_channel oc in
-  
   F.fprintf ppf "@[%a@] \n" Ci.print me.sri;
   F.fprintf ppf "@[%a@] \n" (Misc.pprint_many true "\n" (C.print_wf None)) me.ws;
   F.fprintf ppf "@[%a@] \n" Dom.print s;

@@ -49,3 +49,4 @@ end
 
 val empty     : 'a cfg 
 val create    : deft list -> qbind cfg
+val print     : Format.formatter -> 'a cfg -> unit

@@ -585,13 +585,18 @@ let apply_facts kf me cs =
   let _ = Printf.printf "Started with %d, proved %d false\n" numqs (numqs-numqs') in
     sol
 
-(* API *)
-let create c facts = 
-  c.Config.qs 
+let binds_of_quals ws qs =
+  qs 
   |> Q.normalize 
   (* >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) *)
-  |> BS.time "Qual Inst" (inst c.Config.ws) (* >> List.iter ppBinding *)
+  |> BS.time "Qual Inst" (inst ws) 
+  (* >> List.iter ppBinding *)
   |> SM.of_list 
+ 
+(* API *)
+let create c facts = 
+  SM.empty
+  |> ((!Constants.dump_simp <> "") <?> (fun _ -> binds_of_quals c.Config.ws c.Config.qs))
   |> SM.extendWith (fun _ -> (++)) c.Config.bm
   |> create c.Config.ts c.Config.uops c.Config.ps c.Config.cons c.Config.assm c.Config.qs
   |> fun me -> match facts with
