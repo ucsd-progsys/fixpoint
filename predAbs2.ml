@@ -247,7 +247,7 @@ let print_m ppf s =
   |> List.iter begin fun (k, ds) ->
        ds >>  F.fprintf ppf "solution: %a := [%a] \n\n"  Sy.print k pprint_ds
           |>: fst
-          >>  F.fprintf ppf "//solution: %a := [%a] \n\n"  Sy.print k pprint_ps
+   (* >>  F.fprintf ppf "//solution: %a := [%a] \n\n"  Sy.print k pprint_ps *)
           |> ignore
      end 
  
@@ -334,6 +334,7 @@ let read s k = (s.assm k) ++ (if SM.mem k s.m then p_read s k |>: snd else [])
 (* API *)
 let read_bind s k = failwith "TBD: read_bind"
 
+
 (* API *)
 let refine me c =
   let env = C.env_of_t c in
@@ -361,6 +362,36 @@ let refine me c =
      then (ignore(me.stat_simple_refines += 1); kqs1) 
      else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps) x2))
     |> p_update me k2s 
+
+
+(***************************************************************)
+(****************** Sort Check Based Refinement ****************)
+(***************************************************************)
+
+(* API *)
+let wellformed_pred env p =
+  Misc.do_catch_ret "PA.wellformed: sortcheck_pred " 
+    (A.sortcheck_pred (fun x -> snd3 (SM.find x env))) 
+    p 
+    false
+
+let refts_of_c c =
+  [ C.lhs_of_t c ; C.rhs_of_t c] ++ (C.env_of_t c |> C.bindings_of_env |>: snd)
+
+let refine_sort_reft env me ((vv, so, ras) as r) = 
+  let env' = SM.add vv r env in 
+  let ks   = r |> C.kvars_of_reft |>: snd in
+  ras |> Misc.flap (rhs_cands me)
+      |> List.filter (fun (_,p) -> wellformed_pred env' p)
+      |> List.map fst
+      |> p_update me ks
+      |> snd
+
+(* API *)
+let refine_sort me c =
+  let env = C.env_of_t c in
+  c |> refts_of_c 
+    |> List.fold_left (refine_sort_reft env) me  
 
 (***************************************************************)
 (************************* Satisfaction ************************)
@@ -445,12 +476,10 @@ let qleqs_of_qs ts sm ps qs =
 (******************** Qualifier Instantiation ******************)
 (***************************************************************)
 
-let wellformed env q =
-  Misc.do_catch_ret "PA.wellformed: sortcheck_pred " 
-    (A.sortcheck_pred (fun x -> snd3 (SM.find x env))) 
-    (Q.pred_of_t q)
-    false
 
+let wellformed_qual env q =
+  wellformed_pred env (Q.pred_of_t q)
+  
 (*  >> (F.printf "\nwellformed: q = @[%a@] in env = @[%a@] result %b\n"  
         Q.print q (C.print_env None) env)
  *)
@@ -511,7 +540,7 @@ let inst_ext qs wf =
   qs |> List.filter (fun q -> not (A.Sort.unify [t] [Q.sort_of_t q] = None))
      |> Misc.flap   (inst_qual ys t)
      |> Misc.map    (Misc.app_fst (Q.subst_vv vv))
-     |> Misc.filter (fst <+> wellformed env')
+     |> Misc.filter (fst <+> wellformed_qual env')
      |> Misc.filter (fst <+> C.filter_of_wf wf)
      |> Misc.map    (Misc.app_fst Q.pred_of_t)
      |> Misc.cross_product ks
@@ -576,7 +605,7 @@ let apply_facts_c kf me c =
       let fqm = fqs |> Misc.kgroupby fst |> SM.of_list in
 	  {me with m = BS.time "update pruned" (update_pruned ks me) fqm}
 
-let apply_facts kf me cs =
+let apply_facts cs kf me =
   let numqs = me.m |> Ast.Symbol.SMap.to_list
               |> List.map snd |> List.concat |> List.length in
   let sol   = List.fold_left (apply_facts_c kf) me cs in
@@ -588,28 +617,35 @@ let apply_facts kf me cs =
 let binds_of_quals ws qs =
   qs 
   |> Q.normalize 
-  (* >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) *)
+  (* >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) 
+  >> (fun _ -> flush stdout) *)
   |> BS.time "Qual Inst" (inst ws) 
   (* >> List.iter ppBinding *)
   |> SM.of_list 
- 
+  >> (fun _ -> flush stdout)
+
 (* API *)
 let create c facts = 
   SM.empty
-  |> ((!Constants.dump_simp <> "") <?> (fun _ -> binds_of_quals c.Config.ws c.Config.qs))
+  |> ((!Constants.dump_simp != "") <?> (fun _ -> binds_of_quals c.Config.ws c.Config.qs))
   |> SM.extendWith (fun _ -> (++)) c.Config.bm
   |> create c.Config.ts c.Config.uops c.Config.ps c.Config.cons c.Config.assm c.Config.qs
+  |> ((!Constants.refine_sort) <?> Misc.flip (List.fold_left refine_sort) c.Config.cs)
+  |> Misc.maybe_apply (apply_facts c.Config.cs) facts
+  
+  (*
   |> fun me -> match facts with
        | None -> me
-       | Some kf -> BS.time "apply facts" (apply_facts kf me) (c.Config.cs)
-	     
+       | Some kf -> BS.time "apply facts" (apply_facts me kf) (c.Config.cs)
+*)	    
+
+
 
 (* API *)
 let empty = create Config.empty None
 
 (* API *)
 let meet me you = {me with m = SM.extendWith (fun _ -> (++)) me.m you.m} 
-
 
 
 

@@ -78,9 +78,10 @@ let sift_quals ds =
 *)
 
 let sift_quals ds = 
-  ds |> Misc.map_partial (function Qul q -> Some (Ast.Qualifier.name_of_t q, q) | _ -> None)
-(*     >> (List.map fst <+> (fun ns -> asserts (Misc.distinct ns) "ERROR: duplicate quals!"))
-  *)   |> MSM.of_list
+  ds |> Misc.map_partial (function Qul q -> Some q | _ -> None)
+     |> Ast.Qualifier.normalize 
+     |> Misc.map (Misc.pad_fst Ast.Qualifier.name_of_t)
+     |> MSM.of_list
 
 let extend s2d cfg = function
   | Srt t      -> {cfg with ts   = t     :: cfg.ts   }   
