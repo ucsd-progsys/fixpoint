@@ -34,7 +34,7 @@ open Misc.Ops
 
 module Prover : ProverArch.PROVER = struct
 
-let mydebug = false
+let mydebug = false 
 
 (********************************************************************************)
 (********************************** Type Definitions ****************************)
@@ -305,7 +305,7 @@ and z3Pred me env = function
       let s2 = E.to_string e in
       let Some so = A.sortcheck_expr (varSort env) e in
       let sos = So.to_string so in
-      let _  = asserti (is_z3_bool me a) "Bexp is not bool! z3=%s, fix=%s, sort=%s" 
+      let _  = asserts (is_z3_bool me a) "Bexp is not bool! z3=%s, fix=%s, sort=%s" 
                                          s1 s2 sos in 
       a
  | A.Forall (xts, p), _ -> 
@@ -405,18 +405,6 @@ let min_filter me env p_imp ps =
   |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
   |> Misc.cov_filter (fun x y -> BS.time "p_imp" (p_imp (fst3 x)) (fst3 y)) (thd3 <+> valid me)
   |> List.map (fun (x, xs) -> List.map fst3 (x::xs))
-
-(* DEBUG
-let ps_to_string xps = List.map snd xps |> Misc.fsprintf (Misc.pprint_many false "," P.print)
-
-let min_filter me env f ps = 
-  let ps'  = min_filter me env f ps in
-  let ps'' = full_filter me env f ps in
-  let _    = asserti (List.length ps' = List.length ps'') 
-             "difference in filters:\n[ps' = %s]\n[ps'' = %s]\n\n" 
-             (ps_to_string ps') (ps_to_string ps'') in
-  ps'
-*)
 
 let filter me = 
   if !Constants.minquals then min_filter me else full_filter me

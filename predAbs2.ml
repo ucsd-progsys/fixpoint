@@ -210,7 +210,7 @@ let impm_of_quals ts sm ps qs =
  }}} *)
 
 let p_read s k =
-  let _ = asserti (SM.mem k s.m) "ERROR: p_read : unknown kvar %s\n" (Sy.to_string k) in
+  let _ = asserts (SM.mem k s.m) "ERROR: p_read : unknown kvar %s\n" (Sy.to_string k) in
   SM.find k s.m  |>: (fun d -> ((k, d), fst d))
 
 (* INV: qs' \subseteq qs *)
@@ -247,7 +247,7 @@ let print_m ppf s =
   |> List.iter begin fun (k, ds) ->
        ds >>  F.fprintf ppf "solution: %a := [%a] \n\n"  Sy.print k pprint_ds
           |>: fst
-          >>  F.fprintf ppf "//solution: %a := [%a] \n\n"  Sy.print k pprint_ps
+   (* >>  F.fprintf ppf "//solution: %a := [%a] \n\n"  Sy.print k pprint_ps *)
           |> ignore
      end 
  
@@ -617,10 +617,10 @@ let apply_facts cs kf me =
 let binds_of_quals ws qs =
   qs 
   |> Q.normalize 
-  >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print)
-  >> (fun _ -> flush stdout)
+  (* >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) 
+  >> (fun _ -> flush stdout) *)
   |> BS.time "Qual Inst" (inst ws) 
-  >> List.iter ppBinding
+  (* >> List.iter ppBinding *)
   |> SM.of_list 
   >> (fun _ -> flush stdout)
 
