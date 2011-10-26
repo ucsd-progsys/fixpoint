@@ -545,8 +545,15 @@ let inst_ext qs wf =
      |> Misc.map    (Misc.app_fst Q.pred_of_t)
      |> Misc.cross_product ks
 
+let flapn s f = 
+  let rec go acc n = function
+    | []    -> acc
+    | x::xs -> (print_now (Printf.sprintf "flap %s %d" s n); 
+                go ((f x) ++ acc) (n+1) xs)
+  in go [] 0 
+
 let inst ws qs = 
-  Misc.flap (inst_ext qs) ws 
+  flapn "inst_ext" (inst_ext qs) ws 
   >> (fun _ -> Co.bprintf mydebug "\n\nvarmatch_ctr = %d \n\n" !varmatch_ctr)
   |> Misc.kgroupby fst 
   |> Misc.map (Misc.app_snd (List.map snd)) 

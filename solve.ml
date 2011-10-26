@@ -128,8 +128,7 @@ let log_iter_stats me s =
 (***************************************************************)
 
 let refine_constraint s c =
- (* BS.time "refine" (Dom.refine s) c 
-  *) 
+ (* BS.time "refine" (Dom.refine s) c *) 
  try BS.time "refine" (Dom.refine s) c with ex ->
     let _ = F.printf "constraint refinement fails with: %s\n" (Printexc.to_string ex) in
     let _ = F.printf "Failed on constraint:\n%a\n" (C.print_t None) c in
