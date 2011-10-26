@@ -530,6 +530,7 @@ let inst_qual ys t' (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
  *)
 
 let inst_ext qs wf = 
+  let _    = print_now (Printf.sprintf "\nPredAbs2.inst_ext wf id = %d\n" (C.id_of_wf wf)) in
   let r    = C.reft_of_wf wf in
   let ks   = C.kvars_of_reft r |> List.map snd in
   let env  = C.env_of_wf wf in
@@ -545,15 +546,17 @@ let inst_ext qs wf =
      |> Misc.map    (Misc.app_fst Q.pred_of_t)
      |> Misc.cross_product ks
 
+(*
 let flapn s f = 
   let rec go acc n = function
     | []    -> acc
     | x::xs -> (print_now (Printf.sprintf "flap %s %d" s n); 
                 go ((f x) ++ acc) (n+1) xs)
   in go [] 0 
+*)
 
 let inst ws qs = 
-  flapn "inst_ext" (inst_ext qs) ws 
+  Misc.flap (inst_ext qs) ws 
   >> (fun _ -> Co.bprintf mydebug "\n\nvarmatch_ctr = %d \n\n" !varmatch_ctr)
   |> Misc.kgroupby fst 
   |> Misc.map (Misc.app_snd (List.map snd)) 

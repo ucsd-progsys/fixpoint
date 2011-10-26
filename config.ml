@@ -106,7 +106,8 @@ let create ds =
   let n2q = fun n -> Misc.do_catchf ("name2qual: "^n) (MSM.find n) qm in
   let s2d = List.map (fun (p, (n,s)) -> [(p, (n2q n, s))]) in
   ds |> List.fold_left (extend s2d) empty
-     |> (fun cfg -> {cfg with a = get_arity cfg.cs})
+     |> (fun cfg -> {cfg with a  = get_arity cfg.cs})
+     |> (fun cfg -> {cfg with ws = C.add_wf_ids cfg.ws})
 
 module type DOMAIN = sig
   type t

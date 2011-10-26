@@ -390,6 +390,19 @@ let max_id n cs =
      >> (fun ids -> asserts (Misc.distinct ids) "Duplicate Ids")
      |> List.fold_left max n
 
+let max_wf_id n ws =
+  ws |> Misc.map_partial (fun (_,_,ido,_) -> ido) 
+     >> (fun ids -> asserts (Misc.distinct ids) "Duplicate WF Ids")
+     |> List.fold_left max n
+
+(* API *)
+let add_wf_ids ws = 
+  Misc.mapfold begin fun j wf -> match wf with
+    | (x,y,None,z) -> j+1, (x, y, Some j, z) 
+    | _            -> j, wf
+  end ((max_wf_id 0 ws) + 1) ws
+  |> snd
+    
 (* API *)
 let add_ids n cs =
   Misc.mapfold begin fun j c -> match c with
