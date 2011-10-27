@@ -95,7 +95,7 @@ let hook_simplify_ts = function
   (* put other transforms here *)
   | _        -> id
 
-let simplify_ts = hook_simplify_ts !Co.dump_simp
+let simplify_ts cs = hook_simplify_ts !Co.dump_simp cs
 
 let dump_simp ac = 
   let ac = {ac with Config.cs = simplify_ts ac.Config.cs; Config.bm = SM.empty} in
