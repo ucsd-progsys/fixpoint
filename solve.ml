@@ -128,8 +128,7 @@ let log_iter_stats me s =
 (***************************************************************)
 
 let refine_constraint s c =
- (* BS.time "refine" (Dom.refine s) c *) 
- try BS.time "refine" (Dom.refine s) c with ex ->
+  try BS.time "refine" (Dom.refine s) c with ex ->
     let _ = F.printf "constraint refinement fails with: %s\n" (Printexc.to_string ex) in
     let _ = F.printf "Failed on constraint:\n%a\n" (C.print_t None) c in
     assert false
@@ -205,20 +204,20 @@ let solve me s =
 
 
 (* API *)
-let create cfg kf = 
-  let sri = cfg.Config.cs 
-            >> Co.logPrintf "Pre-Simplify Stats\n%a" print_constr_stats 
+let create cfg kf =
+  let sri = cfg.Config.cs
+            >> Co.logPrintf "Pre-Simplify Stats\n%a" print_constr_stats
             |> BS.time  "Constant Env" (List.map (C.add_consts_t cfg.Config.cons))
             |> BS.time  "Simplify" FixSimplify.simplify_ts
             >> Co.logPrintf "Post-Simplify Stats\n%a" print_constr_stats
-            |> BS.time  "Ref Index" Ci.create cfg.Config.ds 
+            |> BS.time  "Ref Index" Ci.create cfg.Config.ds
             |> (!Co.slice <?> BS.time "Slice" Ci.slice) in
-  let ws  = cfg.Config.ws 
+  let ws  = cfg.Config.ws
             |> (!Co.slice <?> BS.time "slice_wf" (Ci.slice_wf sri))
-            |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf cfg.Config.cons)) 
+            |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf cfg.Config.cons))
             |> PP.validate_wfs in
   let s   = if !Constants.dump_simp <> "" then Dom.empty else Dom.create cfg kf in
-  let _   = Ci.to_list sri 
+  let _   = Ci.to_list sri
             |> BS.time "Validate" (PP.validate cfg.Config.a (Dom.read s)) in
   ({ sri          = sri; ws           = ws
    (* stat *)

@@ -562,7 +562,7 @@ let valid_bindings ys x =
 let inst_qual ys t' (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
   let v  = Q.vv_of_t   q in
   let p  = Q.pred_of_t q in
-  let q' = Q.create "" v t' p in
+  let q' = Q.create "" v t' (Q.params_of_t q) p in
   let v' = Sy.value_variable t' in
   let su = Su.of_list [(v, A.eVar v')] in 
   begin

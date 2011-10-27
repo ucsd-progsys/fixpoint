@@ -38,16 +38,16 @@ open Misc.Ops
 
 let mydebug = false
 
-module Sort = 
+module Sort =
   struct
     type loc = 
       | Loc  of string 
       | Lvar of int
 
-    type t = 
-      | Int 
-      | Bool                            
-      | Obj                     
+    type t =
+      | Int
+      | Bool
+      | Obj
       | Var of int              (* type-var *)
       | Ptr of loc              (* c-pointer *)
       | Func of int * t list    (* type-var-arity, in-types @ [out-type] *)
@@ -178,9 +178,11 @@ module Sort =
           | None                   -> Some {s with locs = (j,cl) :: s.locs}
           end
 
+      | (t1, t2) when t1 = t2 -> Some s
+      (*
       | Int, Int | Bool, Bool | Obj, Obj -> 
           Some s
-      
+      *)
       | _        -> None
     
     let unify ats cts =
@@ -216,9 +218,10 @@ module Symbol =
       let t,_ = Misc.mk_int_factory () in
       t <+> string_of_int <+> (^) "~A"
     
-    let is_wild_any s = s.[0] = '~'
-    let is_wild_pre s = s.[0] = '@'
-    let is_wild s     = is_wild_any s || is_wild_pre s
+    let is_wild_fresh s = s = "_"
+    let is_wild_any   s = s.[0] = '~'
+    let is_wild_pre   s = s.[0] = '@'
+    let is_wild s       = is_wild_fresh s || is_wild_any s || is_wild_pre s
 
     let is_safe s = 
       let re = Str.regexp "[A-Za-z '~' '_' '\'' '@' ][0-9 a-z A-Z '_' '@' '\'' '.' '#']*$" in
@@ -969,20 +972,20 @@ and sortcheck_op f (e1, op, e2) =
       Some Sort.Int 
   | _ -> None 
  
-and sortcheck_rel f (e1, r, e2) = 
+and sortcheck_rel f (e1, r, e2) =
   let t1o, t2o = (e1,e2) |> Misc.map_pair (sortcheck_expr f) in
   match r, t1o, t2o with
-  | _ , Some Sort.Int,     Some (Sort.Ptr l) 
+  | _ , Some Sort.Int,     Some (Sort.Ptr l)
   | _ , Some (Sort.Ptr l), Some Sort.Int
-    -> (sortcheck_loc f l = Some Sort.Num) 
-  | Eq, Some t1, Some t2 
-  | Ne, Some t1, Some t2 
-    -> t1 = t2 
-  | _ , Some t1, Some t2 
+    -> (sortcheck_loc f l = Some Sort.Num)
+  | Eq, Some t1, Some t2
+  | Ne, Some t1, Some t2
+    -> t1 = t2
+  | _ , Some t1, Some t2
     -> t1 = t2 && t1 != Sort.Bool
-  | _ -> false 
+  | _ -> false
 
-and sortcheck_pred f p = 
+and sortcheck_pred f p =
   match puw p with
     | True  
     | False -> 
@@ -1152,33 +1155,41 @@ end
 
 module Qualifier = struct
   
-  type t = { name  : string
-           ; vvar  : Symbol.t
-           ; vsort : Sort.t 
-           ; pred  : pred }
+  type t = { name   : string
+           ; vvar   : Symbol.t
+           ; vsort  : Sort.t
+           ; params : Sort.t Symbol.SMap.t
+           ; pred   : pred }
 
   type def = pred * (t * Subst.t)
 
-  let rename    = fun n -> fun q -> {q with name = n} 
-  let name_of_t = fun q -> q.name
-  let vv_of_t   = fun q -> q.vvar
-  let sort_of_t = fun q -> q.vsort
-  let pred_of_t = fun q -> q.pred
+  let rename      = fun n -> fun q -> {q with name = n} 
+  let name_of_t   = fun q -> q.name
+  let vv_of_t     = fun q -> q.vvar
+  let sort_of_t   = fun q -> q.vsort
+  let pred_of_t   = fun q -> q.pred
+  let params_of_t = fun q -> q.params
 
-  let czr () = 
+  let is_free params x = not (Symbol.SMap.mem x params)
+
+  let czr params =
     let n = ref 0 in
     let t = Hashtbl.create 7 in
-    function 
-      | (Var x, _) when Hashtbl.mem t x -> 
-          Hashtbl.find t x 
-      | (Var x, _) when Symbol.is_wild_any x -> 
+    function
+      | (Var x, _) when is_free params x && Hashtbl.mem t x -> 
+          Hashtbl.find t x
+      | (Var x, _) when is_free params x && Symbol.is_wild_fresh x ->
           "~A" ^ (string_of_int (n =+ 1))
           |> Symbol.of_string 
-          |> eVar 
+          |> eVar
+      | (Var x, _) when is_free params x && Symbol.is_wild_any x -> 
+          "~A" ^ (string_of_int (n =+ 1))
+          |> Symbol.of_string 
+          |> eVar
           >> Hashtbl.replace t x
       | e -> e
 
-  let canon p = Predicate.map id (czr ()) p
+  let canon q = Predicate.map id (czr q.params) q.pred
 
   let print ppf q = 
     Format.fprintf ppf "qualif %s(%a:%a):%a" 
@@ -1194,8 +1205,7 @@ module Qualifier = struct
 
   (* remove duplicates, ensure distinct names *)
   let normalize qs = 
-    qs |> List.map (fun q -> {q with pred = canon q.pred})
-       |> Misc.kgroupby (Misc.fsprintf print_short)
+    qs |> Misc.kgroupby (Misc.fsprintf print_short)
        |> List.map (fun (_,x::_) -> x)
        |> Misc.mapfold begin fun m q ->
             if SM.mem q.name m then
@@ -1209,17 +1219,27 @@ module Qualifier = struct
   let subst_vv v' q =
     { q with vvar = v'; pred = Predicate.subst q.pred q.vvar (eVar v')} 
 
-  let create n v t p = 
-    { name  = n; vvar  = v; vsort = t; pred  = p }
+  let params_of_pred p =
+    p |> Predicate.support
+      |> List.filter Symbol.is_wild
+      |> List.map (fun x -> (x, Sort.t_int))
+      |> Symbol.SMap.of_list
 
-  let create n v t p = 
-    create n v t p
-    |> subst_vv (Symbol.value_variable t) 
+  let create n v t vtm p =
+    let vtm = Symbol.SMap.extend (params_of_pred p) vtm in
+    { name  = n; vvar  = v; vsort = t; pred  = p; params = vtm }
 
+  (* API *)
+  let create n v t vtm p =
+    create n v t vtm p
+    |> subst_vv (Symbol.value_variable t)
+    |> (fun q -> {q with pred = canon q})
+
+    
   let subst su q = 
     su |> Subst.to_list 
        |> Predicate.substs q.pred
-       |> create q.name q.vvar q.vsort
+       |> create q.name q.vvar q.vsort q.params
 
   let print ppf q = 
     Format.fprintf ppf "qualif %s(%a:%a):%a" 

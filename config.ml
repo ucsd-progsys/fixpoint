@@ -50,8 +50,7 @@ type 'bind cfg = {
  ; ws   : FixConstraint.wf list
  ; ds   : FixConstraint.dep list
  ; qs   : Ast.Qualifier.t list
- ; bm   : 'bind SM.t                       (* Initial Sol Bindings *)
- (* ; bs   : (Ast.Symbol.t * Ast.Qualifier.def list) list  -- Initial Sol Bindings *)
+ ; bm   : 'bind SM.t                                    (* Initial Sol Bindings *)
  ; cons : (Ast.Symbol.t * Ast.Sort.t) list              (* Distinct Constants *)
  ; uops : Ast.Sort.t Ast.Symbol.SMap.t                  (* Uninterpreted Funs *)
  ; assm : FixConstraint.soln
@@ -84,13 +83,13 @@ let sift_quals ds =
      |> MSM.of_list
 
 let extend s2d cfg = function
-  | Srt t      -> {cfg with ts   = t     :: cfg.ts   }   
-  | Axm p      -> {cfg with ps   = p     :: cfg.ps   } 
-  | Cst c      -> {cfg with cs   = c     :: cfg.cs   }
-  | Wfc w      -> {cfg with ws   = w     :: cfg.ws   } 
+  | Srt t      -> {cfg with ts   = t     :: cfg.ts }
+  | Axm p      -> {cfg with ps   = p     :: cfg.ps }
+  | Cst c      -> {cfg with cs   = c     :: cfg.cs }
+  | Wfc w      -> {cfg with ws   = w     :: cfg.ws }
   | Con (s,t)  -> {cfg with cons = (s,t) :: cfg.cons; uops = SM.add s t cfg.uops} 
-  | Dep d      -> {cfg with ds   = d     :: cfg.ds   }
-  | Qul q      -> {cfg with qs   = q     :: cfg.qs   }
+  | Dep d      -> {cfg with ds   = d     :: cfg.ds }
+  | Qul q      -> {cfg with qs   = q     :: cfg.qs }
   | Sol (k,ps) -> {cfg with bm   = SM.add k (s2d ps) cfg.bm  }
 
 let empty = { a    = 0 ; ts   = []; ps = []
@@ -129,7 +128,7 @@ end
 
 (* type t = Ast.Qualifier.def list list cfg *)
 
-let print ppf me = 
+let print ppf me =
   (* Print cs *)
   Format.fprintf ppf "@[%a@] \n" (Misc.pprint_many true "\n" (C.print_t None)) me.cs;
   (* Print ws *)
