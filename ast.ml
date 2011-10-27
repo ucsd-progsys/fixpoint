@@ -438,6 +438,7 @@ let zero = eInt 0
 let one  = eInt 1
 let bot  = ewr Bot
 let eMod = fun (e, m) -> ewr (Bin (e, Mod, eInt m))
+let eModExp = fun (e, m) -> ewr (Bin (e, Mod, m))
 let eVar = fun s -> ewr (Var s)
 let eApp = fun (s, es) -> ewr (App (s, es))
 let eBin = fun (e1, op, e2) -> ewr (Bin (e1, op, e2)) 
