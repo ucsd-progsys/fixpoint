@@ -1,6 +1,5 @@
 // ../../fixpoint.native baz.fq -refinesort -strictsortcheck -sortedquals
 
-
 constant __tag_36 : func(1, [ptr(0); int])
 constant mlength : func(1, [ptr(0); int])
 

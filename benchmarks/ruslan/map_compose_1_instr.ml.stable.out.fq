@@ -47254,18 +47254,15 @@ wf: env [true_0:{VV_bool : bool | []};
    id 1 
    
 qualif MLQ(VV_int:int):((Bexp VV_int) <=> (~A1 > ~A0))
+qualif Measure(VV_int:int):(VV_int = mlength([_]))
+qualif MLQ0(VV_int:int):((Bexp VV_int) <=> (~A1 <= ~A0))
+qualif MLQ1(VV_int:int):((~A0 > 0) => (VV_int < ~A0))
 
-    qualif Measure(VV_int:int):(VV_int = mlength([_]))
+qualif Measure0(VV_int:int):(mlength([VV_int]) = (1 + mlength([~A0])))
 
-    qualif MLQ0(VV_int:int):((Bexp VV_int) <=> (~A1 <= ~A0))
+qualif MLQ2(VV_int:int):((~A0 >= 0) => (VV_int >= 0))
 
-    qualif MLQ1(VV_int:int):((~A0 > 0) => (VV_int < ~A0))
-
-    qualif Measure0(VV_int:int):(mlength([VV_int]) = (1 + mlength([~A0])))
-
-    qualif MLQ2(VV_int:int):((~A0 >= 0) => (VV_int >= 0))
-
-    qualif MLQ3(VV_int:int):(0 <= VV_int)
+qualif MLQ3(VV_int:int):(0 <= VV_int)
 qualif FALSE(VV_int:int):(1 = 0)
 
     qualif MLQ4(VV_int:int):(VV_int = (~A1 - ~A0))
