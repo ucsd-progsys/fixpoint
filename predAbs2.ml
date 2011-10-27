@@ -210,7 +210,7 @@ let impm_of_quals ts sm ps qs =
  }}} *)
 
 let p_read s k =
-  let _ = asserti (SM.mem k s.m) "ERROR: p_read : unknown kvar %s\n" (Sy.to_string k) in
+  let _ = asserts (SM.mem k s.m) "ERROR: p_read : unknown kvar %s\n" (Sy.to_string k) in
   SM.find k s.m  |>: (fun d -> ((k, d), fst d))
 
 (* INV: qs' \subseteq qs *)
@@ -247,7 +247,7 @@ let print_m ppf s =
   |> List.iter begin fun (k, ds) ->
        ds >>  F.fprintf ppf "solution: %a := [%a] \n\n"  Sy.print k pprint_ds
           |>: fst
-          >>  F.fprintf ppf "//solution: %a := [%a] \n\n"  Sy.print k pprint_ps
+   (* >>  F.fprintf ppf "//solution: %a := [%a] \n\n"  Sy.print k pprint_ps *)
           |> ignore
      end 
  
@@ -502,24 +502,42 @@ let varmatch (x, y) =
 let valid_binding xys = 
   (dupfree_binding xys) && (List.for_all varmatch xys)
 
-let valid_bindings ys x = 
+let valid_bindings ys x =
   ys |> List.map (fun y -> (x, y))
-     |> List.filter varmatch 
+     |> List.filter varmatch
 
-let inst_qual ys t' (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
+let sort_compat t1 t2 = A.Sort.unify [t1] [t2] <> None
+
+let valid_bindings_sort env (x, t) =
+  env |> SM.to_list
+      |> Misc.filter (snd <+> C.sort_of_reft <+> (sort_compat t))
+      |> Misc.map (fun (y,_) -> (x, y))
+      |> Misc.filter varmatch
+
+let valid_bindings env ys (x, t) =
+  if !Constants.sorted_quals
+  then valid_bindings_sort env (x,t)
+  else valid_bindings ys x
+
+let inst_qual env ys t' (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
   let v  = Q.vv_of_t   q in
   let p  = Q.pred_of_t q in
-  let q' = Q.create "" v t' p in
+  let q' = Q.create "" v t' (Q.params_of_t q) p in
   let v' = Sy.value_variable t' in
-  let su = Su.of_list [(v, A.eVar v')] in 
+  let su = Su.of_list [(v, A.eVar v')] in
   begin
-  match q' |> Q.pred_of_t |> P.support |> List.filter Sy.is_wild with
-  | [] -> 
+  (*match q' |> Q.pred_of_t |> P.support |> List.filter Sy.is_wild with
+  | [] ->
       [q', (q, su)]
-  | xs -> 
-      xs
+  | xs ->
+      xs *)
+  match q' |> Q.params_of_t |> Sy.SMap.to_list with
+  | [] ->
+      [q', (q, su)]
+  | xts ->
+      xts
       |> Misc.sort_and_compact
-      |> List.map (valid_bindings ys)                   (* candidate bindings    *)
+      |> List.map (valid_bindings env ys)               (* candidate bindings    *)
       |> Misc.product                                   (* generate combinations *) 
       |> List.filter valid_binding                      (* remove bogus bindings *)
       |> List.map (List.map (Misc.app_snd A.eVar))      (* instantiations        *)
@@ -530,20 +548,30 @@ let inst_qual ys t' (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
  *)
 
 let inst_ext qs wf = 
-  let r    = C.reft_of_wf wf in
+  let r    = wf >> (C.id_of_wf <+>  Printf.sprintf "\nPredAbs2.inst_ext wf id = %d\n" <+> print_now)
+                |> C.reft_of_wf in
   let ks   = C.kvars_of_reft r |> List.map snd in
   let env  = C.env_of_wf wf in
-  let ys   = SM.fold (fun y _ ys -> y::ys) env [] in
   let vv   = fst3 r in
   let t    = snd3 r in
+  let ys   = Sy.SMap.domain env in
   let env' = SM.add vv r env in
-  qs |> List.filter (fun q -> not (A.Sort.unify [t] [Q.sort_of_t q] = None))
-     |> Misc.flap   (inst_qual ys t)
+  qs |> List.filter (Q.sort_of_t <+> sort_compat t)
+     |> Misc.flap   (inst_qual env ys t)
      |> Misc.map    (Misc.app_fst (Q.subst_vv vv))
      |> Misc.filter (fst <+> wellformed_qual env')
      |> Misc.filter (fst <+> C.filter_of_wf wf)
      |> Misc.map    (Misc.app_fst Q.pred_of_t)
      |> Misc.cross_product ks
+
+(*
+let flapn s f = 
+  let rec go acc n = function
+    | []    -> acc
+    | x::xs -> (print_now (Printf.sprintf "flap %s %d" s n); 
+                go ((f x) ++ acc) (n+1) xs)
+  in go [] 0 
+*)
 
 let inst ws qs = 
   Misc.flap (inst_ext qs) ws 
@@ -557,7 +585,7 @@ let inst ws qs =
 
 let create ts sm ps consts assm qs0 bm =
   let qs         = Misc.sort_and_compact (qs0 ++ quals_of_bindings bm) in
-  { m = bm; assm = assm; qs = QS.of_list qs 
+  { m = bm; assm = assm; qs = QS.of_list qs
   ; qleqs               = if !Constants.minquals then qleqs_of_qs ts sm ps qs else Q2S.empty
   ; tpc                 = TP.create ts sm ps (List.map fst consts)
   ; stat_simple_refines = ref 0
@@ -615,12 +643,12 @@ let apply_facts cs kf me =
     sol
 
 let binds_of_quals ws qs =
-  qs 
-  |> Q.normalize 
-  >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print)
-  >> (fun _ -> flush stdout)
+  qs
+  |> Q.normalize
+  (* >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) 
+  >> (fun _ -> flush stdout) *)
   |> BS.time "Qual Inst" (inst ws) 
-  >> List.iter ppBinding
+  (* >> List.iter ppBinding *)
   |> SM.of_list 
   >> (fun _ -> flush stdout)
 
@@ -632,7 +660,7 @@ let create c facts =
   |> create c.Config.ts c.Config.uops c.Config.ps c.Config.cons c.Config.assm c.Config.qs
   |> ((!Constants.refine_sort) <?> Misc.flip (List.fold_left refine_sort) c.Config.cs)
   |> Misc.maybe_apply (apply_facts c.Config.cs) facts
-  
+
   (*
   |> fun me -> match facts with
        | None -> me

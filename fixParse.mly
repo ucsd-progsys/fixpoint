@@ -70,13 +70,19 @@ defs:
   ;
 
 qual:
-   Id LPAREN Id COLON sort RPAREN COLON pred  
-                                        { A.Qualifier.create $1 (Sy.of_string $3) $5 $8 }
- | Id LPAREN Id RPAREN COLON pred  
-                                        { A.Qualifier.create $1 (Sy.of_string $3) So.t_int $6 }
- 
+   Id LPAREN Id COLON sort RPAREN COLON pred
+                                        { A.Qualifier.create $1 (Sy.of_string $3) $5 Sy.SMap.empty $8 }
+ | Id LPAREN Id RPAREN COLON pred
+                                        { A.Qualifier.create $1 (Sy.of_string $3) So.t_int Sy.SMap.empty $6 }
+
+ | Id LPAREN Id COLON sort qbindsne RPAREN COLON pred
+                                        { A.Qualifier.create $1 (Sy.of_string $3) $5 (Sy.SMap.of_list $6) $9 }
                                         ;
 
+qbindsne:
+    COMMA bind                          { [$2] }
+  | COMMA bind qbindsne                 { $2 :: $3 }
+  ;
 
 def:
     SRT COLON sort                      { Config.Srt $3 }

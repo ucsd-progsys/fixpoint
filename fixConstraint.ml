@@ -311,21 +311,21 @@ let tag_of_t    = fun t -> t.tag
 let ido_of_t    = fun t -> t.ido
 let id_of_t     = fun t -> match t.ido with Some i -> i | _ -> assertf "C.id_of_t"
 let is_tauto    = rhs_of_t <+> ras_of_reft <+> List.for_all is_tauto_refatom
-let make_t      = fun env p r1 r2 io is -> 
-                    { full    = env ; 
-                      nontriv = non_trivial env; 
-                      guard   = A.simplify_pred p; 
-                      lhs     = r1; 
-                      rhs     = r2; 
+let make_t      = fun env p r1 r2 io is ->
+                    { full    = env ;
+                      nontriv = non_trivial env;
+                      guard   = A.simplify_pred p;
+                      lhs     = r1;
+                      rhs     = r2;
                       ido     = io;
                       tag     = is }
 
 
 let reft_of_sort so = make_reft (Sy.value_variable so) so []
 
-let add_consts_env consts env = 
-  consts 
-  |> List.map (Misc.app_snd reft_of_sort) 
+let add_consts_env consts env =
+  consts
+  |> List.map (Misc.app_snd reft_of_sort)
   |> List.fold_left (fun env (x,r) -> SM.add x r env) env
 
 (* API *)
@@ -390,6 +390,19 @@ let max_id n cs =
      >> (fun ids -> asserts (Misc.distinct ids) "Duplicate Ids")
      |> List.fold_left max n
 
+let max_wf_id n ws =
+  ws |> Misc.map_partial (fun (_,_,ido,_) -> ido) 
+     >> (fun ids -> asserts (Misc.distinct ids) "Duplicate WF Ids")
+     |> List.fold_left max n
+
+(* API *)
+let add_wf_ids ws = 
+  Misc.mapfold begin fun j wf -> match wf with
+    | (x,y,None,z) -> j+1, (x, y, Some j, z) 
+    | _            -> j, wf
+  end ((max_wf_id 0 ws) + 1) ws
+  |> snd
+    
 (* API *)
 let add_ids n cs =
   Misc.mapfold begin fun j c -> match c with

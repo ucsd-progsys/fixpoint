@@ -70,9 +70,11 @@ module Symbol :
     type t 
     module SMap         : Misc.EMapType with type key = t
     module SSet         : Misc.ESetType with type elt = t
+    
     val mk_wild         : unit -> t  
     val of_string       : string -> t
     val to_string       : t -> string 
+    val is_wild_fresh   : t -> bool
     val is_wild         : t -> bool
     val print           : Format.formatter -> t -> unit
     val value_variable  : Sort.t -> t
@@ -201,12 +203,13 @@ module Qualifier :
     type t 
     type def      = pred * (t * Subst.t)
     
-    val create    : string -> Symbol.t -> Sort.t -> pred -> t 
+    val create    : string -> Symbol.t -> Sort.t -> Sort.t Symbol.SMap.t -> pred -> t 
     val rename    : string -> t -> t
     val name_of_t : t -> string 
     val vv_of_t   : t -> Symbol.t
     val pred_of_t : t -> pred
     val sort_of_t : t -> Sort.t
+    val params_of_t : t -> Sort.t Symbol.SMap.t
     val vv_of_t   : t -> Symbol.t
     val normalize : t list -> t list
     val subst_vv  : Symbol.t -> t -> t 
