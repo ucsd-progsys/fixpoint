@@ -289,7 +289,6 @@ type expr = expr_int * tag
     
 and expr_int =
   | Con  of Constant.t
-  | MCon of Constant.t list
   | Var  of Symbol.t
   | App  of Symbol.t * expr list
   | Bin  of expr * bop * expr  
@@ -297,6 +296,8 @@ and expr_int =
   | Fld  of Symbol.t * expr             (* NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
   | Cst  of expr * Sort.t 
   | Bot
+  | MExp of expr list
+  | MBin of expr * bop list * expr 
 
 and pred = pred_int * tag
 
@@ -346,8 +347,8 @@ module ExprHashconsStruct = struct
     match e1, e2 with
       | Con c1, Con c2 -> 
           c1 = c2
-      | MCon c1, MCon c2 -> 
-          c1 = c2
+      | MExp es1, MExp es2 -> 
+          es1 = es2
       | Var x1, Var x2 -> 
           x1 = x2
       | App (s1, e1s), App (s2, e2s) ->
@@ -355,8 +356,10 @@ module ExprHashconsStruct = struct
           (try List.for_all2 (==) e1s e2s with _ -> false)
       | Bin (e1, op1, e1'), Bin (e2, op2, e2') ->
           op1 = op2 && e1 == e2 && e1' == e2'
+      | MBin (e1, ops1, e1'), MBin (e2, ops2, e2') ->
+          ops1 = ops2 && e1 == e2 && e1' == e2'
       | Ite (ip1,te1,ee1), Ite (ip2,te2,ee2) ->
-	  ip1 == ip2 && te1 == te2 && ee1 == ee2
+	      ip1 == ip2 && te1 == te2 && ee1 == ee2
       | Fld (s1, e1), Fld (s2, e2) ->
           s1 = s2 && e1 == e2
       | _ -> 
@@ -365,13 +368,15 @@ module ExprHashconsStruct = struct
   let hash = function
     | Con (Constant.Int x) -> 
         x
-    | MCon ((Constant.Int x) :: _) ->
-        x
+    | MExp es ->
+        list_hash 6 es 
     | Var x -> 
         Hashtbl.hash x
     | App (s, es) -> 
         list_hash ((Hashtbl.hash s) + 1) es 
     | Bin ((_,id1), op, (_,id2)) -> 
+        (Hashtbl.hash op) + 1 + (2 * id1) + id2 
+    | MBin ((_,id1), op::_ , (_,id2)) -> 
         (Hashtbl.hash op) + 1 + (2 * id1) + id2 
     | Ite ((_,id1), (_,id2), (_,id3)) -> 
         32 + (4 * id1) + (2 * id2) + id3
@@ -446,7 +451,7 @@ let puw = PredHashcons.unwrap
 
 (* Constructors: Expressions *)
 let eCon  = fun c  -> ewr  (Con c)
-let eMCon = fun cs -> ewr  (MCon cs)
+let eMExp = fun es -> ewr  (MExp es)
 let eInt  = fun i  -> eCon (Constant.Int i)
 let zero  = eInt 0
 let one   = eInt 1
@@ -456,6 +461,8 @@ let eModExp = fun (e, m) -> ewr (Bin (e, Mod, m))
 let eVar = fun s -> ewr (Var s)
 let eApp = fun (s, es) -> ewr (App (s, es))
 let eBin = fun (e1, op, e2) -> ewr (Bin (e1, op, e2)) 
+
+let eMBin = fun (e1, ops, e2) -> ewr (MBin (e1, ops, e2)) 
 let eIte = fun (ip,te,ee) -> ewr (Ite(ip,te,ee))
 let eFld = fun (s,e) -> ewr (Fld (s,e))
 let eCst = fun (e,t) -> ewr (Cst (e, t))
@@ -525,8 +532,8 @@ let bind_to_string  (s,t) =
 let rec print_expr ppf e = match euw e with
   | Con c -> 
       F.fprintf ppf "%a" Constant.print c 
-  | MCon cs -> 
-      F.fprintf ppf "[%a]" (Misc.pprint_many false " ; " Constant.print) cs
+  | MExp es -> 
+      F.fprintf ppf "[%a]" (Misc.pprint_many false " ; " print_expr) es
   | Var s -> 
       F.fprintf ppf "%a" Symbol.print s
   | App (s, es) -> 
@@ -538,6 +545,12 @@ let rec print_expr ppf e = match euw e with
         print_expr e1 
         (bop_to_string op) 
         print_expr e2
+  | MBin (e1, ops, e2) ->
+      F.fprintf ppf "(%a [%s] %a)" 
+        print_expr e1 
+        (ops |>: bop_to_string |> String.concat " ; ")
+        print_expr e2
+ 
   | Ite(ip,te,ee) -> 
       F.fprintf ppf "(%a ? %a : %a)" 
         print_pred ip 
@@ -590,8 +603,8 @@ let rec expr_to_string e =
   match euw e with
   | Con c -> 
       Constant.to_string c
-  | MCon cs -> 
-      Printf.sprintf "[%s]" (cs |>: Constant.to_string |> String.concat " ; ")
+  | MExp es -> 
+      Printf.sprintf "[%s]" (es |>: expr_to_string |> String.concat " ; ")
   | Var s -> 
       Symbol.to_string s
   | App (s, es) ->
@@ -601,6 +614,11 @@ let rec expr_to_string e =
   | Bin (e1, op, e2) ->
       Printf.sprintf "(%s %s %s)" 
         (expr_to_string e1) (bop_to_string op) (expr_to_string e2)
+  | MBin (e1, ops, e2) ->
+      Printf.sprintf "(%s [%s] %s)" 
+        (expr_to_string e1) 
+        (ops |> List.map bop_to_string |> String.concat "; ")
+        (expr_to_string e2)
   | Ite(ip,te,ee) -> 
       Printf.sprintf "(%s ? %s : %s)" 
         (pred_to_string ip) (expr_to_string te) (expr_to_string ee)
@@ -677,12 +695,16 @@ and expr_map hp he fp fe e =
     try ExprHash.find he e with Not_found -> begin
       let e' = 
         match euw e with
-        | Con _ | MCon _ | Var _ | Bot as e1 -> 
+        | Con _ | Var _ | Bot as e1 -> 
             e1
+        | MExp es ->
+            MExp (List.map em es) 
         | App (f, es) ->
             App (f, List.map em es)
         | Bin (e1, op, e2) ->
             Bin (em e1, op, em e2)
+        | MBin (e1, ops, e2) ->
+            MBin (em e1, ops, em e2)
         | Ite (ip, te, ee) ->
             Ite (pred_map hp he fp fe ip, em te, em ee) 
         | Fld (s, e1) -> 
@@ -711,11 +733,15 @@ let rec pred_iter fp fe pw =
 
 and expr_iter fp fe ew =
   begin match puw ew with
-    | Con _ | MCon _ | Var _ | Bot -> 
+    | Con _ | Var _ | Bot -> 
         ()
+    | MExp es ->
+        List.iter (expr_iter fp fe) es
     | App (_, es)  -> 
         List.iter (expr_iter fp fe) es
     | Bin (e1, _, e2)  -> 
+        expr_iter fp fe e1; expr_iter fp fe e2
+    | MBin (e1, _, e2)  -> 
         expr_iter fp fe e1; expr_iter fp fe e2
     | Ite (ip, te, ee) -> 
         pred_iter fp fe ip; expr_iter fp fe te; expr_iter fp fe ee
@@ -1156,16 +1182,15 @@ let expand_with_list f g =
 let expand_with_pair f g =
   Misc.map_pair f <+> Misc.uncurry Misc.cross_product <+> Misc.map g
 
-let crunchAtom e1s rs e2s =
+let crunchExpr f e1s xs e2s =
   List.map begin fun e1 -> 
     List.map begin fun e2 ->
-      List.map begin fun r ->
-        pAtom (e1,r,e2)
-      end rs
+      List.map begin fun x ->
+        f (e1, x, e2)
+      end xs
     end e2s
   end e1s
   |> List.flatten |> List.flatten
-
 
 let rec expand_p ((p,_) as pred) = match p with 
    | And ps             -> expand_ps pAnd ps
@@ -1176,27 +1201,29 @@ let rec expand_p ((p,_) as pred) = match p with
    | Forall(qs, p)      -> expand_p p |> List.map (fun p -> pForall (qs, p))
    | Bexp e             -> expand_e e |> List.map pBexp
    | MAtom (e1, rs, e2) -> let (e1s, e2s) = Misc.map_pair expand_e (e1,e2) in
-                           crunchAtom e1s rs e2s
+                           crunchExpr pAtom e1s rs e2s
    | Atom (e1, r, e2)   -> let (e1s, e2s) = Misc.map_pair expand_e (e1,e2) in
-                           crunchAtom e1s [r] e2s
+                           crunchExpr pAtom e1s [r] e2s
    | _                  -> [pred]
 
 and expand_e ((e,_) as expr) = match e with
-   | MCon cs          -> List.map eCon cs
-   | App (f, es)      -> expand_es (fun es -> eApp (f, es)) es
-   | Bin (e1, op, e2) -> expand_ep (fun (e1,e2) -> eBin (e1, op, e2)) (e1, e2) 
-   | Fld (s, e)       -> expand_e e |> List.map (fun e -> eFld (s,e))
-   | Cst (e, t)       -> expand_e e |> List.map (fun e -> eCst (e,t))
-   | Ite (p,e1,e2)    -> let e1s, e2s = Misc.map_pair expand_e (e1, e2) in
-                         let ps       = expand_p p in 
-                         List.map begin fun e1 ->
-                           List.map begin fun e2 ->
-                             List.map begin fun p ->
-                               eIte (p, e1, e2)
-                             end ps
-                           end e2s
-                         end e1s
-                         |> List.flatten |> List.flatten
+   | MExp es            -> Misc.flap expand_e es
+   | App (f, es)        -> expand_es (fun es -> eApp (f, es)) es
+   | Bin (e1, op, e2)   -> expand_ep (fun (e1,e2) -> eBin (e1, op, e2)) (e1, e2) 
+   | MBin (e1, ops, e2) -> let e1s, e2s = Misc.map_pair expand_e (e1, e2) in
+                           crunchExpr eBin e1s ops e2s
+   | Fld (s, e)         -> expand_e e |> List.map (fun e -> eFld (s,e))
+   | Cst (e, t)         -> expand_e e |> List.map (fun e -> eCst (e,t))
+   | Ite (p,e1,e2)      -> let e1s, e2s = Misc.map_pair expand_e (e1, e2) in
+                           let ps       = expand_p p in 
+                           List.map begin fun e1 ->
+                             List.map begin fun e2 ->
+                               List.map begin fun p ->
+                                 eIte (p, e1, e2)
+                               end ps
+                             end e2s
+                           end e1s
+                           |> List.flatten |> List.flatten
    | _ -> [expr]
 
 and expand_ps x = expand_with_list expand_p x

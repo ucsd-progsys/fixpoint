@@ -42,5 +42,5 @@ wf: env []
 //qualif BOT(v:int) : (0 = 1)
 //qualif FOO(v:int): (v [ < ; > ] 10)
 qualif BAZ(v:int): (v [ < ; > ] [ 10 ; 20 ; 30 ; 40  ])
-qualif ROOMAR(v:ptr)        : (BLOCK_END([v]) - v) >= [ 3000000 ; 2 ; 208 ; 16]
+qualif ROOMAR(v:ptr)        : (BLOCK_END([v]) [ - ; + ] v) >= [ 3000000 ; v; 208 ; 16]
 qualif GOO(v:int)        : v >= [ 3000000 ; 2 ; 208 ; 16]

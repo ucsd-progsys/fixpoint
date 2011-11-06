@@ -197,12 +197,13 @@ exprsne:
 expr:
     Id                                    { A.eVar (Sy.of_string $1) }
   | con                                   { A.eCon $1  }
-  | cons                                  { A.eMCon $1 } 
+  | exprs                                 { A.eMExp $1 } 
   | LPAREN expr MOD Num RPAREN            { A.eMod ($2, $4) }
   | expr PLUS expr                        { A.eBin ($1, A.Plus, $3) }
   | expr MINUS expr                       { A.eBin ($1, A.Minus, $3) }
   | expr TIMES expr                       { A.eBin ($1, A.Times, $3) }
   | expr DIV expr                         { A.eBin ($1, A.Div, $3) }
+  | expr ops expr                         { A.eMBin ($1, $2, $3) }
   | Id LPAREN exprs RPAREN                { A.eApp ((Sy.of_string $1), $3) }
   | Id Id                                 { A.eApp ((Sy.of_string $1), [A.eVar (Sy.of_string $2)]) }
   | LPAREN pred QM expr COLON expr RPAREN { A.eIte ($2,$4,$6) }
@@ -210,7 +211,26 @@ expr:
   | LPAREN expr COLON sort RPAREN         { A.eCst ($2, $4) }
   | LPAREN expr RPAREN                    { $2 }
   ;
- 
+
+op:
+  | PLUS                                  { A.Plus  }
+  | MINUS                                 { A.Minus }
+  | TIMES                                 { A.Times }
+  | DIV                                   { A.Div   }
+  ; 
+
+ops:
+    LB RB                                 { [] }
+  | LB opsne RB                           { $2 }
+  ; 
+
+opsne:
+    op                                    { [$1] }
+  | op SEMI opsne                         { $1 :: $3 }
+  ;
+
+
+
 con:
   | Num                                   { (A.Constant.Int $1) }
   | MINUS Num                             { (A.Constant.Int (-1 * $2)) }

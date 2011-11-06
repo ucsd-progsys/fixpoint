@@ -103,16 +103,17 @@ type bop  = Plus | Minus | Times | Div | Mod    (* NOTE: For "Mod" 2nd expr shou
 type expr = expr_int * tag 
 
 and expr_int =
-  | Con of Constant.t
-  | MCon of Constant.t list
-  | Var of Symbol.t
-  | App of Symbol.t * expr list
-  | Bin of expr * bop * expr  
-  | Ite of pred * expr * expr
-  | Fld of Symbol.t * expr             (* NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
-  | Cst of expr * Sort.t 
+  | Con  of Constant.t
+  | Var  of Symbol.t
+  | App  of Symbol.t * expr list
+  | Bin  of expr * bop * expr  
+  | Ite  of pred * expr * expr
+  | Fld  of Symbol.t * expr             (* NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
+  | Cst  of expr * Sort.t 
   | Bot
-
+  | MExp of expr list
+  | MBin of expr * bop list * expr 
+  
 and pred = pred_int * tag
 
 and pred_int =
@@ -132,12 +133,13 @@ and pred_int =
 val eTim : expr * expr -> expr
 val eInt : int -> expr
 val eCon : Constant.t -> expr
-val eMCon : Constant.t list -> expr
+val eMExp : expr list -> expr
 val eMod : expr * int -> expr
 val eModExp : expr * expr -> expr
 val eVar : Symbol.t -> expr
 val eApp : Symbol.t * expr list -> expr
 val eBin : expr * bop * expr -> expr 
+val eMBin : expr * bop list * expr -> expr 
 val eIte : pred * expr * expr -> expr
 val eFld : Symbol.t * expr -> expr
 val eCst : expr * Sort.t -> expr
