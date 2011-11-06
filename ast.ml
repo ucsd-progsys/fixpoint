@@ -1156,6 +1156,17 @@ let expand_with_list f g =
 let expand_with_pair f g =
   Misc.map_pair f <+> Misc.uncurry Misc.cross_product <+> Misc.map g
 
+let crunchAtom e1s rs e2s =
+  List.map begin fun e1 -> 
+    List.map begin fun e2 ->
+      List.map begin fun r ->
+        pAtom (e1,r,e2)
+      end rs
+    end e2s
+  end e1s
+  |> List.flatten |> List.flatten
+
+
 let rec expand_p ((p,_) as pred) = match p with 
    | And ps             -> expand_ps pAnd ps
    | Or ps              -> expand_ps pOr ps
@@ -1165,14 +1176,9 @@ let rec expand_p ((p,_) as pred) = match p with
    | Forall(qs, p)      -> expand_p p |> List.map (fun p -> pForall (qs, p))
    | Bexp e             -> expand_e e |> List.map pBexp
    | MAtom (e1, rs, e2) -> let (e1s, e2s) = Misc.map_pair expand_e (e1,e2) in
-                           List.map begin fun e1 -> 
-                             List.map begin fun e2 ->
-                               List.map begin fun r ->
-                                 pAtom (e1,r,e2)
-                               end rs
-                             end e2s
-                           end e1s
-                           |> List.flatten |> List.flatten
+                           crunchAtom e1s rs e2s
+   | Atom (e1, r, e2)   -> let (e1s, e2s) = Misc.map_pair expand_e (e1,e2) in
+                           crunchAtom e1s [r] e2s
    | _                  -> [pred]
 
 and expand_e ((e,_) as expr) = match e with
