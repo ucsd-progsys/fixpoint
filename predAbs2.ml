@@ -500,7 +500,7 @@ let varmatch (x, y) =
   else true
 
 let valid_binding xys = 
-  (dupfree_binding xys) && (List.for_all varmatch xys)
+  List.for_all varmatch xys
 
 let valid_bindings ys x =
   ys |> List.map (fun y -> (x, y))
