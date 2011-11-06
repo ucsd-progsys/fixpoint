@@ -302,13 +302,14 @@ and pred = pred_int * tag
 and pred_int =
   | True
   | False
-  | And  of pred list
-  | Or   of pred list
-  | Not  of pred
-  | Imp  of pred * pred
-  | Iff  of pred * pred
-  | Bexp of expr
-  | Atom of expr * brel * expr 
+  | And   of pred list
+  | Or    of pred list
+  | Not   of pred
+  | Imp   of pred * pred
+  | Iff   of pred * pred
+  | Bexp  of expr
+  | Atom  of expr * brel * expr 
+  | MAtom of expr * brel list * expr
   | Forall of ((Symbol.t * Sort.t) list) * pred
 
 let list_hash b xs = 
@@ -399,6 +400,8 @@ module PredHashconsStruct = struct
           e1 == e2
       | Atom (e1, r1, e1'), Atom (e2, r2, e2') ->
           r1 = r2 && e1 == e2 && e1' == e2'
+      | MAtom (e1, r1, e1'), MAtom (e2, r2, e2') ->
+          r1 = r2 && e1 == e2 && e1' == e2'
       | Forall(q1s,p1), Forall(q2s,p2) -> 
           q1s = q2s && p1 == p2
       | _ -> 
@@ -423,6 +426,8 @@ module PredHashconsStruct = struct
        32 + id
    | Atom ((_,id1), r, (_,id2)) ->
        36 + (Hashtbl.hash r) + (2 * id1) + id2
+   | MAtom ((_,id1), r, (_,id2)) ->
+       42 + (Hashtbl.hash r) + (2 * id1) + id2
    | Forall(qs,(_,id)) -> 
        50 + (2 * (Hashtbl.hash qs)) + id
 end
@@ -464,6 +469,7 @@ let eTim = function
 let pTrue  = pwr True
 let pFalse = pwr False
 let pAtom  = fun (e1, r, e2) -> pwr (Atom (e1, r, e2))
+let pMAtom = fun (e1, r, e2) -> pwr (MAtom (e1, r, e2))
 let pAnd   = fun ps -> pwr (And ps)
 let pOr    = fun ps -> pwr (Or ps)
 let pNot   = fun p  -> pwr (Not p)
@@ -500,6 +506,9 @@ let brel_to_string = function
   | Ge -> ">="
   | Lt -> "<"
   | Le -> "<="
+
+let print_brel ppf r = 
+  F.fprintf ppf "%s" (brel_to_string r)
 
 let print_binding ppf (s,t) = 
   F.fprintf ppf "%a:%a" Symbol.print s Sort.print t
@@ -559,11 +568,16 @@ and print_pred ppf p = match puw p with
         print_expr e1 
         (brel_to_string r) 
         print_expr e2
+  | MAtom (e1, rs, e2) ->
+      F.fprintf ppf "@[(%a [%a] %a)@]" 
+        print_expr e1 
+        (Misc.pprint_many_box " ; " print_brel) rs
+        print_expr e2
   | Forall (qs, p) -> 
       F.fprintf ppf "forall [%a] . %a" 
         (Misc.pprint_many false "; " print_binding) qs
         print_pred p
-
+  
 let rec expr_to_string e = 
   match euw e with
   | Con c -> 
@@ -609,6 +623,11 @@ and pred_to_string p =
     | Atom (e1, r, e2) ->
         Printf.sprintf "(%s %s %s)" 
         (expr_to_string e1) (brel_to_string r) (expr_to_string e2)
+    | MAtom (e1, rs, e2) ->
+        Printf.sprintf "(%s [%s] %s)" 
+        (expr_to_string e1)
+        (List.map brel_to_string rs |> String.concat " ; ") 
+        (expr_to_string e2)
     | Forall (qs,p) -> 
         Printf.sprintf "forall [%s] . %s" 
         (List.map bind_to_string qs |> String.concat "; ") (pred_to_string p)
@@ -634,6 +653,8 @@ let rec pred_map hp he fp fe p =
             Bexp (expr_map hp he fp fe e) 
         | Atom (e1, r, e2) ->
             Atom (expr_map hp he fp fe e1, r, expr_map hp he fp fe e2)
+        | MAtom (e1, rs, e2) ->
+            MAtom (expr_map hp he fp fe e1, rs, expr_map hp he fp fe e2)
         | Forall (qs, p) ->
             Forall (qs, pm p) in
       let rv = fp (pwr p') in
@@ -673,6 +694,7 @@ let rec pred_iter fp fe pw =
     | Iff (p1, p2) -> pred_iter fp fe p1; pred_iter fp fe p2
     | And ps | Or ps -> List.iter (pred_iter fp fe) ps
     | Atom (e1, _, e2) -> expr_iter fp fe e1; expr_iter fp fe e2
+    | MAtom (e1, _, e2) -> expr_iter fp fe e1; expr_iter fp fe e2
     | Forall (_, p) -> pred_iter fp fe p (* pmr: looks wrong, but so does pred_map *)
   end;
   fp pw
@@ -808,7 +830,7 @@ module Predicate =
 
       let rec is_tauto  = function
         | Atom(e1, Eq, e2), _ -> snd e1 == snd e2
-	      | Imp (p1, p2), _     -> snd p1 == snd p2
+	    | Imp (p1, p2), _     -> snd p1 == snd p2
         | And ps, _           -> List.for_all is_tauto ps
         | Or  ps, _           -> List.exists is_tauto ps
         | True, _             -> true
@@ -1000,7 +1022,6 @@ and sortcheck_pred f p =
     | And ps  
     | Or ps ->
         List.for_all (sortcheck_pred f) ps
-
     | Atom ((Con (Constant.Int(0)),_), _, e) 
     | Atom (e, _, (Con (Constant.Int(0)),_)) 
       when not (!Constants.strictsortcheck)

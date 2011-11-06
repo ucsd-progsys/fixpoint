@@ -134,6 +134,16 @@ bind:
   Id COLON sort                         { ((Sy.of_string $1), $3) }
   ;
 
+rels:
+    LB RB                               { [] }
+  | LB relsne RB                        { $2 }
+  ;
+
+relsne: 
+    rel                                 { [$1]}
+  | rel SEMI relsne                     { $1 :: $3}
+  ;
+
 preds:
     LB RB                               { [] }
   | LB predsne RB                       { $2 }
@@ -143,6 +153,15 @@ predsne:
     pred                                { [$1] }
   | pred SEMI predsne                   { $1 :: $3 }
 ;
+
+rel:
+   EQ                                   { A.Eq }
+ | NE                                   { A.Ne }    
+ | GT                                   { A.Gt }
+ | GE                                   { A.Ge }
+ | LT                                   { A.Lt }
+ | LE                                   { A.Le }
+ ;
 
 pred:
     TRUE				                { A.pTrue }
@@ -155,18 +174,25 @@ pred:
   | NOTWORD pred				        { A.pNot ($2) }
   | LPAREN pred AND pred RPAREN         { A.pAnd [$2; $4] }
   | LPAREN pred OR  pred RPAREN         { A.pOr  [$2; $4] }
-  | expr EQ expr                        { A.pAtom ($1, A.Eq, $3) }
+  | expr rel expr                       { A.pAtom  ($1, $2, $3) }
+  | expr rels expr                      { A.pMAtom ($1, $2, $3) }
+  | FORALL binds DOT pred               { A.pForall ($2, $4) }
+  | pred IMPL pred                      { A.pImp ($1, $3) }
+  | pred IFF pred                       { A.pIff ($1, $3) }
+  | pred IFFWORD pred                   { A.pIff ($1, $3) }
+  | LPAREN pred RPAREN			        { $2 }
+  ;
+
+
+(*  | expr EQ expr                        { A.pAtom ($1, A.Eq, $3) }
   | expr NE expr                        { A.pAtom ($1, A.Ne, $3) }
   | expr GT expr                        { A.pAtom ($1, A.Gt, $3) }
   | expr GE expr                        { A.pAtom ($1, A.Ge, $3) }
   | expr LT expr                        { A.pAtom ($1, A.Lt, $3) }
   | expr LE expr                        { A.pAtom ($1, A.Le, $3) }
-  | FORALL binds DOT pred               { A.pForall ($2, $4) }
-  | pred IMPL pred                      { A.pImp ($1, $3) }
-  | pred IFF pred                       { A.pIff ($1, $3) }
-  | pred IFFWORD pred                   { A.pIff ($1, $3) }
-  | LPAREN pred RPAREN			{ $2 }
-  ;
+ *)
+
+
 
 exprs:
     LB RB                               { [] }

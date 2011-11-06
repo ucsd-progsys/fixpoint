@@ -124,6 +124,7 @@ and pred_int =
   | Iff  of pred * pred
   | Bexp of expr
   | Atom of expr * brel * expr 
+  | MAtom of expr * brel list * expr
   | Forall of ((Symbol.t * Sort.t) list) * pred
 
 (* Constructors : expressions *)
@@ -142,6 +143,7 @@ val eCst : expr * Sort.t -> expr
 val pTrue  : pred
 val pFalse : pred
 val pAtom  : expr * brel * expr -> pred
+val pMAtom : expr * brel list * expr -> pred
 val pAnd   : pred list -> pred
 val pOr    : pred list -> pred
 val pNot   : pred -> pred
