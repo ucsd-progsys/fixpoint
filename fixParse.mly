@@ -144,6 +144,16 @@ relsne:
   | rel SEMI relsne                     { $1 :: $3}
   ;
 
+rel:
+   EQ                                   { A.Eq }
+ | NE                                   { A.Ne }    
+ | GT                                   { A.Gt }
+ | GE                                   { A.Ge }
+ | LT                                   { A.Lt }
+ | LE                                   { A.Le }
+ ;
+
+
 preds:
     LB RB                               { [] }
   | LB predsne RB                       { $2 }
@@ -153,15 +163,6 @@ predsne:
     pred                                { [$1] }
   | pred SEMI predsne                   { $1 :: $3 }
 ;
-
-rel:
-   EQ                                   { A.Eq }
- | NE                                   { A.Ne }    
- | GT                                   { A.Gt }
- | GE                                   { A.Ge }
- | LT                                   { A.Lt }
- | LE                                   { A.Le }
- ;
 
 pred:
     TRUE				                { A.pTrue }
@@ -182,17 +183,6 @@ pred:
   | pred IFFWORD pred                   { A.pIff ($1, $3) }
   | LPAREN pred RPAREN			        { $2 }
   ;
-
-
-(*  | expr EQ expr                        { A.pAtom ($1, A.Eq, $3) }
-  | expr NE expr                        { A.pAtom ($1, A.Ne, $3) }
-  | expr GT expr                        { A.pAtom ($1, A.Gt, $3) }
-  | expr GE expr                        { A.pAtom ($1, A.Ge, $3) }
-  | expr LT expr                        { A.pAtom ($1, A.Lt, $3) }
-  | expr LE expr                        { A.pAtom ($1, A.Le, $3) }
- *)
-
-
 
 exprs:
     LB RB                               { [] }

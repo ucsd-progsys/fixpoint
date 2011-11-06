@@ -1139,6 +1139,24 @@ let rec conjuncts = function
   | True, _   -> []
   | p         -> [p]
 
+
+let rec expand_matoms ((p,_) as pred) = match p with 
+   | And ps             -> expand_matoms_ps pAnd ps
+   | Or ps              -> expand_matoms_ps pOr ps
+   | Not p              -> expand_matoms p |> List.map pNot 
+   | Imp (p1,p2)        -> expand_matoms_pp pImp (p1, p2)
+   | Iff (p1,p2)        -> expand_matoms_pp pIff (p1, p2)
+   | MAtom (e1, rs, e2) -> rs |> List.map (fun r -> pAtom (e1, r, e2))
+   | Forall(qs, p)      -> expand_matoms p |> List.map (fun p -> pForall (qs, p))
+   | _                  -> [pred]
+ 
+and expand_matoms_ps f = 
+  List.map expand_matoms <+> Misc.cross_flatten <+> Misc.map f
+
+and expand_matoms_pp f = 
+  Misc.map_pair expand_matoms <+> Misc.uncurry Misc.cross_product <+> Misc.map f
+
+      
 (**************************************************************************)
 (*************************** Substitutions ********************************)
 (**************************************************************************)
@@ -1225,9 +1243,15 @@ module Qualifier = struct
       Sort.print q.vsort
       Predicate.print q.pred
 
+  let expand_matoms_qual q = 
+    expand_matoms q.pred
+    |> List.map (fun p -> {q with pred = p})
+
+
   (* remove duplicates, ensure distinct names *)
   let normalize qs = 
-    qs |> Misc.kgroupby (Misc.fsprintf print_short)
+    qs |> Misc.flap expand_matoms_qual 
+       |> Misc.kgroupby (Misc.fsprintf print_short)
        |> List.map (fun (_,x::_) -> x)
        |> Misc.mapfold begin fun m q ->
             if SM.mem q.name m then

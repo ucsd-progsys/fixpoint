@@ -645,8 +645,8 @@ let apply_facts cs kf me =
 let binds_of_quals ws qs =
   qs
   |> Q.normalize
-  (* >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) 
-  >> (fun _ -> flush stdout) *)
+  >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) 
+  >> (fun _ -> flush stdout)
   |> BS.time "Qual Inst" (inst ws) 
   (* >> List.iter ppBinding *)
   |> SM.of_list 
