@@ -104,6 +104,7 @@ type expr = expr_int * tag
 
 and expr_int =
   | Con of Constant.t
+  | MCon of Constant.t list
   | Var of Symbol.t
   | App of Symbol.t * expr list
   | Bin of expr * bop * expr  
@@ -131,6 +132,7 @@ and pred_int =
 val eTim : expr * expr -> expr
 val eInt : int -> expr
 val eCon : Constant.t -> expr
+val eMCon : Constant.t list -> expr
 val eMod : expr * int -> expr
 val eModExp : expr * expr -> expr
 val eVar : Symbol.t -> expr

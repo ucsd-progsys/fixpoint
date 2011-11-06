@@ -196,22 +196,36 @@ exprsne:
 
 expr:
     Id                                    { A.eVar (Sy.of_string $1) }
-  | Num                                   { A.eCon (A.Constant.Int $1) }
-  | MINUS Num                             { A.eCon (A.Constant.Int (-1 * $2)) }
+  | con                                   { A.eCon $1  }
+  | cons                                  { A.eMCon $1 } 
   | LPAREN expr MOD Num RPAREN            { A.eMod ($2, $4) }
   | expr PLUS expr                        { A.eBin ($1, A.Plus, $3) }
   | expr MINUS expr                       { A.eBin ($1, A.Minus, $3) }
   | expr TIMES expr                       { A.eBin ($1, A.Times, $3) }
   | expr DIV expr                         { A.eBin ($1, A.Div, $3) }
   | Id LPAREN exprs RPAREN                { A.eApp ((Sy.of_string $1), $3) }
-  
   | Id Id                                 { A.eApp ((Sy.of_string $1), [A.eVar (Sy.of_string $2)]) }
   | LPAREN pred QM expr COLON expr RPAREN { A.eIte ($2,$4,$6) }
   | expr DOT Id                           { A.eFld ((Sy.of_string $3), $1) }
   | LPAREN expr COLON sort RPAREN         { A.eCst ($2, $4) }
   | LPAREN expr RPAREN                    { $2 }
   ;
-  
+ 
+con:
+  | Num                                   { (A.Constant.Int $1) }
+  | MINUS Num                             { (A.Constant.Int (-1 * $2)) }
+  ;
+
+cons:
+    LB RB                                 { [] }
+  | LB consne RB                          { $2 }
+  ;
+
+consne:
+    con                                   { [$1] }
+  | con SEMI consne                       { $1 :: $3 }
+  ;
+
 wf:
     ENV env REF reft                              { C.make_wf $2 $4 None }
   | ENV env REF reft ID Num                       { C.make_wf $2 $4 (Some $6) }

@@ -288,13 +288,14 @@ type bop  = Plus | Minus | Times | Div | Mod    (* NOTE: For "Mod" 2nd expr shou
 type expr = expr_int * tag 
     
 and expr_int =
-  | Con of Constant.t
-  | Var of Symbol.t
-  | App of Symbol.t * expr list
-  | Bin of expr * bop * expr  
-  | Ite of pred * expr * expr
-  | Fld of Symbol.t * expr             (* NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
-  | Cst of expr * Sort.t 
+  | Con  of Constant.t
+  | MCon of Constant.t list
+  | Var  of Symbol.t
+  | App  of Symbol.t * expr list
+  | Bin  of expr * bop * expr  
+  | Ite  of pred * expr * expr
+  | Fld  of Symbol.t * expr             (* NOTE: Fld (s, e) == App ("field"^s,[e]) *) 
+  | Cst  of expr * Sort.t 
   | Bot
 
 and pred = pred_int * tag
@@ -345,6 +346,8 @@ module ExprHashconsStruct = struct
     match e1, e2 with
       | Con c1, Con c2 -> 
           c1 = c2
+      | MCon c1, MCon c2 -> 
+          c1 = c2
       | Var x1, Var x2 -> 
           x1 = x2
       | App (s1, e1s), App (s2, e2s) ->
@@ -361,6 +364,8 @@ module ExprHashconsStruct = struct
   
   let hash = function
     | Con (Constant.Int x) -> 
+        x
+    | MCon ((Constant.Int x) :: _) ->
         x
     | Var x -> 
         Hashtbl.hash x
@@ -440,10 +445,11 @@ let pwr = PredHashcons.wrap
 let puw = PredHashcons.unwrap
 
 (* Constructors: Expressions *)
-let eCon = fun c -> ewr  (Con c)
-let eInt = fun i -> eCon (Constant.Int i)
-let zero = eInt 0
-let one  = eInt 1
+let eCon  = fun c  -> ewr  (Con c)
+let eMCon = fun cs -> ewr  (MCon cs)
+let eInt  = fun i  -> eCon (Constant.Int i)
+let zero  = eInt 0
+let one   = eInt 1
 let bot  = ewr Bot
 let eMod = fun (e, m) -> ewr (Bin (e, Mod, eInt m))
 let eModExp = fun (e, m) -> ewr (Bin (e, Mod, m))
@@ -519,6 +525,8 @@ let bind_to_string  (s,t) =
 let rec print_expr ppf e = match euw e with
   | Con c -> 
       F.fprintf ppf "%a" Constant.print c 
+  | MCon cs -> 
+      F.fprintf ppf "[%a]" (Misc.pprint_many false " ; " Constant.print) cs
   | Var s -> 
       F.fprintf ppf "%a" Symbol.print s
   | App (s, es) -> 
@@ -582,6 +590,8 @@ let rec expr_to_string e =
   match euw e with
   | Con c -> 
       Constant.to_string c
+  | MCon cs -> 
+      Printf.sprintf "[%s]" (cs |>: Constant.to_string |> String.concat " ; ")
   | Var s -> 
       Symbol.to_string s
   | App (s, es) ->
@@ -667,7 +677,7 @@ and expr_map hp he fp fe e =
     try ExprHash.find he e with Not_found -> begin
       let e' = 
         match euw e with
-        | Con _ | Var _ | Bot as e1 -> 
+        | Con _ | MCon _ | Var _ | Bot as e1 -> 
             e1
         | App (f, es) ->
             App (f, List.map em es)
@@ -701,7 +711,7 @@ let rec pred_iter fp fe pw =
 
 and expr_iter fp fe ew =
   begin match puw ew with
-    | Con _ | Var _ | Bot -> 
+    | Con _ | MCon _ | Var _ | Bot -> 
         ()
     | App (_, es)  -> 
         List.iter (expr_iter fp fe) es
@@ -1140,23 +1150,61 @@ let rec conjuncts = function
   | p         -> [p]
 
 
-let rec expand_matoms ((p,_) as pred) = match p with 
-   | And ps             -> expand_matoms_ps pAnd ps
-   | Or ps              -> expand_matoms_ps pOr ps
-   | Not p              -> expand_matoms p |> List.map pNot 
-   | Imp (p1,p2)        -> expand_matoms_pp pImp (p1, p2)
-   | Iff (p1,p2)        -> expand_matoms_pp pIff (p1, p2)
-   | MAtom (e1, rs, e2) -> rs |> List.map (fun r -> pAtom (e1, r, e2))
-   | Forall(qs, p)      -> expand_matoms p |> List.map (fun p -> pForall (qs, p))
+let expand_with_list f g =
+  List.map f <+> Misc.cross_flatten <+> Misc.map g
+
+let expand_with_pair f g =
+  Misc.map_pair f <+> Misc.uncurry Misc.cross_product <+> Misc.map g
+
+let rec expand_p ((p,_) as pred) = match p with 
+   | And ps             -> expand_ps pAnd ps
+   | Or ps              -> expand_ps pOr ps
+   | Not p              -> expand_p p |> List.map pNot 
+   | Imp (p1,p2)        -> expand_pp pImp (p1, p2)
+   | Iff (p1,p2)        -> expand_pp pIff (p1, p2)
+   | Forall(qs, p)      -> expand_p p |> List.map (fun p -> pForall (qs, p))
+   | Bexp e             -> expand_e e |> List.map pBexp
+   | MAtom (e1, rs, e2) -> let (e1s, e2s) = Misc.map_pair expand_e (e1,e2) in
+                           List.map begin fun e1 -> 
+                             List.map begin fun e2 ->
+                               List.map begin fun r ->
+                                 pAtom (e1,r,e2)
+                               end rs
+                             end e2s
+                           end e1s
+                           |> List.flatten |> List.flatten
    | _                  -> [pred]
- 
+
+and expand_e ((e,_) as expr) = match e with
+   | MCon cs          -> List.map eCon cs
+   | App (f, es)      -> expand_es (fun es -> eApp (f, es)) es
+   | Bin (e1, op, e2) -> expand_ep (fun (e1,e2) -> eBin (e1, op, e2)) (e1, e2) 
+   | Fld (s, e)       -> expand_e e |> List.map (fun e -> eFld (s,e))
+   | Cst (e, t)       -> expand_e e |> List.map (fun e -> eCst (e,t))
+   | Ite (p,e1,e2)    -> let e1s, e2s = Misc.map_pair expand_e (e1, e2) in
+                         let ps       = expand_p p in 
+                         List.map begin fun e1 ->
+                           List.map begin fun e2 ->
+                             List.map begin fun p ->
+                               eIte (p, e1, e2)
+                             end ps
+                           end e2s
+                         end e1s
+                         |> List.flatten |> List.flatten
+   | _ -> [expr]
+
+and expand_ps x = expand_with_list expand_p x
+and expand_pp x = expand_with_pair expand_p x
+and expand_es x = expand_with_list expand_e x
+and expand_ep x = expand_with_pair expand_e x
+(*
 and expand_matoms_ps f = 
   List.map expand_matoms <+> Misc.cross_flatten <+> Misc.map f
 
 and expand_matoms_pp f = 
   Misc.map_pair expand_matoms <+> Misc.uncurry Misc.cross_product <+> Misc.map f
+*)
 
-      
 (**************************************************************************)
 (*************************** Substitutions ********************************)
 (**************************************************************************)
@@ -1243,14 +1291,14 @@ module Qualifier = struct
       Sort.print q.vsort
       Predicate.print q.pred
 
-  let expand_matoms_qual q = 
-    expand_matoms q.pred
+  let expand_qual q = 
+    expand_p q.pred
     |> List.map (fun p -> {q with pred = p})
 
 
   (* remove duplicates, ensure distinct names *)
   let normalize qs = 
-    qs |> Misc.flap expand_matoms_qual 
+    qs |> Misc.flap expand_qual
        |> Misc.kgroupby (Misc.fsprintf print_short)
        |> List.map (fun (_,x::_) -> x)
        |> Misc.mapfold begin fun m q ->
