@@ -254,8 +254,9 @@ let print_m ppf s =
 let print_qs ppf s = 
   QS.elements s.qs
   >> (fun _ -> F.fprintf ppf "//QUALIFIERS \n\n")
-  |> List.iter (F.fprintf ppf "%a@ \n" Q.print) 
-  |> ignore
+  |> F.fprintf ppf "%a" (Misc.pprint_many true "\n" Q.print)
+(*  |> List.iter (F.fprintf ppf "%a" Q.print) 
+ *) |> ignore
 
 (* API *)
 let print ppf s = s >> print_m ppf >> print_qs ppf |> ignore

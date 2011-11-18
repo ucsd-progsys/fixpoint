@@ -580,10 +580,10 @@ and print_pred ppf p = match puw p with
       F.fprintf ppf "(%a <=> %a)" print_pred p1 print_pred p2 
   | And ps -> 
       F.fprintf ppf "&& [@[%a@]]" 
-        (Misc.pprint_many_box " ; " print_pred) ps
+        (Misc.pprint_many false " ; " print_pred) ps
   | Or ps -> 
       F.fprintf ppf "|| [@[%a@]]" 
-        (Misc.pprint_many_box " ; " print_pred) ps
+        (Misc.pprint_many false " ; " print_pred) ps
   | Atom (e1, r, e2) ->
       F.fprintf ppf "@[(%a %s %a)@]" 
         print_expr e1 
@@ -592,7 +592,7 @@ and print_pred ppf p = match puw p with
   | MAtom (e1, rs, e2) ->
       F.fprintf ppf "@[(%a [%a] %a)@]" 
         print_expr e1 
-        (Misc.pprint_many_box " ; " print_brel) rs
+        (Misc.pprint_many false " ; " print_brel) rs
         print_expr e2
   | Forall (qs, p) -> 
       F.fprintf ppf "forall [%a] . %a" 
@@ -1015,20 +1015,26 @@ and sortcheck_app f so_expected uf es =
                                   | Some s -> Some (Sort.apply s t)
 
 
-
-
-
-
 and sortcheck_op f (e1, op, e2) = 
   match Misc.map_pair (sortcheck_expr f) (e1, e2) with
-  | (Some Sort.Int, Some Sort.Int) -> 
-      Some Sort.Int
+  | (Some Sort.Int, Some Sort.Int) 
+  -> Some Sort.Int
+  
+  (* only allow when language is Haskell *)
+  | (Some (Sort.Ptr l), Some (Sort.Ptr l')) 
+  when (l = l' && sortcheck_loc f l = Some Sort.Num)
+  -> Some (Sort.Ptr l)
+ 
+  (* only allow when language is C *)
   | (Some (Sort.Ptr s), Some Sort.Int) 
-  | (Some Sort.Int, Some (Sort.Ptr s)) -> 
-      Some (Sort.Ptr s)
+  | (Some Sort.Int, Some (Sort.Ptr s)) 
+  -> Some (Sort.Ptr s)
+
+  (* only allow when language is C *)
   | (Some (Sort.Ptr s), Some (Sort.Ptr s')) 
-    when op = Minus && s = s' -> 
-      Some Sort.Int 
+  when op = Minus && s = s'
+  -> Some Sort.Int 
+  
   | _ -> None 
  
 and sortcheck_rel f (e1, r, e2) =
@@ -1368,12 +1374,13 @@ module Qualifier = struct
        |> Predicate.substs q.pred
        |> create q.name q.vvar q.vsort q.params
 
-  let print ppf q = 
+(*  let print ppf q = 
     Format.fprintf ppf "qualif %s(%a:%a):%a" 
       q.name
       Symbol.print q.vvar
       Sort.print q.vsort
       Predicate.print q.pred
+      *)
 end
 
 (**************************************************************************)
