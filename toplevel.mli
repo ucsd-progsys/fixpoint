@@ -21,5 +21,5 @@
  *
  *)
 
-val read_inputs      : string -> (string list * Config.qbind Config.cfg)
+val read_inputs      : string -> (string list * FixConfig.qbind FixConfig.cfg)
 

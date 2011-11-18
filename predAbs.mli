@@ -13,4 +13,4 @@
  *
  *)
 
-include Config.DOMAIN
+include FixConfig.DOMAIN

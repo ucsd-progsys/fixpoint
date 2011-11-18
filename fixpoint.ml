@@ -30,8 +30,9 @@ module Co  = Constants
 module C   = FixConstraint
 module F   = Format
 module T   = Toplevel
-module PA  = PredAbs2
+module PA  = PredAbs
 module SPA = Solve.Make (PA)
+module Cg  = FixConfig
 
 open Misc.Ops
 
@@ -66,7 +67,7 @@ let solve ac  =
   cs'
 
 let dump_solve ac = 
-  let cs' = solve { ac with Config.bm = SM.map PA.mkbind ac.Config.bm } in
+  let cs' = solve { ac with Cg.bm = SM.map PA.mkbind ac.Cg.bm } in
   let _   = BNstats.print stdout "Fixpoint Solver Time \n" in
   match cs' with 
   | [] -> (F.printf "\nSAT\n" ; exit 0)
@@ -78,7 +79,7 @@ let dump_solve ac =
 (*****************************************************************)
 
 let dump_imp a = 
-  (List.map (fun c -> Config.Cst c) a.Config.cs ++ List.map (fun c -> Config.Wfc c) a.Config.ws)
+  (List.map (fun c -> Cg.Cst c) a.Cg.cs ++ List.map (fun c -> Cg.Wfc c) a.Cg.ws)
   |> ToImp.mk_program
   |> F.fprintf F.std_formatter "%a" Imp.print_program_as_c 
   |> fun _ -> exit 1 
@@ -98,14 +99,14 @@ let hook_simplify_ts = function
 let simplify_ts cs = hook_simplify_ts !Co.dump_simp cs
 
 let dump_simp ac = 
-  let ac = {ac with Config.cs = simplify_ts ac.Config.cs; Config.bm = SM.empty} in
-  Misc.with_out_formatter !Co.save_file (fun ppf -> Config.print ppf ac)
+  let ac = {ac with Cg.cs = simplify_ts ac.Cg.cs; Cg.bm = SM.empty} in
+  Misc.with_out_formatter !Co.save_file (fun ppf -> Cg.print ppf ac)
 
    (*
 let dump_simp ac = 
-  (* let ac    = {ac with Config.cs = simplify_ts ac.Config.cs; Config.bm = SM.empty; Config.qs = []} in *)
-  let ac    = {ac with Config.cs = simplify_ts ac.Config.cs; Config.bm = SM.empty} in
-  Misc.with_out_formatter !Co.save_file (fun ppf -> Config.print ppf ac)
+  (* let ac    = {ac with Cg.cs = simplify_ts ac.Cg.cs; Cg.bm = SM.empty; Cg.qs = []} in *)
+  let ac    = {ac with Cg.cs = simplify_ts ac.Cg.cs; Cg.bm = SM.empty} in
+  Misc.with_out_formatter !Co.save_file (fun ppf -> Cg.print ppf ac)
 
   let ctx,_ = BS.time "create" SPA.create ac None in
   let s0    = PA.empty (* PA.create ac None *) in 
