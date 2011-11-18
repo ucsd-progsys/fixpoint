@@ -108,6 +108,21 @@ let create ds =
      |> (fun cfg -> {cfg with a  = get_arity cfg.cs})
      |> (fun cfg -> {cfg with ws = C.add_wf_ids cfg.ws})
 
+(* API *)
+let create_raw ts env ps a ds cs ws qs assm = 
+  { empty with 
+    a    = a
+  ; ts   = ts
+  ; uops = env
+  ; ps   = ps
+  ; ds   = ds
+  ; cs   = cs
+  ; ws   = C.add_wf_ids ws
+  ; qs   = qs 
+  ; assm = assm
+  }
+
+
 module type DOMAIN = sig
   type t
   type bind
