@@ -259,8 +259,7 @@ let slice_wf me ws =
            |> Misc.flap C.kvars_of_t 
            |> Misc.map snd 
            |> SS.of_list 
-  in Misc.filter (C.reft_of_wf <+> C.kvars_of_reft <+> List.exists (fun (_,k) ->
-    SS.mem k ks)) ws
+  in Misc.filter (C.reft_of_wf <+> C.kvars_of_reft <+> List.exists (fun (_,k) -> SS.mem k ks)) ws
   
   
 
