@@ -1,9 +1,9 @@
-Two tricks:
+wierd error from vector1.hs.fq
 
-../../fixpoint.native fold_left_1_instr.ml.in.fq -refinesort -strictsortcheck
+id 77 fails during checking, depends on:
 
-now fold_left_1_instr.ml.in.fq
+    k_131: written in id 78, 85
+    k_71 : written in id 104
 
-finishes with "UNSAT" ...
-
-
+iter 101, id=85 is picked and ch=true. then 131 may have changed, so why
+was 77 not processed again?
