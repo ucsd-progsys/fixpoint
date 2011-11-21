@@ -262,11 +262,14 @@ let slice_wf me ws =
   in Misc.filter (C.reft_of_wf <+> C.kvars_of_reft <+> List.exists (fun (_,k) -> SS.mem k ks)) ws
   
   
+let pp_cstr_id ppf c   = F.fprintf ppf "%d" (C.id_of_t c)
+let pp_cstr_ids ppf cs = F.fprintf ppf "@[%a@.@]" (Misc.pprint_many false "," pp_cstr_id) cs
 
 (* API *) 
 let deps me c =
   (try IM.find (C.id_of_t c) me.depm with Not_found -> [])
   |> List.map (get_ref_constraint me)
+  >> (Co.logPrintf "Deps %d = [%a]\n" (C.id_of_t c) pp_cstr_ids)
 
 (* API *)
 let to_list me = IM.range me.cnst

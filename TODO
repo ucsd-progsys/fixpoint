@@ -1,4 +1,6 @@
-wierd error from vector1.hs.fq
+wierd error from 
+
+./fixpoint.native -notruekvars -strictsortcheck vector1.hs.fq
 
 id 77 fails during checking, depends on:
 
@@ -7,3 +9,9 @@ id 77 fails during checking, depends on:
 
 iter 101, id=85 is picked and ch=true. then 131 may have changed, so why
 was 77 not processed again?
+
+because id 77 DOES NOT depend on 85:
+
+Deps 85 = [106,105,104,103,102]
+
+    
