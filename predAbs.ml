@@ -550,7 +550,7 @@ let inst_qual env ys t' (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
  *)
 
 let inst_ext qs wf = 
-  let r    = wf >> (C.id_of_wf <+>  Printf.sprintf "\nPredAbs.inst_ext wf id = %d\n" <+> print_now)
+  let r    = wf (* >> (C.id_of_wf <+>  Printf.sprintf "\nPredAbs.inst_ext wf id = %d\n" <+> print_now) *)
                 |> C.reft_of_wf in
   let ks   = C.kvars_of_reft r |> List.map snd in
   let env  = C.env_of_wf wf in
