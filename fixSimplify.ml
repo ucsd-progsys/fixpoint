@@ -387,27 +387,25 @@ end
 (****************************************************************************)
 (***** Copy Propagation *****************************************************)
 (****************************************************************************)
-
+(* 
 module CopyProp : SIMPLIFIER = struct
 
-
-  List.fold_left begin fun c (x, e) ->
-    if x in e then c else subst c (x, e)
   let rec eliminate theta c = 
     match theta with
-      | []  -> c
       | (x, e) :: theta' when x in e 
         -> eliminate theta' c
       | (x, e) :: theta' (* x not in e *)
         -> eliminate (subst theta' (x, e)) (subst c (x, e))
-
-  let simplify_t =
-    1. theta = candidate substitutions 
+      | []  -> c
+  
+  let simplify_t c =
+    let theta = get_equalities c in
+ 
                walk over env, find equalities x : {VV = e}
     2. eliminate theta t
 
 end
-
+*)
 
 (* API *)
 let simplify_ts cs =
