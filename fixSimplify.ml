@@ -31,6 +31,7 @@ module Sy = Ast.Symbol
 module Kg = Kvgraph
 module Su = Ast.Subst
 module SM = Ast.Symbol.SMap
+module SS = Ast.Symbol.SSet
 
 open Misc.Ops
 open Ast
@@ -387,25 +388,58 @@ end
 (****************************************************************************)
 (***** Copy Propagation *****************************************************)
 (****************************************************************************)
-(* 
+
 module CopyProp : SIMPLIFIER = struct
 
-  let rec eliminate theta c = 
-    match theta with
-      | (x, e) :: theta' when x in e 
-        -> eliminate theta' c
-      | (x, e) :: theta' (* x not in e *)
-        -> eliminate (subst theta' (x, e)) (subst c (x, e))
-      | []  -> c
+  let subst_theta = 
+    List.map <.> Misc.app_snd <.> (fun (x, e) e' -> E.subst e' x e) 
   
-  let simplify_t c =
-    let theta = get_equalities c in
+  let subst_bind su x y ((v, t, ras) as r) =  
+    if x = y then (v, t, []) else C.theta su r
+
+  let subst_cstr (x, e) c =
+    let su    = Su.of_list [(x, e)]                         in
+    let env'  = C.env_of_t c |> C.map_env (subst_bind su x) in
+    let grd'  = C.grd_of_t c |> (fun p -> P.subst p x e)    in
+    let lhs'  = C.lhs_of_t c |> C.theta su                  in
+    let rhs'  = C.rhs_of_t c |> C.theta su                  in
+    C.make_t env' grd' lhs' rhs' (C.ido_of_t c) (C.tag_of_t c)
+  
+  let rec eliminate c = function 
+      | (x, e) :: theta' when List.mem x (E.support e)
+        -> eliminate c theta'
+      | xe :: theta' (* x not in e *)
+        -> eliminate (subst_cstr xe c) (subst_theta xe theta') 
+      | []  -> c
  
-               walk over env, find equalities x : {VV = e}
-    2. eliminate theta t
+  let rigid_vars c =
+    c |> C.kvars_of_t 
+      |> List.map fst 
+      |> Misc.flap Su.to_list 
+      |> List.map fst 
+      |> SS.of_list 
+
+  let equalities_of_binding = function 
+    | (x, (v, _, [C.Conc ( Atom ((Var v', _), Eq, e), _  )])) 
+      when v = v' -> Some (x, e)
+    | (x, (v, _, [C.Conc (  Atom (e, Eq, (Var v', _)), _ )])) 
+      when v = v' -> Some (x, e)
+    | _ -> None
+
+  let equalities_of_t c =
+    c |> C.env_of_t 
+      |> C.bindings_of_env 
+      |> Misc.map_partial equalities_of_binding
+
+  let simplify_t c = 
+    let ys = rigid_vars c in
+    c |> equalities_of_t 
+      |> List.filter (fun (x,_) -> not (SS.mem x ys))
+      |> eliminate c
+
+  let simplify_ts = Misc.map simplify_t
 
 end
-*)
 
 (* API *)
 let simplify_ts cs =
@@ -414,6 +448,7 @@ let simplify_ts cs =
   |> ((not !Co.lfp)  <?> BS.time "simplify 0" WeakFixpoint.simplify_ts)
   |> BS.time "add ids  1" (C.add_ids 0) 
   |> snd
+  |> (!Co.copyprop   <?> BS.time "simplify CP" CopyProp.simplify_ts)
   |> (!Co.simplify_t <?> BS.time "simplify 1" Syntactic.simplify_ts) (* termination bug, tickled by C benchmarks *)
   |> (!Co.simplify_t <?> BS.time "simplify 2" Cone.simplify_ts)
   |> (!Co.simplify_t <?> BS.time "simplify 3" EliminateK.simplify_ts)
