@@ -45,7 +45,7 @@ type cex     = (Ast.Symbol.t * fact * FixConstraint.id) list
 
 val create  :  FixConstraint.soln       (* assumes           *) 
             -> FixConstraint.t list     (* all constraints   *)
-            -> FixConstraint.t list     (* unsat constraints *)
+            (* -> FixConstraint.t list     (* unsat constraints *) *)
             -> ctrace                   
             -> lifespan 
             -> TpNull.Prover.t          (* tp context        *)

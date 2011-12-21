@@ -478,7 +478,7 @@ let unsat_core_one me (va : Z3.ast array) (f: Z3.ast -> 'a) (k, q) =
   (k, r)
 
 (* API *)
-let unsat_core me env p ips iqs = 
+let unsat_cores me env p ips iqs = 
   (* let _     = handle_vv me env vv                              in *)
   let _  = Hashtbl.clear me.vart                                  in 
   let p2z   = A.fixdiv <+> z3Pred me env                          in
@@ -495,4 +495,8 @@ let unsat_core me env p ips iqs =
                   |> List.map (unsat_core_one me va f)
                   >> (fun _ -> Z3.pop me.c)
 
+  let unsat_core me env bgp ips = failwith "TBD:unsat_core"
+  
+  let unsat_suffix me env bgp ps = failwith "TBD:unsat_suffix"
+ 
 end

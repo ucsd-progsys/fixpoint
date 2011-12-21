@@ -703,6 +703,6 @@ let meet me you = {me with m = SM.extendWith (fun _ -> (++)) me.m you.m}
 (************************************************************************)
 
 let ctr_examples me cs ucs = 
-  let cx = Cx.create (read me) cs ucs me.ctrace  me.lifespan me.tpc in 
+  let cx = Cx.create (read me) cs me.ctrace  me.lifespan me.tpc in 
   List.map (Cx.explain cx) ucs
 

@@ -48,10 +48,10 @@ let mydebug   = false
 (************** Type Aliases ***********************************************)
 (***************************************************************************)
 
+type step  = int
 type kvar  = Sy.t
 type fact  = Abs of kvar * Qualifier.t | Conc of C.id
 type cause = step * C.id * ((Sy.t * fact) list)
-type step  = int
 
 (* [k |-> [(i0, [q_i0_1...]),...]] 
  * where q_i0_1... are killed at timestep i0 for kvar k sorted by step *)
@@ -90,13 +90,13 @@ type t = { tpc      : TP.t
          ; cm       : FixConstraint.t IM.t
          ; ctrace   : ctrace 
          ; lifespan : lifespan                     (* builds soln at n                *)
-         ; sfm      : fact list IM.t               (* step |-> facts killed at a step *)
-         
+         (* ; sfm      : fact list IM.t               (* step |-> facts killed at a step *)
+         *)
          ; fsm      : step FactMap.t               (* fact |-> step at which killed   *)
          ; scm      : int IM.t                     (* step |-> constr at step         *)
          }
 
-let scm_of_ctrace = 
+let scm_of_ctrace ctrace = 
   ctrace 
   |> IM.to_list 
   |> Misc.flap (fun (cid, is) -> List.map (fun i -> (i, cid)) is)
@@ -105,8 +105,10 @@ let scm_of_ctrace =
 
 let fsm_of_lifespan lifetime =
   SM.fold begin fun k sqs fsm ->
-    List.fold_left begin fun fsm (step, q) -> 
-      FactMap.add (Abs (k, q)) step fsm
+    List.fold_left begin fun fsm (step, qs) -> 
+      List.fold_left begin fun fsm q -> 
+        FactMap.add (Abs (k, q)) step fsm
+      end fsm qs
     end fsm sqs
   end lifetime FactMap.empty 
 
@@ -136,18 +138,9 @@ let solutionAt me n k =
   |> Misc.map Q.pred_of_t
   |> (++) (me.s k)
 
-let delta me c n k : fact list = 
-  let _n = prevStep me c n in
-  SM.safeFind k me.lifespan "delta: bad kvar" 
-  |> List.filter (fun (m,_) -> _n <= m && m < n) 
-  |> Misc.flap snd
-  |> Misc.map (fun q -> Abs (k, q))
-
 (************************************************************************)
 (************************************************************************)
 (************************************************************************)
-
-
 
 (* YUCK: TODO, share with PredAbs *)
 let check_tp me env vv t lps =  function [] -> [] | rcs ->
@@ -179,10 +172,18 @@ let prevStep me c n =
   if C.is_conc_rhs c then 
     prevStep_conc me c
   else
-    prevStep_abs me (C.id_of_t) n
+    prevStep_abs me (C.id_of_t c) n
 
-let killStep me f = 
-  FactMap.safeFind f me.fsm "Cex.killStep"
+let killstep_of_fact me f = 
+  FactMap.safeFind f me.fsm "Cex.killstep_of_fact"
+
+let delta me c n k : fact list = 
+  let _n = prevStep me c n in
+  SM.safeFind k me.lifespan "delta: bad kvar" 
+  |> List.filter (fun (m,_) -> _n <= m && m < n) 
+  |> Misc.flap snd
+  |> Misc.map (fun q -> Abs (k, q))
+
 
 (************************************************************************)
 (************************************************************************)
@@ -198,7 +199,7 @@ let killerCands me c n : (int * (((Sy.t * fact) * A.pred)) list) list =
       end
     end |> Misc.flatten
   end |> Misc.flatten
-  |> Misc.kgroupby (fst <+> snd <+> killStep me)
+  |> Misc.kgroupby (fst <+> snd <+> killstep_of_fact me)
 
 (* {{{ EAGER
 let rhs_pred_of_conc c =
@@ -327,11 +328,11 @@ let killedPred me c f =
     -> p 
   | _ -> failwith "Counterexample.killed"
 
-let getKillStep me c bgp iks : int =
-  let iks = Misc.fsort iks in
+let getKillStep me c bgp iks =
+  let iks = Misc.fsort fst iks in
   let ps  = iks |>: (snd <+> List.map snd <+> A.pAnd) in
   match TP.unsat_suffix me.tpc (C.senv_of_t c) bgp ps with
-  | None   -> E.s <| E.error "getKillStep" 
+  | None   -> assertf "getKillStep" 
   | Some j -> List.nth iks j 
 
 let getKillers_cands me c bgp cands =
@@ -340,23 +341,23 @@ let getKillers_cands me c bgp cands =
       None
   | _, Some g -> 
       Some g 
-  | _, _  -> begin
-      let _ = F.printf "\nNON BOT KILLER at _n = %d n = %d cid = %d \n" _n n cid in
-      TP.unsat_core me.tpc (C.senv_of_t c) bgp killers
+  | _, _  -> 
+      TP.unsat_core me.tpc (C.senv_of_t c) bgp cands 
       |> Misc.do_catch "ERROR: empty unsat core" List.hd
+      |> some
 
 let getKillers_fact (me: t) (f: fact) = 
   let n          = killstep_of_fact me f                    in 
   let cid        = IM.safeFind n me.scm  "Cex.getKillers 2" in
   let c          = IM.safeFind cid me.cm "Cex.getKillers 3" in
   let bgps       = C.preds_of_lhs (solutionAt me n) c
-                   |> (++) (A.pNot (killedPred me c f))     in
+                   |> (++) [A.pNot (killedPred me c f)]     in
   let iks        = killerCands me c n                       in
   let (j, cands) = getKillStep me c (A.pAnd bgps) iks       in
   let bgps'      = iks 
                    |> List.filter (fun (i,_) -> j < i)
                    |> Misc.flap   (snd <+> List.map snd)    in 
-  (cid, killer_of_cands me c (A.pAnd (bgps ++ bgps')) cands)
+  (cid, getKillers_cands me c (A.pAnd (bgps ++ bgps')) cands)
 
 let rec explain me acc f = 
   match getKillers_fact me f with

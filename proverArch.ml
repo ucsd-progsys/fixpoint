@@ -54,7 +54,7 @@ sig
                     -> Ast.Sort.t Ast.Symbol.SMap.t 
                     -> Ast.pred                             (* background predicate   *)
                     -> ('a * Ast.pred) list                 (* [(index, killer-fact)] *)
-                    -> 'a list                              (* [(killed, killers)]    *)
+                    -> 'a list                              (* [unsat-core-index]    *)
 
   val unsat_suffix : t
                    -> Ast.Sort.t Ast.Symbol.SMap.t 
