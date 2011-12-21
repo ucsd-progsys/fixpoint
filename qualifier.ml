@@ -34,7 +34,9 @@ module Sy = Ast.Symbol
 module So = Ast.Sort
 module Su = Ast.Subst
 module SM = Sy.SMap
+module SS = Sy.SSet
 module IM = Misc.IntMap
+
 open Misc.Ops
 open Ast
 
@@ -175,10 +177,14 @@ let expand_qual q =
 (*************** Expanding Away Sets of Ops and Rels **********************)
 (**************************************************************************)
 
-let make_def_deps q = 
+let make_def_deps qnames q = 
   let res = ref [] in
-  let p' : pred  = P.map begin function Bexp (App (f, args),_), _ ->  res := (f, args) :: !res; pTrue | p -> p end id q.pred  in 
-  (q.name, !res) 
+  let p' : pred  = P.map begin function 
+                         | Bexp (App (f, args),_), _ 
+                           when SS.mem f qnames -> res := (f, args) :: !res; pTrue 
+                         | p -> p 
+                         end id q.pred  
+  in (q.name, !res) 
 (*  >> (fun (n, xs) ->  F.printf "qdep %a = %a \n" Sy.print n (Misc.pprint_many false ", " Sy.print) (List.map fst xs) )
   *)
 
@@ -189,23 +195,37 @@ let check_def_deps qm =
         | [q] -> asserts (List.length args = 1 + List.length q.params) 
                  "Malformed Qualifier: %s with incorrect application of %s"
                  (Sy.to_string n) (Sy.to_string f)
-        | []  -> assertf "Malformed Qualifier: %s refers to unknown %s" 
+        | _::_::_ -> assertf "Malformed Qualifier: %s refers to multiply defined %s" 
                  (Sy.to_string n) (Sy.to_string f)
-        | _   -> assertf "Malformed Qualifier: %s refers to multiply defined %s" 
-                 (Sy.to_string n) (Sy.to_string f)
+        | _   -> ()     
+(*      | []  -> assertf "Malformed Qualifier: %s refers to unknown %s" 
+                 (Sy.to_string n) (Sy.to_string f) *)
+ 
       end fargs
   end
 
 let order_by_defs qm qs = 
+  let _    = print_now "Q.order_by_defs 1 \n" in
   let is   = Misc.range 0 (List.length qs)                                      in
+  let _    = print_now "Q.order_by_defs 2 \n" in
   let qis  = List.combine qs is                                                 in
+  let _    = print_now "Q.order_by_defs 3 \n" in
   let i2q  = qis  |>: Misc.swap |> IM.of_list  |> Misc.flip IM.find             in
+  let _    = print_now "Q.order_by_defs 4 \n" in
   let i2s  = i2q <+> name_of_t <+> Sy.to_string                                 in  
-  let n2i  = qis  |>: Misc.app_fst name_of_t |> SM.of_list |> Misc.flip SM.find in
-  let deps = qs |>: make_def_deps >> check_def_deps qm                          in
-  let ijs  = deps |> Misc.flap (fun (n,fargs) -> fargs |>: (fun (f,_) -> (n, f)))   
+  let _    = print_now "Q.order_by_defs 5 \n" in
+  let n2i  = qis  |>: Misc.app_fst name_of_t |> SM.of_list 
+             |> (fun m n -> SM.safeFind n m "order_by_defs") in
+   
+  let _    = print_now "Q.order_by_defs 6 \n" in
+  let qnams= qs |>: name_of_t |> SS.of_list in
+  let deps = qs |>: make_def_deps qnams >> check_def_deps qm                       in
+  let _    = print_now "Q.order_by_defs 7 \n" in
+  let ijs  = deps |> Misc.flap (fun (n, fargs) -> fargs |>: (fun (f,_) -> (n, f)))   
                   |> List.map (Misc.map_pair n2i)                               in
+  let _    = print_now "Q.order_by_defs 8 \n" in
   let irs  = Fcommon.scc_rank "qualifier-deps" i2s is ijs                       in 
+  let _    = print_now "Q.order_by_defs 9 \n" in
   Misc.fsort snd irs 
   |>: (fst <+> i2q)
 (*   >> (F.printf "ORDERED QUALS:\n%a\n" (Misc.pprint_many true "\n" print)) *)
@@ -213,24 +233,28 @@ let order_by_defs qm qs =
 let expand_def qm p = match p with 
   | Bexp (App (f, args),_), _ -> begin
     match SM.finds f qm with
-    | []      -> assertf "Unknown Qualifier: %s"   (Sy.to_string f) 
     | _::_::_ -> assertf "Ambiguous Qualifier: %s" (Sy.to_string f)
     | [q]     -> q |> all_params_of_t
                    |> List.map fst
                    |> Misc.flip (Misc.combine ("Q.expand_def "^ (P.to_string p))) args
                    |> Su.of_list
                    |> substs_pred q.pred
+    | []      -> p (* assertf "Unknown Qualifier: %s"   (Sy.to_string f)  *)
     end
   | _ -> p
     
 (* this MUST precede any renaming as renaming can screw up name resolution *)
 let compile_definitions qs = 
+  let _    = print_now "Q.compile_definitions 0 \n" in
   let qm   = List.fold_left (fun qm q -> SM.adds q.name [q] qm) SM.empty qs in
-  let qs'  = order_by_defs qm qs                                            in 
+  let _    = print_now "Q.compile_definitions 1 \n" in
+  let qs'  = order_by_defs qm qs                                       in 
+  let _    = print_now "Q.compile_definitions 2 \n" in
   List.fold_left begin fun qm q -> 
     let q' = {q with pred = P.map (expand_def qm) id q.pred } in
     SM.adds q.name [q'] qm
   end SM.empty qs'
+  >> (fun _ -> print_now "Q.compile_definitions 3\n")
   |> SM.range |> Misc.flatten
 
 (**************************************************************************)
@@ -247,7 +271,7 @@ let rename_qual q i =
 let uniquely_rename qs =
   Misc.mapfold begin fun m q ->
     if SM.mem q.name m then
-      let i = SM.find q.name m in
+      let i = SM.safeFind q.name m "uniquelyRename" in
       (SM.add q.name (i+1) m, rename_qual q i)
     else 
       (SM.add q.name 0 m, q)
@@ -256,11 +280,15 @@ let uniquely_rename qs =
 
 (* API *)
 let normalize qs =
-  qs |> Misc.flap expand_qual
+  qs >> (fun _ -> print_now "Q.normalize 0\n")
+     |> Misc.flap expand_qual
+     >> (fun _ -> print_now "Q.normalize 1\n")
      |> compile_definitions
+     >> (fun _ -> print_now "Q.normalize 2\n")
      |> remove_duplicates
+     >> (fun _ -> print_now "Q.normalize 3\n")
      |> uniquely_rename
-
+     >> (fun _ -> print_now "Q.normalize 4\n")
 
 
 (**************************************************************************)

@@ -346,7 +346,7 @@ let refine me c =
     let _ = me.stat_unsatLHS += 1 in
     let _ = me.stat_umatches += List.length rcs in
     (false, me)
-  else
+  else 
     let rcs     = List.filter (fun (_,p) -> not (P.is_contra p)) rcs in
     let lt      = PH.create 17 in
     let _       = List.iter (fun p -> PH.add lt p ()) lps in
@@ -372,13 +372,6 @@ let refine me c =
 (****************** Sort Check Based Refinement ****************)
 (***************************************************************)
 
-(* API *)
-let wellformed_pred env p =
-  Misc.do_catch_ret "PA.wellformed: sortcheck_pred " 
-    (A.sortcheck_pred (fun x -> snd3 (SM.find x env))) 
-    p 
-    false
-
 let refts_of_c c =
   [ C.lhs_of_t c ; C.rhs_of_t c] ++ (C.env_of_t c |> C.bindings_of_env |>: snd)
 
@@ -386,7 +379,7 @@ let refine_sort_reft env me ((vv, so, ras) as r) =
   let env' = SM.add vv r env in 
   let ks   = r |> C.kvars_of_reft |>: snd in
   ras |> Misc.flap (rhs_cands me)
-      |> List.filter (fun (_,p) -> wellformed_pred env' p)
+      |> List.filter (fun (_,p) -> C.wellformed_pred env' p)
       |> List.map fst
       |> p_update me ks
       |> snd
@@ -395,6 +388,8 @@ let refine_sort me c =
   let env = C.env_of_t c in
   c |> refts_of_c 
     |> List.fold_left (refine_sort_reft env) me  
+
+
 (***************************************************************)
 (************************* Satisfaction ************************)
 (***************************************************************)
@@ -462,11 +457,29 @@ let min_read s k =
 let min_read s k =
   BS.time "min_read" (min_read s) k
 
+(*
+let close_env qs sm =
+  qs |> Misc.flap   (Q.pred_of_t <+> P.support) 
+     |> Misc.filter (not <.> Misc.flip SM.mem sm)
+     |> Misc.map    (fun x -> (x, Ast.Sort.t_int))
+     |> SM.of_list
+     |> SM.extend sm
+*)
+
+let rename_vv q q' =
+  List.combine (Q.all_params_of_t q |>: fst) (Q.all_params_of_t q' |>: fst)
+  |> List.filter (fun (x, y) -> not (x = y))
+  |> List.map (fun (x, y) -> (y, A.eVar x))
+  |> Su.of_list
+  |> A.substs_pred (Q.pred_of_t q')
+  |> (fun p' -> (q', p'))
+
 (*  check_leq tp sm q qs = [q' | q' <- qs, Z3 |- q => q'] *)
 let check_leq tp sm (q : Q.t) (qs : Q.t list) : Q.t list = 
   let vv  = Q.vv_of_t q in
   let lps = [Q.pred_of_t q] in
-  qs |> List.map (fun q -> (q, Q.pred_of_t q))
+  let sm  = q |> Q.all_params_of_t |> SM.of_list |> SM.extend sm in
+  qs |> List.map (rename_vv q) (* (fun q -> (q, Q.pred_of_t q)) *)
      (* >> (List.map fst <+> F.printf "CHECK_TP: %a IN %a \n" Q.print q pprint_qs) *)
      |> TP.set_filter tp sm vv lps (fun _ _ -> false)
      |> List.flatten
@@ -480,30 +493,20 @@ let qimps_of_partition tp sm qs =
     end
   end
 
-let close_env qs sm =
-  qs |> Misc.flap   (Q.pred_of_t <+> P.support) 
-     |> Misc.filter (not <.> Misc.flip SM.mem sm)
-     |> Misc.map    (fun x -> (x, Ast.Sort.t_int))
-     |> SM.of_list
-     |> SM.extend sm
-
-let qleqs_of_qs ts sm ps qs =
-  let sm = close_env qs sm       in
-  let tp = TP.create ts sm ps [] in
-  qs |> Misc.groupby Q.sort_of_t
+let qleqs_of_qs ts sm cs ps qs  =
+  let tp = TP.create ts sm cs ps         in
+  qs |> Misc.groupby (List.map snd <.> Q.all_params_of_t) (* Q.sort_of_t *)
      |> Misc.flap (qimps_of_partition tp sm)
      |> Misc.flatten
      |> Misc.map (Misc.map_pair Q.name_of_t) 
      |> Q2S.of_list
 
-
 (***************************************************************)
 (******************** Qualifier Instantiation ******************)
 (***************************************************************)
 
-
 let wellformed_qual env q =
-  wellformed_pred env (Q.pred_of_t q)
+  C.wellformed_pred env (Q.pred_of_t q)
   
 (*  >> (F.printf "\nwellformed: q = @[%a@] in env = @[%a@] result %b\n"  
         Q.print q (C.print_env None) env)
@@ -602,13 +605,17 @@ let inst ws qs =
 (*************************** Creation ************************************)
 (*************************************************************************)
 
+let create_qleqs ts sm ps consts qs =
+  if !Co.minquals 
+  then BS.time "Annots: make qleqs" (qleqs_of_qs ts sm consts ps) qs 
+  else Q2S.empty
+
 let create ts sm ps consts assm qs bm =
-  let qleqs =  if !Co.minquals then BS.time "Annots: make qleqs" (qleqs_of_qs ts sm ps) qs else Q2S.empty in
-  { m    = bm
-  ; assm = assm
-  ; qm = qs |>: Misc.pad_fst Q.name_of_t |> SM.of_list
-  ; qleqs               = qleqs 
-  ; tpc                 = TP.create ts sm ps (List.map fst consts)
+ { m      = bm
+  ; assm  = assm
+  ; qm    = qs |>: Misc.pad_fst Q.name_of_t |> SM.of_list
+  ; qleqs = create_qleqs ts sm consts ps qs 
+  ; tpc   = TP.create ts sm ps consts
   
   (* Counterexamples *) 
   ; step     = 0
@@ -635,8 +642,8 @@ let ppBinding (k, zs) =
 let update_pruned ks me fqm =
   List.fold_left begin fun m k ->
     if not (SM.mem k fqm) then m else
-      let false_qs = SM.find k fqm in
-      let qs = SM.find k m 
+      let false_qs = SM.safeFind k fqm "update_pruned 1" in
+      let qs = SM.safeFind k m "update_pruned 2" 
                |> List.filter (fun q -> (not (List.mem (k,q) false_qs))) 
       in SM.add k qs m
   end me.m ks
@@ -684,15 +691,17 @@ let binds_of_quals ws qs =
   | "" -> binds_of_quals ws qs  (* regular solving mode *)
   | _  -> SM.empty              (* constraint simplification mode *)
 
+
+
 (* API *)
 let create c facts = 
   binds_of_quals c.Cg.ws c.Cg.qs
   |> SM.extendWith (fun _ -> (++)) c.Cg.bm
   |> create c.Cg.ts c.Cg.uops c.Cg.ps c.Cg.cons c.Cg.assm c.Cg.qs
-  |> ((!Constants.refine_sort) <?> Misc.flip (List.fold_left refine_sort) c.Cg.cs)
+  (* |> ((* (!Constants.refine_sort) <?> *) Misc.flip (List.fold_left refine_sort) c.Cg.cs) *)
   |> Misc.maybe_apply (apply_facts c.Cg.cs) facts
 
-  (* API *)
+(* API *)
 let empty = create Cg.empty None
 
 (* API *)

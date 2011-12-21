@@ -285,8 +285,8 @@ and z3Pred me env = function
       let s2 = E.to_string e in
       let Some so = A.sortcheck_expr (varSort env) e in
       let sos = So.to_string so in
-      let _  = asserts (is_z3_bool me a) "Bexp is not bool! z3=%s, fix=%s, sort=%s" 
-                                         s1 s2 sos in 
+      let _  = asserts (is_z3_bool me a) "Bexp is not bool (e = %s)! z3=%s, fix=%s, sort=%s" 
+                                         (E.to_string e) s1 s2 sos in 
       a
  | A.Forall (xts, p), _ -> 
       let (xs, ts) = List.split xts in
@@ -296,7 +296,10 @@ and z3Pred me env = function
       let _        = me.bnd <- me.bnd - (List.length xs) in
       rv
 
-let z3Pred me env p = BS.time "z3Pred" (z3Pred me env) p
+let z3Pred me env p = 
+  try 
+    BS.time "z3Pred" (z3Pred me env) p
+  with ex -> (Format.printf "z3Pred: error converting %a\n" P.print p) ; raise ex 
 
 let z3Distinct me env = List.map (z3Var me env) <+> Array.of_list <+> Z3.mk_distinct me.c
 
@@ -410,10 +413,11 @@ let create ts env ps consts =
             funt  = Hashtbl.create 37; 
             vars  = []; count = 0; bnd = 0} in
   let _  = List.iter (z3Pred me env <+> assert_axiom me) (axioms ++ ps) in
-  let _  = match consts with [] -> () | _ -> z3Distinct me env consts |> assert_axiom me in 
-  me
+  let _  = if Misc.nonnull consts 
+           then (z3Distinct me env consts |> assert_axiom me) 
+  in me
 
-(* API *)
+ (* API *)
 let set_filter (me: t) (env: So.t SM.t) (vv: Sy.t) ps p_imp qs =
   let _   = ignore(nb_set   += 1); ignore (nb_query += List.length qs) in
   let ps  = BS.time "fixdiv" (List.rev_map A.fixdiv) ps in

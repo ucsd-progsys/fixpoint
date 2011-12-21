@@ -46,7 +46,7 @@ val empty_solution   : soln
 val meet_solution    : soln -> soln -> soln
 val apply_solution   : soln -> reft -> reft
 
-
+val wellformed_pred  : envt -> Ast.pred -> bool
 val preds_of_refa    : soln -> refa -> Ast.pred list
 val preds_of_reft    : soln -> reft -> Ast.pred list
 val preds_of_lhs     : soln -> t -> Ast.pred list

@@ -22,10 +22,10 @@ type 'bind cfg = {
  ; ws   : FixConstraint.wf list
  ; ds   : FixConstraint.dep list
  ; qs   : Qualifier.t list
- ; bm   : 'bind Ast.Symbol.SMap.t                       (* Initial Sol Bindings *)
- ; cons : (Ast.Symbol.t * Ast.Sort.t) list              (* Distinct Constants *)
- ; uops : Ast.Sort.t Ast.Symbol.SMap.t                  (* Uninterpreted Funs *) 
- ; assm : FixConstraint.soln                            (* invariant fixpoint assumption for K *)
+ ; bm   : 'bind Ast.Symbol.SMap.t           (* Initial Sol Bindings *)
+ ; uops : Ast.Sort.t Ast.Symbol.SMap.t      (* Globals: measures + distinct consts) *)
+ ; cons : Ast.Symbol.t list                 (* Distinct Constants, defined in uops *)
+ ; assm : FixConstraint.soln                (* invariant fixpoint assumption for K *)
 }
 
 

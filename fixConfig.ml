@@ -24,6 +24,7 @@ module Sy  = Ast.Symbol
 module SM  = Sy.SMap
 module Q   = Qualifier
 module C   = FixConstraint
+module So  = Ast.Sort
 
 open Misc.Ops
 
@@ -46,18 +47,17 @@ type deft = Srt of Ast.Sort.t
 
 
 type 'bind cfg = { 
-   a    : int                                           (* Tag arity *)
- ; ts   : Ast.Sort.t list                               (* New sorts, now = []*)
- ; ps   : Ast.pred list                                 (* New axioms, now = [] *)
+   a    : int                               (* Tag arity *)
+ ; ts   : Ast.Sort.t list                   (* New sorts, now = []*)
+ ; ps   : Ast.pred list                     (* New axioms, now = [] *)
  ; cs   : FixConstraint.t list
  ; ws   : FixConstraint.wf list
  ; ds   : FixConstraint.dep list
  ; qs   : Q.t list
- ; bm   : 'bind SM.t                                    (* Initial Sol Bindings *)
- ; cons : (Ast.Symbol.t * Ast.Sort.t) list              (* Distinct Constants *)
- ; uops : Ast.Sort.t Ast.Symbol.SMap.t                  (* Uninterpreted Funs *)
- ; assm : FixConstraint.soln
-          (* Seed Solution -- must be a fixpoint over constraints *)
+ ; bm   : 'bind SM.t                        (* Initial Sol Bindings *)
+ ; uops : Ast.Sort.t Ast.Symbol.SMap.t      (* Globals: measures + distinct consts) *)
+ ; cons : Ast.Symbol.t list                 (* Distinct Constants, defined in uops *)
+ ; assm : FixConstraint.soln                (* Seed Solution -- must be a fixpoint over constraints *)
 }
 
 let get_arity = function
@@ -81,7 +81,9 @@ let sift_quals ds =
 
 let sift_quals ds = 
   ds |> Misc.map_partial (function Qul q -> Some q | _ -> None)
+     >> (fun _ -> print_now "BEGIN: Q.normalize\n")
      |> Q.normalize 
+     >> (fun _ -> print_now "DONE: Q.normalize\n")
      |> Misc.map (Misc.pad_fst Q.name_of_t)
      |> SM.of_list
 
@@ -90,11 +92,11 @@ let extend f cfg = function
   | Axm p         -> {cfg with ps   = p     :: cfg.ps }
   | Cst c         -> {cfg with cs   = c     :: cfg.cs }
   | Wfc w         -> {cfg with ws   = w     :: cfg.ws }
-  | Con (s,t)     -> {cfg with cons = (s,t) :: cfg.cons; uops = SM.add s t cfg.uops} 
   | Dep d         -> {cfg with ds   = d     :: cfg.ds }
   | Qul q         -> {cfg with qs   = q     :: cfg.qs }
   | Sol (k, fess) -> {cfg with bm   = SM.add k (List.map f fess) cfg.bm  }
-
+  | Con (s,t)     -> {cfg with cons = if So.is_func t then cfg.cons else s :: cfg.cons
+                             ; uops = SM.add s t cfg.uops} 
   
 let empty = { a    = 0 ; ts   = []; ps = []
             ; cs   = []; ws   = []; ds = []
@@ -103,7 +105,7 @@ let empty = { a    = 0 ; ts   = []; ps = []
             ; assm = FixConstraint.empty_solution }
 
 let fes2q qm (f, es) =
-  let q   = Misc.do_catchf ("name2qual: "^ (Sy.to_string f)) (SM.find f) qm in
+  let q   = SM.safeFind f qm "name2qual" in
   q |> Q.all_params_of_t
     |> List.map fst 
     |> Misc.flip (Misc.combine "FixConfig.fes2q") es
@@ -115,6 +117,7 @@ let create ds =
   ds |> List.fold_left (extend (fes2q qm)) empty
      |> (fun cfg -> {cfg with a  = get_arity cfg.cs})
      |> (fun cfg -> {cfg with ws = C.add_wf_ids cfg.ws})
+
 
 (* API *)
 let create_raw ts env ps a ds cs ws qs assm = 

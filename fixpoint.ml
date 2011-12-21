@@ -64,7 +64,7 @@ let solve ac  =
   let ctx, s    = BS.time "create" SPA.create ac None in
   let _         = print_now "Fixpoint: Solving \n" in
   let s, cs',_  = BS.time "solve" (SPA.solve ctx) s in
-
+  
   let _         = print_now "Fixpoint: Saving Result \n" in
   let _         = BS.time "save" (save_raw !Co.out_file cs') s in
   let _         = print_now "Fixpoint: Saving Result DONE \n" in
@@ -106,7 +106,7 @@ let dump_simp ac =
   let ac = {ac with Cg.cs = simplify_ts ac.Cg.cs; Cg.bm = SM.empty} in
   Misc.with_out_formatter !Co.save_file (fun ppf -> Cg.print ppf ac)
 
-   (*
+(*
 let dump_simp ac = 
   (* let ac    = {ac with Cg.cs = simplify_ts ac.Cg.cs; Cg.bm = SM.empty; Cg.qs = []} in *)
   let ac    = {ac with Cg.cs = simplify_ts ac.Cg.cs; Cg.bm = SM.empty} in

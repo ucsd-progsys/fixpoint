@@ -204,25 +204,31 @@ let solve me s =
 
 (* API *)
 let create cfg kf =
+  let gts = SM.to_list cfg.Cg.uops in
   let sri = cfg.Cg.cs
             >> Co.logPrintf "Pre-Simplify Stats\n%a" print_constr_stats
-            |> BS.time  "Constant Env" (List.map (C.add_consts_t cfg.Cg.cons))
+            |> BS.time  "Constant Env" (List.map (C.add_consts_t gts))
             |> BS.time  "Simplify" FixSimplify.simplify_ts
             >> Co.logPrintf "Post-Simplify Stats\n%a" print_constr_stats
             |> BS.time  "Ref Index" Ci.create cfg.Cg.ds
             |> (!Co.slice <?> BS.time "Slice" Ci.slice) in
   let ws  = cfg.Cg.ws
             |> (!Co.slice <?> BS.time "slice_wf" (Ci.slice_wf sri))
-            |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf cfg.Cg.cons))
+            |> BS.time  "Constant EnvWF" (List.map (C.add_consts_wf gts))
             |> PP.validate_wfs in
   let s   = if !Constants.dump_simp <> "" then Dom.empty else Dom.create cfg kf in
+  let _   = print_now "DONE: Dom.create\n" in
   let _   = Ci.to_list sri
             |> BS.time "Validate" (PP.validate cfg.Cg.a (Dom.read s)) in
-  ({ sri          = sri; ws           = ws
+  let _   = print_now "DONE: PP.validate \n" in
+  ({ sri          = sri
+   ; ws           = ws
    (* stat *)
    ; tt           = Timer.create "fixpoint iters"
-   ; stat_refines = ref 0; stat_cfreqt  = Hashtbl.create 37
+   ; stat_refines = ref 0
+   ; stat_cfreqt  = Hashtbl.create 37
    }, s)
+   >> (fun _ -> print_now "DONE: Solve.create\n")
 
 (* API *)
 let save fname me s =
