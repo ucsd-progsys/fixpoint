@@ -448,7 +448,7 @@ let simplify_ts cs =
   |> ((not !Co.lfp)  <?> BS.time "simplify 0" WeakFixpoint.simplify_ts)
   |> BS.time "add ids  1" (C.add_ids 0) 
   |> snd
-  |> (!Co.copyprop   <?> BS.time "simplify CP" CopyProp.simplify_ts)
+  (* |> (!Co.copyprop   <?> BS.time "simplify CP" CopyProp.simplify_ts)  *)
   |> (!Co.simplify_t <?> BS.time "simplify 1" Syntactic.simplify_ts) (* termination bug, tickled by C benchmarks *)
   |> (!Co.simplify_t <?> BS.time "simplify 2" Cone.simplify_ts)
   |> (!Co.simplify_t <?> BS.time "simplify 3" EliminateK.simplify_ts)
