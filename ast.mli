@@ -188,7 +188,6 @@ sig
   val iter      : (pred -> unit) -> (expr -> unit) -> pred -> unit 
   val is_contra : pred -> bool
   val is_tauto  : pred -> bool
-  (* val size      : pred -> int *)
 end
 
 module Subst : 
@@ -201,6 +200,7 @@ module Subst :
     val of_list   : (Symbol.t * expr) list -> t
     val to_list   : t -> (Symbol.t * expr) list
     val print     : Format.formatter -> t -> unit
+    val apply     : t -> Symbol.t -> expr option
   end
 
 
@@ -240,6 +240,7 @@ val bot            : expr
 
 val symm_pred      : pred -> pred
 val unify_pred     : pred -> pred -> Subst.t option
+val substs_expr    : expr -> Subst.t -> expr
 val substs_pred    : pred -> Subst.t -> pred 
 val simplify_pred  : pred -> pred
 val conjuncts      : pred -> pred list

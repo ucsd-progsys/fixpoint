@@ -755,10 +755,10 @@ let esub x e = function
   | _ as e1 -> e1 
 
 let expr_subst hp he e x e' =
-  expr_map hp he (fun p -> p) (esub x e') e 
+  expr_map hp he id (esub x e') e 
 
 let pred_subst hp he p x e' =
-  pred_map hp he (fun p -> p) (esub x e') p 
+  pred_map hp he id (esub x e') p 
 
 module Expression = 
   struct
@@ -808,79 +808,75 @@ module Expression =
 
   end
     
-module Predicate =
-    struct
-      module Hash = PredHash 
+module Predicate = struct
+  module Hash = PredHash 
 	
-      let to_string = pred_to_string
-(*
-     let print     = fun fmt p -> Format.pp_print_string fmt (to_string p)
-  *)    
-     
-      let print = print_pred
- 
-      let show      = print Format.std_formatter
+  let to_string = pred_to_string
+  let print     = print_pred
+  let show      = print Format.std_formatter
 			
-      let map fp fe p =
+  let map fp fe p =
 	let hp = PredHash.create 251 in
 	let he = ExprHash.create 251 in 
-        pred_map hp he fp fe p
+    pred_map hp he fp fe p
 	
-      let iter fp fe p =
-        pred_iter fp fe p
+  let iter fp fe p =
+    pred_iter fp fe p
 
-      let subst p x e' =
-        map id (esub x e') p
+  let subst p x e' =
+    map id (esub x e') p
 
-      let substs p xes =
-        map id (fun e -> List.fold_left (esub |> Misc.uncurry |> Misc.flip) e xes) p
+  let substs p xes =
+    map id (fun e -> List.fold_left (esub |> Misc.uncurry |> Misc.flip) e xes) p
 
-      let support p =
-        let xs = ref Symbol.SSet.empty in
-        iter un begin function 
-          | (Var x), _ 
-          | (App (x,_)),_ -> xs := Symbol.SSet.add x !xs;
-          | _               -> ()
-        end p; 
-        Symbol.SSet.elements !xs |> List.sort compare
+  let support p =
+    let xs = ref Symbol.SSet.empty in
+    iter un begin function 
+      | (Var x), _ 
+      | (App (x,_)),_ -> xs := Symbol.SSet.add x !xs;
+      | _               -> ()
+    end p; 
+    Symbol.SSet.elements !xs |> List.sort compare
 
-      let size p =
-	let c = ref 0 in
-        let f = fun _ -> incr c in
-        let _ = iter f f p in 
-        !c
+  (*
+  let size p =
+	let c = ref 0           in
+    let f = fun _ -> incr c in
+    let _ = iter f f p      in 
+    !c
 
-      let size p =
-	let c = ref 0 in
-        let _ = iter (fun _ -> incr c) p in 
-        !c
+  let size p =
+	let c = ref 0                    in
+    let _ = iter (fun _ -> incr c) p in 
+    !c
+  *)
+  
+  let unwrap = puw
 
-      let unwrap = puw
+  let is_contra = 
+    let t = PredHash.create 17 in
+    let _ = [pFalse; pNot pTrue; pAtom (zero, Eq, one); pAtom (one, Eq, zero)]
+            |> List.iter (fun p-> PredHash.replace t p ()) in 
+    fun p -> PredHash.mem t p 
+   
 
-      let is_contra = 
-        let t = PredHash.create 17 in
-        let _ = [pFalse; pNot pTrue; pAtom (zero, Eq, one); pAtom (one, Eq, zero)]
-                |> List.iter (fun p-> PredHash.replace t p ()) in 
-        fun p -> PredHash.mem t p 
-       
+  let rec is_tauto  = function
+    | Atom(e1, Eq, e2), _ -> snd e1 == snd e2
+    | Imp (p1, p2), _     -> snd p1 == snd p2
+    | And ps, _           -> List.for_all is_tauto ps
+    | Or  ps, _           -> List.exists is_tauto ps
+    | True, _             -> true
+    | _                   -> false
 
-      let rec is_tauto  = function
-        | Atom(e1, Eq, e2), _ -> snd e1 == snd e2
-	    | Imp (p1, p2), _     -> snd p1 == snd p2
-        | And ps, _           -> List.for_all is_tauto ps
-        | Or  ps, _           -> List.exists is_tauto ps
-        | True, _             -> true
-        | _                   -> false
+  let has_bot p =
+    let r = ref false in
+    iter un begin function 
+      | Bot, _ -> r := true
+      | _      -> ()
+    end p; 
+    !r
 
-      let has_bot p =
-        let r = ref false in
-        iter un begin function 
-          | Bot, _ -> r := true
-          | _      -> ()
-        end p; 
-        !r
-
-    end
+  end
 
 let print_stats _ = 
   Printf.printf "Ast Stats. [none] \n"
@@ -1273,6 +1269,9 @@ module Subst = struct
   let concat    = fun s1 s2 -> Symbol.SMap.fold (fun x e s -> extend s (x, e)) s2 s1
   let print_sub = fun ppf (x,e) -> F.fprintf ppf "[%a:=%a]" Symbol.print x Expression.print e
   let print     = fun ppf -> to_list <+> F.fprintf ppf "%a" (Misc.pprint_many false "" print_sub)
+
+  let apply su x = 
+    if Symbol.SMap.mem x su then Some (Symbol.SMap.find x su) else None 
 end
 
 
@@ -1412,8 +1411,18 @@ end
 
 (* API *)
 let simplify_pred = remove_bot <+> simplify_pred
-let substs_pred   = fun p su -> su |> Subst.to_list |> Predicate.substs p |> simplify_pred
 
+
+let esub_su su e = match e with 
+  | ((Var y), _) -> Misc.maybe_default (Subst.apply su y) e
+  | _            -> e
+
+(* ORIG 
+   let substs_pred   = fun p su -> su |> Subst.to_list |> Predicate.substs p |> simplify_pred
+*)
+
+let substs_pred p su = Predicate.map  id (esub_su su) p
+let substs_expr e su = Expression.map id (esub_su su) e
 
 (****************************************************************************)
 (******************** Unification of Predicates *****************************)
