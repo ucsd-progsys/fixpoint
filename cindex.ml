@@ -274,7 +274,7 @@ let pp_cstr_ids ppf cs = F.fprintf ppf "@[%a@.@]" (Misc.pprint_many false "," pp
 let deps me c =
   (try IM.find (C.id_of_t c) me.depm with Not_found -> [])
   |> List.map (get_ref_constraint me)
-  >> (List.map C.id_of_t <+> Co.logPrintf "Deps %d = [%a]\n" (C.id_of_t c) Misc.pprint_pretty_ints)
+  (* >> (List.map C.id_of_t <+> Co.logPrintf "Deps %d = [%a]\n" (C.id_of_t c) Misc.pprint_pretty_ints) *)
 
 (* API *)
 let to_list me = IM.range me.cnst

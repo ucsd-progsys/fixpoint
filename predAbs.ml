@@ -436,19 +436,22 @@ let min_read s k =
     |> List.map fst 
   else []
 
+let min_read s k =
+  if !Co.minquals then min_read s k else read s k
+
 (* API *)
 let min_read s k =
-  if !Constants.minquals then min_read s k else read s k
+  BS.time "min_read" (min_read s) k
 
 (*  check_leq tp sm q qs = [q' | q' <- qs, Z3 |- q => q'] *)
 let check_leq tp sm (q : Q.t) (qs : Q.t list) : Q.t list = 
   let vv  = Q.vv_of_t q in
   let lps = [Q.pred_of_t q] in
   qs |> List.map (fun q -> (q, Q.pred_of_t q))
-     >> (List.map fst <+> F.printf "CHECK_TP: %a IN %a \n" Q.print q pprint_qs)
+     (* >> (List.map fst <+> F.printf "CHECK_TP: %a IN %a \n" Q.print q pprint_qs) *)
      |> TP.set_filter tp sm vv lps (fun _ _ -> false)
      |> List.flatten
-     >> F.printf "CHECK_TP: %a OUT %a \n" Q.print q pprint_qs
+     (* >> F.printf "CHECK_TP: %a OUT %a \n" Q.print q pprint_qs *)
 
 let qimps_of_partition tp sm qs =
   foreach qs begin fun q ->
@@ -517,7 +520,7 @@ let valid_bindings_sort env (x, t) =
       |> Misc.filter varmatch
 
 let valid_bindings env ys (x, t) =
-  if !Constants.sorted_quals
+  if !Co.sorted_quals
   then valid_bindings_sort env (x,t)
   else valid_bindings ys x
 
@@ -586,9 +589,10 @@ let inst ws qs =
 (*************************************************************************)
 
 let create ts sm ps consts assm qs0 bm =
-  let qs         = Misc.sort_and_compact (qs0 ++ quals_of_bindings bm) in
+  let qs    = Misc.sort_and_compact (qs0 ++ quals_of_bindings bm) in
+  let qleqs =  if !Co.minquals then BS.time "Annots: make qleqs" (qleqs_of_qs ts sm ps) qs else Q2S.empty in
   { m = bm; assm = assm; qs = QS.of_list qs
-  ; qleqs               = if !Constants.minquals then qleqs_of_qs ts sm ps qs else Q2S.empty
+  ; qleqs               = qleqs 
   ; tpc                 = TP.create ts sm ps (List.map fst consts)
   ; stat_simple_refines = ref 0
   ; stat_tp_refines     = ref 0; stat_imp_queries    = ref 0
