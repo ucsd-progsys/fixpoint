@@ -429,12 +429,26 @@ let qual_leq s =
 let def_leq s (_, (q1, su1)) (_, (q2, su2)) = 
   qual_leq s (q1, q2) && subst_leq (su1, su2)
 
+let pred_of_bind (_, (q, su)) =
+  let name = q |> Q.name_of_t                                in
+  let es   = q |> Q.params_of_t |> List.map (fst <+> A.eVar) in
+  A.substs_pred (A.pBexp (A.eApp (name, es))) su
+
+let min_read s k = 
+  if SM.mem k s.m then 
+    SM.find k s.m 
+    |> Misc.rootsBy (def_leq s)  
+    |> List.map pred_of_bind
+  else []
+
+(*
 let min_read s k = 
   if SM.mem k s.m then 
     SM.find k s.m 
     |> Misc.rootsBy (def_leq s)  
     |> List.map fst 
   else []
+*)
 
 let min_read s k =
   if !Co.minquals then min_read s k else read s k

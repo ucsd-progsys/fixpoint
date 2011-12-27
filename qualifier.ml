@@ -53,7 +53,6 @@ let sort_of_t   = fun { params = (_,so)::_ } -> so
 let pred_of_t   = fun q -> q.pred
 let params_of_t = fun q -> q.params
 
-
 let print_param ppf (x, t) =
   Format.fprintf ppf "%a:%a" Sy.print x So.print t 
 

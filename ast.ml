@@ -572,6 +572,8 @@ and print_pred ppf p = match puw p with
       F.fprintf ppf "true"
   | False -> 
       F.fprintf ppf "false"
+  | Bexp (App (s, es), _) ->
+      F.fprintf ppf "%a(%a)" Symbol.print s (Misc.pprint_many false ", " print_expr) es
   | Bexp e ->
       F.fprintf ppf "(Bexp %a)" print_expr e
   | Not p -> 

@@ -28,10 +28,12 @@
 
 type t 
 type def   = Ast.pred * (t * Ast.Subst.t)
-val create    : Ast.Symbol.t -> Ast.Symbol.t -> Ast.Sort.t -> (Ast.Symbol.t * Ast.Sort.t) list -> Ast.pred -> t 
+val create    :  Ast.Symbol.t 
+              -> Ast.Symbol.t 
+              -> Ast.Sort.t 
+              -> (Ast.Symbol.t * Ast.Sort.t) list -> Ast.pred -> t 
 
-(* val create    : string -> Ast.Symbol.t -> Ast.Sort.t -> Ast.Sort.t Ast.Symbol.SMap.t -> Ast.pred -> t 
-*)
+(* val create    : string -> Ast.Symbol.t -> Ast.Sort.t -> Ast.Sort.t Ast.Symbol.SMap.t -> Ast.pred -> t *)
 (* val rename    : string -> t -> t *)
 
 val name_of_t : t -> Ast.Symbol.t (* string *)
