@@ -3,15 +3,15 @@
 
 exception UnmappedKvar of Ast.Symbol.t
 
-type qbind = Ast.Qualifier.def list list
+type qbind = Qualifier.def list list
 
 type deft = Srt of Ast.Sort.t 
           | Axm of Ast.pred 
           | Cst of FixConstraint.t
           | Wfc of FixConstraint.wf
           | Con of Ast.Symbol.t * Ast.Sort.t
-          | Sol of Ast.Symbol.t * (Ast.pred * (string * Ast.Subst.t)) list
-          | Qul of Ast.Qualifier.t
+          | Sol of Ast.Symbol.t * (Ast.pred * (Ast.Symbol.t * Ast.Subst.t)) list
+          | Qul of Qualifier.t
           | Dep of FixConstraint.dep
 
 type 'bind cfg = { 
@@ -21,7 +21,7 @@ type 'bind cfg = {
  ; cs   : FixConstraint.t list
  ; ws   : FixConstraint.wf list
  ; ds   : FixConstraint.dep list
- ; qs   : Ast.Qualifier.t list
+ ; qs   : Qualifier.t list
  ; bm   : 'bind Ast.Symbol.SMap.t                       (* Initial Sol Bindings *)
  ; cons : (Ast.Symbol.t * Ast.Sort.t) list              (* Distinct Constants *)
  ; uops : Ast.Sort.t Ast.Symbol.SMap.t                  (* Uninterpreted Funs *) 
@@ -57,6 +57,6 @@ val create_raw:  Ast.Sort.t list
               -> FixConstraint.dep list 
               -> FixConstraint.t list 
               -> FixConstraint.wf list 
-              -> Ast.Qualifier.t list
+              -> Qualifier.t list
               -> FixConstraint.soln 
               -> 'a cfg

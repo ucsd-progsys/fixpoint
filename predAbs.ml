@@ -30,7 +30,7 @@ module A   = Ast
 module E   = A.Expression
 module P   = A.Predicate
 
-module Q   = A.Qualifier
+module Q   = Qualifier
 module Sy  = A.Symbol
 module Su  = A.Subst
 module SM  = Sy.SMap
@@ -108,7 +108,7 @@ let pprint_ps =
   Misc.pprint_many false ";" P.print 
 
 let print_dep ppf (p, (q, su)) = 
-  F.fprintf ppf "(%a, %s%a)" P.print p (Q.name_of_t q) Su.print su
+  F.fprintf ppf "(%a, %a%a)" P.print p Sy.print (Q.name_of_t q) Su.print su
 
 let pprint_ds = 
   Misc.pprint_many false ";" print_dep
@@ -158,7 +158,7 @@ module DotGraph = struct
   let iter_edges_e              = G.iter_edges_e
   let graph_attributes          = fun _ -> [`Size (11.0, 8.5); `Ratio (`Fill (* Float 1.29*))]
   let default_vertex_attributes = fun _ -> [`Shape `Box]
-  let vertex_name               = Q.name_of_t 
+  let vertex_name               = Q.name_of_t <+> Sy.to_string 
   let vertex_attributes         = fun q -> [`Label ((Misc.fsprintf Q.print q))] 
   let default_edge_attributes   = fun _ -> []
   let edge_attributes           = fun (_,(),_) -> [] 
@@ -527,16 +527,12 @@ let valid_bindings env ys (x, t) =
 let inst_qual env ys t' (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
   let v  = Q.vv_of_t   q in
   let p  = Q.pred_of_t q in
-  let q' = Q.create "" v t' (Q.params_of_t q) p in
+  let n  = Sy.of_string "" in 
+  let q' = Q.create n v t' (Q.params_of_t q) p in
   let v' = Sy.value_variable t' in
   let su = Su.of_list [(v, A.eVar v')] in
   begin
-  (*match q' |> Q.pred_of_t |> P.support |> List.filter Sy.is_wild with
-  | [] ->
-      [q', (q, su)]
-  | xs ->
-      xs *)
-  match q' |> Q.params_of_t |> Sy.SMap.to_list with
+  match Q.params_of_t q' with
   | [] ->
       [q', (q, su)]
   | xts ->

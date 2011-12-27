@@ -70,21 +70,16 @@ module Symbol :
     type t 
     module SMap         : Misc.EMapType with type key = t
     module SSet         : Misc.ESetType with type elt = t
-    
     val mk_wild         : unit -> t  
     val of_string       : string -> t
     val to_string       : t -> string 
+    val is_wild_any     : t -> bool
     val is_wild_fresh   : t -> bool
     val is_wild         : t -> bool
     val print           : Format.formatter -> t -> unit
     val value_variable  : Sort.t -> t
     val is_value_variable : t -> bool
-(*
-    val sm_length       : 'a SMap.t -> int
-    val sm_filter       : (t -> 'a -> bool) -> 'a SMap.t -> 'a SMap.t
-    val sm_to_list      : 'a SMap.t -> (t * 'a) list
-    val sm_of_list      : (t * 'a) list -> 'a SMap.t
-  *)
+    val suffix          : t -> string -> t
   end
 
 module Constant :
@@ -203,25 +198,6 @@ module Subst :
     val apply     : t -> Symbol.t -> expr option
   end
 
-
-module Qualifier : 
-  sig
-    type t 
-    type def      = pred * (t * Subst.t)
-    
-    val create    : string -> Symbol.t -> Sort.t -> Sort.t Symbol.SMap.t -> pred -> t 
-    val rename    : string -> t -> t
-    val name_of_t : t -> string 
-    val vv_of_t   : t -> Symbol.t
-    val pred_of_t : t -> pred
-    val sort_of_t : t -> Sort.t
-    val params_of_t : t -> Sort.t Symbol.SMap.t
-    val vv_of_t   : t -> Symbol.t
-    val normalize : t list -> t list
-    val subst_vv  : Symbol.t -> t -> t 
-    val subst     : Subst.t -> t -> t
-    val print     : Format.formatter -> t -> unit
-  end
 
 module Horn :
   sig

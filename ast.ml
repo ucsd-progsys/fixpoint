@@ -241,6 +241,8 @@ module Symbol =
                    
     let to_string = fun s -> s (* if is_safe s then s else "'" ^ s ^ "'" *)
 
+    let suffix = fun s suff -> of_string ((to_string s) ^ suff)
+
     let print fmt s =
       to_string s |> Format.fprintf fmt "%s" 
 
@@ -1178,68 +1180,6 @@ let rec conjuncts = function
   | p         -> [p]
 
 
-let expand_with_list f g =
-  List.map f <+> Misc.cross_flatten <+> Misc.map g
-
-let expand_with_pair f g =
-  Misc.map_pair f <+> Misc.uncurry Misc.cross_product <+> Misc.map g
-
-let crunchExpr f e1s xs e2s =
-  List.map begin fun e1 -> 
-    List.map begin fun e2 ->
-      List.map begin fun x ->
-        f (e1, x, e2)
-      end xs
-    end e2s
-  end e1s
-  |> List.flatten |> List.flatten
-
-let rec expand_p ((p,_) as pred) = match p with 
-   | And ps             -> expand_ps pAnd ps
-   | Or ps              -> expand_ps pOr ps
-   | Not p              -> expand_p p |> List.map pNot 
-   | Imp (p1,p2)        -> expand_pp pImp (p1, p2)
-   | Iff (p1,p2)        -> expand_pp pIff (p1, p2)
-   | Forall(qs, p)      -> expand_p p |> List.map (fun p -> pForall (qs, p))
-   | Bexp e             -> expand_e e |> List.map pBexp
-   | MAtom (e1, rs, e2) -> let (e1s, e2s) = Misc.map_pair expand_e (e1,e2) in
-                           crunchExpr pAtom e1s rs e2s
-   | Atom (e1, r, e2)   -> let (e1s, e2s) = Misc.map_pair expand_e (e1,e2) in
-                           crunchExpr pAtom e1s [r] e2s
-   | _                  -> [pred]
-
-and expand_e ((e,_) as expr) = match e with
-   | MExp es            -> Misc.flap expand_e es
-   | App (f, es)        -> expand_es (fun es -> eApp (f, es)) es
-   | Bin (e1, op, e2)   -> expand_ep (fun (e1,e2) -> eBin (e1, op, e2)) (e1, e2) 
-   | MBin (e1, ops, e2) -> let e1s, e2s = Misc.map_pair expand_e (e1, e2) in
-                           crunchExpr eBin e1s ops e2s
-   | Fld (s, e)         -> expand_e e |> List.map (fun e -> eFld (s,e))
-   | Cst (e, t)         -> expand_e e |> List.map (fun e -> eCst (e,t))
-   | Ite (p,e1,e2)      -> let e1s, e2s = Misc.map_pair expand_e (e1, e2) in
-                           let ps       = expand_p p in 
-                           List.map begin fun e1 ->
-                             List.map begin fun e2 ->
-                               List.map begin fun p ->
-                                 eIte (p, e1, e2)
-                               end ps
-                             end e2s
-                           end e1s
-                           |> List.flatten |> List.flatten
-   | _ -> [expr]
-
-and expand_ps x = expand_with_list expand_p x
-and expand_pp x = expand_with_pair expand_p x
-and expand_es x = expand_with_list expand_e x
-and expand_ep x = expand_with_pair expand_e x
-(*
-and expand_matoms_ps f = 
-  List.map expand_matoms <+> Misc.cross_flatten <+> Misc.map f
-
-and expand_matoms_pp f = 
-  Misc.map_pair expand_matoms <+> Misc.uncurry Misc.cross_product <+> Misc.map f
-*)
-
 (**************************************************************************)
 (*************************** Substitutions ********************************)
 (**************************************************************************)
@@ -1274,113 +1214,6 @@ module Subst = struct
     if Symbol.SMap.mem x su then Some (Symbol.SMap.find x su) else None 
 end
 
-
-(**************************************************************************)
-(***************************** Qualifiers *********************************)
-(**************************************************************************)
-
-module Qualifier = struct
-  
-  type t = { name   : string
-           ; vvar   : Symbol.t
-           ; vsort  : Sort.t
-           ; params : Sort.t Symbol.SMap.t
-           ; pred   : pred }
-
-  type def = pred * (t * Subst.t)
-
-  let rename      = fun n -> fun q -> {q with name = n} 
-  let name_of_t   = fun q -> q.name
-  let vv_of_t     = fun q -> q.vvar
-  let sort_of_t   = fun q -> q.vsort
-  let pred_of_t   = fun q -> q.pred
-  let params_of_t = fun q -> q.params
-
-  let is_free params x = not (Symbol.SMap.mem x params)
-
-  let czr params =
-    let n = ref 0 in
-    let t = Hashtbl.create 7 in
-    function
-      | (Var x, _) when is_free params x && Hashtbl.mem t x -> 
-          Hashtbl.find t x
-      | (Var x, _) when is_free params x && Symbol.is_wild_fresh x ->
-          "~A" ^ (string_of_int (n =+ 1))
-          |> Symbol.of_string 
-          |> eVar
-      | (Var x, _) when is_free params x && Symbol.is_wild_any x -> 
-          "~A" ^ (string_of_int (n =+ 1))
-          |> Symbol.of_string 
-          |> eVar
-          >> Hashtbl.replace t x
-      | e -> e
-
-  let canon q = Predicate.map id (czr q.params) q.pred
-
-  let print ppf q = 
-    Format.fprintf ppf "qualif %s(%a:%a):%a" 
-      q.name
-      Symbol.print q.vvar
-      Sort.print q.vsort
-      Predicate.print q.pred
-
-  let print_short ppf q = 
-    Format.fprintf ppf "%a:%a" 
-      Sort.print q.vsort
-      Predicate.print q.pred
-
-  let expand_qual q = 
-    expand_p q.pred
-    |> List.map (fun p -> {q with pred = p})
-
-
-  (* remove duplicates, ensure distinct names *)
-  let normalize qs = 
-    qs |> Misc.flap expand_qual
-       |> Misc.kgroupby (Misc.fsprintf print_short)
-       |> List.map (fun (_,x::_) -> x)
-       |> Misc.mapfold begin fun m q ->
-            if SM.mem q.name m then
-              let i = SM.find q.name m in
-              (SM.add q.name (i+1) m, {q with name = q.name ^ (string_of_int i)})
-            else
-              (SM.add q.name 0 m, q)
-          end SM.empty 
-       |> snd
-
-  let subst_vv v' q =
-    { q with vvar = v'; pred = Predicate.subst q.pred q.vvar (eVar v')} 
-
-  let params_of_pred p =
-    p |> Predicate.support
-      |> List.filter Symbol.is_wild
-      |> List.map (fun x -> (x, Sort.t_int))
-      |> Symbol.SMap.of_list
-
-  let create n v t vtm p =
-    let vtm = Symbol.SMap.extend (params_of_pred p) vtm in
-    { name  = n; vvar  = v; vsort = t; pred  = p; params = vtm }
-
-  (* API *)
-  let create n v t vtm p =
-    create n v t vtm p
-    |> subst_vv (Symbol.value_variable t)
-    |> (fun q -> {q with pred = canon q})
-
-    
-  let subst su q = 
-    su |> Subst.to_list 
-       |> Predicate.substs q.pred
-       |> create q.name q.vvar q.vsort q.params
-
-(*  let print ppf q = 
-    Format.fprintf ppf "qualif %s(%a:%a):%a" 
-      q.name
-      Symbol.print q.vvar
-      Sort.print q.vsort
-      Predicate.print q.pred
-      *)
-end
 
 (**************************************************************************)
 (******************* Horn Clauses: Parsing ARMC files *********************)

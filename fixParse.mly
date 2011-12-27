@@ -12,6 +12,8 @@ module C  = FixConstraint
 let parse_error msg =
   Errorline.error (symbol_start ()) msg
 
+let create_qual name vv = Qualifier.create (Sy.of_string name) (Sy.of_string vv) 
+
 %}
 
 %token <string> Id
@@ -48,7 +50,7 @@ let parse_error msg =
 
 %type <FixConfig.deft list>              defs
 %type <FixConfig.deft>                   def
-%type <(Ast.Symbol.t * (Ast.pred * (string * Ast.Subst.t)) list) list>  sols
+%type <(Ast.Symbol.t * (Ast.pred * (Ast.Symbol.t * Ast.Subst.t)) list) list>  sols
 %type <So.t list>                            sorts, sortsne 
 %type <So.t>                                 sort
 %type <(Sy.t * So.t) list>                   binds, bindsne 
@@ -69,15 +71,13 @@ defs:
   | def defs                            { $1 :: $2 }
   ;
 
-qual:
-   Id LPAREN Id COLON sort RPAREN COLON pred
-                                        { A.Qualifier.create $1 (Sy.of_string $3) $5 Sy.SMap.empty $8 }
- | Id LPAREN Id RPAREN COLON pred
-                                        { A.Qualifier.create $1 (Sy.of_string $3) So.t_int Sy.SMap.empty $6 }
 
- | Id LPAREN Id COLON sort qbindsne RPAREN COLON pred
-                                        { A.Qualifier.create $1 (Sy.of_string $3) $5 (Sy.SMap.of_list $6) $9 }
-                                        ;
+
+qual:
+    Id LPAREN Id COLON sort RPAREN COLON pred            { create_qual $1 $3 $5 [] $8 }
+  | Id LPAREN Id RPAREN COLON pred                       { create_qual $1 $3 So.t_int [] $6 }
+  | Id LPAREN Id COLON sort qbindsne RPAREN COLON pred   { create_qual $1 $3 $5 $6 $9 }
+  ;
 
 qbindsne:
     COMMA bind                          { [$2] }
@@ -169,6 +169,7 @@ pred:
   | FALSE				                { A.pFalse }
   | BEXP expr                           { A.pBexp $2 }
   | QM expr                             { A.pBexp $2 }
+  | Id LPAREN argsne RPAREN             { A.pBexp (A.eApp ((Sy.of_string $1), $3)) }
   | AND preds   			            { A.pAnd ($2) }
   | OR  preds 	        		        { A.pOr  ($2) }
   | NOT pred				            { A.pNot ($2) }
@@ -182,6 +183,11 @@ pred:
   | pred IFF pred                       { A.pIff ($1, $3) }
   | pred IFFWORD pred                   { A.pIff ($1, $3) }
   | LPAREN pred RPAREN			        { $2 }
+  ;
+
+argsne:
+    expr                                { [$1] } 
+  | expr COMMA argsne                   { $1::$3 }
   ;
 
 exprs:
@@ -318,7 +324,7 @@ subs:
   ;
 
 npred: 
-  LPAREN pred COMMA Id subs RPAREN      { ($2, ($4, $5)) }
+  LPAREN pred COMMA Id subs RPAREN      { ($2, (Sy.of_string $4, $5)) }
   ;
 
 npreds:

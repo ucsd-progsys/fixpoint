@@ -42,7 +42,7 @@ type dep  = Adp of tag * tag | Ddp of tag * tag | Ddp_s of tag | Ddp_t of tag
 type refa = Conc of A.pred | Kvar of Su.t * Sy.t
 type reft = Sy.t * A.Sort.t * refa list                (* { VV: t | [ra] } *)
 type envt = reft SM.t
-type wf   = envt * reft * (id option) * (A.Qualifier.t -> bool)
+type wf   = envt * reft * (id option) * (Qualifier.t -> bool)
 type t    = { full    : envt; 
               nontriv : envt;
               guard   : A.pred;

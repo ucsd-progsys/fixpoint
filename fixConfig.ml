@@ -20,10 +20,9 @@
  * TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *)
 
-
-module MSM = Misc.StringMap
-module SM  = Ast.Symbol.SMap
-module Q   = Ast.Qualifier
+module Sy  = Ast.Symbol
+module SM  = Sy.SMap
+module Q   = Qualifier
 module C   = FixConstraint
 
 open Misc.Ops
@@ -38,8 +37,8 @@ type deft = Srt of Ast.Sort.t
           | Cst of FixConstraint.t
           | Wfc of FixConstraint.wf
           | Con of Ast.Symbol.t * Ast.Sort.t
-          | Sol of Ast.Symbol.t * (Ast.pred * (string * Ast.Subst.t)) list
-          | Qul of Ast.Qualifier.t
+          | Sol of Ast.Symbol.t * (Ast.pred * (Ast.Symbol.t * Ast.Subst.t)) list
+          | Qul of Q.t
           | Dep of FixConstraint.dep
 
 type 'bind cfg = { 
@@ -49,7 +48,7 @@ type 'bind cfg = {
  ; cs   : FixConstraint.t list
  ; ws   : FixConstraint.wf list
  ; ds   : FixConstraint.dep list
- ; qs   : Ast.Qualifier.t list
+ ; qs   : Q.t list
  ; bm   : 'bind SM.t                                    (* Initial Sol Bindings *)
  ; cons : (Ast.Symbol.t * Ast.Sort.t) list              (* Distinct Constants *)
  ; uops : Ast.Sort.t Ast.Symbol.SMap.t                  (* Uninterpreted Funs *)
@@ -61,10 +60,10 @@ let get_arity = function
   | []   -> Constants.logPrintf "WARNING: NO CONSTRAINTS!"; 0
   | c::_ -> c |> FixConstraint.tag_of_t |> fst |> List.length
 
+(*
 let qual_rename i q = 
   Q.rename ((Q.name_of_t q)^(string_of_int i)) q
 
-(*
 let sift_quals ds = 
   ds |> Misc.map_partial (function Qul q -> Some q | _ -> None)
      |> List.fold_left begin fun (i, m) q -> 
@@ -78,9 +77,9 @@ let sift_quals ds =
 
 let sift_quals ds = 
   ds |> Misc.map_partial (function Qul q -> Some q | _ -> None)
-     |> Ast.Qualifier.normalize 
-     |> Misc.map (Misc.pad_fst Ast.Qualifier.name_of_t)
-     |> MSM.of_list
+     |> Q.normalize 
+     |> Misc.map (Misc.pad_fst Q.name_of_t)
+     |> SM.of_list
 
 let extend s2d cfg = function
   | Srt t      -> {cfg with ts   = t     :: cfg.ts }
@@ -102,7 +101,7 @@ let empty = { a    = 0 ; ts   = []; ps = []
 (* API *)
 let create ds =
   let qm  = sift_quals ds in
-  let n2q = fun n -> Misc.do_catchf ("name2qual: "^n) (MSM.find n) qm in
+  let n2q = fun n -> Misc.do_catchf ("name2qual: "^ (Sy.to_string n)) (SM.find n) qm in
   let s2d = List.map (fun (p, (n,s)) -> [(p, (n2q n, s))]) in
   ds |> List.fold_left (extend s2d) empty
      |> (fun cfg -> {cfg with a  = get_arity cfg.cs})
