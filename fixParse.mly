@@ -48,22 +48,22 @@ let create_qual name vv = Qualifier.create (Sy.of_string name) (Sy.of_string vv)
 %start defs 
 %start sols
 
-%type <FixConfig.deft list>              defs
-%type <FixConfig.deft>                   def
-%type <(Ast.Symbol.t * (Ast.pred * (Ast.Symbol.t * Ast.Subst.t)) list) list>  sols
-%type <So.t list>                            sorts, sortsne 
-%type <So.t>                                 sort
-%type <(Sy.t * So.t) list>                   binds, bindsne 
-%type <A.pred list>                          preds, predsne
-%type <A.pred>                               pred
-%type <A.expr list>                          exprs, exprsne
-%type <A.expr>                               expr
-%type <C.t>                                  cstr
-%type <C.envt>                               env
-%type <C.reft>                               reft
-%type <C.refa list>                          refas, refasne
-%type <C.refa>                               refa
-%type <Su.t>                                 subs
+%type <FixConfig.deft list>     defs
+%type <FixConfig.deft>          def
+%type <FixConfig.solbind list>  sols
+%type <So.t list>               sorts, sortsne 
+%type <So.t>                    sort
+%type <(Sy.t * So.t) list>      binds, bindsne 
+%type <A.pred list>             preds, predsne
+%type <A.pred>                  pred
+%type <A.expr list>             exprs, exprsne
+%type <A.expr>                  expr
+%type <C.t>                     cstr
+%type <C.envt>                  env
+%type <C.reft>                  reft
+%type <C.refa list>             refas, refasne
+%type <C.refa>                  refa
+%type <Su.t>                    subs
 
 %%
 defs:
@@ -90,7 +90,7 @@ def:
   | CST COLON cstr                      { FixConfig.Cst $3 }
   | CON Id COLON sort                   { FixConfig.Con (Sy.of_string $2, $4) }
   | WF  COLON wf                        { FixConfig.Wfc $3 }
-  | sol                                 { let sym, ps = $1 in FixConfig.Sol (sym, ps) }
+  | sol                                 { FixConfig.Sol $1 } 
   | QUL qual                            { FixConfig.Qul $2 }
   | dep                                 { FixConfig.Dep $1 }
   ;
@@ -324,7 +324,7 @@ subs:
   ;
 
 npred: 
-  LPAREN pred COMMA Id subs RPAREN      { ($2, (Sy.of_string $4, $5)) }
+  LPAREN pred COMMA Id LPAREN argsne RPAREN RPAREN      { ((* $2, *) (Sy.of_string $4, $6)) }
   ;
 
 npreds:

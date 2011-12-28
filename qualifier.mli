@@ -27,14 +27,12 @@
  * *)
 
 type t 
-type def   = Ast.pred * (t * Ast.Subst.t)
+
 val create    :  Ast.Symbol.t 
               -> Ast.Symbol.t 
               -> Ast.Sort.t 
               -> (Ast.Symbol.t * Ast.Sort.t) list -> Ast.pred -> t 
 
-(* val create    : string -> Ast.Symbol.t -> Ast.Sort.t -> Ast.Sort.t Ast.Symbol.SMap.t -> Ast.pred -> t *)
-(* val rename    : string -> t -> t *)
 
 val name_of_t : t -> Ast.Symbol.t (* string *)
 val vv_of_t   : t -> Ast.Symbol.t
@@ -42,8 +40,9 @@ val pred_of_t : t -> Ast.pred
 val sort_of_t : t -> Ast.Sort.t
 val params_of_t : t -> (Ast.Symbol.t * Ast.Sort.t) list (* Ast.Sort.t Ast.Symbol.SMap.t *)
 val vv_of_t   : t -> Ast.Symbol.t
+val args_of_t : t -> (Ast.Symbol.t * Ast.expr) list
+
 val normalize : t list -> t list
-(* val subst_vv  : Ast.Symbol.t -> t -> t 
-   val subst     : Ast.Subst.t -> t -> t *)
-val inst      : t -> Ast.Symbol.t -> Ast.Sort.t -> Ast.expr list -> t
+val inst      : t -> Ast.expr list -> t
 val print     : Format.formatter -> t -> unit
+val print_args: Format.formatter -> t -> unit

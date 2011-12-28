@@ -30,16 +30,19 @@ open Misc.Ops
 exception UnmappedKvar of Ast.Symbol.t
 
 
-type qbind = Q.def list list
+type qbind   = Q.t list
+type solbind = Ast.Symbol.t * ((Ast.Symbol.t * (Ast.expr list)) list)
 
 type deft = Srt of Ast.Sort.t 
           | Axm of Ast.pred 
           | Cst of FixConstraint.t
           | Wfc of FixConstraint.wf
           | Con of Ast.Symbol.t * Ast.Sort.t
-          | Sol of Ast.Symbol.t * (Ast.pred * (Ast.Symbol.t * Ast.Subst.t)) list
+          | Sol of solbind
+          (* | Sol of Ast.Symbol.t * (Ast.pred * (Ast.Symbol.t * Ast.Subst.t)) list *)
           | Qul of Q.t
           | Dep of FixConstraint.dep
+
 
 type 'bind cfg = { 
    a    : int                                           (* Tag arity *)
@@ -81,16 +84,17 @@ let sift_quals ds =
      |> Misc.map (Misc.pad_fst Q.name_of_t)
      |> SM.of_list
 
-let extend s2d cfg = function
-  | Srt t      -> {cfg with ts   = t     :: cfg.ts }
-  | Axm p      -> {cfg with ps   = p     :: cfg.ps }
-  | Cst c      -> {cfg with cs   = c     :: cfg.cs }
-  | Wfc w      -> {cfg with ws   = w     :: cfg.ws }
-  | Con (s,t)  -> {cfg with cons = (s,t) :: cfg.cons; uops = SM.add s t cfg.uops} 
-  | Dep d      -> {cfg with ds   = d     :: cfg.ds }
-  | Qul q      -> {cfg with qs   = q     :: cfg.qs }
-  | Sol (k,ps) -> {cfg with bm   = SM.add k (s2d ps) cfg.bm  }
+let extend f cfg = function
+  | Srt t         -> {cfg with ts   = t     :: cfg.ts }
+  | Axm p         -> {cfg with ps   = p     :: cfg.ps }
+  | Cst c         -> {cfg with cs   = c     :: cfg.cs }
+  | Wfc w         -> {cfg with ws   = w     :: cfg.ws }
+  | Con (s,t)     -> {cfg with cons = (s,t) :: cfg.cons; uops = SM.add s t cfg.uops} 
+  | Dep d         -> {cfg with ds   = d     :: cfg.ds }
+  | Qul q         -> {cfg with qs   = q     :: cfg.qs }
+  | Sol (k, fess) -> {cfg with bm   = SM.add k (List.map f fess) cfg.bm  }
 
+  
 let empty = { a    = 0 ; ts   = []; ps = []
             ; cs   = []; ws   = []; ds = []
             ; qs   = []; bm   = SM.empty
@@ -102,8 +106,7 @@ let empty = { a    = 0 ; ts   = []; ps = []
 let create ds =
   let qm  = sift_quals ds in
   let n2q = fun n -> Misc.do_catchf ("name2qual: "^ (Sy.to_string n)) (SM.find n) qm in
-  let s2d = List.map (fun (p, (n,s)) -> [(p, (n2q n, s))]) in
-  ds |> List.fold_left (extend s2d) empty
+  ds |> List.fold_left (extend (fun (f, es) -> Q.inst (n2q f) es)) empty
      |> (fun cfg -> {cfg with a  = get_arity cfg.cs})
      |> (fun cfg -> {cfg with ws = C.add_wf_ids cfg.ws})
 

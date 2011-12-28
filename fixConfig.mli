@@ -3,14 +3,14 @@
 
 exception UnmappedKvar of Ast.Symbol.t
 
-type qbind = Qualifier.def list list
-
+type qbind   = Qualifier.t list
+type solbind = Ast.Symbol.t * ((Ast.Symbol.t * (Ast.expr list)) list)
 type deft = Srt of Ast.Sort.t 
           | Axm of Ast.pred 
           | Cst of FixConstraint.t
           | Wfc of FixConstraint.wf
           | Con of Ast.Symbol.t * Ast.Sort.t
-          | Sol of Ast.Symbol.t * (Ast.pred * (Ast.Symbol.t * Ast.Subst.t)) list
+          | Sol of solbind
           | Qul of Qualifier.t
           | Dep of FixConstraint.dep
 

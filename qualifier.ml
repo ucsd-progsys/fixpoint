@@ -26,6 +26,8 @@
  * This module implements a module for representing and manipulating Qualifiers.
  * *)
 
+module F = Format
+
 module P  = Ast.Predicate
 module E  = Ast.Expression
 module Sy = Ast.Symbol
@@ -44,9 +46,10 @@ type t = { name    : Sy.t
          ; vsort   : So.t
          ; params  : (Sy.t * So.t) list
          ; pred    : pred
-         ; args    : expr list option }
-
-type def = pred * (t * Su.t)
+         ; args    : expr list option 
+           (* when args = Some es, es = vv'::[e1;...;en]
+              where vv' is the applied vv and e1...en are the args applied to ~A1,...,~An *)
+         }
 
 let rename      = fun n -> fun q -> {q with name = n} 
 let name_of_t   = fun q -> q.name
@@ -55,24 +58,35 @@ let sort_of_t   = fun q -> q.vsort
 let pred_of_t   = fun q -> q.pred
 let params_of_t = fun q -> q.params
 
+let args_of_t q  =
+  let xs = q.vvar :: List.map fst q.params in
+  let es = match q.args with
+           | Some es -> es
+           | None    -> List.map eVar xs
+  in Misc.combine "Qualifier.args_of_t" xs es
+
+
 let print_param ppf (x, t) =
-  Format.fprintf ppf "%a:%a" Sy.print x So.print t 
+  F.fprintf ppf "%a:%a" Sy.print x So.print t 
 
 let print_params ppf args =
-  Format.fprintf ppf "%a" (Misc.pprint_many false ", " print_param) args
+  F.fprintf ppf "%a" (Misc.pprint_many false ", " print_param) args
 
 let print ppf q = 
-  Format.fprintf ppf "qualif %a(%a):%a" 
+  F.fprintf ppf "qualif %a(%a):%a" 
     Sy.print q.name
     print_params q.params 
     P.print q.pred
 
 let print_short ppf q = 
-  Format.fprintf ppf "(%a):%a" 
+  F.fprintf ppf "(%a):%a" 
     (Misc.pprint_many false ", " So.print) (List.map snd q.params)
     P.print q.pred
 
-
+let print_args ppf q =
+  q |> args_of_t |> List.map snd 
+    |> F.fprintf ppf "%a(%a)" Sy.print q.name (Misc.pprint_many false ", " E.print) 
+   
 (**********************************************************************)
 (****************** Canonizing Wildcards (e.g. _ ---> ~A) *************)
 (**********************************************************************)
@@ -274,16 +288,20 @@ let create n v t vts p =
   (* |> subst_vv (Sy.value_variable t) *) (* TODO: eliminate *)
   |> (fun q -> {q with pred = P.map id (canonizer q.params) q.pred })
 
-(* API 
+(* API *)
 let subst su q = 
   su (* |> Su.to_list *) 
      |> Ast.substs_pred q.pred
      |> create q.name (vv_of_t q) (sort_of_t q) (List.tl q.params)
-*)
 
 (* API *)
-let inst q v t es =
-  let xs = List.map fst q.params in
-  let su = Su.of_list ((q.vvar, eVar v) :: (Misc.combine xs es)) in
-  { q with vvar  = v; vsort = t; pred  = Ast.substs_pred q.pred su; args  = Some es }
+let inst q es = match es with 
+  | (Var v, _) :: _ ->
+    let xs = q.vvar :: (List.map fst q.params)   in
+    let p  = es |> Misc.combine "Qualifier.inst" xs 
+                |> Su.of_list 
+                |> Ast.substs_pred q.pred 
+    in { q with vvar  = v; pred  = p ; args  = Some es }
+  | _ -> assertf "Error: bad call to Qual.inst"
+
 

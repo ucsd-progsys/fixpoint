@@ -34,9 +34,9 @@ module Q   = Qualifier
 module Sy  = A.Symbol
 module Su  = A.Subst
 module SM  = Sy.SMap
+module SS  = Sy.SSet
 module C   = FixConstraint
 
-module SSM = Misc.StringMap
 module BS  = BNstats
 module TP  = TpNull.Prover
 module Co  = Constants
@@ -48,6 +48,21 @@ open Misc.Ops
 
 
 let mydebug = false 
+
+module Q2S = Misc.ESet (struct
+  type t = Sy.t * Sy.t
+  let compare x y = compare x y 
+end)
+
+module V : Graph.Sig.COMPARABLE with type t = Sy.t = struct
+  type t = Sy.t
+  let hash    = Sy.to_string <+> H.hash
+  let compare = compare
+  let equal   = (=) 
+end
+
+
+(*
 
 let tag_of_qual  = snd <.> Q.pred_of_t
 let tag_of_qual2 = Misc.map_pair tag_of_qual
@@ -62,13 +77,14 @@ module Q2S = Misc.ESet (struct
   let compare x y = compare (tag_of_qual2 x) (tag_of_qual2 y)
 end)
 
-
 module V : Graph.Sig.COMPARABLE with type t = Q.t = struct
   type t = Q.t
   let hash    = tag_of_qual <+> H.hash
   let compare = fun q1 q2 -> compare (tag_of_qual q1) (tag_of_qual q2)
   let equal   = fun q1 q2 -> tag_of_qual q1 = tag_of_qual q2
 end
+
+*)
 
 module Id : Graph.Sig.ORDERED_TYPE_DFT with type t = unit = struct
   type t = unit 
@@ -79,19 +95,14 @@ end
 module G   = Graph.Persistent.Digraph.ConcreteLabeled(V)(Id)
 module SCC = Graph.Components.Make(G)
 
-module TTM = Misc.EMap (struct
-    type t = A.tag * A.tag 
-    let compare = compare 
-  end)
-
-type bind = Q.def list
+type bind = Q.t list
 
 type t   = 
   { tpc  : TP.t
   ; m    : bind SM.t
   ; assm : FixConstraint.soln (* invariant assumption for K, 
                                  must be a fixpoint wrt constraints *)
-  ; qs   : QS.t 
+  ; qm   : Qualifier.t SM.t   (* map from names to qualifiers *)
   ; qleqs: Q2S.t              (* (q1,q2) \in qleqs implies q1 => q2 *)
   (* stats *)
   ; stat_simple_refines : int ref 
@@ -107,11 +118,12 @@ type t   =
 let pprint_ps =
   Misc.pprint_many false ";" P.print 
 
-let print_dep ppf (p, (q, su)) = 
-  F.fprintf ppf "(%a, %a%a)" P.print p Sy.print (Q.name_of_t q) Su.print su
+ 
+let pprint_dep ppf q = 
+  F.fprintf ppf "(%a, %a)" P.print (Q.pred_of_t q) Q.print_args q
 
 let pprint_ds = 
-  Misc.pprint_many false ";" print_dep
+  Misc.pprint_many false ";" pprint_dep
 
 let pprint_qs ppf = 
   F.fprintf ppf "[%a]" (Misc.pprint_many false ";" Q.print)
@@ -123,6 +135,7 @@ let pprint_qs' ppf =
 (************* Constructing Initial Solution *****************)
 (*************************************************************)
 
+(*
 
 let def_of_pred_qual (p, q) =
   let qp = Q.pred_of_t q in
@@ -130,7 +143,6 @@ let def_of_pred_qual (p, q) =
   | Some su -> (p, q, su)
   | None    -> assertf "ERROR: unify q=%s p=%s" (P.to_string qp) (P.to_string p)
 
-(*
 let map_of_bindings bs =
   List.fold_left begin fun s (k, ds) -> 
     ds |> List.map Misc.single 
@@ -141,7 +153,7 @@ let map_of_bindings bs =
 let quals_of_bindings bm =
   bm |> SM.range 
      |> Misc.flatten
-     |> Misc.map (snd <+> fst) 
+     (* |> Misc.map (snd <+> fst)  *)
      |> Misc.sort_and_compact
 
 
@@ -158,8 +170,8 @@ module DotGraph = struct
   let iter_edges_e              = G.iter_edges_e
   let graph_attributes          = fun _ -> [`Size (11.0, 8.5); `Ratio (`Fill (* Float 1.29*))]
   let default_vertex_attributes = fun _ -> [`Shape `Box]
-  let vertex_name               = Q.name_of_t <+> Sy.to_string 
-  let vertex_attributes         = fun q -> [`Label ((Misc.fsprintf Q.print q))] 
+  let vertex_name               = Sy.to_string 
+  let vertex_attributes         = fun q -> [`Label (Sy.to_string q)] 
   let default_edge_attributes   = fun _ -> []
   let edge_attributes           = fun (_,(),_) -> [] 
   let get_subgraph              = fun _ -> None
@@ -173,6 +185,13 @@ let dump_graph s g =
     |> close_out 
 
 (* {{{
+
+  module TTM = Misc.EMap (struct
+    type t = A.tag * A.tag 
+    let compare = compare 
+  end)
+
+
 (************************************************************)
 (***************** Build Implication Graph ******************)
 (************************************************************)
@@ -212,7 +231,7 @@ let impm_of_quals ts sm ps qs =
 
 let p_read s k =
   let _ = asserts (SM.mem k s.m) "ERROR: p_read : unknown kvar %s\n" (Sy.to_string k) in
-  SM.find k s.m  |>: (fun d -> ((k, d), fst d))
+  SM.find k s.m  |>: (fun q -> ((k, q), Q.pred_of_t q))
 
 (* INV: qs' \subseteq qs *)
 let update m k ds' =
@@ -247,13 +266,13 @@ let print_m ppf s =
   SM.to_list s.m 
   |> List.iter begin fun (k, ds) ->
        ds >>  F.fprintf ppf "solution: %a := [%a] \n\n"  Sy.print k pprint_ds
-          |>: fst
-   (* >>  F.fprintf ppf "//solution: %a := [%a] \n\n"  Sy.print k pprint_ps *)
+      (*  |>: fst
+          >>  F.fprintf ppf "//solution: %a := [%a] \n\n"  Sy.print k pprint_ps *)
           |> ignore
      end 
  
 let print_qs ppf s = 
-  QS.elements s.qs
+  SM.range s.qm
   >> (fun _ -> F.fprintf ppf "//QUALIFIERS \n\n")
   |> F.fprintf ppf "%a" (Misc.pprint_many true "\n" Q.print)
 (*  |> List.iter (F.fprintf ppf "%a" Q.print) 
@@ -263,7 +282,7 @@ let print_qs ppf s =
 let print ppf s = s >> print_m ppf >> print_qs ppf |> ignore
 
      
-let botInt qs = if List.exists (fst <+> P.is_contra) qs then 1 else 0
+let botInt qs = if List.exists (Q.pred_of_t <+> P.is_contra) qs then 1 else 0
 
 (* API *)
 let print_stats ppf me =
@@ -297,13 +316,13 @@ let key_of_quals qs =
      |> String.concat ","
 
 (* API *)
-let mkbind = Misc.flatten <+> Misc.sort_and_compact
+let mkbind = id (* Misc.flatten <+> Misc.sort_and_compact *)
 
 (* API *)
 let dump s = 
   s.m 
   |> SM.to_list 
-  |> List.map (snd <+> List.map fst)
+  |> List.map (snd <+> List.map Q.pred_of_t)
   |> Misc.groupby key_of_quals
   |> List.map begin function 
      | [] -> assertf "impossible" 
@@ -418,22 +437,27 @@ let unsat me c =
 (************* Minimization: For Prettier Output ****************)
 (****************************************************************)
 
+(*
 let canonize_subs = 
   Su.to_list <+> List.sort (fun (x,_) (y,_) -> compare x y)
 
 let subst_leq =
   Misc.map_pair canonize_subs <+> Misc.isPrefix
- 
-let qual_leq s = 
-  Misc.flip Q2S.mem s.qleqs
+*)
 
-let def_leq s (_, (q1, su1)) (_, (q2, su2)) = 
-  qual_leq s (q1, q2) && subst_leq (su1, su2)
+let args_leq q1 q2 =
+  let xe1s, xe2s = (Q.args_of_t q1, Q.args_of_t q2) in
+  let xe1e2s     = Misc.join fst xe1s xe2s          in
+  List.for_all (fun ((_,e1),(_,e2)) -> e1 = e2) xe1e2s 
 
-let pred_of_bind (_, (q, su)) =
-  let name = q |> Q.name_of_t                                in
-  let es   = q |> Q.params_of_t |> List.map (fst <+> A.eVar) in
-  A.substs_pred (A.pBexp (A.eApp (name, es))) su
+(* P(v,x,y,z) => Q(v,x) if P => Q held and _intersection_ of args match. *)
+let def_leq s q1 q2 = 
+     Q2S.mem (Q.name_of_t q1, Q.name_of_t q2) s.qleqs && args_leq q1 q2
+
+let pred_of_bind q = 
+  let name = q |> Q.name_of_t                 in
+  let args = q |> Q.args_of_t |> List.map snd in
+  A.pBexp (A.eApp (name, args)) 
 
 let min_read s k = 
   if SM.mem k s.m then 
@@ -490,8 +514,10 @@ let qleqs_of_qs ts sm ps qs =
   qs |> Misc.groupby Q.sort_of_t
      |> Misc.flap (qimps_of_partition tp sm)
      |> Misc.flatten
+     |> Misc.map (Misc.map_pair Q.name_of_t) 
      |> Q2S.of_list
      >> (fun _ -> ignore <| Format.printf "DONE: Building qleqs_of_qs \n")  
+
 
 (***************************************************************)
 (******************** Qualifier Instantiation ******************)
@@ -520,7 +546,7 @@ let varmatch (x, y) =
     Misc.is_prefix x' y
   else true
 
-let valid_binding xys = 
+let is_valid_binding xys = 
   List.for_all varmatch xys
 
 let valid_bindings ys x =
@@ -540,16 +566,42 @@ let valid_bindings env ys (x, t) =
   then valid_bindings_sort env (x,t)
   else valid_bindings ys x
 
-(* HEREHEREHEREHEREHERE: refactor the below to use 
-  inst :: Q.t -> v -> t -> [expr] -> Q.t
-*)
+let inst_qual env ys evv (q : Q.t) : Q.t list =
+  match Q.params_of_t q with
+  | [] ->
+      [(Q.inst q [evv])]
+  | xts ->
+      xts
+      |> List.map (valid_bindings env ys)              (* candidate bindings    *)
+      |> Misc.product                                  (* generate combinations *) 
+      |> List.filter is_valid_binding                  (* remove bogus bindings *)
+      |> List.rev_map (List.map (snd <+> A.eVar))      (* instantiations        *)
+      |> List.rev_map (fun es -> Q.inst q (evv::es))   (* quals *)
+(*  >> (F.printf "\n\ninst_qual q = %a: %a" Q.print q (Misc.pprint_many true "" Q.print)) *)
 
-let inst_qual env ys t' (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
+let inst_ext qs wf = 
+  let r    = wf >> (C.id_of_wf <+>  Printf.sprintf "\nPredAbs.inst_ext wf id = %d\n" <+> print_now) 
+                |> C.reft_of_wf in
+  let ks   = C.kvars_of_reft r |> List.map snd in
+  let env  = C.env_of_wf wf in
+  let vv   = fst3 r in
+  let t    = snd3 r in
+  let ys   = Sy.SMap.domain env in
+  let env' = SM.add vv r env in
+  qs |> List.filter (Q.sort_of_t <+> sort_compat t)
+     |> Misc.flap   (inst_qual env ys (A.eVar vv))
+     |> Misc.filter (wellformed_qual env' <&&> C.filter_of_wf wf)
+     |> Misc.cross_product ks
+     >> (fun _ -> C.id_of_wf wf |> Printf.sprintf "\nDONE: PredAbs.inst_ext wf id = %d\n" |> print_now)
+
+
+(* {{{ ORIG
+let inst_qual env ys t (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
   let v  = Q.vv_of_t   q in
   let p  = Q.pred_of_t q in
   let n  = Sy.of_string "" in 
-  let q' = Q.create n v t' (Q.params_of_t q) p in
-  let v' = Sy.value_variable t' in
+  let q' = Q.create n v t (Q.params_of_t q) p in
+  let v' = Sy.value_variable t in
   let su = Su.of_list [(v, A.eVar v')] in
   begin
   match Q.params_of_t q' with
@@ -586,14 +638,7 @@ let inst_ext qs wf =
      |> Misc.cross_product ks
      >> (fun _ -> C.id_of_wf wf |> Printf.sprintf "\nDONE: PredAbs.inst_ext wf id = %d\n" |> print_now)
 
-(*
-let flapn s f = 
-  let rec go acc n = function
-    | []    -> acc
-    | x::xs -> (print_now (Printf.sprintf "flap %s %d" s n); 
-                go ((f x) ++ acc) (n+1) xs)
-  in go [] 0 
-*)
+}}} *)
 
 let inst ws qs = 
   Misc.flap (inst_ext qs) ws 
@@ -608,7 +653,9 @@ let inst ws qs =
 let create ts sm ps consts assm qs0 bm =
   let qs    = Misc.sort_and_compact (qs0 ++ quals_of_bindings bm) in
   let qleqs =  if !Co.minquals then BS.time "Annots: make qleqs" (qleqs_of_qs ts sm ps) qs else Q2S.empty in
-  { m = bm; assm = assm; qs = QS.of_list qs
+  { m = bm
+  ; assm = assm
+  ; qm = qs |>: Misc.pad_fst Q.name_of_t |> SM.of_list
   ; qleqs               = qleqs 
   ; tpc                 = TP.create ts sm ps (List.map fst consts)
   ; stat_simple_refines = ref 0
