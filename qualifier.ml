@@ -39,17 +39,19 @@ open Ast
 (***************************** Qualifiers *********************************)
 (**************************************************************************)
   
-type t = { name   : Sy.t (* string *)
-         (*; vvar   : Sy.t ; vsort  : So.t *)
-         ; params : (Sy.t * So.t) list (* So.t Sy.SMap.t *)
-         ; pred   : pred }
+type t = { name    : Sy.t 
+         ; vvar    : Sy.t
+         ; vsort   : So.t
+         ; params  : (Sy.t * So.t) list
+         ; pred    : pred
+         ; args    : expr list option }
 
 type def = pred * (t * Su.t)
 
 let rename      = fun n -> fun q -> {q with name = n} 
 let name_of_t   = fun q -> q.name
-let vv_of_t     = fun { params = (vv,_)::_ } -> vv 
-let sort_of_t   = fun { params = (_,so)::_ } -> so 
+let vv_of_t     = fun q -> q.vvar
+let sort_of_t   = fun q -> q.vsort
 let pred_of_t   = fun q -> q.pred
 let params_of_t = fun q -> q.params
 
@@ -241,7 +243,7 @@ let uniquely_rename qs =
 let normalize qs =
   qs |> Misc.flap expand_qual
      |> remove_duplicates
-     |> compile_definitions
+     (* |> compile_definitions *)
      |> uniquely_rename
 
 (**************************************************************************)
@@ -250,29 +252,38 @@ let normalize qs =
  
 (* Rename to ensure unique names *)
 let subst_vv v' q =
-  { q with params = (v', sort_of_t q) :: (List.tl q.params)
-         ; pred   = P.subst q.pred (vv_of_t q) (eVar v')} 
-
+  { q with vvar = v' ; pred = P.subst q.pred q.vvar (eVar v')} 
 
 let close_params vts p =
   p |> P.support
     |> List.filter (Sy.is_wild <&&> is_free vts) 
-    |> List.map (fun x -> (x, So.t_generic 0 (* So.t_int *)))
+    |> List.map (fun x -> (x, So.t_int (* t_generic 0 causes blowup? *)))
     |> (@) vts (* Sy.SMap.of_list *)
 
 let create n v t vts p =
-  { name = n (* ; vvar = v; vsort = t *)
-  ; pred = p; params = close_params ((v,t)::vts) p }
+  { name   = n 
+  ; vvar   = v
+  ; vsort  = t
+  ; pred   = p
+  ; params = close_params vts p 
+  ; args   = None }
 
 (* API *)
 let create n v t vts p =
   create n v t vts p
-  |> subst_vv (Sy.value_variable t) (* TODO: eliminate *)
+  (* |> subst_vv (Sy.value_variable t) *) (* TODO: eliminate *)
   |> (fun q -> {q with pred = P.map id (canonizer q.params) q.pred })
 
-(* API *)
+(* API 
 let subst su q = 
   su (* |> Su.to_list *) 
      |> Ast.substs_pred q.pred
      |> create q.name (vv_of_t q) (sort_of_t q) (List.tl q.params)
+*)
+
+(* API *)
+let inst q v t es =
+  let xs = List.map fst q.params in
+  let su = Su.of_list ((q.vvar, eVar v) :: (Misc.combine xs es)) in
+  { q with vvar  = v; vsort = t; pred  = Ast.substs_pred q.pred su; args  = Some es }
 
