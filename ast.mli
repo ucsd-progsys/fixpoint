@@ -193,14 +193,15 @@ end
 module Subst : 
   sig
     type t
-    val empty     : t
-    val is_empty  : t -> bool
-    val extend    : t -> (Symbol.t * expr) -> t
-    val concat    : t -> t -> t
-    val of_list   : (Symbol.t * expr) list -> t
-    val to_list   : t -> (Symbol.t * expr) list
-    val print     : Format.formatter -> t -> unit
-    val apply     : t -> Symbol.t -> expr option
+    val empty                : t
+    val is_empty             : t -> bool
+    val extend               : t -> (Symbol.t * expr) -> t
+    val concat               : t -> t -> t
+    val of_list              : (Symbol.t * expr) list -> t
+    val simultaneous_of_list : (Symbol.t * expr) list -> t
+    val to_list              : t -> (Symbol.t * expr) list
+    val print                : Format.formatter -> t -> unit
+    val apply                : t -> Symbol.t -> expr option
   end
 
 

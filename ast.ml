@@ -1262,13 +1262,14 @@ module Subst = struct
         | Var x', _ when x = x' -> s
         | _                     -> Symbol.SMap.add x e s
 
-  let empty     = Symbol.SMap.empty
-  let is_empty  = Symbol.SMap.is_empty
-  let to_list   = Symbol.sm_to_list
-  let of_list   = fun xes -> List.fold_left extend empty xes
-  let concat    = fun s1 s2 -> Symbol.SMap.fold (fun x e s -> extend s (x, e)) s2 s1
-  let print_sub = fun ppf (x,e) -> F.fprintf ppf "[%a:=%a]" Symbol.print x Expression.print e
-  let print     = fun ppf -> to_list <+> F.fprintf ppf "%a" (Misc.pprint_many false "" print_sub)
+  let empty                = Symbol.SMap.empty
+  let is_empty             = Symbol.SMap.is_empty
+  let to_list              = Symbol.sm_to_list
+  let of_list              = fun xes -> List.fold_left extend empty xes
+  let simultaneous_of_list = Symbol.SMap.of_list
+  let concat               = fun s1 s2 -> Symbol.SMap.fold (fun x e s -> extend s (x, e)) s2 s1
+  let print_sub            = fun ppf (x,e) -> F.fprintf ppf "[%a:=%a]" Symbol.print x Expression.print e
+  let print                = fun ppf -> to_list <+> F.fprintf ppf "%a" (Misc.pprint_many false "" print_sub)
 
   let apply su x = 
     if Symbol.SMap.mem x su then Some (Symbol.SMap.find x su) else None 
