@@ -281,7 +281,7 @@ let uniquely_rename qs =
 let normalize qs =
   qs |> Misc.flap expand_qual
      |> remove_duplicates
-     (* |> compile_definitions *)
+     (* TODO |> compile_definitions *)
      |> uniquely_rename
 
 

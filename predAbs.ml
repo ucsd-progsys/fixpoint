@@ -154,7 +154,7 @@ let quals_of_bindings bm =
      |> Misc.flatten
      (* |> Misc.map (snd <+> fst)  *)
      |> Misc.sort_and_compact
-
+     >> (fun qs -> Co.logPrintf "Quals of Bindings: \n%a" (Misc.pprint_many true "\n" Q.print) qs; flush stdout)
 
 (************************************************************************)
 (*************************** Dumping to Dot *****************************) 
@@ -452,13 +452,17 @@ let args_leq q1 q2 =
 let def_leq s q1 q2 = 
      Q2S.mem (Q.name_of_t q1, Q.name_of_t q2) s.qleqs && args_leq q1 q2
 
-let pred_of_bind q = 
+let pred_of_bind_name q = 
   let name = q |> Q.name_of_t                 in
   let args = q |> Q.args_of_t |> List.map snd in
   A.pBexp (A.eApp (name, args)) 
 
-  (* DEBUG ONLY *)
-let pred_of_bind = Q.pred_of_t 
+let pred_of_bind_raw = Q.pred_of_t 
+
+let pred_of_bind q = 
+  if !Co.shortannots 
+  then pred_of_bind_name q 
+  else pred_of_bind_raw q 
 
 let min_read s k = 
   if SM.mem k s.m then 
@@ -509,7 +513,6 @@ let close_env qs sm =
      |> SM.extend sm
 
 let qleqs_of_qs ts sm ps qs =
-  let _     = Format.printf "BEGIN: predAbs.qleqs_of_qs \n" in
   let sm = close_env qs sm       in
   let tp = TP.create ts sm ps [] in
   qs |> Misc.groupby Q.sort_of_t
@@ -517,7 +520,6 @@ let qleqs_of_qs ts sm ps qs =
      |> Misc.flatten
      |> Misc.map (Misc.map_pair Q.name_of_t) 
      |> Q2S.of_list
-     >> (fun _ -> ignore <| Format.printf "DONE: Building qleqs_of_qs \n")  
 
 
 (***************************************************************)
@@ -670,8 +672,8 @@ let inst ws qs =
 (*************************** Creation ************************************)
 (*************************************************************************)
 
-let create ts sm ps consts assm qs0 bm =
-  let qs    = Misc.sort_and_compact (qs0 ++ quals_of_bindings bm) in
+let create ts sm ps consts assm qs bm =
+  (* let qs    = Misc.sort_and_compact (qs0 ++ quals_of_bindings bm) in *)
   let qleqs =  if !Co.minquals then BS.time "Annots: make qleqs" (qleqs_of_qs ts sm ps) qs else Q2S.empty in
   { m = bm
   ; assm = assm
@@ -734,18 +736,22 @@ let apply_facts cs kf me =
 
 let binds_of_quals ws qs =
   qs
-  |> Q.normalize
-  >> (fun qs -> Co.logPrintf "Using GOO Quals: \n%a" (Misc.pprint_many true "\n" Q.print) qs; flush stdout)
+  (* |> Q.normalize *)
+  >> (fun qs -> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) qs; flush stdout)
   >> (fun _ -> Co.bprintflush mydebug "BEGIN: Qualifier Instantiation \n")
   |> BS.time "Qual Inst" (inst ws) 
   >> (fun _ -> Co.bprintflush mydebug "DONE: Qualifier Instantiation \n")
   (* >> List.iter ppBinding *)
   |> SM.of_list 
 
+let binds_of_quals ws qs = 
+  match !Constants.dump_simp with
+  | "" -> binds_of_quals ws qs  (* regular solving mode *)
+  | _  -> SM.empty              (* constraint simplification mode *)
+
 (* API *)
 let create c facts = 
-  SM.empty
-  |> ((!Constants.dump_simp != "") <?> (fun _ -> binds_of_quals c.Cg.ws c.Cg.qs))
+  binds_of_quals c.Cg.ws c.Cg.qs
   |> SM.extendWith (fun _ -> (++)) c.Cg.bm
   |> create c.Cg.ts c.Cg.uops c.Cg.ps c.Cg.cons c.Cg.assm c.Cg.qs
   |> ((!Constants.refine_sort) <?> Misc.flip (List.fold_left refine_sort) c.Cg.cs)

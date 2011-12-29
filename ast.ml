@@ -233,7 +233,8 @@ module Symbol =
       let bind = fun s sy -> Hashtbl.replace of_t s sy; Hashtbl.replace to_t sy s in
       let f,_  = Misc.mk_string_factory "FIXPOINTSYMBOL_" in
       ((fun s -> 
-         if is_safe s then s else
+        if is_wild_fresh s then mk_wild () else
+        if is_safe s then s else
            try Hashtbl.find of_t s with Not_found ->
              let sy = f () in
              let _  = bind s sy in sy),

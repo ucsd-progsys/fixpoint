@@ -63,7 +63,7 @@ let get_arity = function
   | []   -> Constants.logPrintf "WARNING: NO CONSTRAINTS!"; 0
   | c::_ -> c |> FixConstraint.tag_of_t |> fst |> List.length
 
-(*
+(* {{{ 
 let qual_rename i q = 
   Q.rename ((Q.name_of_t q)^(string_of_int i)) q
 
@@ -76,7 +76,7 @@ let sift_quals ds =
         end (0, MSM.empty)
      >> (fun (i, _) -> if i <> 0 then Constants.logPrintf "WARNING: duplicate qualifier names")
      |> snd
-*)
+}}} *)
 
 let sift_quals ds = 
   ds |> Misc.map_partial (function Qul q -> Some q | _ -> None)
@@ -101,14 +101,12 @@ let empty = { a    = 0 ; ts   = []; ps = []
             ; cons = []; uops = SM.empty 
             ; assm = FixConstraint.empty_solution }
 
-
 let fes2q qm (f, es) =
   let q   = Misc.do_catchf ("name2qual: "^ (Sy.to_string f)) (SM.find f) qm in
   q |> Q.all_params_of_t
     |> List.map fst 
     |> Misc.flip (Misc.combine "FixConfig.fes2q") es
     |> Q.inst q 
-
 
 (* API *)
 let create ds =
@@ -127,7 +125,7 @@ let create_raw ts env ps a ds cs ws qs assm =
   ; ds   = ds
   ; cs   = cs
   ; ws   = C.add_wf_ids ws
-  ; qs   = qs 
+  ; qs   = Q.normalize qs 
   ; assm = assm
   }
 

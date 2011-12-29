@@ -396,21 +396,23 @@ let set me env vv ps =
   ps |> prep_preds me env |> push me;
   (* unsat me *) false
 
-let full_filter me env _ ps =
+let filter me env _ ps =
   ps 
   |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
   |> Misc.filter (thd3 <+> valid me)
   |> List.map (fst3 <+> Misc.single)
 
+
+(* DEPRECATED, overall slowdown 
 let min_filter me env p_imp ps =
   ps 
   |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
   |> Misc.cov_filter (fun x y -> BS.time "p_imp" (p_imp (fst3 x)) (fst3 y)) (thd3 <+> valid me)
   |> List.map (fun (x, xs) -> List.map fst3 (x::xs))
 
-let filter me = 
-  if !Constants.minquals then min_filter me else full_filter me
-
+let filter me =  
+  if !Constants.minquals then min_filter me else filter me
+*)
 
 (************************************************************************)
 (********************************* API **********************************)
