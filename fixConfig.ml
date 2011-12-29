@@ -102,11 +102,18 @@ let empty = { a    = 0 ; ts   = []; ps = []
             ; assm = FixConstraint.empty_solution }
 
 
+let fes2q qm (f, es) =
+  let q   = Misc.do_catchf ("name2qual: "^ (Sy.to_string f)) (SM.find f) qm in
+  q |> Q.all_params_of_t
+    |> List.map fst 
+    |> Misc.flip (Misc.combine "FixConfig.fes2q") es
+    |> Q.inst q 
+
+
 (* API *)
 let create ds =
   let qm  = sift_quals ds in
-  let n2q = fun n -> Misc.do_catchf ("name2qual: "^ (Sy.to_string n)) (SM.find n) qm in
-  ds |> List.fold_left (extend (fun (f, es) -> Q.inst (n2q f) es)) empty
+  ds |> List.fold_left (extend (fes2q qm)) empty
      |> (fun cfg -> {cfg with a  = get_arity cfg.cs})
      |> (fun cfg -> {cfg with ws = C.add_wf_ids cfg.ws})
 

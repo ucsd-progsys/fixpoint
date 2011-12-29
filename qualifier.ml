@@ -37,6 +37,9 @@ module SM = Sy.SMap
 module IM = Misc.IntMap
 open Misc.Ops
 open Ast
+
+let mydebug = false
+
 (**************************************************************************)
 (***************************** Qualifiers *********************************)
 (**************************************************************************)
@@ -51,15 +54,16 @@ type t = { name    : Sy.t
               where vv' is the applied vv and e1...en are the args applied to ~A1,...,~An *)
          }
 
-let rename      = fun n -> fun q -> {q with name = n} 
-let name_of_t   = fun q -> q.name
-let vv_of_t     = fun q -> q.vvar
-let sort_of_t   = fun q -> q.vsort
-let pred_of_t   = fun q -> q.pred
-let params_of_t = fun q -> q.params
+let rename          = fun n -> fun q -> {q with name = n} 
+let name_of_t       = fun q -> q.name
+let vv_of_t         = fun q -> q.vvar
+let sort_of_t       = fun q -> q.vsort
+let pred_of_t       = fun q -> q.pred
+let params_of_t     = fun q -> q.params
+let all_params_of_t = fun q -> (q.vvar, q.vsort) :: q.params
 
 let args_of_t q  =
-  let xs = q.vvar :: List.map fst q.params in
+  let xs = all_params_of_t q |> List.map fst in
   let es = match q.args with
            | Some es -> es
            | None    -> List.map eVar xs
@@ -75,12 +79,7 @@ let print_params ppf args =
 let print ppf q = 
   F.fprintf ppf "qualif %a(%a):%a" 
     Sy.print q.name
-    print_params q.params 
-    P.print q.pred
-
-let print_short ppf q = 
-  F.fprintf ppf "(%a):%a" 
-    (Misc.pprint_many false ", " So.print) (List.map snd q.params)
+    print_params (all_params_of_t q) 
     P.print q.pred
 
 let print_args ppf q =
@@ -94,10 +93,8 @@ let print_args ppf q =
 let is_free params x = Misc.list_assoc_maybe x params |> Misc.maybe_bool |> not
 (* not (Sy.SMap.mem x params) *)
 
-
-(* API *)
 let canonizer params =
-  let fresh = Misc.mk_string_factory "~A" |> fst |> (fun f -> f <+> Sy.of_string <+> eVar) in
+  let fresh = Misc.mk_string_factory "~AA" |> fst |> (fun f -> f <+> Sy.of_string <+> eVar) in
   let memo  = Hashtbl.create 7 in
   function
     | (Var x, _) when is_free params x && Hashtbl.mem memo x -> 
@@ -105,8 +102,28 @@ let canonizer params =
     | (Var x, _) when is_free params x && Sy.is_wild_fresh x ->
         fresh () 
     | (Var x, _) when is_free params x && Sy.is_wild_any x -> 
-        fresh () >> Hashtbl.replace memo x
-    | e -> e
+        fresh () >> Hashtbl.replace memo x 
+    | e -> e 
+
+(*
+(* API *)
+let canonizer params p =
+  let fresh = Misc.mk_string_factory "~A" |> fst |> (fun f -> f <+> Sy.of_string) in
+  let memo  = Hashtbl.create 7 in
+  let fe    = function
+    | (Var x, _) when is_free params x && Hashtbl.mem memo x -> 
+        Hashtbl.find memo x
+    | (Var x, _) when is_free params x && Sy.is_wild_fresh x ->
+        fresh () >> (fun x' -> Hashtbl.replace memo x' (A.eVar x')) 
+    | (Var x, _) when is_free params x && Sy.is_wild_any x -> 
+        fresh () >> (fun x' -> Hashtbl.replace memo x (A.eVar x'))
+    | (Var x, _) as e when is_free params x && Sy.is_wild_pre x -> 
+        e >> Hashtbl.replace memo x
+    | e -> e in
+  let p'      = P.map id fe p in
+  let params' = Misc.hashtbl_keys memo in
+  params', p'
+*)
 
 (**************************************************************************)
 (*************** Expanding Away Sets of Ops and Rels **********************)
@@ -236,8 +253,15 @@ let compile_definitions qs =
 (************************* Normalize Qualifier Sets ***********************)
 (**************************************************************************)
  
-let remove_duplicates qs =
-  qs |> Misc.kgroupby (Misc.fsprintf print_short)
+(*
+let print_short ppf q = 
+  F.fprintf ppf "(%a):%a" 
+    (Misc.pprint_many false ", " So.print) (List.map snd q.params)
+    P.print q.pred
+*)
+
+let remove_duplicates qs = 
+  qs |> Misc.kgroupby (all_params_of_t <*> pred_of_t)
      |> List.map (fun (_,x::_) -> x)
 
 let rename_qual q i = 
@@ -260,13 +284,16 @@ let normalize qs =
      (* |> compile_definitions *)
      |> uniquely_rename
 
+
+
 (**************************************************************************)
 (********************************** Create ********************************)
 (**************************************************************************)
  
-(* Rename to ensure unique names *)
+(* Rename to ensure unique names 
 let subst_vv v' q =
   { q with vvar = v' ; pred = P.subst q.pred q.vvar (eVar v')} 
+*)
 
 let close_params vts p =
   p |> P.support
@@ -274,15 +301,20 @@ let close_params vts p =
     |> List.map (fun x -> (x, So.t_int (* t_generic 0 causes blowup? *)))
     |> (@) vts (* Sy.SMap.of_list *)
 
+(* API *)
 let create n v t vts p =
-  { name   = n 
-  ; vvar   = v
-  ; vsort  = t
-  ; pred   = p
-  ; params = close_params vts p 
-  ; args   = None }
+  let p    = P.map id (canonizer vts) p in
+  let vts  = close_params vts p         in 
+  let _    = asserts (Misc.distinct vts) "Error: Q.create duplicate params %s \n" (Sy.to_string n)
+  in { name   = n 
+     ; vvar   = v
+     ; vsort  = t
+     ; pred   = p
+     ; params = vts 
+     ; args   = None }
 
 (* API *)
+(*
 let create n v t vts p =
   create n v t vts p
   (* |> subst_vv (Sy.value_variable t) *) (* TODO: eliminate *)
@@ -293,15 +325,24 @@ let subst su q =
   su (* |> Su.to_list *) 
      |> Ast.substs_pred q.pred
      |> create q.name (vv_of_t q) (sort_of_t q) (List.tl q.params)
+*)
+
+(* DEBUG ONLY *)
+let printb ppf (x, e) =
+  F.fprintf ppf "%a:%a" Sy.print x E.print e 
+let printbs ppf args =
+  F.fprintf ppf "%a" (Misc.pprint_many false ", " printb) args
 
 (* API *)
-let inst q es = match es with 
-  | (Var v, _) :: _ ->
-    let xs = q.vvar :: (List.map fst q.params)   in
-    let p  = es |> Misc.combine "Qualifier.inst" xs 
-                |> Su.of_list 
-                |> Ast.substs_pred q.pred 
-    in { q with vvar  = v; pred  = p ; args  = Some es }
-  | _ -> assertf "Error: bad call to Qual.inst"
+let inst q args =
+  let _   = if mydebug then F.printf "\nQ.inst with <<%a>>\n" printbs args in 
+  let xes = try q |> all_params_of_t |> List.map (fun (x,_) -> (x, List.assoc x args)) 
+            with Not_found -> 
+              let _ = F.printf "Error: Q.inst with bad args %a <<%a>>" print q printbs args 
+              in assertf "Error: Q.inst with bad args \n" 
+  in
+  let v   = match xes with (_, (Var v, _)) :: _ -> v | _ -> assertf "Error: Q.inst with non-vvar arg" in
+  let p   = xes |> Su.of_list |> Ast.substs_pred q.pred in
+  { q with vvar = v; pred = p; args = Some (List.map snd xes)}
 
-
+  

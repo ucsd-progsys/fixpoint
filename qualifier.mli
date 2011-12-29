@@ -39,10 +39,11 @@ val vv_of_t   : t -> Ast.Symbol.t
 val pred_of_t : t -> Ast.pred
 val sort_of_t : t -> Ast.Sort.t
 val params_of_t : t -> (Ast.Symbol.t * Ast.Sort.t) list (* Ast.Sort.t Ast.Symbol.SMap.t *)
+val all_params_of_t : t -> (Ast.Symbol.t * Ast.Sort.t) list 
 val vv_of_t   : t -> Ast.Symbol.t
 val args_of_t : t -> (Ast.Symbol.t * Ast.expr) list
 
 val normalize : t list -> t list
-val inst      : t -> Ast.expr list -> t
+val inst      : t -> (Ast.Symbol.t * Ast.expr) list -> t
 val print     : Format.formatter -> t -> unit
 val print_args: Format.formatter -> t -> unit

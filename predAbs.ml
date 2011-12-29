@@ -46,7 +46,6 @@ module PH  = A.Predicate.Hash
 
 open Misc.Ops
 
-
 let mydebug = false 
 
 module Q2S = Misc.ESet (struct
@@ -358,7 +357,6 @@ let read_bind s k = failwith "TBD: read_bind"
 
 (* API *)
 let refine me c =
-  let _   = Misc.dump "TICK: PredAbs.refine \n" in
   let env = C.env_of_t c in
   let (vv1, t1, _) = C.lhs_of_t c in
   let (_,_,ra2s) as r2 = C.rhs_of_t c in
@@ -458,6 +456,9 @@ let pred_of_bind q =
   let name = q |> Q.name_of_t                 in
   let args = q |> Q.args_of_t |> List.map snd in
   A.pBexp (A.eApp (name, args)) 
+
+  (* DEBUG ONLY *)
+let pred_of_bind = Q.pred_of_t 
 
 let min_read s k = 
   if SM.mem k s.m then 
@@ -566,22 +567,37 @@ let valid_bindings env ys (x, t) =
   then valid_bindings_sort env (x,t)
   else valid_bindings ys x
 
+
+(* DEBUG ONLY *)
+let print_param ppf (x, t) =
+  F.fprintf ppf "%a:%a" Sy.print x Ast.Sort.print t 
+let print_params ppf args =
+  F.fprintf ppf "%a" (Misc.pprint_many false ", " print_param) args
+let print_valid_binding ppf (x,y) =
+  F.fprintf ppf "[%a := %a]" Sy.print x Sy.print y
+let print_valid_bindings ppf xys =
+  F.printf "[%a]" (Misc.pprint_many false "" print_valid_binding) xys
+
+
+
 let inst_qual env ys evv (q : Q.t) : Q.t list =
+  let vve = (Q.vv_of_t q, evv) in
   match Q.params_of_t q with
   | [] ->
-      [(Q.inst q [evv])]
+      [(Q.inst q [vve])]
   | xts ->
       xts
+      (* >> F.printf "\n\nparams q = %a: %a" Q.print q print_params) *) 
       |> List.map (valid_bindings env ys)              (* candidate bindings    *)
       |> Misc.product                                  (* generate combinations *) 
       |> List.filter is_valid_binding                  (* remove bogus bindings *)
-      |> List.rev_map (List.map (snd <+> A.eVar))      (* instantiations        *)
-      |> List.rev_map (fun es -> Q.inst q (evv::es))   (* quals *)
-(*  >> (F.printf "\n\ninst_qual q = %a: %a" Q.print q (Misc.pprint_many true "" Q.print)) *)
+      (* >> (List.iter (F.printf "\ninst_binds = %a\n" print_valid_bindings)) *)
+      |> List.rev_map (List.map (Misc.app_snd A.eVar))      (* instantiations        *)
+      |> List.rev_map (fun xes -> Q.inst q (vve::xes))   (* quals *)
+      (* >> (F.printf "\n\ninst_qual q = %a: %a" Q.print q (Misc.pprint_many true "" Q.print)) *)
 
 let inst_ext qs wf = 
-  let r    = wf >> (C.id_of_wf <+>  Printf.sprintf "\nPredAbs.inst_ext wf id = %d\n" <+> print_now) 
-                |> C.reft_of_wf in
+  let r    = C.reft_of_wf wf in 
   let ks   = C.kvars_of_reft r |> List.map snd in
   let env  = C.env_of_wf wf in
   let vv   = fst3 r in
@@ -592,8 +608,12 @@ let inst_ext qs wf =
      |> Misc.flap   (inst_qual env ys (A.eVar vv))
      |> Misc.filter (wellformed_qual env' <&&> C.filter_of_wf wf)
      |> Misc.cross_product ks
-     >> (fun _ -> C.id_of_wf wf |> Printf.sprintf "\nDONE: PredAbs.inst_ext wf id = %d\n" |> print_now)
 
+let inst_ext qs wf =
+  if mydebug then 
+    let msg = Printf.sprintf "inst_ext wf id = %d" (C.id_of_wf wf) in
+    Misc.trace msg (inst_ext qs) wf 
+  else inst_ext qs wf
 
 (* {{{ ORIG
 let inst_qual env ys t (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
@@ -714,31 +734,22 @@ let apply_facts cs kf me =
 
 let binds_of_quals ws qs =
   qs
-  >> (fun _ -> Misc.dump "predAbs.binds_of_quals 0 \n")
   |> Q.normalize
-  >> (fun _ -> Misc.dump "predAbs.binds_of_quals 1 \n")
-  >> Format.printf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) 
- (*  >> Co.logPrintf "Using Quals: \n%a" (Misc.pprint_many true "\n" Q.print) *)
-  >> (fun _ -> flush stdout)
-  >> (fun _ -> Misc.dump "predAbs.binds_of_quals 2 \n")
+  >> (fun qs -> Co.logPrintf "Using GOO Quals: \n%a" (Misc.pprint_many true "\n" Q.print) qs; flush stdout)
+  >> (fun _ -> Co.bprintflush mydebug "BEGIN: Qualifier Instantiation \n")
   |> BS.time "Qual Inst" (inst ws) 
-  >> (fun _ -> Misc.dump "predAbs.binds_of_quals 3 \n")
+  >> (fun _ -> Co.bprintflush mydebug "DONE: Qualifier Instantiation \n")
   (* >> List.iter ppBinding *)
   |> SM.of_list 
-  >> (fun _ -> flush stdout)
 
 (* API *)
 let create c facts = 
   SM.empty
-  >> (fun _ -> Misc.dump "predAbs.create 0 \n")
   |> ((!Constants.dump_simp != "") <?> (fun _ -> binds_of_quals c.Cg.ws c.Cg.qs))
-  >> (fun _ -> Misc.dump "predAbs.create 1 \n")
   |> SM.extendWith (fun _ -> (++)) c.Cg.bm
   |> create c.Cg.ts c.Cg.uops c.Cg.ps c.Cg.cons c.Cg.assm c.Cg.qs
-  >> (fun _ -> Misc.dump "predAbs.create 2 \n")
   |> ((!Constants.refine_sort) <?> Misc.flip (List.fold_left refine_sort) c.Cg.cs)
   |> Misc.maybe_apply (apply_facts c.Cg.cs) facts
-  >> (fun _ -> Misc.dump "predAbs.create 3 \n")
 
   (* API *)
 let empty = create Cg.empty None
