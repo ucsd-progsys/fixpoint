@@ -205,11 +205,17 @@ let print_refineatom ppf = function
   | Conc p       -> F.fprintf ppf "%a" P.print p
   | Kvar (su, k) -> F.fprintf ppf "%a%a" Sy.print k Su.print su
 
-let print_ras so ppf ras = 
-  match so with 
-  | None   -> F.fprintf ppf "%a" (Misc.pprint_many false ";" print_refineatom) ras
-  | Some s -> ras |> Misc.flap (preds_of_refa s) |> A.pAnd
-                  |> F.fprintf ppf "%a" P.print 
+let print_ras so ppf = function 
+  | []  -> F.fprintf ppf "[]"
+  | ras -> begin match so with 
+             | None   ->
+               F.fprintf ppf "%a" (Misc.pprint_many_box false "" "; " "" print_refineatom) ras 
+               (* F.fprintf ppf "%a" (Misc.pprint_many false ";" print_refineatom) ras *)
+             | Some s -> let ps = Misc.flap (preds_of_refa s) ras in
+                         (match ps with 
+                         | [] -> F.fprintf ppf "[]" 
+                         | _  -> F.fprintf ppf "%a" P.print (A.pAnd ps))
+           end
 
 (* API *)
 let print_reft_pred so ppf = function
@@ -218,8 +224,8 @@ let print_reft_pred so ppf = function
 
 (* API *)
 let print_reft so ppf (v, t, ras) =
-  F.fprintf ppf "@[{%a : %a | [%a]}@]" 
-    Sy.print v
+  F.fprintf ppf "@[{%a : %a | %a}@]" 
+    Sy.print v 
     Ast.Sort.print t
     (print_ras so) ras
 
@@ -230,9 +236,7 @@ let print_binding so ppf (x, r) =
 (* API *)
 let print_env so ppf env = 
   bindings_of_env env 
-  |> F.fprintf ppf "@[%a@]" (Misc.pprint_many_box ";" (print_binding so))
-
-
+  |> F.fprintf ppf "@[%a@]" (Misc.pprint_many_brackets true (print_binding so))
 
 
 let pprint_id ppf = function
@@ -260,7 +264,7 @@ let print_dep ppf = function
 
 (* API *)
 let print_wf so ppf (env, r, io, _) =
-  F.fprintf ppf "wf: env @[[%a]@] @\n reft %a @\n %a @\n"
+  F.fprintf ppf "wf: env @[%a@] @\n reft %a @\n %a @\n"
     (print_env so) env
     (print_reft so) r
     pprint_id io
@@ -269,7 +273,7 @@ let print_wf so ppf (env, r, io, _) =
 let print_t so ppf {full=env;nontriv=nenv;guard=g;lhs=r1;rhs=r2;ido=io;tag=is} =
   let env = if !Constants.print_nontriv then nenv else env in 
   F.fprintf ppf 
-  "constraint:@. env  @[[%a]@] @\n grd @[%a@] @\n lhs @[%a@] @\n rhs @[%a@] @\n %a %a @\n"
+  "constraint:@. env  @[%a@] @\n grd @[%a@] @\n lhs @[%a@] @\n rhs @[%a@] @\n %a %a @\n"
     (print_env so) env 
     P.print g
     (print_reft so) r1
@@ -293,8 +297,14 @@ let theta_ra (su': Su.t) = function
   | Conc p       -> Conc (A.substs_pred p su')
   | Kvar (su, k) -> Kvar (Su.concat su su', k) 
 
+let canon_ras ras = 
+  let cras, kras = List.partition (function (Conc _) -> true | _ -> false) ras in
+  cras |> Misc.map_partial (function Conc p -> Some p | _ -> None) 
+       |> (function [] -> kras | ps -> Conc (A.pAnd ps) :: kras)
+
 (* API *)
-let make_reft     = fun v so ras -> (v, so, List.map (theta_ra Su.empty) ras)
+let make_reft     = fun v so ras -> (v, so, List.map (theta_ra Su.empty) (canon_ras ras))
+
 let vv_of_reft    = fst3
 let sort_of_reft  = snd3
 let ras_of_reft   = thd3

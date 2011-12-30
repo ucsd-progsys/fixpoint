@@ -228,16 +228,18 @@ let order_by_defs qm qs =
   Misc.fsort snd irs 
   |>: (fst <+> i2q)
 
-let expand_def qm = function
-  | Bexp (App (f, args),_), _ 
-   -> let fq = SM.find f qm in
-      let _  = asserts (List.length args = List.length fq.params) in
-      fq.params 
-      |> List.map fst
-      |> Misc.flip List.combine args
-      |> Su.of_list
-      |> substs_pred fq.pred
-  | p -> p
+let expand_def qm p = match p with 
+  | Bexp (App (f, args),_), _ -> begin
+    match SM.finds f qm with
+    | []      -> assertf "Unknown Qualifier: %s"   (Sy.to_string f) 
+    | _::_::_ -> assertf "Ambiguous Qualifier: %s" (Sy.to_string f)
+    | [q]     -> q |> all_params_of_t
+                   |> List.map fst
+                   |> Misc.flip (Misc.combine ("Q.expand_def "^ (P.to_string p))) args
+                   |> Su.of_list
+                   |> substs_pred q.pred
+    end
+  | _ -> p
     
 (* this MUST precede any renaming as renaming can screw up name resolution *)
 let compile_definitions qs = 
@@ -245,9 +247,9 @@ let compile_definitions qs =
   let qs'  = order_by_defs qm qs                                            in 
   List.fold_left begin fun qm q -> 
     let q' = {q with pred = P.map (expand_def qm) id q.pred } in
-    SM.add q.name q' qm
+    SM.adds q.name [q'] qm
   end SM.empty qs'
-  |> SM.range
+  |> SM.range |> Misc.flatten
 
 (**************************************************************************)
 (************************* Normalize Qualifier Sets ***********************)
@@ -281,7 +283,7 @@ let uniquely_rename qs =
 let normalize qs =
   qs |> Misc.flap expand_qual
      |> remove_duplicates
-     (* TODO |> compile_definitions *)
+     |> compile_definitions
      |> uniquely_rename
 
 

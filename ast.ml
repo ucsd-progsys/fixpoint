@@ -247,11 +247,22 @@ module Symbol =
     let print fmt s =
       to_string s |> Format.fprintf fmt "%s" 
 
-    let value_variable = function
-      | Sort.Ptr l -> Printf.sprintf "VV_ptr_%s" (Sort.loc_to_string l)
-      | t          -> Printf.sprintf "VV_%s" (Sort.to_string_short t)
+    let vvprefix = "VV_"
+    let vvsuffix = function
+      | Sort.Ptr l -> Sort.loc_to_string l
+      | t          -> Sort.to_string_short t
 
-    let is_value_variable s = Misc.is_prefix "VV_" s 
+
+
+    let is_value_variable = Misc.is_prefix vvprefix
+    let value_variable t = vvprefix ^ (vvsuffix t)
+
+    (* DEBUG *)
+    let vvprefix = "VV"
+    let is_value_variable = (=) vvprefix
+    let value_variable _  = vvprefix
+
+
 
     let sm_length m = 
       SMap.fold (fun _ _ i -> i+1) m 0
@@ -480,13 +491,17 @@ let eTim = function
   | (e1, e2) -> eBin (e1, Times, e2)
 
 
+let rec conjuncts = function
+  | And ps, _ -> Misc.flap conjuncts ps
+  | True, _   -> []
+  | p         -> [p]
+
 
 (* Constructors: Predicates *)
 let pTrue  = pwr True
 let pFalse = pwr False
 let pAtom  = fun (e1, r, e2) -> pwr (Atom (e1, r, e2))
 let pMAtom = fun (e1, r, e2) -> pwr (MAtom (e1, r, e2))
-let pAnd   = fun ps -> pwr (And ps)
 let pOr    = fun ps -> pwr (Or ps)
 let pNot   = fun p  -> pwr (Not p)
 let pBexp  = fun e  -> pwr (Bexp e)
@@ -494,6 +509,12 @@ let pImp   = fun (p1,p2) -> pwr (Imp (p1,p2))
 let pIff   = fun (p1,p2) -> pwr (Iff (p1,p2))
 let pForall= fun (qs, p) -> pwr (Forall (qs, p))
 let pEqual = fun (e1,e2) -> pAtom (e1, Eq, e2)
+
+let pAnd   = fun ps -> match Misc.flap conjuncts ps with 
+                       | []  -> pTrue 
+                       | [p] -> p
+                       | ps  -> pwr (And (Misc.flap conjuncts ps))
+
 
 
 module ExprHash = Hashtbl.Make(struct
@@ -583,19 +604,22 @@ and print_pred ppf p = match puw p with
       F.fprintf ppf "(%a => %a)" print_pred p1 print_pred p2 
   | Iff (p1, p2) ->
       F.fprintf ppf "(%a <=> %a)" print_pred p1 print_pred p2 
-  | And ps -> 
-      F.fprintf ppf "&& [@[%a@]]" 
-        (Misc.pprint_many false " ; " print_pred) ps
-  | Or ps -> 
-      F.fprintf ppf "|| [@[%a@]]" 
-        (Misc.pprint_many false " ; " print_pred) ps
+  | And ps -> begin match ps with [] -> F.fprintf ppf "true" | _ ->
+      F.fprintf ppf "&& %a" (Misc.pprint_many_brackets true print_pred) ps
+    end
+  | Or ps -> begin match ps with [] -> F.fprintf ppf "false" | _ -> 
+      F.fprintf ppf "|| %a" (Misc.pprint_many_brackets true print_pred) ps
+    end
+
   | Atom (e1, r, e2) ->
-      F.fprintf ppf "@[(%a %s %a)@]" 
+      (* F.fprintf ppf "@[(%a %s %a)@]" *)
+      F.fprintf ppf "(%a %s %a)"
         print_expr e1 
         (brel_to_string r) 
         print_expr e2
   | MAtom (e1, rs, e2) ->
-      F.fprintf ppf "@[(%a [%a] %a)@]" 
+      F.fprintf ppf "(%a [%a] %a)" 
+      (* F.fprintf ppf "@[(%a [%a] %a)@]"  *)
         print_expr e1 
         (Misc.pprint_many false " ; " print_brel) rs
         print_expr e2
@@ -1177,12 +1201,6 @@ let rec simplify_pred ((p, _) as pred) =
                              | ps  -> pOr ps)
     | _ -> pred
 
-let rec conjuncts = function
-  | And ps, _ -> Misc.flap conjuncts ps
-  | True, _   -> []
-  | p         -> [p]
-
-
 (**************************************************************************)
 (*************************** Substitutions ********************************)
 (**************************************************************************)
@@ -1212,9 +1230,9 @@ module Subst = struct
   let concat    = fun s1 s2 -> Symbol.SMap.fold (fun x e s -> extend s (x, e)) s2 s1
   let print_sub = fun ppf (x,e) -> F.fprintf ppf "[%a:=%a]" Symbol.print x Expression.print e
   let print     = fun ppf -> to_list <+> F.fprintf ppf "%a" (Misc.pprint_many false "" print_sub)
+  let apply     = Misc.flip Symbol.SMap.maybe_find
+  (* if Symbol.SMap.mem x su then Some (Symbol.SMap.find x su) else None *)
 
-  let apply su x = 
-    if Symbol.SMap.mem x su then Some (Symbol.SMap.find x su) else None 
 end
 
 

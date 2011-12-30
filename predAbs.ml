@@ -467,7 +467,7 @@ let pred_of_bind q =
 let min_read s k = 
   if SM.mem k s.m then 
     SM.find k s.m 
-    |> Misc.rootsBy (def_leq s)  
+    |> Misc.rootsBy (def_leq s)
     |> List.map pred_of_bind
   else []
 
