@@ -204,13 +204,12 @@ let strengthen_reft env ((v,t,ras) as r) =
 let print_refineatom ppf = function
   | Conc p       -> F.fprintf ppf "%a" P.print p
   | Kvar (su, k) -> F.fprintf ppf "%a%a" Sy.print k Su.print su
-
+(* API *)
 let print_ras so ppf = function 
-  | []  -> F.fprintf ppf "[]"
+  | []  -> F.fprintf ppf "true"
   | ras -> begin match so with 
              | None   ->
                F.fprintf ppf "%a" (Misc.pprint_many_box false "" "; " "" print_refineatom) ras 
-               (* F.fprintf ppf "%a" (Misc.pprint_many false ";" print_refineatom) ras *)
              | Some s -> let ps = Misc.flap (preds_of_refa s) ras in
                          (match ps with 
                          | [] -> F.fprintf ppf "[]" 
@@ -218,9 +217,16 @@ let print_ras so ppf = function
            end
 
 (* API *)
+let print_reft_pred so ppf (v,_,ras) =
+  F.fprintf ppf "@[{%a | %a}@]"
+    Sy.print v 
+    (print_ras so) ras
+
+  (*
 let print_reft_pred so ppf = function
   | (v,_,[])  -> F.fprintf ppf "@[{%a | true }@]" Sy.print v
   | (v,_,ras) -> F.fprintf ppf "@[{%a | @[%a@]}@]" Sy.print v (print_ras so) ras
+*)
 
 (* API *)
 let print_reft so ppf (v, t, ras) =
