@@ -69,29 +69,29 @@ let args_of_t q  =
            | None    -> List.map eVar xs
   in Misc.combine "Qualifier.args_of_t" xs es
 
-
 let print_param ppf (x, t) =
   F.fprintf ppf "%a:%a" Sy.print x So.print t 
 
 let print_params ppf args =
   F.fprintf ppf "%a" (Misc.pprint_many false ", " print_param) args
 
+let print_args ppf q =
+  q |> args_of_t |> List.map snd 
+    |> F.fprintf ppf "%a(%a)" Sy.print q.name (Misc.pprint_many false ", " E.print) 
+ 
+(* API *) 
 let print ppf q = 
   F.fprintf ppf "qualif %a(%a):%a" 
     Sy.print q.name
     print_params (all_params_of_t q) 
     P.print q.pred
 
-let print_args ppf q =
-  q |> args_of_t |> List.map snd 
-    |> F.fprintf ppf "%a(%a)" Sy.print q.name (Misc.pprint_many false ", " E.print) 
-   
+  
 (**********************************************************************)
 (****************** Canonizing Wildcards (e.g. _ ---> ~A) *************)
 (**********************************************************************)
 
 let is_free params x = Misc.list_assoc_maybe x params |> Misc.maybe_bool |> not
-(* not (Sy.SMap.mem x params) *)
 
 let canonizer params =
   let fresh = Misc.mk_string_factory "~AA" |> fst |> (fun f -> f <+> Sy.of_string <+> eVar) in
@@ -104,26 +104,6 @@ let canonizer params =
     | (Var x, _) when is_free params x && Sy.is_wild_any x -> 
         fresh () >> Hashtbl.replace memo x 
     | e -> e 
-
-(*
-(* API *)
-let canonizer params p =
-  let fresh = Misc.mk_string_factory "~A" |> fst |> (fun f -> f <+> Sy.of_string) in
-  let memo  = Hashtbl.create 7 in
-  let fe    = function
-    | (Var x, _) when is_free params x && Hashtbl.mem memo x -> 
-        Hashtbl.find memo x
-    | (Var x, _) when is_free params x && Sy.is_wild_fresh x ->
-        fresh () >> (fun x' -> Hashtbl.replace memo x' (A.eVar x')) 
-    | (Var x, _) when is_free params x && Sy.is_wild_any x -> 
-        fresh () >> (fun x' -> Hashtbl.replace memo x (A.eVar x'))
-    | (Var x, _) as e when is_free params x && Sy.is_wild_pre x -> 
-        e >> Hashtbl.replace memo x
-    | e -> e in
-  let p'      = P.map id fe p in
-  let params' = Misc.hashtbl_keys memo in
-  params', p'
-*)
 
 (**************************************************************************)
 (*************** Expanding Away Sets of Ops and Rels **********************)
@@ -193,14 +173,12 @@ let expand_qual q =
 (*************** Expanding Away Sets of Ops and Rels **********************)
 (**************************************************************************)
 
-
-(* make_def_deps : name -> [(name, [expr])] of calls within each qual *)
 let make_def_deps q = 
   let res = ref [] in
   let p' : pred  = P.map begin function Bexp (App (f, args),_), _ ->  res := (f, args) :: !res; pTrue | p -> p end id q.pred  in 
   (q.name, !res) 
-  (* >> (fun (n, xs) ->  F.printf "qdep %a = %a \n" Sy.print n (Misc.pprint_many false ", " Sy.print) (List.map fst xs) )
-   *)
+(*  >> (fun (n, xs) ->  F.printf "qdep %a = %a \n" Sy.print n (Misc.pprint_many false ", " Sy.print) (List.map fst xs) )
+  *)
 
 let check_def_deps qm = 
   List.iter begin fun (n, fargs) ->
@@ -228,8 +206,7 @@ let order_by_defs qm qs =
   let irs  = Fcommon.scc_rank "qualifier-deps" i2s is ijs                       in 
   Misc.fsort snd irs 
   |>: (fst <+> i2q)
- (*  >> (F.printf "ORDERED QUALS:\n%a\n" (Misc.pprint_many true "\n" print))
-  *)
+(*   >> (F.printf "ORDERED QUALS:\n%a\n" (Misc.pprint_many true "\n" print)) *)
 
 let expand_def qm p = match p with 
   | Bexp (App (f, args),_), _ -> begin
@@ -257,13 +234,6 @@ let compile_definitions qs =
 (**************************************************************************)
 (************************* Normalize Qualifier Sets ***********************)
 (**************************************************************************)
- 
-(*
-let print_short ppf q = 
-  F.fprintf ppf "(%a):%a" 
-    (Misc.pprint_many false ", " So.print) (List.map snd q.params)
-    P.print q.pred
-*)
 
 let remove_duplicates qs = 
   qs |> Misc.kgroupby (all_params_of_t <*> pred_of_t)
@@ -285,8 +255,8 @@ let uniquely_rename qs =
 (* API *)
 let normalize qs =
   qs |> Misc.flap expand_qual
-     |> remove_duplicates
      |> compile_definitions
+     |> remove_duplicates
      |> uniquely_rename
 
 
@@ -318,20 +288,6 @@ let create n v t vts p =
      ; params = vts 
      ; args   = None }
 
-(* API *)
-(*
-let create n v t vts p =
-  create n v t vts p
-  (* |> subst_vv (Sy.value_variable t) *) (* TODO: eliminate *)
-  |> (fun q -> {q with pred = P.map id (canonizer q.params) q.pred })
-
-(* API *)
-let subst su q = 
-  su (* |> Su.to_list *) 
-     |> Ast.substs_pred q.pred
-     |> create q.name (vv_of_t q) (sort_of_t q) (List.tl q.params)
-*)
-
 (* DEBUG ONLY *)
 let printb ppf (x, e) =
   F.fprintf ppf "%a:%a" Sy.print x E.print e 
@@ -350,4 +306,3 @@ let inst q args =
   let p   = xes |> Su.of_list |> Ast.substs_pred q.pred in
   { q with vvar = v; pred = p; args = Some (List.map snd xes)}
 
-  
