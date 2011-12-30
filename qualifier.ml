@@ -192,20 +192,21 @@ let expand_qual q =
 (**************************************************************************)
 (*************** Expanding Away Sets of Ops and Rels **********************)
 (**************************************************************************)
- 
+
+
 (* make_def_deps : name -> [(name, [expr])] of calls within each qual *)
 let make_def_deps q = 
   let res = ref [] in
-  P.map begin fun p -> 
-    p >> (function Bexp (App (f, args),_), _ -> res := (f, args) :: !res | _ -> ()) 
-  end id q.pred
-  >| (q.name, !res)
+  let p' : pred  = P.map begin function Bexp (App (f, args),_), _ ->  res := (f, args) :: !res; pTrue | p -> p end id q.pred  in 
+  (q.name, !res) 
+  (* >> (fun (n, xs) ->  F.printf "qdep %a = %a \n" Sy.print n (Misc.pprint_many false ", " Sy.print) (List.map fst xs) )
+   *)
 
 let check_def_deps qm = 
   List.iter begin fun (n, fargs) ->
       List.iter begin fun (f, args) ->
         match SM.finds f qm with
-        | [q] -> asserts (List.length args = List.length q.params) 
+        | [q] -> asserts (List.length args = 1 + List.length q.params) 
                  "Malformed Qualifier: %s with incorrect application of %s"
                  (Sy.to_string n) (Sy.to_string f)
         | []  -> assertf "Malformed Qualifier: %s refers to unknown %s" 
@@ -227,6 +228,8 @@ let order_by_defs qm qs =
   let irs  = Fcommon.scc_rank "qualifier-deps" i2s is ijs                       in 
   Misc.fsort snd irs 
   |>: (fst <+> i2q)
+ (*  >> (F.printf "ORDERED QUALS:\n%a\n" (Misc.pprint_many true "\n" print))
+  *)
 
 let expand_def qm p = match p with 
   | Bexp (App (f, args),_), _ -> begin
