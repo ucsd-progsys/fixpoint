@@ -1,8 +1,8 @@
 (* This module deals with top-level parsing of fq files and such *)
 
-
+(*
 exception UnmappedKvar of Ast.Symbol.t
-
+*)
 type qbind   = Qualifier.t list
 type solbind = Ast.Symbol.t * ((Ast.Symbol.t * (Ast.expr list)) list)
 type deft = Srt of Ast.Sort.t 
