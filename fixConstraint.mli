@@ -84,6 +84,7 @@ val lookup_env       : envt -> Ast.Symbol.t -> reft option
 val print_env        : soln option -> Format.formatter -> envt -> unit
 val print_wf         : soln option -> Format.formatter -> wf -> unit
 val print_t          : soln option -> Format.formatter -> t -> unit
+val print_ras        : soln option -> Format.formatter -> refa list -> unit
 val print_reft       : soln option -> Format.formatter -> reft -> unit
 val print_reft_pred  : soln option -> Format.formatter -> reft -> unit
 val print_binding    : soln option -> Format.formatter -> (Ast.Symbol.t * reft) -> unit

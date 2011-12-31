@@ -204,6 +204,7 @@ let strengthen_reft env ((v,t,ras) as r) =
 let print_refineatom ppf = function
   | Conc p       -> F.fprintf ppf "%a" P.print p
   | Kvar (su, k) -> F.fprintf ppf "%a%a" Sy.print k Su.print su
+
 (* API *)
 let print_ras so ppf = function 
   | []  -> F.fprintf ppf "true"
