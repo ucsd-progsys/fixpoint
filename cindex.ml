@@ -191,7 +191,7 @@ let is_addall im is = List.fold_left (IS.add |> Misc.flip) im is
 (* A constraint c is non-live if its rhs is a k variable that is not
  * (transitively) read. 
  * roots := { c | (rhs_of_t c) has a concrete predicate }
- * lives := PRE*(roots) where Pre* is refl-trans-clos of the depends-on relation *)
+ * lives := Pre*(roots) where Pre* is refl-trans-clos of the depends-on relation *)
 
 let make_lives cm real_deps =
   let dm = List.fold_left (fun im (i, j) -> IM.add j (i :: (im_findall j im)) im) IM.empty real_deps in
@@ -202,7 +202,9 @@ let make_lives cm real_deps =
        let vm = IS.fold (fun j vm -> IS.add j vm) js vm in
        let js =
          IS.fold begin fun j js ->
-              im_findall j dm |> List.filter (fun j -> not (IS.mem j vm)) |> is_addall js
+              im_findall j dm 
+              |> List.filter (fun j -> not (IS.mem j vm)) 
+              |> is_addall js
          end js IS.empty
        in ((js, vm), js != IS.empty)
      end
