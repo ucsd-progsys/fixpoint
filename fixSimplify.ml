@@ -103,6 +103,7 @@ let rec expr_apply_defs em pm expr =
   | Cst (e, t), _ ->
       let e', b'   = ef e in
       eCst (e', t), b'
+  | _ -> failwith "Pattern: expr_apply_defs"
 
 and pred_apply_defs em pm pred =
   let ef = expr_apply_defs em pm in
