@@ -303,7 +303,6 @@ let check_tp me env vv t lps =  function [] -> [] | rcs ->
             ignore(me.stat_valid_queries += (List.length rv)) in
   rv
 
-
 (* API *)
 let read s k = (s.assm k) ++ (if SM.mem k s.m then p_read s k |>: snd else [])
 
@@ -374,18 +373,12 @@ let refine_sort me c =
 (***************************************************************)
 
 let unsat me c = 
+  let s        = read me      in
   let env      = C.env_of_t c in
   let (vv,t,_) = C.lhs_of_t c in
-  let s        = read me      in
   let lps      = C.preds_of_lhs s c  in
   let rhsp     = c |> C.rhs_of_t |> C.preds_of_reft s |> A.pAnd in
   not ((check_tp me env vv t lps [(0, rhsp)]) = [0])
-
-(*
-let unsat me c = 
-  let msg = Printf.sprintf "unsat_cstr %d" (C.id_of_t c) in
-  Misc.do_catch msg (unsat me s) c
-*)
 
 (****************************************************************)
 (************* Minimization: For Prettier Output ****************)

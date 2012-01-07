@@ -40,6 +40,7 @@ val kvars_of_reft    : reft -> (Ast.Subst.t * Ast.Symbol.t) list
 val kvars_of_t       : t -> (Ast.Subst.t * Ast.Symbol.t) list
 
 val is_conc_refa     : refa -> bool
+val is_conc_rhs      : t -> bool
 
 val empty_solution   : soln
 val meet_solution    : soln -> soln -> soln

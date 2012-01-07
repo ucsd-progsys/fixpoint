@@ -125,6 +125,15 @@ let is_simple {lhs = (_,_,ra1s); rhs = (_,_,ra2s)} =
   && List.for_all is_simple_refatom ra2s 
   && !Co.simple
 
+let is_conc_refa = function Conc p -> not (P.is_tauto p) | _ -> false
+
+(* API *)
+let is_conc_rhs {rhs = (_,_,ras)} =
+  List.exists is_conc_refa ras
+  >> (fun rv -> if rv then (asserts (List.for_all is_conc_refa ras) "is_conc_rhs"))
+
+
+
 (* API *)
 let kvars_of_t {nontriv = env; lhs = lhs; rhs = rhs} =
   [lhs; rhs] 
