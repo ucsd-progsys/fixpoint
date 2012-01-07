@@ -98,8 +98,23 @@ let env_of_bindings xrs =
     SM.add x r env
   end SM.empty xrs
 
-let bindings_of_env env = 
+
+let bindings_of_env = SM.to_list
+
+(* let bindings_of_env env = 
   SM.fold (fun x y bs -> (x,y)::bs) env []
+*)
+
+let split_ras ras = 
+  let cras, kras = List.partition (function (Conc _) -> true | _ -> false) ras in
+  cras |> Misc.map_partial (function Conc p -> Some p | _ -> None) 
+       |> (function [] -> (None, kras) | ps -> (Some (A.pAnd ps), kras))
+
+
+let kbindings_of_lhs {nontriv = ne; lhs = (v, t, ras)} =  
+  let xkss     = SM.to_list ne in
+  let _, kras  = split_ras ras in
+  (v, (v,t,kras)) :: xkss
 
 let map_env          = SM.mapi
 let lookup_env env x = try Some (SM.find x env) with Not_found -> None 
@@ -121,11 +136,6 @@ let kvars_of_t {nontriv = env; lhs = lhs; rhs = rhs} =
 (*************************************************************)
 (*********************** Logic Embedding *********************)
 (*************************************************************)
-
-let split_ras ras = 
-  let cras, kras = List.partition (function (Conc _) -> true | _ -> false) ras in
-  cras |> Misc.map_partial (function Conc p -> Some p | _ -> None) 
-       |> (function [] -> (None, kras) | ps -> (Some (A.pAnd ps), kras))
 
 let canon_ras ras = 
   match split_ras ras with
@@ -322,17 +332,32 @@ let ido_of_t    = fun t -> t.ido
 let id_of_t     = fun t -> match t.ido with Some i -> i | _ -> assertf "C.id_of_t"
 let is_tauto    = rhs_of_t <+> ras_of_reft <+> List.for_all is_tauto_refatom
 let make_t      = fun env p r1 r2 io is ->
-                    let p     = A.simplify_pred p in
-                    let ne,ps = non_trivial env   in
+                    let p        = A.simplify_pred p in
+                    let ne, ps   = non_trivial env   in
                     { full    = env 
                     ; nontriv = ne
                     ; guard   = p
-                    ; iguard  = A.pAnd (p :: ps)
-                    ; lhs     = r1
+                    ; iguard  = A.pAnd (p::ps) 
+                    ; lhs     = r1 
                     ; rhs     = r2
                     ; ido     = io
                     ; tag     = is }
 
+(*
+let make_t      = fun env p ((v,t,ras1) as r1) r2 io is ->
+                    let p        = A.simplify_pred p in
+                    let po, kras = split_ras ras1    in
+                    let ne, ps   = non_trivial env   in
+                    let gps      = match po with Some p' -> p' :: p :: ps | _ -> p :: ps in
+                    { full    = env 
+                    ; nontriv = ne
+                    ; guard   = p
+                    ; iguard  = A.pAnd gps 
+                    ; lhs     = (v, t, kras) 
+                    ; rhs     = r2
+                    ; ido     = io
+                    ; tag     = is }
+*)
 
 let reft_of_sort so = make_reft (Sy.value_variable so) so []
 
