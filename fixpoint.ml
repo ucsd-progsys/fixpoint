@@ -24,6 +24,10 @@
 
 (** read a set of constraints, solve, and dump out the solution *)
 
+module CX  = Counterexample
+
+
+
 module BS  = BNstats
 module SM  = Ast.Symbol.SMap
 module Co  = Constants 

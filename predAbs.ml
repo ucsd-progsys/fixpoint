@@ -184,51 +184,6 @@ let dump_graph s g =
     >> (fun oc -> Dot.output_graph oc g)
     |> close_out 
 
-(* {{{
-
-  module TTM = Misc.EMap (struct
-    type t = A.tag * A.tag 
-    let compare = compare 
-  end)
-
-
-(************************************************************)
-(***************** Build Implication Graph ******************)
-(************************************************************)
-
-let check_tp tp sm q qs = 
-  let vv  = Q.vv_of_t q in
-  let lps = [Q.pred_of_t q] in
-  qs |> List.map (fun q -> ((q, tag_of_qual q), Q.pred_of_t q))
-     >> (List.map (fst <+> fst) <+> F.printf "CHECK_TP: %a IN %a \n" Q.print q pprint_qs)
-     |> TP.set_filter tp sm vv lps (fun _ _ -> false) 
-     >> (List.flatten <+> List.map fst <+> F.printf "CHECK_TP: %a OUT %a \n" Q.print q pprint_qs)
-
-
-let update_impm_for_quals tp sm impmg qs = 
-  List.fold_left begin fun impmg q ->
-    let tag = tag_of_qual q in 
-    qs |> check_tp tp sm q
-       |> List.flatten
-       |> (fun xs -> (q, tag) :: xs)
-       |> List.fold_left begin fun (ttm, g) (q', tag') -> 
-           ( TTM.add (tag, tag') true ttm
-           , G.add_edge_e g (q, (), q'))
-          end impmg
-  end impmg qs
-
-let close_env =
-  List.fold_left (fun sm x -> if SM.mem x sm then sm else SM.add x Ast.Sort.t_int sm)
-
-let impm_of_quals ts sm ps qs =
-  let sm = qs |> Misc.flap (Q.pred_of_t <+> P.support) |> close_env sm in
-  let tp = TP.create ts sm ps [] in
-  qs |> cluster_quals 
-     |> List.fold_left (update_impm_for_quals tp sm) (TTM.empty, G.empty)
-     >> (fun _ -> ignore <| Printf.printf "DONE: Building IMP Graph \n")  
-
- }}} *)
-
 let p_read s k =
   let _ = asserts (SM.mem k s.m) "ERROR: p_read : unknown kvar %s\n" (Sy.to_string k) in
   SM.find k s.m  |>: (fun q -> ((k, q), Q.pred_of_t q))
@@ -674,7 +629,6 @@ let inst ws qs =
 (*************************************************************************)
 
 let create ts sm ps consts assm qs bm =
-  (* let qs    = Misc.sort_and_compact (qs0 ++ quals_of_bindings bm) in *)
   let qleqs =  if !Co.minquals then BS.time "Annots: make qleqs" (qleqs_of_qs ts sm ps) qs else Q2S.empty in
   { m = bm
   ; assm = assm
