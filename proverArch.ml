@@ -40,7 +40,12 @@ sig
                     -> ('a -> 'a -> bool)
                     -> ('a * Ast.pred) list 
                     -> 'a list list
-                       
+
   val print_stats : Format.formatter -> t -> unit
 
+  val unsat_core  : t                                       
+                    -> Ast.pred                             (* background predicate   *)
+                    -> ('a * Ast.pred) list                 (* [(index, killer-fact)] *)
+                    -> ('b * Ast.pred) list                 (* [(index, killed-fact)] *)
+                    -> ('b * 'a list) list                  (* [(killed, killers)]    *)
 end

@@ -103,6 +103,7 @@ type t   =
                                  must be a fixpoint wrt constraints *)
   ; qm   : Qualifier.t SM.t   (* map from names to qualifiers *)
   ; qleqs: Q2S.t              (* (q1,q2) \in qleqs implies q1 => q2 *)
+  
   (* stats *)
   ; stat_simple_refines : int ref 
   ; stat_tp_refines     : int ref 

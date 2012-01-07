@@ -31,10 +31,11 @@ type t
 val create    :  Ast.Symbol.t 
               -> Ast.Symbol.t 
               -> Ast.Sort.t 
-              -> (Ast.Symbol.t * Ast.Sort.t) list -> Ast.pred -> t 
+              -> (Ast.Symbol.t * Ast.Sort.t) list 
+              -> Ast.pred 
+              -> t 
 
-
-val name_of_t : t -> Ast.Symbol.t (* string *)
+val name_of_t : t -> Ast.Symbol.t
 val vv_of_t   : t -> Ast.Symbol.t
 val pred_of_t : t -> Ast.pred
 val sort_of_t : t -> Ast.Sort.t

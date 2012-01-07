@@ -31,6 +31,7 @@ exception UnmappedKvar of Ast.Symbol.t
 
 
 type qbind   = Q.t list
+
 type solbind = Ast.Symbol.t * ((Ast.Symbol.t * (Ast.expr list)) list)
 
 type deft = Srt of Ast.Sort.t 

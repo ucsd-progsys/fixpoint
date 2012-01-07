@@ -170,7 +170,7 @@ let unconstrained_kvars cs =
       |> List.filter (fun kv -> not (Sy.SSet.mem kv rhss))
 
 let true_unconstrained sri s =
-  sri |> Cindex.to_list 
+  sri |> Ci.to_list 
       >> (fun _ -> Co.logPrintf "Fixpoint: true_unconstrained Step 2 \n")
       |> unconstrained_kvars
       >> (fun _ -> Co.logPrintf "Fixpoint: true_unconstrained Step 2 \n")

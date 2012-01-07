@@ -458,4 +458,8 @@ let print_stats ppf me =
     "TP stats: sets=%d, pushes=%d, pops=%d, unsats=%d, queries=%d, count=%d, unsatLHS=%d \n" 
     !nb_set !nb_push !nb_pop !nb_unsat !nb_query (List.length me.vars) !nb_unsatLHS
 
+
+(* API *)
+let unsat_core me p ips iqs = failwith "TBD: TPZ3.unsat_core"
+
 end
