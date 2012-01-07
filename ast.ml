@@ -400,6 +400,8 @@ module ExprHashconsStruct = struct
         id + Hashtbl.hash (Sort.to_string t)
     | Bot ->
         0
+    | _ -> assertf "pattern error in A.pred hash"
+
 end
   
 module ExprHashcons = Hashcons(ExprHashconsStruct)
