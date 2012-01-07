@@ -428,7 +428,7 @@ module CopyProp : SIMPLIFIER = struct
 
   let equalities_of_t c =
     c |> C.env_of_t 
-      |> C.bindings_of_env 
+      |> (fun _ -> failwith "CopyProp.equalities_of_t") (* C.bindings_of_env  *)
       |> Misc.map_partial equalities_of_binding
 
   let simplify_t c = 
@@ -438,7 +438,6 @@ module CopyProp : SIMPLIFIER = struct
       |> eliminate c
 
   let simplify_ts = Misc.map simplify_t
-
 end
 
 (* API *)
