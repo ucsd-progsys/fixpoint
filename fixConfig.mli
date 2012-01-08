@@ -44,13 +44,14 @@ module type DOMAIN = sig
   val print        : Format.formatter -> t -> unit
   val print_stats  : Format.formatter -> t -> unit
   val dump         : t -> unit
+  val ctr_examples : t -> FixConstraint.t list -> FixConstraint.t list -> Counterexample.cex list 
   val mkbind       : qbind -> bind
 end
 
 val empty     : 'a cfg 
 val create    : deft list -> qbind cfg
 val print     : Format.formatter -> 'a cfg -> unit
-(* val create_raw:  Ast.Sort.t list 
+val create_raw:  Ast.Sort.t list 
               -> Ast.Sort.t Ast.Symbol.SMap.t 
               -> Ast.pred list 
               -> int 
@@ -60,4 +61,3 @@ val print     : Format.formatter -> 'a cfg -> unit
               -> Qualifier.t list
               -> FixConstraint.soln 
               -> 'a cfg
-              *)

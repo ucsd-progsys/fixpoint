@@ -36,6 +36,7 @@ module Su  = A.Subst
 module SM  = Sy.SMap
 module SS  = Sy.SSet
 module C   = FixConstraint
+module Cx  = Counterexample
 
 module BS  = BNstats
 module TP  = TpNull.Prover
@@ -566,51 +567,6 @@ let inst_ext qs wf =
     Misc.trace msg (inst_ext qs) wf 
   else inst_ext qs wf
 
-(* {{{ ORIG
-let inst_qual env ys t (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
-  let v  = Q.vv_of_t   q in
-  let p  = Q.pred_of_t q in
-  let n  = Sy.of_string "" in 
-  let q' = Q.create n v t (Q.params_of_t q) p in
-  let v' = Sy.value_variable t in
-  let su = Su.of_list [(v, A.eVar v')] in
-  begin
-  match Q.params_of_t q' with
-  | [(_,_)] ->
-      [q', (q, su)]
-  | xts ->
-      xts
-      |> Misc.sort_and_compact
-      |> List.map (valid_bindings env ys)               (* candidate bindings    *)
-      |> Misc.product                                   (* generate combinations *) 
-      |> List.filter valid_binding                      (* remove bogus bindings *)
-      |> List.map (List.map (Misc.app_snd A.eVar))      (* instantiations        *)
-      |> List.rev_map Su.of_list                        (* convert to substs     *)
-      |> List.rev_map (fun su' -> (Q.subst su' q', (q, Su.concat su su'))) (* quals *)
-  end
-(*  >> ((List.map fst) <+> F.printf "\n\ninst_qual q = %a: %a" Q.print q (Misc.pprint_many true "" Q.print))
- *)
-
-let inst_ext qs wf = 
-  let r    = wf >> (C.id_of_wf <+>  Printf.sprintf "\nPredAbs.inst_ext wf id = %d\n" <+> print_now) 
-                |> C.reft_of_wf in
-  let ks   = C.kvars_of_reft r |> List.map snd in
-  let env  = C.env_of_wf wf in
-  let vv   = fst3 r in
-  let t    = snd3 r in
-  let ys   = Sy.SMap.domain env in
-  let env' = SM.add vv r env in
-  qs |> List.filter (Q.sort_of_t <+> sort_compat t)
-     |> Misc.flap   (inst_qual env ys t)
-     |> Misc.map    (Misc.app_fst (Q.subst_vv vv))
-     |> Misc.filter (fst <+> wellformed_qual env')
-     |> Misc.filter (fst <+> C.filter_of_wf wf)
-     |> Misc.map    (Misc.app_fst Q.pred_of_t)
-     |> Misc.cross_product ks
-     >> (fun _ -> C.id_of_wf wf |> Printf.sprintf "\nDONE: PredAbs.inst_ext wf id = %d\n" |> print_now)
-
-}}} *)
-
 let inst ws qs = 
   Misc.flap (inst_ext qs) ws 
   >> (fun _ -> Co.bprintf mydebug "\n\nvarmatch_ctr = %d \n\n" !varmatch_ctr)
@@ -711,5 +667,14 @@ let empty = create Cg.empty None
 (* API *)
 let meet me you = {me with m = SM.extendWith (fun _ -> (++)) me.m you.m} 
 
+(************************************************************************)
+(****************** Counterexample Generation ***************************)
+(************************************************************************)
 
+let mk_ctrace me = failwith "TBD"
+let mk_lifespan me = failwith "TBD"
+
+let ctr_examples me cs ucs = 
+  let cx = Cx.create me.assm cs ucs (mk_ctrace me) (mk_lifespan me) me.tpc in 
+  List.map (Cx.explain cx) ucs
 

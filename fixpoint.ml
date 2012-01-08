@@ -60,14 +60,14 @@ let save_raw fname cs s =
   print_now "Fixpoint: save_raw: END \n"
 
 let solve ac  = 
-  let _       = print_now "Fixpoint: Creating  CI\n" in
-  let ctx, s  = BS.time "create" SPA.create ac None in
-  let _       = print_now "Fixpoint: Solving \n" in
-  let s, cs'  = BS.time "solve" (SPA.solve ctx) s in
+  let _         = print_now "Fixpoint: Creating  CI\n" in
+  let ctx, s    = BS.time "create" SPA.create ac None in
+  let _         = print_now "Fixpoint: Solving \n" in
+  let s, cs',_  = BS.time "solve" (SPA.solve ctx) s in
 
-  let _       = print_now "Fixpoint: Saving Result \n" in
-  let _       = BS.time "save" (save_raw !Co.out_file cs') s in
-  let _       = print_now "Fixpoint: Saving Result DONE \n" in
+  let _         = print_now "Fixpoint: Saving Result \n" in
+  let _         = BS.time "save" (save_raw !Co.out_file cs') s in
+  let _         = print_now "Fixpoint: Saving Result DONE \n" in
   cs'
 
 let dump_solve ac = 

@@ -146,6 +146,7 @@ module type DOMAIN = sig
   val print        : Format.formatter -> t -> unit
   val print_stats  : Format.formatter -> t -> unit
   val dump         : t -> unit
+  val ctr_examples : t -> FixConstraint.t list -> FixConstraint.t list -> Counterexample.cex list 
   val mkbind       : qbind -> bind
 end
 

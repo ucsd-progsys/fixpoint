@@ -19,7 +19,7 @@ module type SOLVER = sig
   type soln
   type bind
   val create    : bind FixConfig.cfg -> FixConstraint.soln option -> (t * soln)
-  val solve     : t -> soln -> (soln * (FixConstraint.t list)) 
+  val solve     : t -> soln -> (soln * (FixConstraint.t list) * Counterexample.cex list) 
   val save      : string -> t -> soln -> unit 
   val read      : soln -> FixConstraint.soln
   val min_read  : soln -> FixConstraint.soln
