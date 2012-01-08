@@ -31,12 +31,12 @@ module E   = A.Expression
 module P   = A.Predicate
 
 module Q   = Qualifier
+module QS  = Q.QSet
 module Sy  = A.Symbol
 module Su  = A.Subst
 module SM  = Sy.SMap
 module SS  = Sy.SSet
 module C   = FixConstraint
-module Cx  = Counterexample
 
 module BS  = BNstats
 module TP  = TpNull.Prover
@@ -44,6 +44,9 @@ module Co  = Constants
 module Cg  = FixConfig
 module H   = Hashtbl
 module PH  = A.Predicate.Hash
+
+module Cx  = Counterexample
+module IM  = Misc.IntMap
 
 open Misc.Ops
 
@@ -62,15 +65,9 @@ module V : Graph.Sig.COMPARABLE with type t = Sy.t = struct
 end
 
 
+
 (*
-
-let tag_of_qual  = snd <.> Q.pred_of_t
 let tag_of_qual2 = Misc.map_pair tag_of_qual
-
-module QS = Misc.ESet (struct
-  type t = Q.t
-  let compare x y = compare (tag_of_qual x) (tag_of_qual y)
-end)
 
 module Q2S = Misc.ESet (struct
   type t = Q.t * Q.t
@@ -100,10 +97,15 @@ type bind = Q.t list
 type t   = 
   { tpc  : TP.t
   ; m    : bind SM.t
-  ; assm : FixConstraint.soln (* invariant assumption for K, 
+  ; assm : FixConstraint.soln  (* invariant assumption for K, 
                                  must be a fixpoint wrt constraints *)
-  ; qm   : Qualifier.t SM.t   (* map from names to qualifiers *)
-  ; qleqs: Q2S.t              (* (q1,q2) \in qleqs implies q1 => q2 *)
+  ; qm   : Q.t SM.t            (* map from names to qualifiers *)
+  ; qleqs: Q2S.t               (* (q1,q2) \in qleqs implies q1 => q2 *)
+  
+  (* counterexamples *)
+  ; step     : Cx.step         (* which iteration *)
+  ; ctrace   : Cx.ctrace 
+  ; lifespan : Cx.lifespan 
   
   (* stats *)
   ; stat_simple_refines : int ref 
@@ -191,18 +193,27 @@ let p_read s k =
 
 (* INV: qs' \subseteq qs *)
 let update m k ds' =
-  let ds = try SM.find k m with Not_found -> [] in
+  let ds = SM.finds k m in
   (not (Misc.same_length ds ds'), SM.add k ds' m)
 
-let p_update s0 ks kds = 
-  let kdsm = Misc.kgroupby fst kds |> SM.of_list in
+let cx_update ks kqsm' me : t = 
+  List.fold_left begin fun me k -> 
+    let qs    = QS.of_list  (SM.finds k me.m)  in
+    let qs'   = QS.of_list  (SM.finds k kqsm') in
+    let kills = QS.elements (QS.diff qs qs')   in
+    if Misc.list_is_empty kills then me 
+    else {me with lifespan = SM.adds k [(me.step, kills)] me.lifespan}
+  end me ks
+
+let p_update me ks kqs = 
+  let kqsm = SM.of_alist kqs in
+  let me   = me |> (!Co.cex <?> BS.time "cx_update" (cx_update ks) kqsm) in 
   List.fold_left begin fun (b, m) k ->
-    (try SM.find k kdsm with Not_found -> [])
-    |> List.map snd 
+    SM.finds k kqsm 
     |> update m k 
     |> Misc.app_fst ((||) b)
-  end (false, s0.m) ks
-  |> Misc.app_snd (fun m -> { s0 with m = m })  
+  end (false, me.m) ks
+  |> Misc.app_snd (fun m -> { me with m = m })  
 
 (* API *)
 let top s ks = 
@@ -305,14 +316,20 @@ let check_tp me env vv t lps =  function [] -> [] | rcs ->
   rv
 
 (* API *)
-let read s k = (s.assm k) ++ (if SM.mem k s.m then p_read s k |>: snd else [])
+let read me k = (me.assm k) ++ (if SM.mem k me.m then p_read me k |>: snd else [])
 
 (* API *)
-let read_bind s k = failwith "TBD: read_bind"
+let read_bind s k = failwith "PredAbs.read_bind"
 
+let cx_iter c me = 
+  { me with 
+    step   = me.step + 1
+  ; ctrace = IM.adds (C.id_of_t c) [me.step + 1] me.ctrace 
+  }          
 
 (* API *)
 let refine me c =
+  let me  = me |> (!Co.cex <?> cx_iter c) in
   let env = C.env_of_t c in
   let (vv1, t1, _) = C.lhs_of_t c in
   let (_,_,ra2s) as r2 = C.rhs_of_t c in
@@ -337,8 +354,7 @@ let refine me c =
     (if C.is_simple c 
      then (ignore(me.stat_simple_refines += 1); kqs1) 
      else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps) x2))
-    |> p_update me k2s 
-
+    |> p_update me k2s
 
 (***************************************************************)
 (****************** Sort Check Based Refinement ****************)
@@ -363,12 +379,10 @@ let refine_sort_reft env me ((vv, so, ras) as r) =
       |> p_update me ks
       |> snd
 
-(* API *)
 let refine_sort me c =
   let env = C.env_of_t c in
   c |> refts_of_c 
     |> List.fold_left (refine_sort_reft env) me  
-
 (***************************************************************)
 (************************* Satisfaction ************************)
 (***************************************************************)
@@ -579,11 +593,18 @@ let inst ws qs =
 
 let create ts sm ps consts assm qs bm =
   let qleqs =  if !Co.minquals then BS.time "Annots: make qleqs" (qleqs_of_qs ts sm ps) qs else Q2S.empty in
-  { m = bm
+  { m    = bm
   ; assm = assm
   ; qm = qs |>: Misc.pad_fst Q.name_of_t |> SM.of_list
   ; qleqs               = qleqs 
   ; tpc                 = TP.create ts sm ps (List.map fst consts)
+  
+  (* Counterexamples *) 
+  ; step     = 0
+  ; ctrace   = IM.empty
+  ; lifespan = SM.empty
+
+  (* Stats *)
   ; stat_simple_refines = ref 0
   ; stat_tp_refines     = ref 0; stat_imp_queries    = ref 0
   ; stat_valid_queries  = ref 0; stat_matches        = ref 0
@@ -671,10 +692,7 @@ let meet me you = {me with m = SM.extendWith (fun _ -> (++)) me.m you.m}
 (****************** Counterexample Generation ***************************)
 (************************************************************************)
 
-let mk_ctrace me = failwith "TBD"
-let mk_lifespan me = failwith "TBD"
-
 let ctr_examples me cs ucs = 
-  let cx = Cx.create me.assm cs ucs (mk_ctrace me) (mk_lifespan me) me.tpc in 
+  let cx = Cx.create (read me) cs ucs me.ctrace  me.lifespan me.tpc in 
   List.map (Cx.explain cx) ucs
 
