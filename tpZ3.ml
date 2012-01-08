@@ -349,7 +349,7 @@ let rec vpop (cs,s) =
 let prep_preds me env ps =
   let ps = List.rev_map (z3Pred me env) ps in
   let _  = me.vars <- Barrier :: me.vars in
-  let _  = Z3.push me.c in
+  (* let _  = Z3.push me.c in *)
   ps
 
 let push me ps =
