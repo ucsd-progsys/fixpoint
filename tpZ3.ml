@@ -28,6 +28,7 @@ module A  = Ast
 module Sy = A.Symbol
 module So = A.Sort
 module SM = Sy.SMap
+module SSM = Misc.StringMap
 module P  = A.Predicate
 module E  = A.Expression
 open Misc.Ops
@@ -207,29 +208,6 @@ let is_z3_int me a =
     |> Z3.sort_to_string me.c
     |> (=) "int"
 
-(* 
-let z3Relf = function
-  | A.Eq -> Z3.mk_eq
-  | A.Gt -> Z3.mk_gt
-  | A.Ge -> Z3.mk_ge
-  | A.Lt -> Z3.mk_lt
-  | A.Le -> Z3.mk_le
-  | _    -> failure "MATCH FAILURE: TPZ3.z3Rel"
-*)
-
-(* TBD: casting int -> bool etc. nonsense, shouldnt happen here 
-
-let rec cast me env a = function 
-  | ("bool", "int") -> z3App me env iofb_n [] [a]
-  | ("int", "bool") -> z3App me env bofi_n [] [a]
-  | _               -> failure "MATCH ERROR: TPZ3.cast" 
- 
-and z3Cast me env a t = 
-  let (st, st') = (Z3.get_type me.c a, z3VarType me t) 
-                  |> Misc.map_pair (ast_type_to_string me) in
-  if st = st' then a else cast me env a (st, st')  
-*)
-
 exception Z3RelTypeError
 
 let rec z3Rel me env (e1, r, e2) =
@@ -349,13 +327,13 @@ let rec vpop (cs,s) =
 let prep_preds me env ps =
   let ps = List.rev_map (z3Pred me env) ps in
   let _  = me.vars <- Barrier :: me.vars in
-  let _  = Z3.push me.c in
+  (* JHALA: UNNECESSARY let _  = Z3.push me.c in *)
   ps
 
 let push me ps =
   let _ = nb_push += 1 in
   let _ = me.count <- me.count + 1 in
-  let _  = BS.time "Z3.push" Z3.push me.c in
+  let _ = BS.time "Z3.push" Z3.push me.c in
   List.iter (fun p -> BS.time "Z3.ass_cst" (Z3.assert_cnstr me.c) p) ps
     
 let pop me =
@@ -379,7 +357,6 @@ let valid me p =
   BS.time "unsat" unsat me 
   >> (fun _ -> pop me)
 
-
 let valid me p = BS.time "valid" (valid me) p
 
 let clean_decls me =
@@ -391,8 +368,11 @@ let clean_decls me =
     | Fun _ as d -> Hashtbl.remove me.funt d
   end cs
 
+let handle_vv me env vv = 
+  Hashtbl.remove me.vart (z3Vbl env vv) (* RJ: why are we removing this? *) 
+
 let set me env vv ps =
-  Hashtbl.remove me.vart (z3Vbl env vv); (* RJ: why are we removing this? *) 
+  handle_vv me env vv;
   ps |> prep_preds me env |> push me;
   (* unsat me *) false
 
@@ -435,7 +415,7 @@ let create ts env ps consts =
 
 (* API *)
 let set_filter (me: t) (env: So.t SM.t) (vv: Sy.t) ps p_imp qs =
-  let _   = ignore(nb_set   += 1); ignore(nb_query += List.length qs) in
+  let _   = ignore(nb_set   += 1); ignore (nb_query += List.length qs) in
   let ps  = BS.time "fixdiv" (List.rev_map A.fixdiv) ps in
   match BS.time "TP set" (set me env vv) ps with 
   | true  -> 
@@ -458,8 +438,53 @@ let print_stats ppf me =
     "TP stats: sets=%d, pushes=%d, pops=%d, unsats=%d, queries=%d, count=%d, unsatLHS=%d \n" 
     !nb_set !nb_push !nb_pop !nb_unsat !nb_query (List.length me.vars) !nb_unsatLHS
 
+let mk_prop_var me pfx i : Z3.ast =
+  i |> string_of_int
+    |> (^) pfx
+    |> Z3.mk_string_symbol me.c 
+    |> Misc.flip (Z3.mk_const me.c) me.tbool 
+
+let mk_prop_var_idx me ipa : (Z3.ast array * (Z3.ast -> 'a option)) =
+  let va  = Array.mapi (fun i _ -> mk_prop_var me "uc_p_" i) ipa in
+  let vm  = va 
+            |> Array.map (Z3.ast_to_string me.c)
+            |> Misc.array_to_index_list 
+            |> List .map Misc.swap 
+            |> SSM.of_list in 
+  let f z = SSM.maybe_find (Z3.ast_to_string me.c z) vm
+            |> Misc.maybe_map (fst <.> Array.get ipa) in
+  (va, f)
+
+let mk_pa me p2z pfx ics =
+  ics |> List.map (Misc.app_snd p2z) 
+      |> Array.of_list 
+      |> Array.mapi (fun i (x, p) -> (x, p, mk_prop_var me pfx i))
+
+let unsat_core_one me bgps (va : Z3.ast array) (f: Z3.ast -> 'a) (k, q) : 'a list =
+  let _  = Z3.push me.c in
+  let _  = Z3.assert_cnstr me.c (Z3.mk_not me.c q) in
+  let r  = match Z3.check_assumptions me.c va (Array.length va) (Array.map id va) with
+           | (Z3.L_FALSE, m,_, n, ucore) -> Array.to_list <| Array.map f ucore
+           | _                           -> [] in
+  let _  = Z3.pop me.c  in
+  r
 
 (* API *)
-let unsat_core me p ips iqs = failwith "TBD: TPZ3.unsat_core"
+let unsat_core me env vv p ips iqs = 
+  let _     = handle_vv me env vv                                 in
+  (* let _  = Hashtbl.clear me.vart                               in *)
+  let p2z   = A.fixdiv <+> z3Pred me env                          in
+  let ipa   = ips |> List.map (Misc.app_snd p2z) |> Array.of_list in 
+  let va, f = mk_prop_var_idx me ipa          in
+  let _     = ipa |> Array.mapi (fun i (_, p) -> Z3.mk_iff me.c va.(i) p)
+                  |> Array.to_list
+                  |> (++) [p2z p]
+                  |> Array.of_list
+                  |> Z3.mk_and me.c
+                  >> (fun _ -> Z3.push me.c)
+                  |> Z3.assert_cnstr me.c 
+  in          iqs |> List.map (Misc.app_snd p2z)
+                  |> List.map (unsat_core_one me p va f)
+                  >> (fun _ -> Z3.pop me.c)
 
 end
