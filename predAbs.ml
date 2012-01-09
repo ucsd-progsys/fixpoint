@@ -50,7 +50,7 @@ module IM  = Misc.IntMap
 
 open Misc.Ops
 
-let mydebug = false 
+let mydebug = true 
 
 module Q2S = Misc.ESet (struct
   type t = Sy.t * Sy.t
@@ -135,6 +135,28 @@ let pprint_qs' ppf =
   List.map (fst <+> snd <+> snd <+> fst) <+> pprint_qs ppf 
 
 (*************************************************************)
+(************* Breadcrumbs for Cex Generation ****************)
+(*************************************************************)
+
+let cx_iter c me = 
+  { me with step = me.step + 1 }          
+
+let cx_ctrace b c me = 
+  let _ = if mydebug then F.printf "\nPredAbs.refine iter = %d cid = %d b = %b\n" 
+                          me.step (C.id_of_t c) b in
+  if b then { me with ctrace = IM.adds (C.id_of_t c) [me.step] me.ctrace } else me
+
+let cx_update ks kqsm' me : t = 
+  List.fold_left begin fun me k -> 
+    let qs    = QS.of_list  (SM.finds k me.m)  in
+    let qs'   = QS.of_list  (SM.finds k kqsm') in
+    let kills = QS.elements (QS.diff qs qs')   in
+    if Misc.nonnull kills 
+    then {me with lifespan = SM.adds k [(me.step, kills)] me.lifespan}
+    else me
+  end me ks
+
+(*************************************************************)
 (************* Constructing Initial Solution *****************)
 (*************************************************************)
 
@@ -195,15 +217,6 @@ let p_read s k =
 let update m k ds' =
   let ds = SM.finds k m in
   (not (Misc.same_length ds ds'), SM.add k ds' m)
-
-let cx_update ks kqsm' me : t = 
-  List.fold_left begin fun me k -> 
-    let qs    = QS.of_list  (SM.finds k me.m)  in
-    let qs'   = QS.of_list  (SM.finds k kqsm') in
-    let kills = QS.elements (QS.diff qs qs')   in
-    if Misc.list_is_empty kills then me 
-    else {me with lifespan = SM.adds k [(me.step, kills)] me.lifespan}
-  end me ks
 
 let p_update me ks kqs = 
   let kqsm = SM.of_alist kqs in
@@ -308,7 +321,6 @@ let rhs_cands s = function
   | _ -> []
 
 let check_tp me env vv t lps =  function [] -> [] | rcs ->
-  let env = SM.map snd3 env |> SM.add vv t in
   let rv  = TP.set_filter me.tpc env vv lps (fun _ _ -> false) rcs |>: List.hd in
   let _   = ignore(me.stat_tp_refines    += 1);
             ignore(me.stat_imp_queries   += (List.length rcs));
@@ -321,17 +333,7 @@ let read me k = (me.assm k) ++ (if SM.mem k me.m then p_read me k |>: snd else [
 (* API *)
 let read_bind s k = failwith "PredAbs.read_bind"
 
-let cx_iter c me = 
-  { me with 
-    step   = me.step + 1
-  ; ctrace = IM.adds (C.id_of_t c) [me.step + 1] me.ctrace 
-  }          
-
-(* API *)
 let refine me c =
-  let me  = me |> (!Co.cex <?> cx_iter c) in
-  let env = C.env_of_t c in
-  let (vv1, t1, _) = C.lhs_of_t c in
   let (_,_,ra2s) as r2 = C.rhs_of_t c in
   let k2s = r2 |> C.kvars_of_reft |> List.map snd in
   let rcs = BS.time "rhs_cands" (Misc.flap (rhs_cands me)) ra2s in
@@ -353,8 +355,18 @@ let refine me c =
     let kqs1    = List.map fst x1 in
     (if C.is_simple c 
      then (ignore(me.stat_simple_refines += 1); kqs1) 
-     else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps) x2))
+     else let senv = C.senv_of_t c in
+          let vv   = C.vv_of_t c   in
+          let t    = C.sort_of_t c in
+          kqs1 ++ (BS.time "check tp" (check_tp me senv vv t lps) x2))
     |> p_update me k2s
+
+let refine me c = 
+  let me      = me |> (!Co.cex <?> cx_iter c)     in
+  let (b, me) = refine me c                       in
+  let me      = me |> (!Co.cex <?> cx_ctrace b c) in
+  (b, me)
+
 
 (***************************************************************)
 (****************** Sort Check Based Refinement ****************)
@@ -389,11 +401,10 @@ let refine_sort me c =
 
 let unsat me c = 
   let s        = read me      in
-  let env      = C.env_of_t c in
   let (vv,t,_) = C.lhs_of_t c in
   let lps      = C.preds_of_lhs s c  in
   let rhsp     = c |> C.rhs_of_t |> C.preds_of_reft s |> A.pAnd in
-  not ((check_tp me env vv t lps [(0, rhsp)]) = [0])
+  not ((check_tp me (C.senv_of_t c) vv t lps [(0, rhsp)]) = [0])
 
 (****************************************************************)
 (************* Minimization: For Prettier Output ****************)
@@ -631,7 +642,7 @@ let update_pruned ks me fqm =
   end me.m ks
 
 let apply_facts_c kf me c =
-  let env = C.env_of_t c in
+  let env = C.senv_of_t c in
   let (vv, t, lras) = C.lhs_of_t c in
   let (_,_,ras) as rhs = C.rhs_of_t c in
   let ks = rhs |> C.kvars_of_reft |> List.map snd in
@@ -644,8 +655,7 @@ let apply_facts_c kf me c =
     else
       let rcs = List.filter (fun (_,p) -> not (P.is_contra p)) rcs
                 |> List.map (fun (x,p) -> (x, A.pNot p)) in
-	(* can we prove anything on the left implies something on the
-	   right is false? *)
+	(* can we prove anything on lhs implies something on rhs is false? *)
       let fqs = BS.time "apply_facts tp" (check_tp me env vv t lps) rcs in
       let fqm = fqs |> Misc.kgroupby fst |> SM.of_list in
 	  {me with m = BS.time "update pruned" (update_pruned ks me) fqm}

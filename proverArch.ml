@@ -44,6 +44,7 @@ sig
   val print_stats : Format.formatter -> t -> unit
 
   val unsat_core  : t                                       
+                    -> Ast.Sort.t Ast.Symbol.SMap.t 
                     -> Ast.pred                             (* background predicate   *)
                     -> ('a * Ast.pred) list                 (* [(index, killer-fact)] *)
                     -> ('b * Ast.pred) list                 (* [(index, killed-fact)] *)

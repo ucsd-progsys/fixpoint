@@ -438,6 +438,11 @@ let print_stats ppf me =
     "TP stats: sets=%d, pushes=%d, pops=%d, unsats=%d, queries=%d, count=%d, unsatLHS=%d \n" 
     !nb_set !nb_push !nb_pop !nb_unsat !nb_query (List.length me.vars) !nb_unsatLHS
 
+
+(******************************************************************************)
+(*********************** Unsat Core for CEX generation ************************)
+(******************************************************************************)
+
 let mk_prop_var me pfx i : Z3.ast =
   i |> string_of_int
     |> (^) pfx
@@ -460,19 +465,22 @@ let mk_pa me p2z pfx ics =
       |> Array.of_list 
       |> Array.mapi (fun i (x, p) -> (x, p, mk_prop_var me pfx i))
 
-let unsat_core_one me bgps (va : Z3.ast array) (f: Z3.ast -> 'a) (k, q) : 'a list =
+let unsat_core_one me (va : Z3.ast array) (f: Z3.ast -> 'a) (k, q) =
   let _  = Z3.push me.c in
   let _  = Z3.assert_cnstr me.c (Z3.mk_not me.c q) in
   let r  = match Z3.check_assumptions me.c va (Array.length va) (Array.map id va) with
-           | (Z3.L_FALSE, m,_, n, ucore) -> Array.to_list <| Array.map f ucore
-           | _                           -> [] in
+           | (Z3.L_FALSE, m,_, n, ucore) 
+               -> Array.map f ucore 
+                  |> Array.to_list 
+                  |> Misc.map_partial id 
+           | _ -> [] in
   let _  = Z3.pop me.c  in
-  r
+  (k, r)
 
 (* API *)
-let unsat_core me env vv p ips iqs = 
-  let _     = handle_vv me env vv                                 in
-  (* let _  = Hashtbl.clear me.vart                               in *)
+let unsat_core me env p ips iqs = 
+  (* let _     = handle_vv me env vv                              in *)
+  let _  = Hashtbl.clear me.vart                                  in 
   let p2z   = A.fixdiv <+> z3Pred me env                          in
   let ipa   = ips |> List.map (Misc.app_snd p2z) |> Array.of_list in 
   let va, f = mk_prop_var_idx me ipa          in
@@ -484,7 +492,7 @@ let unsat_core me env vv p ips iqs =
                   >> (fun _ -> Z3.push me.c)
                   |> Z3.assert_cnstr me.c 
   in          iqs |> List.map (Misc.app_snd p2z)
-                  |> List.map (unsat_core_one me p va f)
+                  |> List.map (unsat_core_one me va f)
                   >> (fun _ -> Z3.pop me.c)
 
 end

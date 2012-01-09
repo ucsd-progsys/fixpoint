@@ -198,7 +198,7 @@ let solve me s =
   let _  = Co.logPrintf "Fixpoint: Testing Solution \n" in
   let u  = BS.time "Solve.unsatcs" (unsat_constraints me) s in
   let _  = if u != [] then F.printf "Unsatisfied Constraints:\n %a" (Misc.pprint_many true "\n" (C.print_t None)) u in
-  let cx = if !Co.cex then Dom.ctr_examples s (Ci.to_list me.sri) u else [] in
+  let cx = if !Co.cex && Misc.nonnull u then Dom.ctr_examples s (Ci.to_list me.sri) u else [] in
   (s, u, cx)
 
 

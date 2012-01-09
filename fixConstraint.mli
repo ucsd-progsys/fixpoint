@@ -106,6 +106,10 @@ val theta            : Ast.Subst.t -> reft -> reft
 val add_consts_wf    : (Ast.Symbol.t * Ast.Sort.t) list -> wf -> wf
 val add_consts_t     : (Ast.Symbol.t * Ast.Sort.t) list -> t -> t
 val make_t           : envt -> Ast.pred -> reft -> reft -> id option -> tag -> t
+
+val sort_of_t        : t -> Ast.Sort.t
+val vv_of_t          : t -> Ast.Symbol.t
+val senv_of_t        : t -> Ast.Sort.t Ast.Symbol.SMap.t
 val env_of_t         : t -> envt
 val grd_of_t         : t -> Ast.pred
 val lhs_of_t         : t -> reft

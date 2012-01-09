@@ -352,6 +352,11 @@ let make_t      = fun env p r1 r2 io is ->
                     ; ido     = io
                     ; tag     = is }
 
+let vv_of_t     = fun t -> fst3 t.lhs
+let sort_of_t   = fun t -> snd3 t.lhs
+let senv_of_t   = fun t -> SM.map snd3 t.full
+                        |> SM.add (vv_of_t t) (sort_of_t t) 
+
 (*
 let make_t      = fun env p ((v,t,ras1) as r1) r2 io is ->
                     let p        = A.simplify_pred p in
