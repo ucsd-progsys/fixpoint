@@ -31,6 +31,7 @@ exception UnmappedKvar of Ast.Symbol.t
 
 
 type qbind   = Q.t list
+
 type solbind = Ast.Symbol.t * ((Ast.Symbol.t * (Ast.expr list)) list)
 
 type deft = Srt of Ast.Sort.t 
@@ -145,6 +146,7 @@ module type DOMAIN = sig
   val print        : Format.formatter -> t -> unit
   val print_stats  : Format.formatter -> t -> unit
   val dump         : t -> unit
+  val ctr_examples : t -> FixConstraint.t list -> FixConstraint.t list -> Counterexample.cex list 
   val mkbind       : qbind -> bind
 end
 

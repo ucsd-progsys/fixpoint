@@ -57,7 +57,7 @@ module type SOLVER = sig
   type soln
   type bind
   val create    : bind Cg.cfg -> FixConstraint.soln option -> (t * soln)
-  val solve  : t -> soln -> (soln * (FixConstraint.t list)) 
+  val solve     : t -> soln -> (soln * (FixConstraint.t list) * Counterexample.cex list) 
   val save      : string -> t -> soln -> unit 
   val read      : soln -> FixConstraint.soln
   val min_read  : soln -> FixConstraint.soln
@@ -152,9 +152,6 @@ let rec acsolve me w s =
 let unsat_constraints me s =
   me.sri |> Ci.to_list |> List.filter (Dom.unsat s)
 
-
-
-
 (***************************************************************)
 (****************** Pruning Unconstrained Vars *****************)
 (***************************************************************)
@@ -170,7 +167,7 @@ let unconstrained_kvars cs =
       |> List.filter (fun kv -> not (Sy.SSet.mem kv rhss))
 
 let true_unconstrained sri s =
-  sri |> Cindex.to_list 
+  sri |> Ci.to_list 
       >> (fun _ -> Co.logPrintf "Fixpoint: true_unconstrained Step 2 \n")
       |> unconstrained_kvars
       >> (fun _ -> Co.logPrintf "Fixpoint: true_unconstrained Step 2 \n")
@@ -201,7 +198,8 @@ let solve me s =
   let _  = Co.logPrintf "Fixpoint: Testing Solution \n" in
   let u  = BS.time "Solve.unsatcs" (unsat_constraints me) s in
   let _  = if u != [] then F.printf "Unsatisfied Constraints:\n %a" (Misc.pprint_many true "\n" (C.print_t None)) u in
-  (s, u)
+  let cx = if !Co.cex && Misc.nonnull u then Dom.ctr_examples s (Ci.to_list me.sri) u else [] in
+  (s, u, cx)
 
 
 (* API *)

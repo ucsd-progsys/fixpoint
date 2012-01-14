@@ -43,8 +43,8 @@ let mydebug = false
 (**************************************************************************)
 (***************************** Qualifiers *********************************)
 (**************************************************************************)
-  
-type t = { name    : Sy.t 
+ 
+type q = { name    : Sy.t 
          ; vvar    : Sy.t
          ; vsort   : So.t
          ; params  : (Sy.t * So.t) list
@@ -53,6 +53,8 @@ type t = { name    : Sy.t
            (* when args = Some es, es = vv'::[e1;...;en]
               where vv' is the applied vv and e1...en are the args applied to ~A1,...,~An *)
          }
+
+type t = q      (* to appease the functor gods. *)
 
 let rename          = fun n -> fun q -> {q with name = n} 
 let name_of_t       = fun q -> q.name
@@ -305,4 +307,13 @@ let inst q args =
   let v   = match xes with (_, (Var v, _)) :: _ -> v | _ -> assertf "Error: Q.inst with non-vvar arg" in
   let p   = xes |> Su.of_list |> Ast.substs_pred q.pred in
   { q with vvar = v; pred = p; args = Some (List.map snd xes)}
+
+
+module QSet = Misc.ESet (struct
+  type t = q
+  let compare q1 q2 = 
+    if (q1.name = q2.name) 
+    then compare q1.args q2.args 
+    else compare q1.name q2.name 
+end)
 

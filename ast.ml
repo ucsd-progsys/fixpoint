@@ -213,12 +213,6 @@ module Symbol =
   struct 
     type t = string
     
-    module SMap = Misc.EMap (struct type t = string 
-                                    let compare i1 i2 = compare i1 i2 end)
-
-    module SSet = Misc.ESet (struct type t = string
-                                    let compare i1 i2 = compare i1 i2 end)
-
     let mk_wild =
       let t,_ = Misc.mk_int_factory () in
       t <+> string_of_int <+> (^) "~A"
@@ -267,9 +261,14 @@ module Symbol =
     let is_value_variable = (=) vvprefix
     let value_variable _  = vvprefix
 
+    module SMap = Misc.EMap (struct type t = string 
+                                    let compare i1 i2 = compare i1 i2 
+                                    let print         = print         end)
 
+    module SSet = Misc.ESet (struct type t = string
+                                    let compare i1 i2 = compare i1 i2 end)
 
-    let sm_length m = 
+   (* let sm_length m = 
       SMap.fold (fun _ _ i -> i+1) m 0
 
     let sm_filter f sm = 
@@ -282,7 +281,7 @@ module Symbol =
     
     let sm_of_list xs = 
       List.fold_left (fun sm (k,v) -> SMap.add k v sm) SMap.empty xs 
-
+   *)
 
   end
 
@@ -405,6 +404,8 @@ module ExprHashconsStruct = struct
         id + Hashtbl.hash (Sort.to_string t)
     | Bot ->
         0
+    | _ -> assertf "pattern error in A.pred hash"
+
 end
   
 module ExprHashcons = Hashcons(ExprHashconsStruct)
@@ -957,7 +958,8 @@ let rec pred_isdiv = function
       expr_isdiv e
   | Atom (e1, _, e2), _ -> 
       expr_isdiv e1 || expr_isdiv e2
-       
+  | _ -> failwith "Unexpected: pred_isdiv"
+
 let bound m e e1 e2 =
   pAnd [pAtom (apply_mult m e, Gt, apply_mult m e2);
         pAtom(apply_mult m e, Le, apply_mult m e1)] 
@@ -1110,6 +1112,7 @@ and sortcheck_pred f p =
     | Forall (qs,p) ->
         let f' = fun x -> try List.assoc x qs with _ -> f x in
         sortcheck_pred f' p
+    | _ -> failwith "Unexpected: sortcheck_pred"
 
 (*
 let sortcheck_pred f p = 
@@ -1192,6 +1195,7 @@ let rec push_neg ?(neg=false) ((p, _) as pred) =
         |> if neg then pAnd else pOr
     | Atom (e1, brel, e2) -> 
         if neg then pAtom (e1, neg_brel brel, e2) else pred
+    | _ -> failwith "Unexpected: push_neg"
 
 (* Andrey: TODO flatten nested conjunctions/disjunctions *)
 let rec simplify_pred ((p, _) as pred) =
@@ -1237,7 +1241,7 @@ module Subst = struct
 
   let empty     = Symbol.SMap.empty
   let is_empty  = Symbol.SMap.is_empty
-  let to_list   = Symbol.sm_to_list
+  let to_list   = Symbol.SMap.to_list 
   let of_list   = fun xes -> List.fold_left extend empty xes
   let simultaneous_of_list = Symbol.SMap.of_list
   let concat    = fun s1 s2 -> Symbol.SMap.fold (fun x e s -> extend s (x, e)) s2 s1

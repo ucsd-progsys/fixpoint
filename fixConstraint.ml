@@ -32,6 +32,7 @@ module SM = Sy.SMap
 module BS = BNstats
 module Su = Ast.Subst
 module MSM = Misc.StringMap
+module Co  = Constants
 open Misc.Ops
 
 
@@ -46,6 +47,7 @@ type wf   = envt * reft * (id option) * (Qualifier.t -> bool)
 type t    = { full    : envt; 
               nontriv : envt;
               guard   : A.pred;
+              iguard  : A.pred;
               lhs     : reft;
               rhs     : reft;
               ido     : id option;
@@ -96,8 +98,23 @@ let env_of_bindings xrs =
     SM.add x r env
   end SM.empty xrs
 
-let bindings_of_env env = 
+
+let bindings_of_env = SM.to_list
+
+(* let bindings_of_env env = 
   SM.fold (fun x y bs -> (x,y)::bs) env []
+*)
+
+let split_ras ras = 
+  let cras, kras = List.partition (function (Conc _) -> true | _ -> false) ras in
+  cras |> Misc.map_partial (function Conc p -> Some p | _ -> None) 
+       |> (function [] -> (None, kras) | ps -> (Some (A.pAnd ps), kras))
+
+
+let kbindings_of_lhs {nontriv = ne; lhs = (v, t, ras)} =  
+  let xkss     = SM.to_list ne in
+  let _, kras  = split_ras ras in
+  (v, (v,t,kras)) :: xkss
 
 let map_env          = SM.mapi
 let lookup_env env x = try Some (SM.find x env) with Not_found -> None 
@@ -106,7 +123,16 @@ let lookup_env env x = try Some (SM.find x env) with Not_found -> None
 let is_simple {lhs = (_,_,ra1s); rhs = (_,_,ra2s)} = 
   List.for_all is_simple_refatom ra1s 
   && List.for_all is_simple_refatom ra2s 
-  && !Constants.simple
+  && !Co.simple
+
+let is_conc_refa = function Conc p -> not (P.is_tauto p) | _ -> false
+
+(* API *)
+let is_conc_rhs {rhs = (_,_,ras)} =
+  List.exists is_conc_refa ras
+  >> (fun rv -> if rv then (asserts (List.for_all is_conc_refa ras) "is_conc_rhs"))
+
+
 
 (* API *)
 let kvars_of_t {nontriv = env; lhs = lhs; rhs = rhs} =
@@ -120,11 +146,27 @@ let kvars_of_t {nontriv = env; lhs = lhs; rhs = rhs} =
 (*********************** Logic Embedding *********************)
 (*************************************************************)
 
+let canon_ras ras = 
+  match split_ras ras with
+  | None, kras   -> kras
+  | Some p, kras -> Conc p :: kras
+
+(* 
 let non_trivial env = 
   SM.fold begin fun x r sm -> match thd3 r with 
         | [] -> sm 
         | _::_ -> SM.add x r sm
   end env SM.empty
+*)
+
+let non_trivial env = 
+  SM.fold begin fun x (v,t,ras) ((ne, ps) as acc) -> match ras with
+    | [] -> acc 
+    | _  -> let po, kras = split_ras ras in 
+            let ne' = match kras with [] -> ne | _      -> SM.add x (v,t,kras) ne in
+            let ps' = match po with None -> ps | Some p -> (P.subst p v (A.eVar x)) :: ps  in
+            ne', ps'
+  end env (SM.empty, []) 
 
 (* API *)
 let is_conc_refa = function
@@ -162,7 +204,7 @@ let preds_of_envt f env =
     env [] 
 
 (* API *)
-let preds_of_lhs f {nontriv = env; guard = gp; lhs =  r1} = 
+let preds_of_lhs f {nontriv = env; iguard = gp; lhs =  r1} = 
   let envps = preds_of_envt f env in
   let r1ps  = preds_of_reft f r1 in
   gp :: (envps ++ r1ps) 
@@ -171,31 +213,6 @@ let preds_of_lhs f {nontriv = env; guard = gp; lhs =  r1} =
 let vars_of_t f ({rhs = r2} as c) =
   (preds_of_reft f r2) ++ (preds_of_lhs f c)
   |> Misc.flap P.support
-
-(*
-(**************************************************************)
-(*******************Constraint Simplification *****************)
-(**************************************************************)
-
-let is_var_def v = function
-  | Conc (A.Atom ((A.Var x, _), A.Eq, (A.Var y, _)), _) when x = v -> Some y
-  | Conc (A.Atom ((A.Var x, _), A.Eq, (A.Var y, _)), _) when y = v -> Some x
-  | _                                                              -> None
-
-let str_reft env r = 
-  Misc.expand begin fun (v, t, ras) ->
-    ras |> List.partition (function Conc _ -> true | _ -> false)
-        |> Misc.app_fst (Misc.map_partial (is_var_def v))
-        |> Misc.app_fst (List.filter (fun x -> SM.mem x env))
-        |> Misc.app_fst (List.map (fun x -> SM.find x env))
-  end [r] []
-
-let strengthen_reft env ((v,t,ras) as r) =
-  if not !Constants.simplify_t then r else
-    let kras = str_reft env r in
-    (v, t, Misc.sort_and_compact (ras ++ kras))
-
-*)
 
 (**************************************************************)
 (********************** Pretty Printing ***********************)
@@ -276,17 +293,16 @@ let print_wf so ppf (env, r, io, _) =
     (print_reft so) r
     pprint_id io
 
-
-let print_t so ppf {full=env;nontriv=nenv;guard=g;lhs=r1;rhs=r2;ido=io;tag=is} =
-  let env = if !Constants.print_nontriv then nenv else env in 
+let print_t so ppf c =
+  let env, g = if !Co.print_nontriv then c.nontriv, c.iguard else c.full, c.guard in 
   F.fprintf ppf 
   "constraint:@. env  @[%a@] @\n grd @[%a@] @\n lhs @[%a@] @\n rhs @[%a@] @\n %a %a @\n"
     (print_env so) env 
     P.print g
-    (print_reft so) r1
-    (print_reft so) r2
-    pprint_id io
-    print_tag is
+    (print_reft so) c.lhs 
+    (print_reft so) c.rhs
+    pprint_id c.ido
+    print_tag c.tag 
 
 (* API *)
 let to_string         = Misc.fsprintf (print_t None)
@@ -304,10 +320,6 @@ let theta_ra (su': Su.t) = function
   | Conc p       -> Conc (A.substs_pred p su')
   | Kvar (su, k) -> Kvar (Su.concat su su', k) 
 
-let canon_ras ras = 
-  let cras, kras = List.partition (function (Conc _) -> true | _ -> false) ras in
-  cras |> Misc.map_partial (function Conc p -> Some p | _ -> None) 
-       |> (function [] -> kras | ps -> Conc (A.pAnd ps) :: kras)
 
 (* API *)
 let make_reft     = fun v so ras -> (v, so, List.map (theta_ra Su.empty) (canon_ras ras))
@@ -329,14 +341,37 @@ let ido_of_t    = fun t -> t.ido
 let id_of_t     = fun t -> match t.ido with Some i -> i | _ -> assertf "C.id_of_t"
 let is_tauto    = rhs_of_t <+> ras_of_reft <+> List.for_all is_tauto_refatom
 let make_t      = fun env p r1 r2 io is ->
-                    { full    = env ;
-                      nontriv = non_trivial env;
-                      guard   = A.simplify_pred p;
-                      lhs     = r1;
-                      rhs     = r2;
-                      ido     = io;
-                      tag     = is }
+                    let p        = A.simplify_pred p in
+                    let ne, ps   = non_trivial env   in
+                    { full    = env 
+                    ; nontriv = ne
+                    ; guard   = p
+                    ; iguard  = A.pAnd (p::ps) 
+                    ; lhs     = r1 
+                    ; rhs     = r2
+                    ; ido     = io
+                    ; tag     = is }
 
+let vv_of_t     = fun t -> fst3 t.lhs
+let sort_of_t   = fun t -> snd3 t.lhs
+let senv_of_t   = fun t -> SM.map snd3 t.full
+                        |> SM.add (vv_of_t t) (sort_of_t t) 
+
+(*
+let make_t      = fun env p ((v,t,ras1) as r1) r2 io is ->
+                    let p        = A.simplify_pred p in
+                    let po, kras = split_ras ras1    in
+                    let ne, ps   = non_trivial env   in
+                    let gps      = match po with Some p' -> p' :: p :: ps | _ -> p :: ps in
+                    { full    = env 
+                    ; nontriv = ne
+                    ; guard   = p
+                    ; iguard  = A.pAnd gps 
+                    ; lhs     = (v, t, kras) 
+                    ; rhs     = r2
+                    ; ido     = io
+                    ; tag     = is }
+*)
 
 let reft_of_sort so = make_reft (Sy.value_variable so) so []
 

@@ -1,17 +1,2 @@
-wierd error from 
 
-./fixpoint.native -notruekvars -strictsortcheck vector1.hs.fq
 
-id 77 fails during checking, depends on:
-
-    k_131: written in id 78, 85
-    k_71 : written in id 104
-
-iter 101, id=85 is picked and ch=true. then 131 may have changed, so why
-was 77 not processed again?
-
-because id 77 DOES NOT depend on 85:
-
-Deps 85 = [106,105,104,103,102]
-
-    

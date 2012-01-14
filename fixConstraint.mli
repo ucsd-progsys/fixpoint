@@ -30,12 +30,6 @@ type dep                (* NEVER EVER expose! dependencies between constraints *
 type tag  = int list * string (* for ordering: must have same dim, lexico-ordered *)
 type id   = int         (* for identifying: must be unique *) 
 
-(*
-type 'a soln = { read  : Ast.Symbol.t -> Ast.pred list
-               ; bindm : 'a Ast.Symbol.SMap.t }
-type soln    = Ast.pred list Ast.Symbol.SMap.t
-*)
-
 type soln = Ast.Symbol.t -> Ast.pred list
 type refa = Conc of Ast.pred | Kvar of Ast.Subst.t * Ast.Symbol.t
 type reft = Ast.Symbol.t * Ast.Sort.t * refa list   (* { VV: t | [ra] } *)
@@ -46,6 +40,7 @@ val kvars_of_reft    : reft -> (Ast.Subst.t * Ast.Symbol.t) list
 val kvars_of_t       : t -> (Ast.Subst.t * Ast.Symbol.t) list
 
 val is_conc_refa     : refa -> bool
+val is_conc_rhs      : t -> bool
 
 val empty_solution   : soln
 val meet_solution    : soln -> soln -> soln
@@ -60,7 +55,12 @@ val is_tauto         : t -> bool
 
 val preds_kvars_of_reft : reft -> (Ast.pred list * (Ast.Subst.t * Ast.Symbol.t) list)
 val env_of_bindings  : (Ast.Symbol.t * reft) list -> envt
+
+(* TODO: Deprecate *)
 val bindings_of_env  : envt -> (Ast.Symbol.t * reft) list
+
+val kbindings_of_lhs : t -> (Ast.Symbol.t * reft) list
+
 val is_simple        : t -> bool
 val map_env          : (Ast.Symbol.t -> reft -> reft) -> envt -> envt 
 val lookup_env       : envt -> Ast.Symbol.t -> reft option
@@ -106,6 +106,10 @@ val theta            : Ast.Subst.t -> reft -> reft
 val add_consts_wf    : (Ast.Symbol.t * Ast.Sort.t) list -> wf -> wf
 val add_consts_t     : (Ast.Symbol.t * Ast.Sort.t) list -> t -> t
 val make_t           : envt -> Ast.pred -> reft -> reft -> id option -> tag -> t
+
+val sort_of_t        : t -> Ast.Sort.t
+val vv_of_t          : t -> Ast.Symbol.t
+val senv_of_t        : t -> Ast.Sort.t Ast.Symbol.SMap.t
 val env_of_t         : t -> envt
 val grd_of_t         : t -> Ast.pred
 val lhs_of_t         : t -> reft

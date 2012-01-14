@@ -31,6 +31,7 @@ module E   = A.Expression
 module P   = A.Predicate
 
 module Q   = Qualifier
+module QS  = Q.QSet
 module Sy  = A.Symbol
 module Su  = A.Subst
 module SM  = Sy.SMap
@@ -44,9 +45,12 @@ module Cg  = FixConfig
 module H   = Hashtbl
 module PH  = A.Predicate.Hash
 
+module Cx  = Counterexample
+module IM  = Misc.IntMap
+
 open Misc.Ops
 
-let mydebug = false 
+let mydebug = true 
 
 module Q2S = Misc.ESet (struct
   type t = Sy.t * Sy.t
@@ -61,15 +65,9 @@ module V : Graph.Sig.COMPARABLE with type t = Sy.t = struct
 end
 
 
+
 (*
-
-let tag_of_qual  = snd <.> Q.pred_of_t
 let tag_of_qual2 = Misc.map_pair tag_of_qual
-
-module QS = Misc.ESet (struct
-  type t = Q.t
-  let compare x y = compare (tag_of_qual x) (tag_of_qual y)
-end)
 
 module Q2S = Misc.ESet (struct
   type t = Q.t * Q.t
@@ -99,10 +97,16 @@ type bind = Q.t list
 type t   = 
   { tpc  : TP.t
   ; m    : bind SM.t
-  ; assm : FixConstraint.soln (* invariant assumption for K, 
+  ; assm : FixConstraint.soln  (* invariant assumption for K, 
                                  must be a fixpoint wrt constraints *)
-  ; qm   : Qualifier.t SM.t   (* map from names to qualifiers *)
-  ; qleqs: Q2S.t              (* (q1,q2) \in qleqs implies q1 => q2 *)
+  ; qm   : Q.t SM.t            (* map from names to qualifiers *)
+  ; qleqs: Q2S.t               (* (q1,q2) \in qleqs implies q1 => q2 *)
+  
+  (* counterexamples *)
+  ; step     : Cx.step         (* which iteration *)
+  ; ctrace   : Cx.ctrace 
+  ; lifespan : Cx.lifespan 
+  
   (* stats *)
   ; stat_simple_refines : int ref 
   ; stat_tp_refines     : int ref 
@@ -129,6 +133,28 @@ let pprint_qs ppf =
 
 let pprint_qs' ppf = 
   List.map (fst <+> snd <+> snd <+> fst) <+> pprint_qs ppf 
+
+(*************************************************************)
+(************* Breadcrumbs for Cex Generation ****************)
+(*************************************************************)
+
+let cx_iter c me = 
+  { me with step = me.step + 1 }          
+
+let cx_ctrace b c me = 
+  let _ = if mydebug then F.printf "\nPredAbs.refine iter = %d cid = %d b = %b\n" 
+                          me.step (C.id_of_t c) b in
+  if b then { me with ctrace = IM.adds (C.id_of_t c) [me.step] me.ctrace } else me
+
+let cx_update ks kqsm' me : t = 
+  List.fold_left begin fun me k -> 
+    let qs    = QS.of_list  (SM.finds k me.m)  in
+    let qs'   = QS.of_list  (SM.finds k kqsm') in
+    let kills = QS.elements (QS.diff qs qs')   in
+    if Misc.nonnull kills 
+    then {me with lifespan = SM.adds k [(me.step, kills)] me.lifespan}
+    else me
+  end me ks
 
 (*************************************************************)
 (************* Constructing Initial Solution *****************)
@@ -183,69 +209,24 @@ let dump_graph s g =
     >> (fun oc -> Dot.output_graph oc g)
     |> close_out 
 
-(* {{{
-
-  module TTM = Misc.EMap (struct
-    type t = A.tag * A.tag 
-    let compare = compare 
-  end)
-
-
-(************************************************************)
-(***************** Build Implication Graph ******************)
-(************************************************************)
-
-let check_tp tp sm q qs = 
-  let vv  = Q.vv_of_t q in
-  let lps = [Q.pred_of_t q] in
-  qs |> List.map (fun q -> ((q, tag_of_qual q), Q.pred_of_t q))
-     >> (List.map (fst <+> fst) <+> F.printf "CHECK_TP: %a IN %a \n" Q.print q pprint_qs)
-     |> TP.set_filter tp sm vv lps (fun _ _ -> false) 
-     >> (List.flatten <+> List.map fst <+> F.printf "CHECK_TP: %a OUT %a \n" Q.print q pprint_qs)
-
-
-let update_impm_for_quals tp sm impmg qs = 
-  List.fold_left begin fun impmg q ->
-    let tag = tag_of_qual q in 
-    qs |> check_tp tp sm q
-       |> List.flatten
-       |> (fun xs -> (q, tag) :: xs)
-       |> List.fold_left begin fun (ttm, g) (q', tag') -> 
-           ( TTM.add (tag, tag') true ttm
-           , G.add_edge_e g (q, (), q'))
-          end impmg
-  end impmg qs
-
-let close_env =
-  List.fold_left (fun sm x -> if SM.mem x sm then sm else SM.add x Ast.Sort.t_int sm)
-
-let impm_of_quals ts sm ps qs =
-  let sm = qs |> Misc.flap (Q.pred_of_t <+> P.support) |> close_env sm in
-  let tp = TP.create ts sm ps [] in
-  qs |> cluster_quals 
-     |> List.fold_left (update_impm_for_quals tp sm) (TTM.empty, G.empty)
-     >> (fun _ -> ignore <| Printf.printf "DONE: Building IMP Graph \n")  
-
- }}} *)
-
 let p_read s k =
   let _ = asserts (SM.mem k s.m) "ERROR: p_read : unknown kvar %s\n" (Sy.to_string k) in
   SM.find k s.m  |>: (fun q -> ((k, q), Q.pred_of_t q))
 
 (* INV: qs' \subseteq qs *)
 let update m k ds' =
-  let ds = try SM.find k m with Not_found -> [] in
+  let ds = SM.finds k m in
   (not (Misc.same_length ds ds'), SM.add k ds' m)
 
-let p_update s0 ks kds = 
-  let kdsm = Misc.kgroupby fst kds |> SM.of_list in
+let p_update me ks kqs = 
+  let kqsm = SM.of_alist kqs in
+  let me   = me |> (!Co.cex <?> BS.time "cx_update" (cx_update ks) kqsm) in 
   List.fold_left begin fun (b, m) k ->
-    (try SM.find k kdsm with Not_found -> [])
-    |> List.map snd 
+    SM.finds k kqsm 
     |> update m k 
     |> Misc.app_fst ((||) b)
-  end (false, s0.m) ks
-  |> Misc.app_snd (fun m -> { s0 with m = m })  
+  end (false, me.m) ks
+  |> Misc.app_snd (fun m -> { me with m = m })  
 
 (* API *)
 let top s ks = 
@@ -340,25 +321,19 @@ let rhs_cands s = function
   | _ -> []
 
 let check_tp me env vv t lps =  function [] -> [] | rcs ->
-  let env = SM.map snd3 env |> SM.add vv t in
   let rv  = TP.set_filter me.tpc env vv lps (fun _ _ -> false) rcs |>: List.hd in
   let _   = ignore(me.stat_tp_refines    += 1);
             ignore(me.stat_imp_queries   += (List.length rcs));
             ignore(me.stat_valid_queries += (List.length rv)) in
   rv
 
+(* API *)
+let read me k = (me.assm k) ++ (if SM.mem k me.m then p_read me k |>: snd else [])
 
 (* API *)
-let read s k = (s.assm k) ++ (if SM.mem k s.m then p_read s k |>: snd else [])
+let read_bind s k = failwith "PredAbs.read_bind"
 
-(* API *)
-let read_bind s k = failwith "TBD: read_bind"
-
-
-(* API *)
 let refine me c =
-  let env = C.env_of_t c in
-  let (vv1, t1, _) = C.lhs_of_t c in
   let (_,_,ra2s) as r2 = C.rhs_of_t c in
   let k2s = r2 |> C.kvars_of_reft |> List.map snd in
   let rcs = BS.time "rhs_cands" (Misc.flap (rhs_cands me)) ra2s in
@@ -380,8 +355,17 @@ let refine me c =
     let kqs1    = List.map fst x1 in
     (if C.is_simple c 
      then (ignore(me.stat_simple_refines += 1); kqs1) 
-     else kqs1 ++ (BS.time "check tp" (check_tp me env vv1 t1 lps) x2))
-    |> p_update me k2s 
+     else let senv = C.senv_of_t c in
+          let vv   = C.vv_of_t c   in
+          let t    = C.sort_of_t c in
+          kqs1 ++ (BS.time "check tp" (check_tp me senv vv t lps) x2))
+    |> p_update me k2s
+
+let refine me c = 
+  let me      = me |> (!Co.cex <?> cx_iter c)     in
+  let (b, me) = refine me c                       in
+  let me      = me |> (!Co.cex <?> cx_ctrace b c) in
+  (b, me)
 
 
 (***************************************************************)
@@ -407,29 +391,20 @@ let refine_sort_reft env me ((vv, so, ras) as r) =
       |> p_update me ks
       |> snd
 
-(* API *)
 let refine_sort me c =
   let env = C.env_of_t c in
   c |> refts_of_c 
     |> List.fold_left (refine_sort_reft env) me  
-
 (***************************************************************)
 (************************* Satisfaction ************************)
 (***************************************************************)
 
 let unsat me c = 
-  let env      = C.env_of_t c in
-  let (vv,t,_) = C.lhs_of_t c in
   let s        = read me      in
+  let (vv,t,_) = C.lhs_of_t c in
   let lps      = C.preds_of_lhs s c  in
   let rhsp     = c |> C.rhs_of_t |> C.preds_of_reft s |> A.pAnd in
-  not ((check_tp me env vv t lps [(0, rhsp)]) = [0])
-
-(*
-let unsat me c = 
-  let msg = Printf.sprintf "unsat_cstr %d" (C.id_of_t c) in
-  Misc.do_catch msg (unsat me s) c
-*)
+  not ((check_tp me (C.senv_of_t c) vv t lps [(0, rhsp)]) = [0])
 
 (****************************************************************)
 (************* Minimization: For Prettier Output ****************)
@@ -617,51 +592,6 @@ let inst_ext qs wf =
     Misc.trace msg (inst_ext qs) wf 
   else inst_ext qs wf
 
-(* {{{ ORIG
-let inst_qual env ys t (q : Q.t) : (Q.t * (Q.t * Su.t)) list =
-  let v  = Q.vv_of_t   q in
-  let p  = Q.pred_of_t q in
-  let n  = Sy.of_string "" in 
-  let q' = Q.create n v t (Q.params_of_t q) p in
-  let v' = Sy.value_variable t in
-  let su = Su.of_list [(v, A.eVar v')] in
-  begin
-  match Q.params_of_t q' with
-  | [(_,_)] ->
-      [q', (q, su)]
-  | xts ->
-      xts
-      |> Misc.sort_and_compact
-      |> List.map (valid_bindings env ys)               (* candidate bindings    *)
-      |> Misc.product                                   (* generate combinations *) 
-      |> List.filter valid_binding                      (* remove bogus bindings *)
-      |> List.map (List.map (Misc.app_snd A.eVar))      (* instantiations        *)
-      |> List.rev_map Su.of_list                        (* convert to substs     *)
-      |> List.rev_map (fun su' -> (Q.subst su' q', (q, Su.concat su su'))) (* quals *)
-  end
-(*  >> ((List.map fst) <+> F.printf "\n\ninst_qual q = %a: %a" Q.print q (Misc.pprint_many true "" Q.print))
- *)
-
-let inst_ext qs wf = 
-  let r    = wf >> (C.id_of_wf <+>  Printf.sprintf "\nPredAbs.inst_ext wf id = %d\n" <+> print_now) 
-                |> C.reft_of_wf in
-  let ks   = C.kvars_of_reft r |> List.map snd in
-  let env  = C.env_of_wf wf in
-  let vv   = fst3 r in
-  let t    = snd3 r in
-  let ys   = Sy.SMap.domain env in
-  let env' = SM.add vv r env in
-  qs |> List.filter (Q.sort_of_t <+> sort_compat t)
-     |> Misc.flap   (inst_qual env ys t)
-     |> Misc.map    (Misc.app_fst (Q.subst_vv vv))
-     |> Misc.filter (fst <+> wellformed_qual env')
-     |> Misc.filter (fst <+> C.filter_of_wf wf)
-     |> Misc.map    (Misc.app_fst Q.pred_of_t)
-     |> Misc.cross_product ks
-     >> (fun _ -> C.id_of_wf wf |> Printf.sprintf "\nDONE: PredAbs.inst_ext wf id = %d\n" |> print_now)
-
-}}} *)
-
 let inst ws qs = 
   Misc.flap (inst_ext qs) ws 
   >> (fun _ -> Co.bprintf mydebug "\n\nvarmatch_ctr = %d \n\n" !varmatch_ctr)
@@ -673,13 +603,19 @@ let inst ws qs =
 (*************************************************************************)
 
 let create ts sm ps consts assm qs bm =
-  (* let qs    = Misc.sort_and_compact (qs0 ++ quals_of_bindings bm) in *)
   let qleqs =  if !Co.minquals then BS.time "Annots: make qleqs" (qleqs_of_qs ts sm ps) qs else Q2S.empty in
-  { m = bm
+  { m    = bm
   ; assm = assm
   ; qm = qs |>: Misc.pad_fst Q.name_of_t |> SM.of_list
   ; qleqs               = qleqs 
   ; tpc                 = TP.create ts sm ps (List.map fst consts)
+  
+  (* Counterexamples *) 
+  ; step     = 0
+  ; ctrace   = IM.empty
+  ; lifespan = SM.empty
+
+  (* Stats *)
   ; stat_simple_refines = ref 0
   ; stat_tp_refines     = ref 0; stat_imp_queries    = ref 0
   ; stat_valid_queries  = ref 0; stat_matches        = ref 0
@@ -706,7 +642,7 @@ let update_pruned ks me fqm =
   end me.m ks
 
 let apply_facts_c kf me c =
-  let env = C.env_of_t c in
+  let env = C.senv_of_t c in
   let (vv, t, lras) = C.lhs_of_t c in
   let (_,_,ras) as rhs = C.rhs_of_t c in
   let ks = rhs |> C.kvars_of_reft |> List.map snd in
@@ -719,8 +655,7 @@ let apply_facts_c kf me c =
     else
       let rcs = List.filter (fun (_,p) -> not (P.is_contra p)) rcs
                 |> List.map (fun (x,p) -> (x, A.pNot p)) in
-	(* can we prove anything on the left implies something on the
-	   right is false? *)
+	(* can we prove anything on lhs implies something on rhs is false? *)
       let fqs = BS.time "apply_facts tp" (check_tp me env vv t lps) rcs in
       let fqm = fqs |> Misc.kgroupby fst |> SM.of_list in
 	  {me with m = BS.time "update pruned" (update_pruned ks me) fqm}
@@ -763,5 +698,11 @@ let empty = create Cg.empty None
 (* API *)
 let meet me you = {me with m = SM.extendWith (fun _ -> (++)) me.m you.m} 
 
+(************************************************************************)
+(****************** Counterexample Generation ***************************)
+(************************************************************************)
 
+let ctr_examples me cs ucs = 
+  let cx = Cx.create (read me) cs ucs me.ctrace  me.lifespan me.tpc in 
+  List.map (Cx.explain cx) ucs
 

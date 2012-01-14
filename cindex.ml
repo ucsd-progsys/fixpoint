@@ -179,11 +179,6 @@ let make_roots rankm ijs =
     if ir <> jr then IS.remove jr sccm else sccm
   end sccm ijs
 
-let is_rhs_conc = 
-  C.rhs_of_t <+>
-  C.ras_of_reft <+> 
-  List.exists (function C.Conc p -> not (P.is_tauto p) | _ -> false)
-
 let im_findall i im = try IM.find i im with Not_found -> []
 
 let is_addall im is = List.fold_left (IS.add |> Misc.flip) im is
@@ -195,7 +190,7 @@ let is_addall im is = List.fold_left (IS.add |> Misc.flip) im is
 
 let make_lives cm real_deps =
   let dm = List.fold_left (fun im (i, j) -> IM.add j (i :: (im_findall j im)) im) IM.empty real_deps in
-  let js = IM.fold (fun i c roots -> if is_rhs_conc c then i::roots else roots) cm [] in
+  let js = IM.fold (fun i c roots -> if C.is_conc_rhs c then i::roots else roots) cm [] in
   let js = is_addall IS.empty js in
   (js, IS.empty)
   |> Misc.fixpoint begin fun (js, vm) ->
@@ -337,12 +332,3 @@ let roots me =
 (* API *)
 let winit me = 
   roots me |> wpush me WH.empty  
-
- 
-(* iter (Format.fprintf ppf "@[%a@.@]" (C.print_t None)) me; *)
-  (* if !Co.dump_ref_constraints then begin
-    Format.fprintf ppf "Refinement Constraints: \n";
-    iter (Format.fprintf ppf "@[%a@.@]" (C.print_t None)) me;
-    Format.fprintf ppf "\n SCC Ranked Refinement Constraints: \n";
-    sort_iter_ref_constraints me (Format.fprintf ppf "@[%a@.@]" (C.print_t None)); 
-  end *)
