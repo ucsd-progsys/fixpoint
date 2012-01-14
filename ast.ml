@@ -51,6 +51,7 @@ module Sort =
       | Var of int              (* type-var *)
       | Ptr of loc              (* c-pointer *)
       | Func of int * t list    (* type-var-arity, in-types @ [out-type] *)
+      | FPtr                    (* function pointer *)
       | Num                     (* kind, for numeric tyvars -- ptr(loc(s)) -- *)
 
     type sub = { locs: (int * string) list; 
@@ -73,6 +74,8 @@ module Sort =
     let t_generic   = fun i -> let _ = asserts (0 <= i) "t_generic: %d" i in Var i
     let t_ptr       = fun l -> Ptr l
     let t_func      = fun i ts -> Func (i, ts)
+    let t_fptr      = FPtr
+
 
     let loc_to_string = function
       | Loc s  -> s
@@ -84,7 +87,8 @@ module Sort =
       | Bool         -> "bool"
       | Obj          -> "obj"
       | Num          -> "num"
-      | Ptr l        -> Printf.sprintf "ptr(%s)" (loc_to_string l) 
+      | Ptr l        -> Printf.sprintf "ptr(%s)" (loc_to_string l)
+      | FPtr         -> "fptr"
       | Func (n, ts) -> ts |> List.map to_string 
                            |> String.concat " ; " 
                            |> Printf.sprintf "func(%d, [%s])" n 
@@ -142,6 +146,8 @@ module Sort =
     let compat t1 t2 = match t1, t2 with
       | Int, (Ptr _) -> true
       | (Ptr _), Int -> true
+      | Int, (FPtr _) -> true
+      | (FPtr _), Int -> true
       | _            -> t1 = t2
     
 
@@ -169,7 +175,6 @@ module Sort =
           | Some _                 -> None
           | None                   -> Some {s with vars = (i,ct) :: s.vars}
           end
-    
       | Ptr (Loc cl), Ptr (Lvar j)
       | Ptr (Lvar j), Ptr (Loc cl) ->
           begin match lookup_loc s j with 
@@ -177,7 +182,7 @@ module Sort =
           | Some _                 -> None
           | None                   -> Some {s with locs = (j,cl) :: s.locs}
           end
-
+      | FPtr, FPtr -> Some s
       | (t1, t2) when t1 = t2 -> Some s
       (*
       | Int, Int | Bool, Bool | Obj, Obj -> 
@@ -979,7 +984,7 @@ let rec fixdiv = function
 (***************************************************************************)
 
 let sortcheck_sym f s = 
-  try Some (f s) with _ -> None
+  try Some (f s)  with _ -> None
 
 let sortcheck_loc f = function
   | Sort.Loc s  -> sortcheck_sym f (Symbol.of_string s)
@@ -1058,9 +1063,13 @@ and sortcheck_op f (e1, op, e2) =
   (* only allow when language is C *)
   | (Some (Sort.Ptr s), Some (Sort.Ptr s')) 
   when op = Minus && s = s'
-  -> Some Sort.Int 
+  -> Some Sort.Int
+
+  (* only allow when language is C *)
+  | (Some Sort.FPtr, Some Sort.FPtr)
+    -> Some Sort.FPtr
   
-  | _ -> None 
+  | _ -> None
  
 and sortcheck_rel f (e1, r, e2) =
   let t1o, t2o = (e1,e2) |> Misc.map_pair (sortcheck_expr f) in
@@ -1068,6 +1077,9 @@ and sortcheck_rel f (e1, r, e2) =
   | _ , Some Sort.Int,     Some (Sort.Ptr l)
   | _ , Some (Sort.Ptr l), Some Sort.Int
     -> (sortcheck_loc f l = Some Sort.Num)
+  | _, Some Sort.Int, Some Sort.FPtr
+  | _, Some Sort.FPtr, Some Sort.Int
+    -> true
   | Eq, Some t1, Some t2
   | Ne, Some t1, Some t2
     -> t1 = t2

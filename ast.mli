@@ -53,6 +53,7 @@ module Sort :
     val t_generic   : int -> t
     val t_ptr       : loc -> t
     val t_func      : int -> t list -> t
+    val t_fptr      : t
    
     val is_bool     : t -> bool
     val is_int      : t -> bool
