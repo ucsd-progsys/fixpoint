@@ -192,7 +192,7 @@ module Subst :
     val empty                : t
     val is_empty             : t -> bool
     val extend               : t -> (Symbol.t * expr) -> t
-    val concat               : t -> t -> t
+    val compose               : t -> t -> t
     val of_list              : (Symbol.t * expr) list -> t
     val simultaneous_of_list : (Symbol.t * expr) list -> t
     val to_list              : t -> (Symbol.t * expr) list

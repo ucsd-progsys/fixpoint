@@ -318,7 +318,7 @@ let binding_to_string = Misc.fsprintf (print_binding None)
 
 let theta_ra (su': Su.t) = function
   | Conc p       -> Conc (A.substs_pred p su')
-  | Kvar (su, k) -> Kvar (Su.concat su su', k) 
+  | Kvar (su, k) -> Kvar (Su.compose su su', k) 
 
 
 (* API *)

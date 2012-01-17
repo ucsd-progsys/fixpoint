@@ -1229,7 +1229,8 @@ module Subst = struct
     xes |> List.split 
         |> Misc.app_snd (Misc.flap Expression.support)
         |> Misc.uncurry Misc.disjoint
-
+            
+    
   let extend s (x, e) =
     let s = Symbol.SMap.map (esub x e) s in
       if Symbol.SMap.mem x s then
@@ -1241,13 +1242,20 @@ module Subst = struct
 
   let empty     = Symbol.SMap.empty
   let is_empty  = Symbol.SMap.is_empty
-  let to_list   = Symbol.SMap.to_list 
+  let to_list   = Symbol.SMap.to_list   
+  let apply     = Misc.flip Symbol.SMap.maybe_find
   let of_list   = fun xes -> List.fold_left extend empty xes
   let simultaneous_of_list = Symbol.SMap.of_list
-  let concat    = fun s1 s2 -> Symbol.SMap.fold (fun x e s -> extend s (x, e)) s2 s1
+  let compose s t = 
+    let s' = Symbol.SMap.fold (fun x e s -> Symbol.SMap.map (esub x e) s) t s
+    in Symbol.SMap.fold (fun x e s -> if Symbol.SMap.mem x s
+                                         then s else Symbol.SMap.add x e s)
+                        t s'
   let print_sub = fun ppf (x,e) -> F.fprintf ppf "[%a:=%a]" Symbol.print x Expression.print e
   let print     = fun ppf -> to_list <+> F.fprintf ppf "%a" (Misc.pprint_many false "" print_sub)
-  let apply     = Misc.flip Symbol.SMap.maybe_find
+      
+(* fun s1 s2 -> Symbol.SMap.fold (fun x e s -> extend s (x, e)) s2 s1 *)
+(*   let apply     = Misc.flip Symbol.SMap.maybe_find *)
 
 end
 
