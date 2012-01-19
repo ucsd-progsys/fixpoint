@@ -576,13 +576,18 @@ let inst_qual env ys evv (q : Q.t) : Q.t list =
       |> List.rev_map (fun xes -> Q.inst q (vve::xes))   (* quals *)
       (* >> (F.printf "\n\ninst_qual q = %a: %a" Q.print q (Misc.pprint_many true "" Q.print)) *)
 
+let inst_vars env = 
+  env |> Sy.SMap.to_list 
+      |> List.filter (fun (_, (_,so,_)) -> not (A.Sort.is_func so))
+      |> List.map fst 
+
 let inst_ext qs wf = 
   let r    = C.reft_of_wf wf in 
   let ks   = C.kvars_of_reft r |> List.map snd in
   let env  = C.env_of_wf wf in
   let vv   = fst3 r in
   let t    = snd3 r in
-  let ys   = Sy.SMap.domain env in
+  let ys   = inst_vars env   in
   let env' = SM.add vv r env in
   qs |> List.filter (Q.sort_of_t <+> sort_compat t)
      |> Misc.flap   (inst_qual env ys (A.eVar vv))
@@ -614,7 +619,8 @@ let create ts sm ps consts assm qs bm =
  { m      = bm
   ; assm  = assm
   ; qm    = qs |>: Misc.pad_fst Q.name_of_t |> SM.of_list
-  ; qleqs = create_qleqs ts sm consts ps qs 
+  ; qleqs = Misc.with_ref_at Constants.strictsortcheck false 
+            (fun () -> create_qleqs ts sm consts ps qs) 
   ; tpc   = TP.create ts sm ps consts
   
   (* Counterexamples *) 
@@ -634,7 +640,7 @@ let create ts sm ps consts assm qs bm =
 let ppBinding (k, zs) = 
   F.printf "ppBind %a := %a \n" 
     Sy.print k 
-    (Misc.pprint_many false "," P.print) (List.map fst zs)
+    (Misc.pprint_many false "," Q.print) zs
 
 (* Take in a solution of things that are known to be true, kf. Using
    this, we can prune qualifiers whose negations are implied by
@@ -698,7 +704,7 @@ let create c facts =
   binds_of_quals c.Cg.ws c.Cg.qs
   |> SM.extendWith (fun _ -> (++)) c.Cg.bm
   |> create c.Cg.ts c.Cg.uops c.Cg.ps c.Cg.cons c.Cg.assm c.Cg.qs
-  (* |> ((* (!Constants.refine_sort) <?> *) Misc.flip (List.fold_left refine_sort) c.Cg.cs) *)
+  |> ((!Constants.refine_sort) <?> Misc.flip (List.fold_left refine_sort) c.Cg.cs) 
   |> Misc.maybe_apply (apply_facts c.Cg.cs) facts
 
 (* API *)

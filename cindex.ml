@@ -249,8 +249,7 @@ let slice me =
               |> IM.filter (fun i _ -> IS.mem i lives) 
               |> IM.map (List.filter (fun j -> IS.mem j lives)) in
   let rdeps = me.rdeps 
-              |> Misc.filter (fun (i,j) -> IS.mem i lives && IS.mem j lives) in
-  
+              |> Misc.filter (fun (i,j) -> IS.mem i lives && IS.mem j lives) in  
   create_raw me.ds cm dm rdeps
   >> save !Co.save_file
 

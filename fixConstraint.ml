@@ -217,8 +217,7 @@ let preds_of_lhs f c =
   let r1ps  = preds_of_reft f c.lhs in
   (c.iguard :: envps) ++ r1ps
   |> List.filter (wellformed_pred (SM.add (fst3 c.lhs) c.lhs c.full))
-  >> (Format.printf "preds_of_lhs %d = %a\n" (Misc.get_option (-1) c.ido)
-  (Misc.pprint_many_brackets false P.print)) 
+  (* >> (Format.printf "preds_of_lhs %d = %a\n" (Misc.get_option (-1) c.ido) (Misc.pprint_many_brackets false P.print))  *)
 
 (* API *)
 let vars_of_t f ({rhs = r2} as c) =
