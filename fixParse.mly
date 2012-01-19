@@ -32,7 +32,7 @@ let create_qual name vv = Qualifier.create (Sy.of_string name) (Sy.of_string vv)
 %token TIMES 
 %token DIV 
 %token QM DOT ASGN
-%token OBJ INT NUM PTR BOOL UNINT FUNC
+%token OBJ INT NUM PTR FPTR BOOL UNINT FUNC
 %token SRT AXM CON CST WF SOL QUL ADP DDP
 %token ENV GRD LHS RHS REF
 
@@ -111,6 +111,7 @@ sort:
   | PTR                                 { So.t_ptr (So.Lvar 0) }
   | PTR LPAREN Num RPAREN               { So.t_ptr (So.Lvar $3) }
   | PTR LPAREN Id RPAREN                { So.t_ptr (So.Loc $3) }
+  | FPTR                                { So.t_fptr }
   | OBJ                                 { So.t_obj } 
   | NUM                                 { So.t_num } 
   | TVAR LPAREN Num RPAREN              { So.t_generic $3 }
