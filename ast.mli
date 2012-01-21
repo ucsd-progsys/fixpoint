@@ -153,6 +153,8 @@ val pBexp  : expr -> pred
 val pForall: ((Symbol.t * Sort. t) list) * pred -> pred
 val pEqual : expr * expr -> pred
 
+val neg_brel : brel -> brel
+
 module Expression : 
 sig
   module Hash : Hashtbl.S with type key = expr 
