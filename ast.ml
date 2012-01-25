@@ -177,6 +177,8 @@ module Sort =
           | Some _                 -> None
           | None                   -> Some {s with vars = (i,ct) :: s.vars}
           end
+      | Ptr LFun, Ptr _ 
+      | Ptr _, Ptr LFun -> Some s
       | Ptr (Loc cl), Ptr (Lvar j)
       | Ptr (Lvar j), Ptr (Loc cl) ->
           begin match lookup_loc s j with 
@@ -993,6 +995,7 @@ let sortcheck_sym f s =
 let sortcheck_loc f = function
   | Sort.Loc s  -> sortcheck_sym f (Symbol.of_string s)
   | Sort.Lvar _ -> None
+  | Sort.LFun   -> None
 
 let rec sortcheck_expr f e = 
   match euw e with
@@ -1057,7 +1060,7 @@ and sortcheck_op f (e1, op, e2) =
   (* only allow when language is Haskell *)
   | (Some (Sort.Ptr l), Some (Sort.Ptr l')) 
   when (l = l' && sortcheck_loc f l = Some Sort.Num)
-  -> Some (Sort.Ptr l)
+ -> Some (Sort.Ptr l)
  
   (* only allow when language is C *)
   | (Some (Sort.Ptr s), Some Sort.Int) 
@@ -1078,12 +1081,12 @@ and sortcheck_op f (e1, op, e2) =
 and sortcheck_rel f (e1, r, e2) =
   let t1o, t2o = (e1,e2) |> Misc.map_pair (sortcheck_expr f) in
   match r, t1o, t2o with
+  | _, Some (Sort.Ptr _) , Some (Sort.Ptr Sort.LFun)
+  | _, Some (Sort.Ptr Sort.LFun), Some (Sort.Ptr _)
+    -> true
   | _ , Some Sort.Int,     Some (Sort.Ptr l)
   | _ , Some (Sort.Ptr l), Some Sort.Int
     -> (sortcheck_loc f l = Some Sort.Num)
-  (* | _, Some Sort.Int, Some Sort.FPtr *)
-  (* | _, Some Sort.FPtr, Some Sort.Int *)
-  (*   -> true *)
   | Eq, Some t1, Some t2
   | Ne, Some t1, Some t2
     -> t1 = t2
