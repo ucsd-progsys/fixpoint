@@ -457,14 +457,12 @@ let min_read s k =
 let min_read s k =
   BS.time "min_read" (min_read s) k
 
-(*
 let close_env qs sm =
   qs |> Misc.flap   (Q.pred_of_t <+> P.support) 
      |> Misc.filter (not <.> Misc.flip SM.mem sm)
      |> Misc.map    (fun x -> (x, Ast.Sort.t_int))
      |> SM.of_list
      |> SM.extend sm
-*)
 
 let rename_vv q q' =
   List.combine (Q.all_params_of_t q |>: fst) (Q.all_params_of_t q' |>: fst)
@@ -478,7 +476,7 @@ let rename_vv q q' =
 let check_leq tp sm (q : Q.t) (qs : Q.t list) : Q.t list = 
   let vv  = Q.vv_of_t q in
   let lps = [Q.pred_of_t q] in
-  let sm  = q |> Q.all_params_of_t |> SM.of_list |> SM.extend sm in
+  let sm  = q |> Q.all_params_of_t |> SM.of_list |> SM.extend sm |> close_env qs in
   qs |> List.map (rename_vv q) (* (fun q -> (q, Q.pred_of_t q)) *)
      (* >> (List.map fst <+> F.printf "CHECK_TP: %a IN %a \n" Q.print q pprint_qs) *)
      |> TP.set_filter tp sm vv lps (fun _ _ -> false)

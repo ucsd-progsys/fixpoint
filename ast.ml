@@ -1069,6 +1069,8 @@ and sortcheck_op f (e1, op, e2) =
 
   (* only allow when language is C *)
   | (Some Sort.FPtr, Some Sort.FPtr)
+  | (Some Sort.FPtr, Some Sort.Int)
+  | (Some Sort.Int,  Some Sort.FPtr)
     -> Some Sort.FPtr
   
   | _ -> None
