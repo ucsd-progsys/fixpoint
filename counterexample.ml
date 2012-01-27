@@ -332,8 +332,9 @@ let getKillStep me c bgp iks =
   let iks = Misc.fsort fst iks in
   let ps  = iks |>: (snd <+> List.map snd <+> A.pAnd) in
   match TP.unsat_suffix me.tpc (C.senv_of_t c) bgp ps with
-  | None   -> assertf "getKillStep" 
-  | Some j -> List.nth iks j 
+  | Some j when 0 <= j && j < List.length iks 
+      -> List.nth iks j 
+  | _ -> assertf "getKillStep" 
 
 let getKillers_cands me c bgp cands =
   match cands, Misc.exists_maybe is_bot_killer cands with 

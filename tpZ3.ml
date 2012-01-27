@@ -310,9 +310,9 @@ let z3Distinct me env = List.map (z3Var me env) <+> Array.of_list <+> Z3.mk_dist
 let us_ref = ref 0
 
 let unsat me =
-  let _ = if mydebug then (Printf.printf "[%d] UNSAT 1 " (us_ref += 1); flush stdout) in
+  let _  = if mydebug then (Printf.printf "[%d] UNSAT 1 " (us_ref += 1); flush stdout) in
   let rv = (BS.time "Z3.check" Z3.check me.c) = Z3.L_FALSE in
-  let _ = if mydebug then (Printf.printf "UNSAT 2 \n"; flush stdout) in
+  let _  = if mydebug then (Printf.printf "UNSAT 2 \n"; flush stdout) in
   let _  = if rv then ignore (nb_unsat += 1) in 
   rv
 
@@ -469,18 +469,9 @@ let mk_pa me p2z pfx ics =
       |> Array.of_list 
       |> Array.mapi (fun i (x, p) -> (x, p, mk_prop_var me pfx i))
 
-let unsat_core_one me (va : Z3.ast array) (f: Z3.ast -> 'a) (k, q) =
-  let _  = Z3.push me.c in
-  let _  = Z3.assert_cnstr me.c (Z3.mk_not me.c q) in
-  let r  = match Z3.check_assumptions me.c va (Array.length va) (Array.map id va) with
-           | (Z3.L_FALSE, m,_, n, ucore) 
-               -> Array.map f ucore 
-                  |> Array.to_list 
-                  |> Misc.map_partial id 
-           | _ -> [] in
-  let _  = Z3.pop me.c  in
-  (k, r)
 
+
+(*
 (* API *)
 let unsat_cores me env p ips iqs = 
   (* let _     = handle_vv me env vv                              in *)
@@ -499,8 +490,52 @@ let unsat_cores me env p ips iqs =
                   |> List.map (unsat_core_one me va f)
                   >> (fun _ -> Z3.pop me.c)
 
-  let unsat_core me env bgp ips = failwith "TBD:unsat_core"
+*)
+
+let unsat_core_one me (va : Z3.ast array) (f: Z3.ast -> 'a) (k, q) =
+  let _  = Z3.push me.c in
+  let _  = Z3.assert_cnstr me.c (Z3.mk_not me.c q) in
+  let r  = match Z3.check_assumptions me.c va (Array.length va) (Array.map id va) with
+           | (Z3.L_FALSE, m,_, n, ucore) 
+               -> Array.map f ucore 
+                  |> Array.to_list 
+                  |> Misc.map_partial id 
+           | _ -> [] in
+  let _  = Z3.pop me.c  in
+  (k, r)
+
+
+let z3Do me f = Misc.bracket (fun _ -> Z3.push me.c) (fun _ -> Z3.pop me.c) f
+
+(* API *)
+let unsat_core me env bgp ips =
+  let _     = Hashtbl.clear me.vart                               in 
+  let p2z   = A.fixdiv <+> z3Pred me env                          in
+  let ipa   = ips |> List.map (Misc.app_snd p2z) |> Array.of_list in 
+  let va, f = mk_prop_var_idx me ipa                              in
+  let zp    = ipa |> Array.mapi (fun i (_, p) -> Z3.mk_iff me.c va.(i) p)
+                  |> Array.to_list
+                  |> (++) [p2z bgp]
+                  |> Array.of_list
+                  |> Z3.mk_and me.c in
+  z3Do me begin fun _ ->
+    let _   = Z3.assert_cnstr me.c zp in
+    let n   = Array.length va in
+    let va' = Array.map id va in
+    match Z3.check_assumptions me.c va n va' with
+      | (Z3.L_FALSE, m,_, n, ucore) 
+          -> Array.map f ucore |> Array.to_list |> Misc.map_partial id 
+      | _ -> []
+  end
+ 
+(* API *)
+let unsat_suffix me env p ps = 
+  z3Do me begin fun _ ->
+    let rec loop j = function [] -> None | zp' :: zps' -> 
+      Z3.assert_cnstr me.c zp'; 
+      if unsat me then Some j else loop (j-1) zps'
+    in loop (List.length ps) (List.map (A.fixdiv <+> z3Pred me env) (p :: List.rev ps)) 
+  end
   
-  let unsat_suffix me env bgp ps = failwith "TBD:unsat_suffix"
  
 end

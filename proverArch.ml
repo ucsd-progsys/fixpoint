@@ -23,6 +23,8 @@
 
 (* Theorem Prover API *)
 
+(* RJ: This is CLEARLY the wrong API and in need of a major refactoring. *)
+
 module type PROVER = 
 sig
   type t 
@@ -43,6 +45,7 @@ sig
 
   val print_stats : Format.formatter -> t -> unit
 
+  (*
   val unsat_cores : t                                       
                     -> Ast.Sort.t Ast.Symbol.SMap.t 
                     -> Ast.pred                             (* background predicate   *)
@@ -50,6 +53,8 @@ sig
                     -> ('b * Ast.pred) list                 (* [(index, killed-fact)] *)
                     -> ('b * 'a list) list                  (* [(killed, killers)]    *)
 
+  *)
+  
   val unsat_core  : t                                       
                     -> Ast.Sort.t Ast.Symbol.SMap.t 
                     -> Ast.pred                             (* background predicate   *)
@@ -58,8 +63,8 @@ sig
 
   val unsat_suffix : t
                    -> Ast.Sort.t Ast.Symbol.SMap.t 
-                   -> Ast.pred                             (* background predicate   *)
-                   -> Ast.pred list                        (* [p1,...,pn] *)
-                   -> int option                           (* max j st. p /\i=j..n pi unsat *)
+                   -> Ast.pred                              (* background predicate   *)
+                   -> Ast.pred list                         (* [p0,...,pn] *)
+                   -> int option                            (* max j st. p /\i=j..n pi unsat *)
 
 end
