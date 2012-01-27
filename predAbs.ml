@@ -472,11 +472,16 @@ let rename_vv q q' =
   |> A.substs_pred (Q.pred_of_t q')
   |> (fun p' -> (q', p'))
 
+let sm_of_qual sm q = 
+  q |> Q.all_params_of_t 
+    |> SM.of_list 
+    |> SM.extend sm
+
 (*  check_leq tp sm q qs = [q' | q' <- qs, Z3 |- q => q'] *)
 let check_leq tp sm (q : Q.t) (qs : Q.t list) : Q.t list = 
   let vv  = Q.vv_of_t q in
   let lps = [Q.pred_of_t q] in
-  let sm  = q |> Q.all_params_of_t |> SM.of_list |> SM.extend sm |> close_env qs in
+  let sm  = q |> sm_of_qual sm |> close_env qs in
   qs |> List.map (rename_vv q) (* (fun q -> (q, Q.pred_of_t q)) *)
      (* >> (List.map fst <+> F.printf "CHECK_TP: %a IN %a \n" Q.print q pprint_qs) *)
      |> TP.set_filter tp sm vv lps (fun _ _ -> false)
@@ -491,9 +496,14 @@ let qimps_of_partition tp sm qs =
     end
   end
 
+let wellformed_qual sm q =
+  let sm = sm_of_qual sm q in
+  A.sortcheck_pred (fun x -> SM.maybe_find x sm) (Q.pred_of_t q)
+
 let qleqs_of_qs ts sm cs ps qs  =
   let tp = TP.create ts sm cs ps         in
-  qs |> Misc.groupby (List.map snd <.> Q.all_params_of_t) (* Q.sort_of_t *)
+  qs |> Misc.filter (wellformed_qual sm)
+     |> Misc.groupby (List.map snd <.> Q.all_params_of_t) (* Q.sort_of_t *)
      |> Misc.flap (qimps_of_partition tp sm)
      |> Misc.flatten
      |> Misc.map (Misc.map_pair Q.name_of_t) 
@@ -503,12 +513,6 @@ let qleqs_of_qs ts sm cs ps qs  =
 (******************** Qualifier Instantiation ******************)
 (***************************************************************)
 
-let wellformed_qual env q =
-  C.wellformed_pred env (Q.pred_of_t q)
-  
-(*  >> (F.printf "\nwellformed: q = @[%a@] in env = @[%a@] result %b\n"  
-        Q.print q (C.print_env None) env)
- *)
 
 let dupfree_binding xys : bool = 
   let ys  = List.map snd xys in
@@ -556,7 +560,9 @@ let print_valid_binding ppf (x,y) =
 let print_valid_bindings ppf xys =
   F.printf "[%a]" (Misc.pprint_many false "" print_valid_binding) xys
 
-
+let wellformed_qual f = A.sortcheck_pred f <.> Q.pred_of_t 
+(*  >> (F.printf "\nwellformed: q = @[%a@] in env = @[%a@] result %b\n"  
+        Q.print q (C.print_env None) env) *)
 
 let inst_qual env ys evv (q : Q.t) : Q.t list =
   let vve = (Q.vv_of_t q, evv) in
@@ -586,7 +592,7 @@ let inst_ext qs wf =
   let vv   = fst3 r in
   let t    = snd3 r in
   let ys   = inst_vars env   in
-  let env' = SM.add vv r env in
+  let env' = Misc.maybe_map C.sort_of_reft <.> C.lookup_env (SM.add vv r env) in
   qs |> List.filter (Q.sort_of_t <+> sort_compat t)
      |> Misc.flap   (inst_qual env ys (A.eVar vv))
      |> Misc.filter (wellformed_qual env' <&&> C.filter_of_wf wf)
@@ -715,7 +721,10 @@ let meet me you = {me with m = SM.extendWith (fun _ -> (++)) me.m you.m}
 (****************** Counterexample Generation ***************************)
 (************************************************************************)
 
+ 
 let ctr_examples me cs ucs = 
-  let cx = Cx.create (read me) cs me.ctrace  me.lifespan me.tpc in 
+  let cx = Cx.create (read me) cs me.ctrace me.lifespan me.tpc in 
   List.map (Cx.explain cx) ucs
+
+
 

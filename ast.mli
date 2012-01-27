@@ -222,7 +222,7 @@ val substs_expr    : expr -> Subst.t -> expr
 val substs_pred    : pred -> Subst.t -> pred 
 val simplify_pred  : pred -> pred
 val conjuncts      : pred -> pred list
-val sortcheck_expr : (Symbol.t -> Sort.t) -> expr -> Sort.t option
-val sortcheck_pred : (Symbol.t -> Sort.t) -> pred -> bool
+val sortcheck_expr : (Symbol.t -> Sort.t option) -> expr -> Sort.t option
+val sortcheck_pred : (Symbol.t -> Sort.t option) -> pred -> bool
 val into_of_expr   : expr -> int option
 

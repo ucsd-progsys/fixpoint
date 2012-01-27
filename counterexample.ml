@@ -66,14 +66,14 @@ type ctrace  = step list IM.t
 type cex     = (Sy.t * fact * C.id) list
 
 let print_fact ppf = function
-  | Abs (k, q) -> F.fprintf ppf "%a/%a" Sy.print k Q.print_args q
-  | Conc i     -> F.fprintf ppf "%d" i
+  | Abs (k, q) -> F.fprintf ppf "(%a/%a)" Sy.print k Q.print_args q
+  | Conc i     -> F.fprintf ppf "(id %d)" i
 
 let print_step ppf (x, f, cid) =
   F.fprintf ppf "%a: %a @@ %d" Sy.print x print_fact f cid
 
 let print_cex = 
-  Misc.pprint_many_box true "     " "---> " "" print_step
+  Misc.pprint_many_box true "" "---> " "" print_step
 
 let compare_fact f1 f2 =
   compare (Misc.fsprintf print_fact f1) (Misc.fsprintf print_fact f2)
@@ -90,7 +90,7 @@ type t = { tpc      : TP.t
          ; cm       : FixConstraint.t IM.t
          ; ctrace   : ctrace 
          ; lifespan : lifespan                     (* builds soln at n                *)
-         (* ; sfm      : fact list IM.t               (* step |-> facts killed at a step *)
+         (* ; sfm      : fact list IM.t            (* step |-> facts killed at a step *)
          *)
          ; fsm      : step FactMap.t               (* fact |-> step at which killed   *)
          ; scm      : int IM.t                     (* step |-> constr at step         *)
@@ -112,7 +112,7 @@ let fsm_of_lifespan lifetime =
     end fsm sqs
   end lifetime FactMap.empty 
 
-(* YUCK *)
+(* YUCK 
 let sfm_of_lifespan lifespan : fact list IM.t  = 
   lifespan 
   |> SM.to_list 
@@ -122,7 +122,7 @@ let sfm_of_lifespan lifespan : fact list IM.t  =
        end iqss
      end
   |> List.fold_left (fun m (i, fs) -> IM.adds i fs m) IM.empty 
-
+*)
 
 (***************************************************************************)
 (************** Helpers to Reconstitute Solutions and Candidates ***********)
@@ -333,8 +333,19 @@ let getKillStep me c bgp iks =
   let ps  = iks |>: (snd <+> List.map snd <+> A.pAnd) in
   match TP.unsat_suffix me.tpc (C.senv_of_t c) bgp ps with
   | Some j when 0 <= j && j < List.length iks 
-      -> List.nth iks j 
-  | _ -> assertf "getKillStep" 
+       -> List.nth iks j 
+  | io -> (* assertf "getKillStep (cid = %d) (|iks| = %d) (io = %s)" 
+            (C.id_of_t c) 
+            (List.length iks) 
+            (Misc.maybe_string string_of_int io) *)
+          let _ = F.printf 
+                  "getKillStep failure: (cid = %d) (|iks| = %d) (io = %a)\n bgp = %a\nps  = %a\n"
+  (C.id_of_t c) 
+  (List.length iks) 
+  (Misc.pprint_maybe Misc.pprint_int) io
+  P.print bgp
+  (Misc.pprint_many_brackets true P.print) ps in
+          assertf "getKillStep"
 
 let getKillers_cands me c bgp cands =
   match cands, Misc.exists_maybe is_bot_killer cands with 
@@ -346,19 +357,23 @@ let getKillers_cands me c bgp cands =
       TP.unsat_core me.tpc (C.senv_of_t c) bgp cands 
       |> Misc.do_catch "ERROR: empty unsat core" List.hd
       |> some
+      
+let killinfo me = function
+  | Conc cid -> me.n, cid
+  | f        -> let n = killstep_of_fact me f in
+                (n, IM.safeFind n me.scm "Cex.killinfo")
 
 let getKillers_fact (me: t) (f: fact) = 
-  let n          = killstep_of_fact me f                    in 
-  let cid        = IM.safeFind n me.scm  "Cex.getKillers 2" in
+  let n, cid     = killinfo me f                            in
   let c          = IM.safeFind cid me.cm "Cex.getKillers 3" in
-  let bgps       = C.preds_of_lhs (solutionAt me n) c
-                   |> (++) [A.pNot (killedPred me c f)]     in
-  let iks        = killerCands me c n                       in
-  let (j, cands) = getKillStep me c (A.pAnd bgps) iks       in
-  let bgps'      = iks 
+  match killerCands me c n with []  -> (cid, None) | iks -> 
+    let bgps       = C.preds_of_lhs (solutionAt me n) c
+                     |> (++) [A.pNot (killedPred me c f)]   in
+    let (j, cands) = getKillStep me c (A.pAnd bgps) iks     in
+    let bgps'      = iks 
                    |> List.filter (fun (i,_) -> j < i)
                    |> Misc.flap   (snd <+> List.map snd)    in 
-  (cid, getKillers_cands me c (A.pAnd (bgps ++ bgps')) cands)
+    (cid, getKillers_cands me c (A.pAnd (bgps ++ bgps')) cands)
 
 let rec explain me acc f = 
   match getKillers_fact me f with
