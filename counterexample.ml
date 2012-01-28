@@ -43,7 +43,6 @@ open Misc.Ops
 
 let mydebug   = false
 
-
 (***************************************************************************)
 (************** Type Aliases ***********************************************)
 (***************************************************************************)
@@ -112,18 +111,6 @@ let fsm_of_lifespan lifetime =
     end fsm sqs
   end lifetime FactMap.empty 
 
-(* YUCK 
-let sfm_of_lifespan lifespan : fact list IM.t  = 
-  lifespan 
-  |> SM.to_list 
-  |> Misc.flap begin fun (k, iqss) ->
-       List.map begin fun (i, qs) -> 
-         (i, List.map (fun q -> Abs (k, q)) qs)
-       end iqss
-     end
-  |> List.fold_left (fun m (i, fs) -> IM.adds i fs m) IM.empty 
-*)
-
 (***************************************************************************)
 (************** Helpers to Reconstitute Solutions and Candidates ***********)
 (***************************************************************************)
@@ -184,7 +171,6 @@ let delta me c n k : fact list =
   |> Misc.flap snd
   |> Misc.map (fun q -> Abs (k, q))
 
-
 (************************************************************************)
 (************************************************************************)
 (************************************************************************)
@@ -201,25 +187,6 @@ let killerCands me c n : (int * (((Sy.t * fact) * A.pred)) list) list =
   end |> Misc.flatten
   |> Misc.kgroupby (fst <+> snd <+> killstep_of_fact me)
 
-(* {{{ EAGER
-let rhs_pred_of_conc c =
-  let _ = asserts (C.is_conc_rhs c) in
-  c |> C.rhs_of_t 
-    |> thd3 
-    |> Misc.map_partial (function C.Conc p -> Some p | _ -> None) 
-    |> A.pAnd
-
-let killedsAt me c n : (fact * A.pred) list =
-  match C.rhs_of_t c with
-  | (_,_, [C.Kvar (su, k)]) ->
-      foreach (IM.finds n me.sfm) begin function
-        | Abs (_, q) as f -> (f, A.substs_pred (Q.pred_of_t q) su)
-      end
-  | (_,_, [C.Conc p]) ->
-      [(Conc (C.id_of_t c), p)]
-  | _ -> failwith "killedsAt"
-}}} *)
-
 (************************************************************************)
 (************************************************************************)
 (************************************************************************)
@@ -233,52 +200,6 @@ let print_fact_causes n ppf (f, xfs) =
 let is_bot_killer = function
   | (f, p) when P.is_contra p -> Some f
   | _                         -> None
-
-(* EAGER {{{
-
-let setCause n cid me ((f: fact), (causes: (Sy.t * fact) list)) : t = 
-  match causes with
-  | [] -> me
-  | _  -> { me with ffm = FactMap.safeAdd f (n, cid, causes) me.ffm "Cex.setCause"}
-
-
-let getKillers_step me _n n c =
-  let cid = C.id_of_t c in
-  let _   = F.printf "\nsetKillers_step: _n = %d n = %d cid = %d\n" _n n cid in
-  let killers = killerCands me c _n n in 
-  let killeds = killedsAt me c n      in
-  match Misc.exists_maybe is_bot_killer killers with 
-  | Some y -> 
-      List.map (fun (x,_) -> (x, [y])) killeds
-  | None when (killers = []) -> 
-      List.map (fun (x,_) -> (x, [])) killeds
-  | None -> 
-      let _ = F.printf "\nNON BOT KILLER at _n = %d n = %d cid = %d \n" _n n cid in
-      let bgp = A.pAnd <| C.preds_of_lhs (solutionAt me n) c in
-      TP.unsat_core me.tpc (C.senv_of_t c) bgp killers killeds
-
-
-let setKillers_step me _n n c = 
-  getKillers_step me _n n c
-  >> (F.printf "causes:\n%a" (Misc.pprint_many true "\n" (print_fact_causes n)))
-  |> List.fold_left (setCause n (C.id_of_t c)) me 
-
-let setKillers_ctrace ctrace me =
-  ctrace 
-  |> IM.to_list 
-  |> Misc.flap (fun (cid, is) -> List.map (fun i -> (i, cid)) is)
-  |> Misc.fsort fst
-  |> List.fold_left begin fun me (n, cid) -> 
-      let c  = constrOfId me cid                in
-      let _n = prevStep_abs me (C.id_of_t c) n  in
-      setKillers_step me _n n c
-     end me
-
-let setKillers_unsats ucs me =
-  List.fold_left begin fun me c ->
-    setKillers_step me (prevStep_conc me c) me.n c
-  end me ucs
-}}} *)
 
 (********************************************************************)
 (*********************** API ****************************************)
@@ -296,23 +217,6 @@ let create s cs ctrace lifespan tpc =
   ; fsm      = fsm_of_lifespan lifespan
   ; scm      = scm
   }  
-
-(* EAGER {{{
-(* API *)
-let create s cs ucs ctrace lifespan tpc =
-  create_ s cs ctrace lifespan tpc
-  |> setKillers_ctrace ctrace
-  |> setKillers_unsats ucs
-
-(* API *)
-let explain me c = 
-  let rec go acc f = 
-    match FactMap.maybe_find f me.ffm with
-    | Some (_, cid, ((x, f') :: _)) -> go ((x, f', cid) :: acc) f'
-    | None                          -> acc
-  in go [] (Conc (C.id_of_t c))
-
-}}} *)
 
 (*****************************************************************)
 (**************** Lazy Explanations ******************************)
@@ -334,19 +238,22 @@ let getKillStep me c bgp iks =
   match TP.unsat_suffix me.tpc (C.senv_of_t c) bgp ps with
   | Some j when 0 <= j && j < List.length iks 
        -> List.nth iks j 
-  | io -> (* assertf "getKillStep (cid = %d) (|iks| = %d) (io = %s)" 
-            (C.id_of_t c) 
-            (List.length iks) 
-            (Misc.maybe_string string_of_int io) *)
-          let _ = F.printf 
+  | io -> let _ = F.printf 
                   "getKillStep failure: (cid = %d) (|iks| = %d) (io = %a)\n bgp = %a\nps  = %a\n"
-  (C.id_of_t c) 
-  (List.length iks) 
-  (Misc.pprint_maybe Misc.pprint_int) io
-  P.print bgp
-  (Misc.pprint_many_brackets true P.print) ps in
-          assertf "getKillStep"
+                    (C.id_of_t c) 
+                    (List.length iks) 
+                    (Misc.pprint_maybe Misc.pprint_int) io
+                    P.print bgp
+                    (Misc.pprint_many_brackets true P.print) ps 
+          in assertf "getKillStep"
 
+let killinfo me = function
+  | Conc cid -> me.n, cid
+  | f        -> let n = killstep_of_fact me f in
+                (n, IM.safeFind n me.scm "Cex.killinfo")
+
+
+(* ORIGINAL: simply use unsat core.
 let getKillers_cands me c bgp cands =
   match cands, Misc.exists_maybe is_bot_killer cands with 
   | [], _ ->
@@ -357,11 +264,6 @@ let getKillers_cands me c bgp cands =
       TP.unsat_core me.tpc (C.senv_of_t c) bgp cands 
       |> Misc.do_catch "ERROR: empty unsat core" List.hd
       |> some
-      
-let killinfo me = function
-  | Conc cid -> me.n, cid
-  | f        -> let n = killstep_of_fact me f in
-                (n, IM.safeFind n me.scm "Cex.killinfo")
 
 let getKillers_fact (me: t) (f: fact) = 
   let n, cid     = killinfo me f                            in
@@ -374,6 +276,41 @@ let getKillers_fact (me: t) (f: fact) =
                    |> List.filter (fun (i,_) -> j < i)
                    |> Misc.flap   (snd <+> List.map snd)    in 
     (cid, getKillers_cands me c (A.pAnd (bgps ++ bgps')) cands)
+*)
+
+let maxCubeSize = 2
+
+let underApproxCubes (p:pred) (q:pred) (rs: ('a * pred) list) : 'a list list =
+  rs |> Misc.subsets maxCubeSize
+     |> Misc.map_partial begin fun cube -> 
+         if SAT (p /\ cube) && UNSAT (p /\ cube /\ q) then 
+           Some (List.map fst cube) 
+         else None
+        end
+
+let getKillers_cands me c bgp killedp cands =
+  match cands, Misc.exists_maybe is_bot_killer cands with 
+  | [], _ ->
+      None
+  | _, Some g -> 
+      Some g 
+  | _, _  -> 
+      TP.unsat_core me.tpc (C.senv_of_t c) bgp cands 
+      |> Misc.do_catch "ERROR: empty unsat core" List.hd
+      |> some
+
+let getKillers_fact (me: t) (f: fact) = 
+  let n, cid     = killinfo me f                            in
+  let c          = IM.safeFind cid me.cm "Cex.getKillers 3" in
+  match killerCands me c n with []  -> (cid, None) | iks -> 
+    let bgps       = C.preds_of_lhs (solutionAt me n) c     in
+                     (* |> (++) [A.pNot (killedPred me c f)]   *) 
+    let killedp    = A.pNot (killedPred me c f)             in 
+    let (j, cands) = getKillStep me c (A.pAnd bgps) iks     in
+    let bgps'      = iks 
+                   |> List.filter (fun (i,_) -> j < i)
+                   |> Misc.flap   (snd <+> List.map snd)    in 
+    (cid, getKillers_cands me c (A.pAnd (bgps ++ bgps')) killedp cands)
 
 let rec explain me acc f = 
   match getKillers_fact me f with
