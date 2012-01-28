@@ -211,7 +211,7 @@ let is_z3_int me a =
 exception Z3RelTypeError
 
 let rec z3Rel me env (e1, r, e2) =
-  if A.sortcheck_pred (varSort env) (A.pAtom (e1, r, e2)) then 
+  if A.sortcheck_pred (Misc.flip SM.maybe_find env) (A.pAtom (e1, r, e2)) then 
     let a1, a2 = Misc.map_pair (z3Exp me env) (e1, e2) in 
     match r with 
     | A.Eq -> Z3.mk_eq me.c a1 a2 
@@ -283,7 +283,7 @@ and z3Pred me env = function
       let a  = z3Exp me env e in
       let s1 = Z3.ast_to_string me.c a in
       let s2 = E.to_string e in
-      let Some so = A.sortcheck_expr (varSort env) e in
+      let Some so = A.sortcheck_expr (Misc.flip SM.maybe_find env) e in
       let sos = So.to_string so in
       let _  = asserts (is_z3_bool me a) "Bexp is not bool (e = %s)! z3=%s, fix=%s, sort=%s" 
                                          (E.to_string e) s1 s2 sos in 
@@ -492,6 +492,7 @@ let unsat_cores me env p ips iqs =
 
 *)
 
+(*
 let unsat_core_one me (va : Z3.ast array) (f: Z3.ast -> 'a) (k, q) =
   let _  = Z3.push me.c in
   let _  = Z3.assert_cnstr me.c (Z3.mk_not me.c q) in
@@ -503,9 +504,10 @@ let unsat_core_one me (va : Z3.ast array) (f: Z3.ast -> 'a) (k, q) =
            | _ -> [] in
   let _  = Z3.pop me.c  in
   (k, r)
+*)
 
 
-let z3Do me f = Misc.bracket (fun _ -> Z3.push me.c) (fun _ -> Z3.pop me.c) f
+let z3Do me f = Misc.bracket (fun _ -> push me []) (fun _ -> pop me) f
 
 (* API *)
 let unsat_core me env bgp ips =
@@ -529,7 +531,8 @@ let unsat_core me env bgp ips =
   end
  
 (* API *)
-let unsat_suffix me env p ps = 
+let unsat_suffix me env p ps =
+  let _ = if unsat me then assertf "WTF: unsat_suffix" in
   z3Do me begin fun _ ->
     let rec loop j = function [] -> None | zp' :: zps' -> 
       Z3.assert_cnstr me.c zp'; 

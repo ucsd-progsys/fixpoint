@@ -985,8 +985,8 @@ let rec fixdiv = function
 (************* Type Checking Expressions and Predicates ********************)
 (***************************************************************************)
 
-let sortcheck_sym f s = 
-  try Some (f s)  with _ -> None
+let sortcheck_sym f s = f s
+  (* try Some (f s)  with _ -> None *)
 
 let sortcheck_loc f = function
   | Sort.Loc s  -> sortcheck_sym f (Symbol.of_string s)
@@ -1069,6 +1069,8 @@ and sortcheck_op f (e1, op, e2) =
 
   (* only allow when language is C *)
   | (Some Sort.FPtr, Some Sort.FPtr)
+  | (Some Sort.FPtr, Some Sort.Int)
+  | (Some Sort.Int,  Some Sort.FPtr)
     -> Some Sort.FPtr
   
   | _ -> None
@@ -1110,9 +1112,13 @@ and sortcheck_pred f p =
     | Atom (e1, r, e2) ->
         sortcheck_rel f (e1, r, e2)
     | Forall (qs,p) ->
-        let f' = fun x -> try List.assoc x qs with _ -> f x in
-        sortcheck_pred f' p
+        (* let f' = fun x -> try List.assoc x qs with _ -> f x in *)
+        let f' = fun x -> match Misc.list_assoc_maybe x qs with None -> f x | y -> y
+        in sortcheck_pred f' p
     | _ -> failwith "Unexpected: sortcheck_pred"
+
+
+
 
 (*
 let sortcheck_pred f p = 

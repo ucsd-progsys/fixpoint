@@ -116,8 +116,11 @@ let kbindings_of_lhs {nontriv = ne; lhs = (v, t, ras)} =
   let _, kras  = split_ras ras in
   (v, (v,t,kras)) :: xkss
 
-let map_env          = SM.mapi
-let lookup_env env x = try Some (SM.find x env) with Not_found -> None 
+let map_env    = SM.mapi
+let lookup_env = Misc.flip SM.maybe_find 
+(* let lookup_env env x = try Some (SM.find x env) with Not_found -> None *)
+
+
 
 (* API *)
 let is_simple {lhs = (_,_,ra1s); rhs = (_,_,ra2s)} = 
@@ -203,13 +206,20 @@ let preds_of_envt f env =
       xps ++ ps)
     env [] 
 
-
 (* API *)
-let wellformed_pred env p =
+let wellformed_pred env = 
+  A.sortcheck_pred (Misc.maybe_map snd3 <.> Misc.flip SM.maybe_find env)
+
+(*
   Misc.do_catch_ret "FixConstraint.wellformed: wellformed_pred" 
     (A.sortcheck_pred (fun x -> snd3 (SM.safeFind x env "wellformed_pred"))) 
     p 
     false
+*)
+
+
+
+
 
 (* API *)
 let preds_of_lhs f c = 
