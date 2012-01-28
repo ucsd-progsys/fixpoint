@@ -94,7 +94,8 @@ rule token = parse
   | "num"               { NUM }
   | "int"               { INT }
   | "ptr"               { PTR }
-  | "fptr"              { FPTR }
+  | "<fun>"              { LFUN }
+  (* | "fptr"              { FPTR } *)
   | "bool"              { BOOL }
   | "uit"               { UNINT }
   | "func"              { FUNC }
