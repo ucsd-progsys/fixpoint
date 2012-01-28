@@ -259,8 +259,8 @@ and z3Exp me env = function
       z3App me env (mk_select f) [z3Exp me env e] (** REQUIRES: disjoint field names *)
   | A.Cst (e, _), _ -> 
       z3Exp me env e
-  | A.Bot, _ -> 
-      assertf "z3Exp: Cannot Convert Bot!" 
+  | e -> 
+      assertf "z3Exp: Cannot Convert %s!" (E.to_string e) 
 
 and z3Pred me env = function
   | A.True, _ -> 
@@ -295,13 +295,19 @@ and z3Pred me env = function
       let rv       = Z3.mk_forall me.c 0 [||] zts zargs (z3Pred me env p) in
       let _        = me.bnd <- me.bnd - (List.length xs) in
       rv
+ | p -> 
+      assertf "z3Pred: Cannot Convert %s!" (P.to_string p) 
+
 
 let z3Pred me env p = 
   try 
+    let p = BS.time "fixdiv" A.fixdiv p in
     BS.time "z3Pred" (z3Pred me env) p
   with ex -> (Format.printf "z3Pred: error converting %a\n" P.print p) ; raise ex 
 
-let z3Distinct me env = List.map (z3Var me env) <+> Array.of_list <+> Z3.mk_distinct me.c
+
+let z3Distinct me env = 
+  List.map (z3Var me env) <+> Array.of_list <+> Z3.mk_distinct me.c
 
 (***************************************************************************)
 (***************** Low Level Query Interface *******************************)
@@ -330,19 +336,23 @@ let rec vpop (cs,s) =
 let prep_preds me env ps =
   let ps = List.rev_map (z3Pred me env) ps in
   let _  = me.vars <- Barrier :: me.vars in
-  (* JHALA: UNNECESSARY let _  = Z3.push me.c in *)
   ps
 
-let push me ps =
+let z3push me =
   let _ = nb_push += 1 in
   let _ = me.count <- me.count + 1 in
   let _ = BS.time "Z3.push" Z3.push me.c in
-  List.iter (fun p -> BS.time "Z3.ass_cst" (Z3.assert_cnstr me.c) p) ps
-    
-let pop me =
+  () (* List.iter (fun p -> BS.time "Z3.ass_cst" (Z3.assert_cnstr me.c) p) ps *)
+
+let z3pop me =
   let _ = incr nb_pop in
   let _ = me.count <- me.count - 1 in
   BS.time "Z3.pop" (Z3.pop me.c) 1 
+
+(* Z3 API *)
+let z3Do me f      = Misc.bracket (fun _ -> z3push me) (fun _ -> z3pop me) f
+let z3assert me ps = List.iter (fun p -> BS.time "Z3.ass_cst" (Z3.assert_cnstr me.c) p) ps
+
 
 (* COMMENTING OUT FOR PROFILING 
 let valid me p =
@@ -352,15 +362,25 @@ let valid me p =
                        | None -> failwith "UNRECOVERABLE FIXPOINT ERROR: Z3 TIMED OUT" in
   let _ = pop me in
   rv
-
 *)
-
+(*
 let valid me p =
   let _ = BS.time "push" (push me) [(Z3.mk_not me.c p)] in
   BS.time "unsat" unsat me 
   >> (fun _ -> pop me)
+*)
 
-let valid me p = BS.time "valid" (valid me) p
+let z3Valid me p = 
+  z3Do me begin fun _ ->
+    z3assert me [Z3.mk_not me.c p];
+    BS.time "unsat" unsat me 
+  end
+
+let z3Contra me p = 
+  z3Do me begin fun _ ->
+    z3assert me [p];
+    BS.time "unsat" unsat me 
+  end
 
 let clean_decls me =
   let cs, vars' = vpop ([],me.vars) in
@@ -370,21 +390,6 @@ let clean_decls me =
     | Vbl _ as d -> Hashtbl.remove me.vart d 
     | Fun _ as d -> Hashtbl.remove me.funt d
   end cs
-
-let handle_vv me env vv = 
-  Hashtbl.remove me.vart (z3Vbl env vv) (* RJ: why are we removing this? *) 
-
-let set me env vv ps =
-  handle_vv me env vv;
-  ps |> prep_preds me env |> push me;
-  (* unsat me *) false
-
-let filter me env _ ps =
-  ps 
-  |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
-  |> Misc.filter (thd3 <+> valid me)
-  |> List.map (fst3 <+> Misc.single)
-
 
 (* DEPRECATED, overall slowdown 
 let min_filter me env p_imp ps =
@@ -396,6 +401,9 @@ let min_filter me env p_imp ps =
 let filter me =  
   if !Constants.minquals then min_filter me else filter me
 *)
+
+let handle_vv me env vv = 
+  Hashtbl.remove me.vart (z3Vbl env vv) (* RJ: why are we removing this? *) 
 
 (************************************************************************)
 (********************************* API **********************************)
@@ -417,7 +425,19 @@ let create ts env ps consts =
            then (z3Distinct me env consts |> assert_axiom me) 
   in me
 
- (* API *)
+(*
+let set me env vv ps =
+  handle_vv me env vv;
+  ps |> prep_preds me env |> push me;
+  (* unsat me *) false
+
+let filter me env _ ps =
+  ps 
+  |> List.rev_map (fun (x, p) -> (x, p, z3Pred me env p)) 
+  |> Misc.filter (thd3 <+> valid me)
+  |> List.map (fst3 <+> Misc.single)
+
+(* API *)
 let set_filter (me: t) (env: So.t SM.t) (vv: Sy.t) ps p_imp qs =
   let _   = ignore(nb_set   += 1); ignore (nb_query += List.length qs) in
   let ps  = BS.time "fixdiv" (List.rev_map A.fixdiv) ps in
@@ -426,7 +446,7 @@ let set_filter (me: t) (env: So.t SM.t) (vv: Sy.t) ps p_imp qs =
     let _ = nb_unsatLHS += 1 in
     let _ = pop me in
     List.map (fst <+> Misc.single) qs 
-
+  
   | false ->
      qs 
      |> List.rev_map   (Misc.app_snd A.fixdiv) 
@@ -436,16 +456,30 @@ let set_filter (me: t) (env: So.t SM.t) (vv: Sy.t) ps p_imp qs =
      >> (fun _ -> pop me; clean_decls me)
      |> Misc.uncurry (++) 
 
+*)
+
+(* API *)
+let set_filter (me: t) (env: So.t SM.t) (vv: Sy.t) ps qs =
+  let _   = ignore(nb_set   += 1); ignore (nb_query += List.length qs) in
+  let _   = handle_vv me env vv in
+  z3Do me begin fun _ ->
+    let _        = ps |> prep_preds me env |> z3assert me        in
+    let tqs, fqs = List.partition (snd <+> P.is_tauto) qs        in
+    let fqs      = fqs |> List.rev_map (Misc.app_snd (z3Pred me env))
+                       |> Misc.filter  (snd <+> z3Valid me)      in 
+    let _        = clean_decls me                                in
+    (List.map fst tqs) ++ (List.map fst fqs)
+  end
+
 (* API *)
 let print_stats ppf me =
   Format.fprintf ppf
     "TP stats: sets=%d, pushes=%d, pops=%d, unsats=%d, queries=%d, count=%d, unsatLHS=%d \n" 
     !nb_set !nb_push !nb_pop !nb_unsat !nb_query (List.length me.vars) !nb_unsatLHS
 
-
-(******************************************************************************)
-(*********************** Unsat Core for CEX generation ************************)
-(******************************************************************************)
+(*************************************************************************)
+(****************** Unsat Core for CEX generation ************************)
+(*************************************************************************)
 
 let mk_prop_var me pfx i : Z3.ast =
   i |> string_of_int
@@ -474,7 +508,6 @@ let mk_pa me p2z pfx ics =
 (*
 (* API *)
 let unsat_cores me env p ips iqs = 
-  (* let _     = handle_vv me env vv                              in *)
   let _  = Hashtbl.clear me.vart                                  in 
   let p2z   = A.fixdiv <+> z3Pred me env                          in
   let ipa   = ips |> List.map (Misc.app_snd p2z) |> Array.of_list in 
@@ -506,9 +539,6 @@ let unsat_core_one me (va : Z3.ast array) (f: Z3.ast -> 'a) (k, q) =
   (k, r)
 *)
 
-
-let z3Do me f = Misc.bracket (fun _ -> push me []) (fun _ -> pop me) f
-
 (* API *)
 let unsat_core me env bgp ips =
   let _     = Hashtbl.clear me.vart                               in 
@@ -521,7 +551,7 @@ let unsat_core me env bgp ips =
                   |> Array.of_list
                   |> Z3.mk_and me.c in
   z3Do me begin fun _ ->
-    let _   = Z3.assert_cnstr me.c zp in
+    let _   = z3assert me [zp] in
     let n   = Array.length va in
     let va' = Array.map id va in
     match Z3.check_assumptions me.c va n va' with
@@ -531,14 +561,16 @@ let unsat_core me env bgp ips =
   end
  
 (* API *)
+let is_contra me env =  z3Pred me env <+> z3Contra me 
+
+(* API *)
 let unsat_suffix me env p ps =
-  let _ = if unsat me then assertf "WTF: unsat_suffix" in
+  let _ = if unsat me then assertf "ERROR: unsat_suffix" in
   z3Do me begin fun _ ->
     let rec loop j = function [] -> None | zp' :: zps' -> 
-      Z3.assert_cnstr me.c zp'; 
+      z3assert me [zp']; 
       if unsat me then Some j else loop (j-1) zps'
-    in loop (List.length ps) (List.map (A.fixdiv <+> z3Pred me env) (p :: List.rev ps)) 
+    in loop (List.length ps) (List.map (z3Pred me env) (p :: List.rev ps)) 
   end
-  
  
 end

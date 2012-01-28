@@ -129,19 +129,11 @@ let solutionAt me n k =
 (************************************************************************)
 (************************************************************************)
 
-(* YUCK: TODO, share with PredAbs *)
-let check_tp me env vv t lps =  function [] -> [] | rcs ->
-  let env = SM.map snd3 env |> SM.add vv t in
-  TP.set_filter me.tpc env vv lps (fun _ _ -> false) rcs 
-  |>: List.hd
-
 let isUnsatAt me c n = 
-  let s        = solutionAt me n     in
-  let env      = C.env_of_t c        in
-  let (vv,t,_) = C.lhs_of_t c        in
-  let lps      = C.preds_of_lhs s c  in
-  let rhsp     = c |> C.rhs_of_t |> C.preds_of_reft s |> A.pAnd in
-  not ((check_tp me env vv t lps [(0, rhsp)]) = [0])
+  let s     = solutionAt me n                                 in
+  let rhsp  = A.pAnd <| C.preds_of_reft s (C.rhs_of_t c)      in
+  let query = A.pAnd <| (A.pNot rhsp) :: (C.preds_of_lhs s c) in
+  not <| TP.is_contra me.tpc (C.senv_of_t c) query
 
 let prevStep_conc me c : int =
   let _  = asserts (C.is_conc_rhs c) in
@@ -276,28 +268,26 @@ let getKillers_fact (me: t) (f: fact) =
                    |> List.filter (fun (i,_) -> j < i)
                    |> Misc.flap   (snd <+> List.map snd)    in 
     (cid, getKillers_cands me c (A.pAnd (bgps ++ bgps')) cands)
+
+let maxCubeSize = 1
+
+let underApproxCubes me  (p:pred) (q:pred) (rs: ('a * pred) list) : 'a option =
+  Misc.exists_maybe begin fun (f, fp) ->
+    if SAT (p /\ fp) && UNSAT (p /\ fp /\ q) 
+    then Some f
+    else None
+  end rs
+
 *)
 
-let maxCubeSize = 2
-
-let underApproxCubes (p:pred) (q:pred) (rs: ('a * pred) list) : 'a list list =
-  rs |> Misc.subsets maxCubeSize
-     |> Misc.map_partial begin fun cube -> 
-         if SAT (p /\ cube) && UNSAT (p /\ cube /\ q) then 
-           Some (List.map fst cube) 
-         else None
-        end
-
-let getKillers_cands me c bgp killedp cands =
-  match cands, Misc.exists_maybe is_bot_killer cands with 
-  | [], _ ->
-      None
-  | _, Some g -> 
-      Some g 
-  | _, _  -> 
-      TP.unsat_core me.tpc (C.senv_of_t c) bgp cands 
-      |> Misc.do_catch "ERROR: empty unsat core" List.hd
-      |> some
+let getKillers_cands me c p q rs =
+  let env    = C.senv_of_t c in
+  let contra = fun p -> TP.is_contra me.tpc env p in
+  Misc.exists_maybe begin fun (f, fp) ->
+    if contra (A.pAnd [p; fp; q]) && not (contra (A.pAnd [p; fp]))
+    then Some f
+    else None
+  end rs
 
 let getKillers_fact (me: t) (f: fact) = 
   let n, cid     = killinfo me f                            in

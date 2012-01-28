@@ -321,11 +321,18 @@ let rhs_cands s = function
   | _ -> []
 
 let check_tp me env vv t lps =  function [] -> [] | rcs ->
-  let rv  = TP.set_filter me.tpc env vv lps (fun _ _ -> false) rcs |>: List.hd in
-  let _   = ignore(me.stat_tp_refines    += 1);
-            ignore(me.stat_imp_queries   += (List.length rcs));
-            ignore(me.stat_valid_queries += (List.length rv)) in
-  rv
+  (* let rv  = TP.set_filter me.tpc env vv lps rcs               in
+  let _   = ignore(me.stat_tp_refines    += 1)
+          ; ignore(me.stat_imp_queries   += (List.length rcs))
+          ; ignore(me.stat_valid_queries += (List.length rv)) 
+  in rv *)
+  TP.set_filter me.tpc env vv lps rcs
+  >> (fun _  -> me.stat_tp_refines    += 1)
+  >> (fun _  -> me.stat_imp_queries   += List.length rcs)
+  >> (fun rv -> me.stat_valid_queries += List.length rv) 
+
+
+
 
 (* API *)
 let read me k = (me.assm k) ++ (if SM.mem k me.m then p_read me k |>: snd else [])
@@ -484,8 +491,7 @@ let check_leq tp sm (q : Q.t) (qs : Q.t list) : Q.t list =
   let sm  = q |> sm_of_qual sm |> close_env qs in
   qs |> List.map (rename_vv q) (* (fun q -> (q, Q.pred_of_t q)) *)
      (* >> (List.map fst <+> F.printf "CHECK_TP: %a IN %a \n" Q.print q pprint_qs) *)
-     |> TP.set_filter tp sm vv lps (fun _ _ -> false)
-     |> List.flatten
+     |> TP.set_filter tp sm vv lps
      (* >> F.printf "CHECK_TP: %a OUT %a \n" Q.print q pprint_qs *)
 
 let qimps_of_partition tp sm qs =

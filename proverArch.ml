@@ -39,9 +39,8 @@ sig
                     -> Ast.Sort.t Ast.Symbol.SMap.t 
                     -> Ast.Symbol.t 
                     -> Ast.pred list 
-                    -> ('a -> 'a -> bool)
                     -> ('a * Ast.pred) list 
-                    -> 'a list list
+                    -> 'a list
 
   val print_stats : Format.formatter -> t -> unit
 
@@ -54,7 +53,12 @@ sig
                     -> ('b * 'a list) list                  (* [(killed, killers)]    *)
 
   *)
-  
+ 
+  val is_contra   : t  
+                    -> Ast.Sort.t Ast.Symbol.SMap.t 
+                    -> Ast.pred
+                    -> bool
+
   val unsat_core  : t                                       
                     -> Ast.Sort.t Ast.Symbol.SMap.t 
                     -> Ast.pred                             (* background predicate   *)
