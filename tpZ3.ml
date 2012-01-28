@@ -461,9 +461,10 @@ let set_filter (me: t) (env: So.t SM.t) (vv: Sy.t) ps p_imp qs =
 (* API *)
 let set_filter (me: t) (env: So.t SM.t) (vv: Sy.t) ps qs =
   let _   = ignore(nb_set   += 1); ignore (nb_query += List.length qs) in
-  let _   = handle_vv me env vv in
+  let _   = handle_vv me env vv  in
+  let zps = prep_preds me env ps in (* DO NOT PUSH INSIDE z3Do or z3 blocks postests/ll3.c *)
   z3Do me begin fun _ ->
-    let _        = ps |> prep_preds me env |> z3assert me        in
+    let _        = z3assert me zps                               in
     let tqs, fqs = List.partition (snd <+> P.is_tauto) qs        in
     let fqs      = fqs |> List.rev_map (Misc.app_snd (z3Pred me env))
                        |> Misc.filter  (snd <+> z3Valid me)      in 
